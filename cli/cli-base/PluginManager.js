@@ -33,7 +33,7 @@ class PluginManager {
     });
   }
 
-  runSync(eventName, ...args) {
+  forEachSync(eventName, callback, ...args) {
     const handlers = this._getEventHandlers(eventName);
     for (let idx = 0; idx < handlers.length; idx++) {
       const handler = handlers[idx];
@@ -43,9 +43,29 @@ class PluginManager {
     }
   }
 
+  runSyncWaterfall(eventName, value, ...args) {
+    const handlers = this._getEventHandlers(eventName);
+    for (let idx = 0; idx < handlers.length; idx++) {
+      const handler = handlers[idx];
+      value = handler(value, ...args);
+    }
+    return value;
+  }
+
+  runSyncMerge(eventName, ...args) {
+    const handlers = this._getEventHandlers(eventName);
+    for (let idx = 0; idx < handlers.length; idx++) {
+      const handler = handlers[idx];
+      const value = handler(...args);
+      merge()
+    }
+    return value;
+  }
+
   runAsync(eventName, ...args) {
     const handlers = this._getEventHandlers(eventName);
     return forEach(handlers, handler => {
+
       return handler(...args);
     });
   }
