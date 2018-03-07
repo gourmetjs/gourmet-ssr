@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "ladd": "lerna add",
+    "lrun": "lerna run",
+    "bootstrap": "lerna bootstrap"
+  },
   "devDependencies": {
     "lerna": "^2.9.0"
   }
