@@ -69,3 +69,47 @@ test("Customizer - string concatenation", t => {
   t.deepEqual(merge(a, b), c);
   t.end();
 });
+
+test("Merging arrays", t => {
+  const a = {
+    a: "A",
+    b: ["B"],
+    c: {c: 1}
+  };
+  const b = {
+    a: ["B"],
+    b: "C",
+    c: ["D"]
+  };
+  const c = {
+    a: ["A", "B"],
+    b: ["B", "C"],
+    c: [{c: 1}, "D"]
+  };
+  t.deepEqual(merge(a, b), c);
+  t.end();
+});
+
+test("Merging plain objects", t => {
+  function C() {}
+  const a = {
+    a: "A",
+    b: {c: 1},
+    c: {d: 2}
+  };
+  const b = {
+    a: {b: 1},
+    b: "B",
+    c: C
+  };
+  const c = {
+    a: {b: 1},
+    b: "B",
+    c: C
+  };
+  const d = merge(a, b);
+  t.deepEqual(d, c);
+  t.ok(d.a !== b.a, "should be a copy");
+  t.ok(d.c === C, "non-plain object should be intact");
+  t.end();
+});

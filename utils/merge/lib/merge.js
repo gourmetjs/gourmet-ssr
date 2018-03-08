@@ -6,16 +6,27 @@ class Customizer {
   }
 }
 
-function _isPlainObject(obj) {
-  return obj && typeof obj === "object"
+const OBJECT = 1;
+const ARRAY = 2;
+const OTHER = 0;
+
+function _getType(obj) {
+  const name = obj && typeof obj === "object"
       && typeof obj.constructor === "function"
-      && obj.constructor.name === "Object";
+      && obj.constructor.name;
+  if (name === "Object")
+    return OBJECT;
+  else if (name === "Array")
+    return ARRAY;
+  return OTHER;
+}
+
+function _isPlainObject(obj) {
+  return _getType(obj) === OBJECT;
 }
 
 function _isArray(arr) {
-  return arr && typeof arr === "object"
-      && typeof arr.constructor === "function"
-      && arr.constructor.name === "Array";
+  return _getType(arr) === ARRAY;
 }
 
 function _merge(des, src) {
@@ -30,19 +41,19 @@ function _merge(des, src) {
         newVal = srcVal.customizer.call(null, desVal);
 
       if (newVal === undefined) {
-        if (_isPlainObject(srcVal)) {
-          if (_isPlainObject(desVal))
-            newVal = _merge(desVal, srcVal);
-          else
-            newVal = _merge({}, srcVal);  // make a deep copy
-        } else if (_isArray(srcVal)) {
-          if (_isArray(desVal))
-            newVal = desVal.concat(srcVal);
-          else
-            newVal = [].concat(srcVal);   // make a shallow copy
-        } else {
+        const st = _getType(srcVal);
+        const dt = _getType(desVal);
+
+        if (dt === ARRAY)
+          newVal = desVal.concat(srcVal);
+        else if (st === ARRAY)
+          newVal = [desVal].concat(srcVal);
+        else if (st === OBJECT && dt === OBJECT)
+          newVal = _merge(desVal, srcVal);
+        else if (st === OBJECT)
+          newVal = _merge({}, srcVal);  // make a copy
+        else
           newVal = srcVal;
-        }
       }
 
       des[prop] = newVal;
