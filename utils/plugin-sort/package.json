@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/plugin-sort",
-  "description": "General purpose plugin ordering functionality",
+  "description": "A general purpose library for human friendly plugin ordering",
   "version": "0.1.0",
   "main": "lib/index.js",
   "scripts": {
-    "test": "tape test/basic_test.js"
+    "test": "tape test/*_test.js"
   },
   "dependencies": {
     "@gourmet/merge": "^0.1.0"

@@ -2,10 +2,16 @@
 
 const merge = require("@gourmet/merge");
 
+// Scale of multiplication for calculating base orders.
+// This number means the maximum number of references that an item can have
+// (i.e. source of `after`) without side-effect.
+// 1000 seems to be way more than enough.
+const CONSTRAINT_SCALE = 1000;
+
 class PluginSorter {
   constructor({
     // The normalizer should return an object with these standard fields:
-    //  - name*, after, before, disable, options, virtual
+    //  - name*, group, after, before, disable, options, virtual
     // Other non-standard fields will be kept intact.
     normalize=(item => item),
 
@@ -19,22 +25,22 @@ class PluginSorter {
     // e.g. {"plugin-1": {before: "plugin-2"}, "*": {loose: true}}
     schema={},
 
-    // Default order value to apply if an item doesn't have `order` field.
+    // Default group value to apply if an item doesn't have `group` field.
     // As an example, you can group plugins based on the stage of loading:
-    //  - 1..4999: early plugins
-    //  - 5000...99999: regular plugins
-    //  - 100000+: late plugins
-    defaultOrder=5000
+    //  - 1..199: early plugins / recommended = 100
+    //  - 200...799: regular plugins / recommended = 500
+    //  - 800..999: late plugins / recommended = 900
+    defaultGroup=500
   }={}) {
     this._normalize = normalize;
     this._finalize = finalize;
     this._schema = schema;
-    this._defaultOrder = defaultOrder;
+    this._defaultGroup = defaultGroup;
   }
 
   // Returns a copied array of plugins, which are normalized, sorted and finalized.
-  // If an item's `virtual` field is truthy, it has the same effect as the
-  // schema, and excluded from the finalized result array.
+  // If an item's name starts with '#', it has the same effect as the schema,
+  // and excluded from the finalized result array.
   run(items) {
     if (!Array.isArray(items))
       throw Error("Items must be an array");
@@ -53,13 +59,18 @@ class PluginSorter {
     for (let idx = 0; idx < items.length; idx++) {
       const item = this._normalize(items[idx]);
 
+      if (!merge.isPlainObject(item))
+        throw Error("'normalize' should return an object");
+
       if (typeof item.name !== "string")
         throw Error("Name is required");
 
-      if (item.name === "*" || item.disable || item.virtual)
-        virtual[item.name] = merge.intact(virtual[item.name], item);
-      else
+      if (item.name[0] === "#") {
+        const name = item.name.substr(1);
+        virtual[name] = merge.intact(virtual[name], item, {name});
+      } else {
         plugins.push(item);
+      }
     }
 
     return this._applySchema(plugins, virtual);
@@ -82,40 +93,38 @@ class PluginSorter {
     return plugins;
   }
 
-  // Sort items based on the `order` field.
+  // Sort items based on the `group` field, constraints(`before`, `after`)
+  // and original position.
   _sortItems(items) {
-    const co = this._getConstraintOrders(items);
-    const list = items.map((item, idx) => [item, co[idx], idx]);
+    const orders = this._getConstraintOrders(items);
+    const list = items.map((item, idx) => [item, orders[idx], idx]);
 
     list.sort((a, b) => {
-      const ac = a[1];
-      const bc = b[1];
+      const ag = a[0].group || this._defaultGroup;
+      const bg = b[0].group || this._defaultGroup;
 
-      // first key: constraint order (generated from `after` & `before`)
-      if (ac !== bc)
-        return ac - bc;
+      if (ag !== bg)
+        return ag - bg;
 
-      // second key: `order` field
-      const ao = a[0].order || this._defaultOrder;
-      const bo = b[0].order || this._defaultOrder;
+      if (a[1] !== b[1])
+        return a[1] - b[1];
 
-      if (ao !== bo)
-        return ao - bo;
-
-      // final key: original index to make the sort stable
       return a[2] - b[2];
     });
 
     return list.map(info => info[0]);
   }
 
+  // Gets a table of numbers that represents the order of items based on
+  // their constraints while preserving their original locations as much as
+  // possible.
   _getConstraintOrders(items) {
     // lowIndices = {"name": idx, ...}  // lowest index of the named plugin
     // highIndices = {"name": idx, ...}  // highest index of the named plugin
     const lowIndices = {};
     const highIndices = {};
 
-    // after = [["a", "b"], [], ...]  // copy of `after` field of a plugin at the index
+    // [["a", "b"], [], ...]: copy of `after` field of a plugin at the index
     const after = items.map((item, idx) => {
       const name = item.name;
       if (lowIndices[name] === undefined)
@@ -135,38 +144,42 @@ class PluginSorter {
     });
 
     function _init(idx) {
-      if (co[idx] !== undefined)
-        return co[idx] || 1;
+      if (orders[idx])
+        return orders[idx];
 
       const af = after[idx];
 
       if (af.length) {
         let max;
-        co[idx] = null;   // flag to prevent the infinite circular reference
+        // We keep updating `orders[idx]` to give the best estimation and
+        // the prevention of infinite circular reference.
+        orders[idx] = idx * CONSTRAINT_SCALE;
         af.forEach(target => {
           if (highIndices[target] !== undefined) {
             const val = _init(highIndices[target]);
-            if (!max || val > max)
+            if (!max || val > max) {
               max = val;
+              orders[idx] = max + 1;
+            }
           }
         });
-        return co[idx] = (max || 0) + 1;
+        return orders[idx] = max ? (max + 1) : idx * CONSTRAINT_SCALE;
       } else {
-        return co[idx] = 1;
+        return orders[idx] = idx * CONSTRAINT_SCALE;
       }
     }
 
-    const co = [];
+    const orders = [];
 
     items.forEach((item, idx) => {
       _init(idx);
     });
 
-    return co;
+    return orders;
   }
 
   _finalizeItems(items) {
-    return items.map(item => this._finalize(item)).filter(item => !!item);
+    return items.map(item => this._finalize(item)).filter(item => item !== undefined);
   }
 }
 
