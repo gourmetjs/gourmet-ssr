@@ -1,0 +1,9 @@
+{
+  "name": "@gourmet/gourmet-cli",
+  "version": "0.1.0",
+  "description": "Gourmet command line interface",
+  "dependencies": {
+    "@gourmet/cli-base": "^0.1.0",
+    "resolve": "^1.5.0"
+  }
+}

@@ -28,9 +28,9 @@ class CliBase {
     this.workDir = npath.resolve(process.cwd(), workDir);
     this.package = this._loadPackage(isPackageRequired);
 
-    this.config = this._loadConfig(configBaseName, isConfigRequired);
+    this._config = this._loadConfig(configBaseName, isConfigRequired);
 
-    this.plugins = new PluginManager({workDir: this.workDir});
+    this.plugins = new PluginManager();
 
     this._loadBuiltinPlugins(builtinPlugins);
     this._loadPlugins(autoLoadPlugins, configPropNames);
@@ -39,6 +39,10 @@ class CliBase {
   // Override and return `true` if the dependency is an auto-loadable plugin
   isAutoLoadablePlugin(moduleName) {   // eslint-disable-line no-unused-vars
     return false;
+  }
+
+  runAsMain() {
+    
   }
 
   _loadPackage(isPackageRequired) {
@@ -80,7 +84,7 @@ class CliBase {
       plugins = plugins.concat(this._scanPlugins(autoLoadPlugins));
     }
 
-    this.plugins.load(plugins);
+    this.plugins.load(plugins, this.workDir);
   }
 
   _scanPlugins(autoLoadPlugins) {

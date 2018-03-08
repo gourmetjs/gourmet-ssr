@@ -13,47 +13,13 @@ const GourmetWebpackBuildContext = require("GourmetWebpackBuildContext");
 //      build:webpack:loader_options:{loader-name}
 //  after:command:build
 class GourmetPluginWebpackBuilder {
-  constructor(gourmet) {
-    this.gourmet = gourmet;
-    this.meta = {
-      commands: {
-        build: {
-          usage: "Build the bundles",
-          options: {
-            stage: {
-              usage: "Specify the stage (e.g. '--stage prod')",
-              shortcut: "s",
-              default: "dev"
-            },
-            client: {
-              usage: "Build the server bundle only"
-            },
-            server: {
-              usage: "Build the client bundle only"
-            },
-            hot: {
-              usage: "Build for Hot Module Replacement"
-            }
-          }
-        }
-      },
-      hooks: {
-        "command:build": this._onBuildCommand,
-        "build:client": this._onWebpackBuild,
-        "build:server": this._onWebpackBuild,
-        "build:webpack:config": this._onWebpackConfig,
-        "build:webpack:config:module": this._onWebpackConfigModule
-      }
-    };
-  }
-
   _onBuildCommand(options) {
     return Promise.resolve().then(() => {
       if (!options.server)
-        return this.gourmet.plugins.runSeries("build:client", options, this);
+        return this.plugins.runAsync("build:client", options);
     }).then(() => {
       if (!options.client)
-        return this.gourmet.plugins.runSeries("build:server", options, this);
+        return this.plugins.runAsync("build:server", options);
     });
   }
 
@@ -188,5 +154,41 @@ class GourmetPluginWebpackBuilder {
   }
 
 }
+
+GourmetPluginWebpackBuilder.meta = {
+  // Inherit this plugin from cli object so that we can access methods of
+  // cli via `this`.
+  inherit: true,
+
+  commands: {
+    build: {
+      help: "Build the bundles & manifests",
+      options: {
+        stage: {
+          help: "Specify the stage (e.g. '--stage prod')",
+          short: "s",
+          default: "dev"
+        },
+        client: {
+          help: "Build the server bundle only"
+        },
+        server: {
+          help: "Build the client bundle only"
+        },
+        hot: {
+          help: "Build for Hot Module Replacement"
+        }
+      }
+    }
+  },
+
+  hooks: (proto => ({
+    "command:build": proto._onBuildCommand,
+    "build:client": proto._onWebpackBuild,
+    "build:server": proto._onWebpackBuild,
+    "build:webpack:config": proto._onWebpackConfig,
+    "build:webpack:config:module": proto._onWebpackConfigModule
+  }))(GourmetPluginWebpackBuilder.prototype)
+};
 
 module.exports = GourmetPluginWebpackBuilder;

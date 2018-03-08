@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/merge",
-  "description": "Merges objects with special handling of arrays and non-plain objects",
   "version": "0.1.0",
+  "description": "Merges objects with special handling of arrays and non-plain objects",
   "main": "lib/merge.js",
   "scripts": {
     "test": "tape test/*_test.js"

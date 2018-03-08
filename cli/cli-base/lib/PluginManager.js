@@ -3,12 +3,12 @@
 const npath = require("path");
 const resolve = require("resolve");
 const repeat = require("promise-box/lib/repeat");
-const merge = require("@gourmet/config-merge");
-const resolvePlugins = require("@gourmet/resolve-plugins");
+const merge = require("@gourmet/merge");
+const sortPlugins = require("@gourmet/plugin-sort");
 
 class PluginManager {
-  constructor({workDir}) {
-    this._workDir = workDir;
+  constructor(cli) {
+    this._cli = cli;
     this._plugins = [];
     this._events = null;
   }
@@ -19,24 +19,40 @@ class PluginManager {
     // `subplugins`) in loading phase.
     // Because all the plugins are re-ordered in event dispatch phase again,
     // The order of loading phase is less important.
-    resolvePlugins({
+    sortPlugins(items, {
+      // name: programmatic ID
+      // plugin: module path string or plugin instance object
       normalize(item) {
         if (typeof item === "string")
           return {name: item};
-        return item;
+        return Object.assign(item);
       },
+
+      // {name, plugin, meta, ...schema}
       finalize(item) {
         let pluginDir, PluginClass = item.plugin;
+
         if (typeof PluginClass !== "function") {
           const {dir, klass} = this._loadPlugin(item.plugin || item.name, baseDir);
           pluginDir = dir;
           PluginClass = klass;
         }
-        item.plugin = new PluginClass(item.options);
-        item.meta = item.plugin.meta || {};
-        if (item.meta.subplugins)
-          this.load(item.meta.subplugins, pluginDir);
-        // {name, plugin, meta}
+
+        const meta = PluginClass.meta || {};
+
+        if (meta.subplugins)
+          this.load(meta.subplugins, pluginDir || baseDir);
+
+        merge(item, meta.schema);
+
+        if (meta.inherit)
+          this._inheritFromCli(PluginClass);
+
+        const plugin = new PluginClass(item.options, this._cli);
+
+        item.meta = meta;
+        item.plugin = plugin;
+
         this._plugins.push(item);
       }
     });
@@ -102,7 +118,7 @@ class PluginManager {
   }
 
   _loadPlugin(name, baseDir) {
-    const path = resolve.sync(name, {basedir: baseDir || this._workDir});
+    const path = resolve.sync(name, {basedir: baseDir});
     const klass = require(path);
     const dir = npath.dirname(path);
     return {dir, klass};
@@ -118,7 +134,7 @@ class PluginManager {
 
     if (!this._events) {
       // Re-order the plugins as a whole array to mix all the batches.
-      this._plugins = resolvePlugins(this._plugins);
+      this._plugins = sortPlugins(this._plugins);
       this._events = {};
     }
 
@@ -140,6 +156,19 @@ class PluginManager {
       handlers = [].concat(handlers).reverse();
 
     return handlers;
+  }
+
+  _inheritFromCli(klass) {
+    for (;;) {
+      const base = klass.prototype.contructor;
+      if (base && base.name === "Object") {
+        klass.prototype = this._cli;  // replace the root class
+        break;
+      }
+      if (!base)
+        throw Error("'inherit' flag is specified but root prototype could not be found");
+      klass = base;
+    }
   }
 }
 

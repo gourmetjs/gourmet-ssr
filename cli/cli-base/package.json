@@ -1,0 +1,13 @@
+{
+  "name": "@gourmet/cli-base",
+  "version": "0.1.0",
+  "description": "Base class for the command line interface apps with flexible plugin architecture",
+  "main": "lib/CliBase.js",
+  "dependencies": {
+    "@gourmet/error": "^0.1.0",
+    "@gourmet/merge": "^0.1.0",
+    "@gourmet/plugin-sort": "^0.1.0",
+    "promise-box": "^0.1.7",
+    "resolve": "^1.5.0"
+  }
+}
