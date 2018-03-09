@@ -4,8 +4,24 @@ const npath = require("path");
 const resolve = require("resolve");
 const omit = require("lodash.omit");
 const repeat = require("promise-box/lib/repeat");
+const error = require("@gourmet/error");
 const merge = require("@gourmet/merge");
 const sortPlugins = require("@gourmet/plugin-sort");
+
+const INVALID_EXPORTED_PLUGIN = {
+  message: "Plugin '${name}' must export a class.",
+  code: "INVALID_EXPORTED_PLUGIN"
+};
+
+const INVALID_PLUGIN_VALUE = {
+  message: "Plugin '${name}' has invalid value in 'plugin'. It must be a string or class.",
+  code: "INVALID_PLUGIN_VALUE"
+};
+
+const INVALID_HANDLER_VALUE = {
+  message: "Plugin '${name}' has invalid value in 'meta.hooks[\"${eventName}\"]'. It must be a function.",
+  code: "INVALID_HANDLER_VALUE"
+};
 
 class PluginManager {
   constructor(cli) {
@@ -26,17 +42,23 @@ class PluginManager {
       normalize(item) {
         if (typeof item === "string")
           return {name: item};
-        return Object.assign(item);
+        return item;
       },
 
-      // {name, plugin, meta, ...schema}
+      // {...schema, name, plugin, meta}
       finalize: item => {
-        let pluginDir, PluginClass = item.plugin;
+        let pluginDir, PluginClass;
 
-        if (typeof PluginClass !== "function") {
+        if (typeof item.plugin === "string" || item.plugin === undefined) {
           const {dir, klass} = this._loadPlugin(item.plugin || item.name, baseDir);
+          if (typeof klass !== "function")
+            throw error(INVALID_EXPORTED_PLUGIN, {name: item.name});
           pluginDir = dir;
           PluginClass = klass;
+        } else if (typeof item.plugin === "function") {
+          PluginClass = item.plugin;
+        } else {
+          throw error(INVALID_PLUGIN_VALUE, {name: item.name});
         }
 
         const meta = PluginClass.meta || {};
@@ -44,7 +66,7 @@ class PluginManager {
         if (meta.subplugins)
           this.load(meta.subplugins, pluginDir || baseDir);
 
-        merge(item, omit(meta.schema, "name"));
+        item = merge(omit(meta.schema, "name"), item);
 
         const plugin = new PluginClass(item.options, this._cli);
 
@@ -147,10 +169,14 @@ class PluginManager {
       handlers = [];
       const items = this._plugins;
       for (let idx = 0; idx < items.length; idx++) {
-        const {meta, plugin} = items[idx];
-        const handler = meta.hooks && meta.hooks[eventName];
-        if (handler)
-          handlers.push(handler.bind(plugin));
+        const item = items[idx];
+        const hooks = item.meta.hooks;
+        if (hooks && hooks.hasOwnProperty(eventName)) {
+          const handler = hooks[eventName];
+          if (typeof handler !== "function")
+            throw error(INVALID_HANDLER_VALUE, {name: item.name, eventName});
+          handlers.push(handler.bind(item.plugin));
+        }
       }
       this._events[eventName] = handlers;
     }

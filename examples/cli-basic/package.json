@@ -1,7 +1,15 @@
 {
   "name": "@gourmet/example-cli-basic",
   "private": true,
+  "scripts": {
+    "test": "tape test/*_test.js"
+  },
   "dependencies": {
+    "@gourmet/example-cli-test-plugin": "^0.1.0",
     "@gourmet/gourmet-cli": "^0.1.0"
+  },
+  "devDependencies": {
+    "pshell": "^1.1.0",
+    "tape": "^4.9.0"
   }
 }

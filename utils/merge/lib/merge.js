@@ -31,16 +31,14 @@ function _isArray(arr) {
 
 function _merge(des, src) {
   for (const prop in src) {
-    let srcVal;
-
-    if (src.hasOwnProperty(prop) && (srcVal = src[prop]) !== undefined) {
+    if (src.hasOwnProperty(prop)) {
+      const srcVal = src[prop];
       const desVal = des[prop];
       let newVal;
 
-      if (srcVal instanceof Customizer)
+      if (srcVal instanceof Customizer) {
         newVal = srcVal.customizer.call(null, desVal);
-
-      if (newVal === undefined) {
+      } else {
         const st = _getType(srcVal);
         const dt = _getType(desVal);
 

@@ -26,6 +26,11 @@ const UNKNOWN_COMMAND = {
   code: "UNKNOWN_COMMAND"
 };
 
+const COMMAND_NOT_HANDLED = {
+  message: "Command '${command}' was not handled by any plugin. Maybe a bug?",
+  code: "COMMAND_NOT_HANDLED"
+};
+
 class CliBase {
   constructor(cliConfig={}) {
     this._cliConfig = merge({
@@ -60,11 +65,22 @@ class CliBase {
         return this._parseCommandArgs(argv);
       }).then(options => {
         return Promise.resolve().then(() => {
-          return this.plugins.runAsync("before:command:" + options.$command, options);
+          return this.plugins.runAsync("before:command:" + options.$command, options, this);
         }).then(() => {
-          return this.plugins.runAsync("command:" + options.$command, options);
+          return this.plugins.forEachAsync("command:" + options.$command, handler => {
+            return wrap(() => {
+              return handler(options, this);
+            }).then(res => {
+              // Returning `false` from the command handler means a pass-through.
+              if (res !== false)
+                return true;
+            });
+          }).then(consumed => {
+            if (!consumed)
+              throw error(COMMAND_NOT_HANDLED, {command: options.$command});
+          });
         }).then(() => {
-          return this.plugins.runAsync("after:command:" + options.$command, options);
+          return this.plugins.runAsync("after:command:" + options.$command, options, this);
         });
       })
     );
@@ -143,7 +159,7 @@ class CliBase {
   }
 
   _parseCommandArgs(argv) {
-    const options = omit(argv, "_");
+    const options = omit(argv, ["_", this._cliConfig.workDirArgName]);
     let command = argv._.join(" ");
 
     if (!command)
@@ -184,7 +200,7 @@ class CliBase {
       if (def.required && options[name] === undefined)
         throw error(COMMAND_OPTION_REQUIRED, {name});
 
-      if (def.default && options[name] === undefined)
+      if (def.default !== undefined && options[name] === undefined)
         options[name] = def.default;
     });
   }
