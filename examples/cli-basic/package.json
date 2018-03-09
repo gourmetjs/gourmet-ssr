@@ -1,0 +1,7 @@
+{
+  "name": "@gourmet/example-cli-basic",
+  "private": true,
+  "dependencies": {
+    "@gourmet/gourmet-cli": "^0.1.0"
+  }
+}

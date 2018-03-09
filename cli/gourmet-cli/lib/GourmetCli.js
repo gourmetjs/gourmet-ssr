@@ -4,11 +4,11 @@ const resolve = require("resolve");
 const CliBase = require("@gourmet/cli-base");
 
 class GourmetCli extends CliBase {
-  constructor(options) {
-    super(Object.assign({
+  constructor() {
+    super({
       configBaseName: "gourmet",
       builtinPlugins: []
-    }, options));
+    });
   }
 
   isAutoLoadablePlugin(moduleName) {

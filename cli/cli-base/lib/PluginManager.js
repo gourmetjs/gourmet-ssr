@@ -2,6 +2,7 @@
 
 const npath = require("path");
 const resolve = require("resolve");
+const omit = require("lodash.omit");
 const repeat = require("promise-box/lib/repeat");
 const merge = require("@gourmet/merge");
 const sortPlugins = require("@gourmet/plugin-sort");
@@ -29,7 +30,7 @@ class PluginManager {
       },
 
       // {name, plugin, meta, ...schema}
-      finalize(item) {
+      finalize: item => {
         let pluginDir, PluginClass = item.plugin;
 
         if (typeof PluginClass !== "function") {
@@ -43,10 +44,7 @@ class PluginManager {
         if (meta.subplugins)
           this.load(meta.subplugins, pluginDir || baseDir);
 
-        merge(item, meta.schema);
-
-        if (meta.inherit)
-          this._inheritFromCli(PluginClass);
+        merge(item, omit(meta.schema, "name"));
 
         const plugin = new PluginClass(item.options, this._cli);
 
@@ -107,14 +105,19 @@ class PluginManager {
     const handlers = this._getEventHandlers(eventName);
     let idx = 0;
     return repeat(() => {
-      if (idx++ >= handlers.length)
+      if (idx >= handlers.length)
         return null;
-      return callback(handlers[idx]);
+      const handler = handlers[idx++];
+      return callback(handler);
     });
   }
 
   runAsync(eventName, ...args) {
     return this.forEachAsync(eventName, handler => handler(...args));
+  }
+
+  toArray() {
+    return [].concat(this._plugins);
   }
 
   _loadPlugin(name, baseDir) {
@@ -142,12 +145,12 @@ class PluginManager {
 
     if (!handlers) {
       handlers = [];
-      const plugins = this._plugins;
-      for (let idx = 0; idx < plugins.length; idx++) {
-        const meta = plugins[idx].meta;
+      const items = this._plugins;
+      for (let idx = 0; idx < items.length; idx++) {
+        const {meta, plugin} = items[idx];
         const handler = meta.hooks && meta.hooks[eventName];
         if (handler)
-          handlers.push(handler.bind(meta.plugin));
+          handlers.push(handler.bind(plugin));
       }
       this._events[eventName] = handlers;
     }
@@ -156,19 +159,6 @@ class PluginManager {
       handlers = [].concat(handlers).reverse();
 
     return handlers;
-  }
-
-  _inheritFromCli(klass) {
-    for (;;) {
-      const base = klass.prototype.contructor;
-      if (base && base.name === "Object") {
-        klass.prototype = this._cli;  // replace the root class
-        break;
-      }
-      if (!base)
-        throw Error("'inherit' flag is specified but root prototype could not be found");
-      klass = base;
-    }
   }
 }
 

@@ -156,10 +156,6 @@ class GourmetPluginWebpackBuilder {
 }
 
 GourmetPluginWebpackBuilder.meta = {
-  // Inherit this plugin from cli object so that we can access methods of
-  // cli via `this`.
-  inherit: true,
-
   commands: {
     build: {
       help: "Build the bundles & manifests",

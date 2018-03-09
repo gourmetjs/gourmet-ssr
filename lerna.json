@@ -4,7 +4,8 @@
   "packages": [
     "utils/*",
     "cli/*",
-    "builder/*"
+    "builder/*",
+    "examples/*"
   ],
   "hoist": true,
   "version": "independent"

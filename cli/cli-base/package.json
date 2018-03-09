@@ -7,6 +7,8 @@
     "@gourmet/error": "^0.1.0",
     "@gourmet/merge": "^0.1.0",
     "@gourmet/plugin-sort": "^0.1.0",
+    "lodash.omit": "^4.5.0",
+    "minimist": "^1.2.0",
     "promise-box": "^0.1.7",
     "resolve": "^1.5.0"
   }
