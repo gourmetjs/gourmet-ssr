@@ -5,9 +5,14 @@ const repeat = require("promise-box/lib/repeat");
 const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
 
-const NON_STRING_MIX = {
+const VAR_INVALID_PATH = {
+  message: "Invalid path '${path}', maybe a bug?",
+  code: "VAR_INVALID_PATH"
+};
+
+const VAR_NON_STRING_MIX = {
   message: "Trying to populate non-string value into a string for variable '${var}'",
-  code: "NON_STRING_MIX"
+  code: "VAR_NON_STRING_MIX"
 };
 
 const VAR_SYNTAX_ERROR = {
@@ -18,6 +23,16 @@ const VAR_SYNTAX_ERROR = {
 const VAR_SOURCE_EXISTS = {
   message: "Variable source already exists: ${source}",
   code: "VAR_SOURCE_EXISTS"
+};
+
+const VAR_INVALID_SOURCE = {
+  message: "Invalid source name '${source} in variable: ${expr}",
+  code: "VAR_INVALID_SOURCE"
+};
+
+const VAR_PROPERTY_NOT_FOUND = {
+  message: "Property doesn't exist at '${path}'",
+  code: "VAR_PROPERTY_NOT_FOUND"
 };
 
 const REF_SYNTAX = /^(?:(?:(\w+):)?([\w-.~/%]+)(?:\?(.*))?)$/;
@@ -57,6 +72,8 @@ class Variables {
     defaultSource="self"
   }) {
     this.syntax = syntax;
+    this.defaultSource = defaultSource;
+
     this._sources = {};
 
     this.addSource(...sources);
@@ -73,7 +90,7 @@ class Variables {
   //    => `"dev-blue"`
   get(path, options) {
     if (!path || typeof path !== "string")
-      return Promise.reject(error(INVALID_PATH, {path}));
+      return Promise.reject(error(VAR_INVALID_PATH, {path}));
 
     const strict = options && options.strict;
     const paths = path.split(".");
@@ -92,21 +109,21 @@ class Variables {
       const name = paths[idx++];
 
       if (!name)
-        throw error(INVALID_PATH, {path});
+        throw error(VAR_INVALID_PATH, {path});
 
       if (merge.isPlainObject(value)) {
         if (strict && !value.hasOwnProperty(name))
-          throw error(PROPERTY_NOT_FOUND, {path: _errorPath()});
+          throw error(VAR_PROPERTY_NOT_FOUND, {path: _errorPath()});
         value = node.next(name);
       } else if (merge.isArray(value)) {
         const index = Number(name);
         if (Number.isNaN(index))
-          throw error(INVALID_INDEX_VALUE, {path: _errorPath()});
+          throw error(VAR_INVALID_INDEX_VALUE, {path: _errorPath()});
         if (strict && (index < 0 || index >= value.length))
-          throw error(INDEX_OUT_OF_RANGE, {path: _errorPath()});
+          throw error(VAR_INDEX_OUT_OF_RANGE, {path: _errorPath()});
         value = node.next(index);
       } else {
-        throw error(OBJECT_OR_ARRAY_REQUIRED, {path: _errorPath()});
+        throw error(VAR_OBJECT_OR_ARRAY_REQUIRED, {path: _errorPath()});
       }
 
       if (value instanceof Unresolved) {
@@ -152,7 +169,7 @@ class Variables {
               value = resolvedValue;
               return value;
             } else {
-              throw error(NON_STRING_MIX, {var: m[0]});
+              throw error(VAR_NON_STRING_MIX, {var: m[0]});
             }
           } else {
             value = [
@@ -255,7 +272,7 @@ class Variables {
     const src = this._sources[info.source];
 
     if (!src)
-      throw error(INVALID_SOURCE, {source: info.source, orgExpr: options.orgExpr});
+      throw error(VAR_INVALID_SOURCE, {source: info.source, expr: options.orgExpr});
 
     return src.resolve(info, options);
   }
