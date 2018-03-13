@@ -2,17 +2,14 @@
 
 const qs = require("querystring");
 const repeat = require("promise-box/lib/repeat");
-const merge = require("@gourmet/merge");
+const isPlainObject = require("@gourmet/is-plain-object");
+const deepProp = require("@gourmet/deep-prop");
+const deepScan = require("@gourmet/deep-scan");
 const error = require("@gourmet/error");
 
-const VAR_INVALID_PATH = {
-  message: "Invalid path '${path}', maybe a bug?",
-  code: "VAR_INVALID_PATH"
-};
-
-const VAR_NON_STRING_MIX = {
+const NON_STRING_MIX = {
   message: "Trying to populate non-string value into a string for variable '${var}'",
-  code: "VAR_NON_STRING_MIX"
+  code: "NON_STRING_MIX"
 };
 
 const VAR_SYNTAX_ERROR = {
@@ -25,48 +22,29 @@ const VAR_SOURCE_EXISTS = {
   code: "VAR_SOURCE_EXISTS"
 };
 
-const VAR_INVALID_SOURCE = {
+const INVALID_VAR_SOURCE = {
   message: "Invalid source name '${source} in variable: ${expr}",
-  code: "VAR_INVALID_SOURCE"
+  code: "INVALID_VAR_SOURCE"
 };
 
-const VAR_PROPERTY_NOT_FOUND = {
-  message: "Property doesn't exist at '${path}'",
-  code: "VAR_PROPERTY_NOT_FOUND"
+const CIRCULAR_VAR_REF = {
+  message: "Circular variable reference detected: ${path}",
+  code: "CIRCULAR_VAR_REF"
 };
 
 const REF_SYNTAX = /^(?:(?:(\w+):)?([\w-.~/%]+)(?:\?(.*))?)$/;
 const VALUE_SYNTAX = /^(?:"([^"]*)"|'([^']*)'|([\d.]+)|(null|true|false))$/;
 
-// Simple helper to replace a node in plain objects and arrays.
-function _node(root) {
-  let parent, prop;
-  let current = root;
-  return {
-    get() {
-      return current;
-    },
-    next(name) {
-      parent = current;
-      prop = name;
-      return current = current[name];
-    },
-    replace(value) {
-      return current = parent[prop] = value;
-    }
-  };
-}
-
 // Simple wrapper class to indicate a text value yet to be resolved.
-class Unresolved {
-  constructor(textValue) {
-    this._textValue = textValue;
+class VarNode {
+  constructor(text) {
+    this._orgText = text;
   }
 }
 
 class Variables {
   constructor({
-    rootObject,
+    object,
     sources=[],
     syntax=/(\$?)\${([\w-.~/%?=& '",]+?)}/,
     defaultSource="self"
@@ -74,6 +52,7 @@ class Variables {
     this.syntax = syntax;
     this.defaultSource = defaultSource;
 
+    this._object = object;
     this._sources = {};
 
     this.addSource(...sources);
@@ -88,49 +67,19 @@ class Variables {
   //    => `{theme: "dev-blue"}`
   // - [code] `vars.get("bootstrap.theme").then(theme => { console.log(JSON.stringify(theme)) })`
   //    => `"dev-blue"`
-  get(path, options) {
-    if (!path || typeof path !== "string")
-      return Promise.reject(error(VAR_INVALID_PATH, {path}));
-
-    const strict = options && options.strict;
-    const paths = path.split(".");
-    const node = _node(this._data);
-    let value = node.get();
-    let idx = 0;
-
-    function _errorPath() {
-      return paths.slice(0, idx).join(".");
-    }
-
-    return repeat(() => {
-      if (idx >= paths.length)
-        return this._resolveAll(value);
-
-      const name = paths[idx++];
-
-      if (!name)
-        throw error(VAR_INVALID_PATH, {path});
-
-      if (merge.isPlainObject(value)) {
-        if (strict && !value.hasOwnProperty(name))
-          throw error(VAR_PROPERTY_NOT_FOUND, {path: _errorPath()});
-        value = node.next(name);
-      } else if (merge.isArray(value)) {
-        const index = Number(name);
-        if (Number.isNaN(index))
-          throw error(VAR_INVALID_INDEX_VALUE, {path: _errorPath()});
-        if (strict && (index < 0 || index >= value.length))
-          throw error(VAR_INDEX_OUT_OF_RANGE, {path: _errorPath()});
-        value = node.next(index);
-      } else {
-        throw error(VAR_OBJECT_OR_ARRAY_REQUIRED, {path: _errorPath()});
-      }
-
-      if (value instanceof Unresolved) {
-        return this._resolveValue(value, {strict}).then(resolvedValue => {
-          value = node.replace(resolvedValue);
-        });
-      }
+  //
+  // options:
+  //  - strict: strict mode for property read
+  //  - force: do not use a cached value
+  //  - strictCircular: throws exception instead of `"!CIRCULAR_REF!"` for circular references
+  get(path, options={}) {
+    return deepProp(this._object, path, (value, prop, parent) => {
+      if (value instanceof VarNode)
+        return this._resolveNode(value, prop, parent, path, options);
+      else
+        return Promise.resolve(value);
+    }, options).then(value => {
+      return this._resolveAll(value, path, options);
     });
   }
 
@@ -147,11 +96,23 @@ class Variables {
     });
   }
 
-  // `value` must be an instance of `Unresolved`.
-  _resolveValue(value, {strict}) {
-    const literals = [];
+  // `node` must be an instance of `VarNode`.
+  _resolveNode(node, prop, parent, path, {strict, force, strictCircular}) {
+    if (node._isLocked) {
+      if (strictCircular)
+        throw error(CIRCULAR_VAR_REF, {path});
+      else
+        return Promise.resolve("!CIRCULAR_REF!");
+    }
 
-    value = value._textValue;
+    if (!force && node.hasOwnProperty("_cachedValue"))
+      return Promise.resolve(node._cachedValue);
+
+    node._isLocked = true;
+
+    const literals = [];
+    let value = node._orgText;
+    let hadVarExpr;
 
     return repeat(() => {
       const m = value.match(this.syntax);
@@ -163,13 +124,14 @@ class Variables {
       const len = m[0].length;
 
       if (!m[1]) {
-        return this._resolveExpr(m[2], {orgExpr: m[0], strict}).then(resolvedValue => {
+        hadVarExpr = true;
+        return this._resolveExpr(m[2], {expr: m[0], strict}).then(resolvedValue => {
           if (typeof resolvedValue !== "string") {
             if (pos === 0 && len === value.length && !literals.length) {
               value = resolvedValue;
               return value;
             } else {
-              throw error(VAR_NON_STRING_MIX, {var: m[0]});
+              throw error(NON_STRING_MIX, {var: m[0]});
             }
           } else {
             value = [
@@ -187,11 +149,18 @@ class Variables {
           return value;
         value = value.substr(pos + len);
       }
-    }).then(value => {
-      if (typeof value === "string")
-        return literals.join("") + value;
-      else
-        return value;
+    }).then(() => {
+      if (typeof value === "string") {
+        if (literals.length)
+          value = literals.join("") + value;
+        if (!hadVarExpr)  // if the string is var-free, replace the node
+          parent[prop] = value;
+      }
+
+      node._isLocked = false;
+      node._cachedValue = value;
+
+      return value;
     });
   }
 
@@ -199,10 +168,10 @@ class Variables {
   // reference to a concrete value.
   _resolveExpr(expr, options) {
     const items = expr.split(",");
-    const ref = this._parseRefExpr(items[0] || "", options.orgExpr);
+    const ref = this._parseRefExpr(items[0] || "", options);
     return this._resolveRef(ref, options).then(value => {
       if (value === undefined) {
-        const def = this._parseDefExpr(items[1] || "", options.orgExpr);
+        const def = this._parseDefaultExpr(items[1] || "", options);
         if (!def)
           return undefined;
         else if (def.type === "value")
@@ -217,13 +186,13 @@ class Variables {
 
   // Parses a reference expression (i.e. `ref` in `${ref, def}`) of a variable
   // reference and returns an object with the parsed information.
-  _parseRefExpr(ref, orgExpr) {
+  _parseRefExpr(ref, {expr}) {
     ref = ref.trim();
 
     const m = ref.match(REF_SYNTAX);
 
     if (!m)
-      throw error(VAR_SYNTAX_ERROR, {expr: orgExpr});
+      throw error(VAR_SYNTAX_ERROR, {expr});
 
     return {
       type: "ref",
@@ -235,7 +204,7 @@ class Variables {
 
   // Parses a default expression (i.e. `def` in `${ref, def}`) of a variable
   // reference and returns an object with the parsed information.
-  _parseDefExpr(def, orgExpr) {
+  _parseDefaultExpr(def, {expr}) {
     def = def.trim();
 
     if (!def)
@@ -265,16 +234,37 @@ class Variables {
       };
     }
 
-    return this._parseRefExpr(def, orgExpr);
+    return this._parseRefExpr(def, {expr});
   }
 
   _resolveRef(info, options) {
     const src = this._sources[info.source];
 
     if (!src)
-      throw error(VAR_INVALID_SOURCE, {source: info.source, expr: options.orgExpr});
+      throw error(INVALID_VAR_SOURCE, {source: info.source, expr: options.expr});
 
     return src.resolve(info, options);
+  }
+
+  _resolveAll(value, path, options) {
+    let des;
+    return deepScan(value, path, (value, prop, parent, path) => {
+      if (value instanceof VarNode) {
+        return this._resolveNode(value, prop, parent, path, options);
+      } else {
+        if (isPlainObject(value))
+          value = {};
+        else if (Array.isArray(value))
+          value = [];
+
+        if (!des)
+          des = value;
+        else
+          des[prop] = value;
+      }
+    }).then(() => {
+      return des;
+    });
   }
 }
 

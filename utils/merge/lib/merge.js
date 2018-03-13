@@ -1,5 +1,7 @@
 "use strict";
 
+const isPlainObject = require("@gourmet/is-plain-object");
+
 class Customizer {
   constructor(customizer) {
     this.customizer = customizer;
@@ -11,22 +13,11 @@ const ARRAY = 2;
 const OTHER = 0;
 
 function _getType(obj) {
-  const name = obj && typeof obj === "object"
-      && typeof obj.constructor === "function"
-      && obj.constructor.name;
-  if (name === "Object")
+  if (isPlainObject(obj))
     return OBJECT;
-  else if (name === "Array")
+  else if (Array.isArray(obj))
     return ARRAY;
   return OTHER;
-}
-
-function _isPlainObject(obj) {
-  return _getType(obj) === OBJECT;
-}
-
-function _isArray(arr) {
-  return _getType(arr) === ARRAY;
 }
 
 function _merge(des, src) {
@@ -71,7 +62,7 @@ function _merge(des, src) {
 function merge(des, ...args) {
   for (let idx = 0, len = args.length; idx < len; idx++) {
     const src = args[idx];
-    if (_isPlainObject(src))
+    if (isPlainObject(src))
       _merge(des, src);
   }
   return des;
@@ -101,7 +92,7 @@ merge.intact = function(...args) {
 
   for (let idx = 0, len = args.length; idx < len; idx++) {
     const src = args[idx];
-    if (_isPlainObject(src)) {
+    if (isPlainObject(src)) {
       if (!des) {
         des = src;
       } else if (des.__safeToWrite__) {
@@ -116,9 +107,5 @@ merge.intact = function(...args) {
 
   return des;
 };
-
-// Utilities for customizers
-merge.isPlainObject = _isPlainObject;
-merge.isArray = _isArray;
 
 module.exports = merge;

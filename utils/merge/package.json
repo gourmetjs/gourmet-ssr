@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "tape": "^4.9.0"
+  },
+  "dependencies": {
+    "@gourmet/is-plain-object": "^0.1.0"
   }
 }
