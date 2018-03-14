@@ -3,12 +3,13 @@
 const qs = require("querystring");
 const repeat = require("promise-box/lib/repeat");
 const isPlainObject = require("@gourmet/is-plain-object");
-const deepProp = require("@gourmet/deep-prop");
-const deepScan = require("@gourmet/deep-scan");
 const error = require("@gourmet/error");
+const deepProp = require("./deepProp");
+const deepClone = require("./deepClone");
+const deepCloneSync = require("./deepCloneSync");
 
 const NON_STRING_MIX = {
-  message: "Trying to populate non-string value into a string for variable '${var}'",
+  message: "Trying to populate non-string value into a string for variable: \"${text}\"",
   code: "NON_STRING_MIX"
 };
 
@@ -32,6 +33,11 @@ const CIRCULAR_VAR_REF = {
   code: "CIRCULAR_VAR_REF"
 };
 
+const EVAL_STRING_REQUIRED = {
+  message: "A text string must be provided to 'vars.eval()'",
+  code: "EVAL_STRING_REQUIRED"
+};
+
 const REF_SYNTAX = /^(?:(?:(\w+):)?([\w-.~/%]+)(?:\?(.*))?)$/;
 const VALUE_SYNTAX = /^(?:"([^"]*)"|'([^']*)'|([\d.]+)|(null|true|false))$/;
 
@@ -43,26 +49,22 @@ class VarNode {
 }
 
 class Variables {
-  constructor({
-    object,
-    sources=[],
+  constructor(object, {
     syntax=/(\$?)\${([\w-.~/%?=& '",]+?)}/,
     defaultSource="self"
-  }) {
+  }={}) {
     this.syntax = syntax;
     this.defaultSource = defaultSource;
 
-    this._object = object;
+    this._object = this.prepareValue(object);
     this._sources = {};
-
-    this.addSource(...sources);
   }
 
-  // Returns a promise that will resolve to a concrete value with all variables
-  // resolved. The result can be any JavaScript value, such as string, number,
-  // object, array, ..etc.
+  // Gets a property value of the object, resolving variable references to
+  // concrete values. The result can be any JavaScript value, such as
+  // string, number, object, array, ..etc.
   //
-  // - [root] `{ bootstrap: {theme: "${sys:stage}-blue"} }`
+  // - [object] `{ bootstrap: {theme: "${sys:stage}-blue"} }`
   // - [code] `vars.get("bootstrap").then(boostrap => { console.log(JSON.stringify(bootstrap)) })`
   //    => `{theme: "dev-blue"}`
   // - [code] `vars.get("bootstrap.theme").then(theme => { console.log(JSON.stringify(theme)) })`
@@ -77,23 +79,45 @@ class Variables {
       if (value instanceof VarNode)
         return this._resolveNode(value, prop, parent, path, options);
       else
-        return Promise.resolve(value);
+        return value;
     }, options).then(value => {
       return this._resolveAll(value, path, options);
     });
   }
 
-  eval(value) {
-
+  // Evaluates a text value, resolving variable references to
+  // concrete values. The result can be any JavaScript value, such as
+  // string, number, object, array, ..etc.
+  //
+  // - [object] `{greeting: "Hello"}`
+  // - [code] `vars.eval("${greeting}, world!")`
+  //    => `"Hello, world!"`
+  //
+  // See `get` for the options.
+  eval(text, options={}) {
+    if (typeof text !== "string")
+      throw error(EVAL_STRING_REQUIRED);
+    return this._resolveNode(new VarNode(text), null, null, "", options).then(value => {
+      return this._resolveAll(value, "", options);
+    });
   }
 
-  // Adds a variable sources (instance of `VariableSource` class)
-  addSource(...sources) {
-    Object.keys(sources).forEach(src => {
-      if (this._sources[src.name])
-        throw error(VAR_SOURCE_EXISTS, {source: src.name});
-      this._sources[src.name] = src;
+  // Prepares a JavaScript value to be used as a part or entirety of an object.
+  // Specifically, this wraps all text values with `VarNode`.
+  prepareValue(value) {
+    return deepCloneSync(value, value => {
+      if (typeof value === "string")
+        return new VarNode(value);
+      else
+        return value;
     });
+  }
+
+  // Adds a variable source (instance of `VariableSource` class)
+  addSource(name, src) {
+    if (this._sources[name])
+      throw error(VAR_SOURCE_EXISTS, {source: name});
+    this._sources[name] = src;
   }
 
   // `node` must be an instance of `VarNode`.
@@ -126,12 +150,12 @@ class Variables {
       if (!m[1]) {
         hadVarExpr = true;
         return this._resolveExpr(m[2], {expr: m[0], strict}).then(resolvedValue => {
-          if (typeof resolvedValue !== "string") {
+          if (isPlainObject(resolvedValue) || Array.isArray(resolvedValue)) {
             if (pos === 0 && len === value.length && !literals.length) {
               value = resolvedValue;
               return value;
             } else {
-              throw error(NON_STRING_MIX, {var: m[0]});
+              throw error(NON_STRING_MIX, {text: node._orgText});
             }
           } else {
             value = [
@@ -153,7 +177,7 @@ class Variables {
       if (typeof value === "string") {
         if (literals.length)
           value = literals.join("") + value;
-        if (!hadVarExpr)  // if the string is var-free, replace the node
+        if (parent && !hadVarExpr)  // if the string is var-free, replace the node
           parent[prop] = value;
       }
 
@@ -239,31 +263,18 @@ class Variables {
 
   _resolveRef(info, options) {
     const src = this._sources[info.source];
-
     if (!src)
       throw error(INVALID_VAR_SOURCE, {source: info.source, expr: options.expr});
-
     return src.resolve(info, options);
   }
 
+  // Recursively resolves all the values and returns a deep copy of it.
   _resolveAll(value, path, options) {
-    let des;
-    return deepScan(value, path, (value, prop, parent, path) => {
-      if (value instanceof VarNode) {
+    return deepClone(value, path, (value, prop, parent, path) => {
+      if (value instanceof VarNode)
         return this._resolveNode(value, prop, parent, path, options);
-      } else {
-        if (isPlainObject(value))
-          value = {};
-        else if (Array.isArray(value))
-          value = [];
-
-        if (!des)
-          des = value;
-        else
-          des[prop] = value;
-      }
-    }).then(() => {
-      return des;
+      else
+        return value;
     });
   }
 }

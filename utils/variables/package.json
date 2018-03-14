@@ -2,5 +2,15 @@
   "name": "@gourmet/variables",
   "version": "0.1.0",
   "description": "Flexible variable resolution engine that can be extended by pluggable variable sources",
-  "main": "lib/Variables.js"
+  "main": "lib/Variables.js",
+  "scripts": {
+    "test": "tape test/*_test.js",
+    "debug": "node --inspect-brk test/vars_test.js"
+  },
+  "dependencies": {
+    "@gourmet/error": "^0.1.0",
+    "@gourmet/is-plain-object": "^0.1.0",
+    "promise-box": "^0.1.7",
+    "tape": "^4.9.0"
+  }
 }

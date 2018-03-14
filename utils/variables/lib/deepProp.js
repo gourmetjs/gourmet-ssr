@@ -1,5 +1,6 @@
 "use strict";
 
+const isPromise = require("promise-box/lib/isPromise");
 const forEach = require("promise-box/lib/forEach");
 const error = require("@gourmet/error");
 const isPlainObject = require("@gourmet/is-plain-object");
@@ -10,7 +11,7 @@ const INVALID_PATH = {
 };
 
 const PROPERTY_NOT_FOUND = {
-  message: "Property '${prop}' of '${path}' doesn't exist",
+  message: "Property '${prop}' doesn't exist",
   code: "PROPERTY_NOT_FOUND"
 };
 
@@ -25,11 +26,11 @@ const INDEX_OUT_OF_RANGE = {
 };
 
 const OBJECT_OR_ARRAY_REQUIRED = {
-  message: "Must be an object or array: '${prop}' of '${path}'",
+  message: "Object or array required to access a property '${prop}'",
   code: "OBJECT_OR_ARRAY_REQUIRED"
 };
 
-module.exports = function deepProp(obj, path, customizer, {strict}) {
+module.exports = function deepProp(obj, path, handler, {strict}) {
   const props = path ? path.split(".") : [];
   let value = obj;
 
@@ -52,10 +53,12 @@ module.exports = function deepProp(obj, path, customizer, {strict}) {
     }
 
     const parent = value;
-
     value = value[prop];
 
-    return customizer(value, prop, parent).then(val => {
+    let res = handler(value, prop, parent);
+    if (!isPromise(res))
+      res = Promise.resolve(res);
+    return res.then(val => {
       value = val;
     });
   });
