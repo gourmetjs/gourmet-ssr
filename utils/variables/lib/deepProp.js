@@ -61,5 +61,5 @@ module.exports = function deepProp(obj, path, handler, {strict}) {
     return res.then(val => {
       value = val;
     });
-  });
+  }).then(() => value);
 };

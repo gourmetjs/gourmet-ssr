@@ -16,7 +16,7 @@ function _vars(obj) {
   return vars;
 }
 
-test("vars basic", t => {
+test("basic eval", t => {
   const vars = _vars({
     a: "Hello",
     b: {
@@ -28,3 +28,114 @@ test("vars basic", t => {
     t.equal(value, "Hello, world!");
   }).then(() => t.end(), t.end);
 });
+
+test("advanced get & eval", t => {
+  const vars = _vars({
+    a: "Hello",
+    b: {
+      c: "world",
+      d: [1, 2, {e: "test"}]
+    },
+    f: {
+      g: {
+        h: {
+          i: {
+            j: {
+              k: "K",
+              l: "L"
+            }
+          }
+        }
+      }
+    },
+    m: "${f}"
+  });
+
+  vars.get("a").then(value => {
+    t.equal(value, "Hello");
+    t.equal(vars._context.a, "Hello", "check if the node was replaced");
+  }).then(() => {
+    return vars.get("b.c").then(value => {
+      t.equal(value, "world");
+    });
+  }).then(() => {
+    return vars.get("b.d.2.e").then(value => {
+      t.equal(value, "test");
+    });
+  }).then(() => {
+    return vars.get("b.d").then(value => {
+      t.deepEqual(value, [1, 2, {e: "test"}]);
+    });
+  }).then(() => {
+    return vars.get("f").then(value => {
+      t.deepEqual(value, {g:{h:{i:{j:{k:"K", l:"L"}}}}});
+      t.equal(vars._context.f.constructor.name, "Object");
+    });
+  }).then(() => {
+    return vars.get("m").then(value => {
+      t.deepEqual(value, {g:{h:{i:{j:{k:"K", l:"L"}}}}});
+      t.equal(vars._context.m.constructor.name, "VarNode", "check if the node is not replaced");
+    });
+  }).then(() => {
+    return vars.eval("#${b.d.0}").then(value => {
+      t.equal(value, "#1");
+    });
+  }).then(() => {
+    return vars.eval("#${b.d.2}").then(() => {
+      t.fail();
+    }).catch(err => {
+      t.equal(err.code, "NON_STRING_MIX");
+    });
+  }).then(() => t.end(), t.end);
+});
+
+test("nested vars & literals", t => {
+  const vars = _vars({
+    a: "c",
+    b: "${${a}}",
+    c: "OK",
+    d: "** \\${a} ${b} \\${z} **",
+    e: "${d}",
+    f: "\\${a}"
+  });
+
+  vars.get("b").then(value => {
+    t.equal(value, "OK", "nested");
+  }).then(() => {
+    return vars.get("f").then(value => {
+      t.equal(value, "${a}", "literal");
+    });
+  }).then(() => {
+    return vars.get("d").then(value => {
+      t.equal(value, "** ${a} OK ${z} **", "literal mix");
+    });
+  }).then(() => {
+    return vars.get("e").then(value => {
+      t.equal(value, "** ${a} OK ${z} **", "literal - indirect");
+    });
+  }).then(() => t.end(), t.end);
+});
+
+
+/*
+test("circular reference", t => {
+  const vars = _vars({
+    a: "${b}",
+    b: "${c.d}",
+    c: {
+      d: "${a}"
+    }
+  });
+
+});
+*/
+
+// * get function
+// * non string value
+// * mixed value error
+// circular ref
+// node replacement
+// options: strict, force, strictCircular
+// file source
+// env source
+// opt source

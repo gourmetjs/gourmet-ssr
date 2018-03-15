@@ -49,22 +49,33 @@ class VarNode {
 }
 
 class Variables {
-  constructor(object, {
-    syntax=/(\$?)\${([\w-.~/%?=& '",]+?)}/,
+  constructor(context, {
+    syntax=/(\\?)\${([^{}]+?)}/,
     defaultSource="self"
   }={}) {
-    this.syntax = syntax;
-    this.defaultSource = defaultSource;
-
-    this._object = this.prepareValue(object);
     this._sources = {};
+    this.setContext(context);
+    this.setSyntax(syntax);
+    this.setDefaultSource(defaultSource);
   }
 
-  // Gets a property value of the object, resolving variable references to
+  setContext(context) {
+    this._context = this.prepareValue(context);
+  }
+
+  setSyntax(syntax) {
+    this._syntax = syntax;
+  }
+
+  setDefaultSource(name) {
+    this._defaultSource = name;
+  }
+
+  // Gets a property value of the context, resolving variable references to
   // concrete values. The result can be any JavaScript value, such as
   // string, number, object, array, ..etc.
   //
-  // - [object] `{ bootstrap: {theme: "${sys:stage}-blue"} }`
+  // - [context] `{ bootstrap: {theme: "${sys:stage}-blue"} }`
   // - [code] `vars.get("bootstrap").then(boostrap => { console.log(JSON.stringify(bootstrap)) })`
   //    => `{theme: "dev-blue"}`
   // - [code] `vars.get("bootstrap.theme").then(theme => { console.log(JSON.stringify(theme)) })`
@@ -75,13 +86,26 @@ class Variables {
   //  - force: do not use a cached value
   //  - strictCircular: throws exception instead of `"!CIRCULAR_REF!"` for circular references
   get(path, options={}) {
-    return deepProp(this._object, path, (value, prop, parent) => {
+    return deepProp(this._context, path, (value, prop, parent) => {
       if (value instanceof VarNode)
         return this._resolveNode(value, prop, parent, path, options);
       else
         return value;
     }, options).then(value => {
-      return this._resolveAll(value, path, options);
+      return this._copyResult(value, path, options);
+    });
+  }
+
+  // Same as `get` but stops resolving values at the node of `path` and
+  // doesn't go any deeper. Not for end user but for the source development.
+  getNode(path, options={}) {
+    return deepProp(this._context, path, (value, prop, parent) => {
+      if (value instanceof VarNode)
+        return this._resolveNode(value, prop, parent, path, options);
+      else
+        return value;
+    }, options).then(value => {
+      return deepCloneSync(value, value => value);
     });
   }
 
@@ -89,7 +113,7 @@ class Variables {
   // concrete values. The result can be any JavaScript value, such as
   // string, number, object, array, ..etc.
   //
-  // - [object] `{greeting: "Hello"}`
+  // - [context] `{greeting: "Hello"}`
   // - [code] `vars.eval("${greeting}, world!")`
   //    => `"Hello, world!"`
   //
@@ -98,11 +122,11 @@ class Variables {
     if (typeof text !== "string")
       throw error(EVAL_STRING_REQUIRED);
     return this._resolveNode(new VarNode(text), null, null, "", options).then(value => {
-      return this._resolveAll(value, "", options);
+      return this._copyResult(value, "", options);
     });
   }
 
-  // Prepares a JavaScript value to be used as a part or entirety of an object.
+  // Prepares a JavaScript value to be used as a part or entirety of an context.
   // Specifically, this wraps all text values with `VarNode`.
   prepareValue(value) {
     return deepCloneSync(value, value => {
@@ -139,7 +163,7 @@ class Variables {
     let hadVarExpr;
 
     return repeat(() => {
-      const m = value.match(this.syntax);
+      const m = value.match(this._syntax);
 
       if (!m)
         return value;
@@ -166,11 +190,7 @@ class Variables {
           }
         });
       } else {
-        if (pos)
-          literals.push(value.substr(0, pos));
-        literals.push(value.substr(pos + m[1].length, m[2].length));
-        if (pos + len >= value.length)
-          return value;
+        literals.push(value.substr(0, pos + len));
         value = value.substr(pos + len);
       }
     }).then(() => {
@@ -209,7 +229,7 @@ class Variables {
   }
 
   // Parses a reference expression (i.e. `ref` in `${ref, def}`) of a variable
-  // reference and returns an object with the parsed information.
+  // expression and returns an object with the parsed information.
   _parseRefExpr(ref, {expr}) {
     ref = ref.trim();
 
@@ -220,14 +240,14 @@ class Variables {
 
     return {
       type: "ref",
-      source: m[1] || this.defaultSource,
+      source: m[1] || this._defaultSource,
       path: decodeURI(m[2]),
       query: m[3] ? qs.parse(m[3]) : {}
     };
   }
 
   // Parses a default expression (i.e. `def` in `${ref, def}`) of a variable
-  // reference and returns an object with the parsed information.
+  // expression and returns an object with the parsed information.
   _parseDefaultExpr(def, {expr}) {
     def = def.trim();
 
@@ -268,13 +288,47 @@ class Variables {
     return src.resolve(info, options);
   }
 
-  // Recursively resolves all the values and returns a deep copy of it.
-  _resolveAll(value, path, options) {
-    return deepClone(value, path, (value, prop, parent, path) => {
-      if (value instanceof VarNode)
-        return this._resolveNode(value, prop, parent, path, options);
-      else
+  // Recursively resolves all the values and replace the literal forms to final
+  // strings. This is used for creating a final deep copy of the value for
+  // user consumption.
+  _copyResult(value, path, options) {
+    const _replaceLiterals = value => {
+      if (typeof value !== "string")
         return value;
+
+      const buf = [];
+
+      for (;;) {
+        const m = value.match(this._syntax);
+
+        if (!m)
+          break;
+
+        const pos = m.index;
+        const len = m[0].length;
+
+        if (m[1]) {
+          if (pos)
+            buf.push(value.substr(0, pos));
+          buf.push(value.substring(pos + m[1].length, pos + len));
+        } else {
+          buf.push(value.substr(0, pos + len));
+        }
+
+        value = value.substr(pos + len);
+      }
+
+      return buf.join("") + value;
+    };
+
+    return deepClone(value, path, (value, prop, parent, path) => {
+      if (value instanceof VarNode) {
+        return this._resolveNode(value, prop, parent, path, options).then(value => {
+          return _replaceLiterals(value);
+        });
+      } else {
+        return _replaceLiterals(value);
+      }
     });
   }
 }

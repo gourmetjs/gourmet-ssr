@@ -25,8 +25,7 @@ module.exports = function deepClone(value, path, handler) {
     const des = {};
     const props = Object.keys(obj);
     return forEach(props, prop => {
-      const value = obj[prop];
-      return _clone(value, prop, obj, path + "." + prop).then(value => {
+      return _clone(obj[prop], prop, obj, path + "." + prop).then(value => {
         des[prop] = value;
       });
     }).then(() => des);
@@ -38,9 +37,10 @@ module.exports = function deepClone(value, path, handler) {
     return repeat(() => {
       if (index >= arr.length)
         return des;
-      const value = arr[index];
-      des.push(_clone(value, index, arr, path + "." + index));
-      index++;
+      return _clone(arr[index], index, arr, path + "." + index).then(value => {
+        des.push(value);
+        index++;
+      });
     });
   }
 

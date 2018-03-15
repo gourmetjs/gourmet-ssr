@@ -6,7 +6,7 @@ class Self {
   }
 
   resolve(info, options) {
-    return this.vars.get(info.path, options);
+    return this.vars.getNode(info.path, options);
   }
 }
 
