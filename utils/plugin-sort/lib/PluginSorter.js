@@ -1,6 +1,7 @@
 "use strict";
 
 const merge = require("@gourmet/merge");
+const isPlainObject = require("@gourmet/is-plain-object");
 
 // Scale of multiplication for calculating base orders.
 // This number means the maximum number of references that an item can have
@@ -59,7 +60,7 @@ class PluginSorter {
     for (let idx = 0; idx < items.length; idx++) {
       const item = this._normalize(items[idx]);
 
-      if (!merge.isPlainObject(item))
+      if (!isPlainObject(item))
         throw Error("'normalize' should return an object");
 
       if (typeof item.name !== "string")

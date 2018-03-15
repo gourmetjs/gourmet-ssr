@@ -1,18 +1,16 @@
 "use strict";
 
-//${env:FLAT_NAME}
-//${opt:path.to.prop}
-//${self:path.to.prop}
-//${file:../path/to/file?abc, self:path.to.prop | "string" | 123 | null | true | false}
-//${s3:bucket/my/path/to/key}
-
 const test = require("tape");
 const Variables = require("..");
 const Self = require("../lib/sources/Self");
+const Env = require("../lib/sources/Env");
+const Opt = require("../lib/sources/Opt");
 
 function _vars(obj) {
   const vars = new Variables(obj);
   vars.addSource("self", new Self(vars));
+  vars.addSource("env", new Env({NODE_ENV: "production"}));
+  vars.addSource("opt", new Opt({"command": "help", verbose: true}));
   return vars;
 }
 
@@ -116,7 +114,7 @@ test("nested vars & literals", t => {
   }).then(() => t.end(), t.end);
 });
 
-test("circular reference && strict access mode", t => {
+test("circular reference", t => {
   const vars = _vars({
     a: "${b}",
     b: "${c.d}",
@@ -131,34 +129,85 @@ test("circular reference && strict access mode", t => {
     }
   });
 
-  vars.get("a").then(value => {
-    t.equal(value, "!!CIRCULAR_REF!!", "circular ref");
-  }).then(() => {
-    return vars.get("e").then(value => {
-      t.deepEqual(value, {
-        f: {
-          g: {
-            d: "!!CIRCULAR_REF!!"
-          },
-          h: "good!"
-        }
-      }, "circular ref in object");
-    });
-  }).then(() => {
-    return vars.get("a", {strictCircular: true}).then(() => {
+  return Promise.resolve().then(() => {
+    return vars.get("a").then(() => {
       t.fail();
     }).catch(err => {
       t.equal(err.code, "CIRCULAR_VAR_REF");
+      t.equal(err.path, "a");
     });
   }).then(() => {
-    return vars.get("e.x.y.z").then(value => {
+    return vars.get("e").then(() => {
+      t.fail();
+    }).catch(err => {
+      t.equal(err.code, "CIRCULAR_VAR_REF");
+      t.equal(err.path, "e.f.g.d");
+    });
+  }).then(() => t.end(), t.end);
+});
+
+test("non-existent property & default value", t => {
+  const vars = _vars({
+    a: {
+      b: {
+        c: "hello"
+      }
+    },
+    d: "${a.b.c, true}",
+    e: "${a.x.y.z, 'good'}",
+    f: "${a.x.y.z, d}",
+    defaultStage: "beta",
+    stage: "${opt:stage, env:STAGE, self:defaultStage, 'dev'}",
+  });
+
+  return Promise.resolve().then(() => {
+    return vars.get("a.x.y.z").then(value => {
       t.equal(value, undefined, "non-existent property");
     });
   }).then(() => {
-    return vars.get("e.x.y.z", {strict: true}).then(() => {
-      t.fail();
-    }).catch(err => {
-      t.equal(err.code, "PROPERTY_NOT_FOUND");
+    return vars.get("d").then(value => {
+      t.equal(value, "hello", "default value - not used");
+    });
+  }).then(() => {
+    return vars.get("e").then(value => {
+      t.equal(value, "good", "default value - used");
+    });
+  }).then(() => {
+    return vars.get("f").then(value => {
+      t.equal(value, "hello", "default value - ref");
+    });
+  }).then(() => {
+    return vars.get("stage").then(value => {
+      t.equal(value, "beta", "default value - sequence");
+    });
+  }).then(() => t.end(), t.end);
+});
+
+test("env source", t => {
+  const vars = _vars({
+    "dataFile": "${env:NODE_ENV, 'dev'}-data.json"
+  });
+
+  return Promise.resolve().then(() => {
+    return vars.get("dataFile").then(value => {
+      t.equal(value, "production-data.json");
+    });
+  }).then(() => t.end(), t.end);
+});
+
+test("opt source", t => {
+  const vars = _vars({
+    "command": "${opt:command}",
+    "verbose": "${opt:verbose}"
+  });
+
+  return Promise.resolve().then(() => {
+    return vars.get("command").then(value => {
+      t.equal(value, "help");
+    });
+  }).then(() => {
+    return vars.get("verbose").then(value => {
+      t.equal(value, true);
     });
   }).then(() => t.end(), t.end);
 });
@@ -169,6 +218,13 @@ test("circular reference && strict access mode", t => {
 // * circular ref
 // * node replacement
 // * options: strict, force, strictCircular
+// * default value
 // file source
-// env source
-// opt source
+// * env source
+// * opt source
+//${env:FLAT_NAME}
+//${opt:path.to.prop}
+//${self:path.to.prop}
+//${file:../path/to/file?abc, self:path.to.prop | "string" | 123 | null | true | false}
+//${s3:bucket/my/path/to/key}
+

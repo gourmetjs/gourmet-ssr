@@ -30,7 +30,7 @@ const OBJECT_OR_ARRAY_REQUIRED = {
   code: "OBJECT_OR_ARRAY_REQUIRED"
 };
 
-module.exports = function deepProp(obj, path, handler, {strict}) {
+module.exports = function deepProp(obj, path, handler) {
   const props = path ? path.split(".") : [];
   let value = obj;
 
@@ -40,18 +40,14 @@ module.exports = function deepProp(obj, path, handler, {strict}) {
 
     if (isPlainObject(value)) {
       if (!value.hasOwnProperty(prop)) {
-        if (strict) {
-          throw error(PROPERTY_NOT_FOUND, {path, prop});
-        } else {
-          value = undefined;
-          return false;
-        }
+        value = undefined;
+        return false;
       }
     } else if (Array.isArray(value)) {
       const index = Number(prop);
       if (Number.isNaN(index))
         throw error(INVALID_INDEX_VALUE, {path, index});
-      if (strict && (index < 0 || index >= value.length))
+      if (index < 0 || index >= value.length)
         throw error(INDEX_OUT_OF_RANGE, {path, index});
       prop = index;
     } else {

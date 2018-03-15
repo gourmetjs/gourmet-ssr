@@ -2,6 +2,8 @@
 
 const qs = require("querystring");
 const repeat = require("promise-box/lib/repeat");
+const forEach = require("promise-box/lib/forEach");
+const isPromise = require("promise-box/lib/isPromise");
 const isPlainObject = require("@gourmet/is-plain-object");
 const error = require("@gourmet/error");
 const deepProp = require("./deepProp");
@@ -48,14 +50,6 @@ class VarNode {
   }
 }
 
-class CircularRef {
-  toString() {
-    return "!!CIRCULAR_REF!!";
-  }
-}
-
-const circularRef = new CircularRef();
-
 class Variables {
   constructor(context, {
     syntax=/(\\?)\${([^{}]+?)}/,
@@ -90,17 +84,14 @@ class Variables {
   //    => `"dev-blue"`
   //
   // options:
-  //  - strict: strict mode for property read
   //  - force: do not use a cached value
-  //  - strictCircular: throws exception instead of `"!!CIRCULAR_REF!!"`
-  //    for circular references. This option implies `force`.
   get(path, options={}) {
     return deepProp(this._context, path, (value, prop, parent) => {
       if (value instanceof VarNode)
         return this._resolveNode(value, prop, parent, path, options);
       else
         return value;
-    }, options).then(value => {
+    }).then(value => {
       return this._copyResult(value, path, options);
     });
   }
@@ -113,7 +104,7 @@ class Variables {
         return this._resolveNode(value, prop, parent, path, options);
       else
         return value;
-    }, options).then(value => {
+    }).then(value => {
       return deepCloneSync(value, value => value);
     });
   }
@@ -155,14 +146,10 @@ class Variables {
 
   // `node` must be an instance of `VarNode`.
   _resolveNode(node, prop, parent, path, options) {
-    if (node._isLocked) {
-      if (options.strictCircular)
-        throw error(CIRCULAR_VAR_REF, {path});
-      else
-        return Promise.resolve(circularRef);
-    }
+    if (node._isLocked)
+      throw error(CIRCULAR_VAR_REF, {path});
 
-    if (!options.force && !options.strict && !options.strictCircular && node.hasOwnProperty("_cachedValue"))
+    if (!options.force && node.hasOwnProperty("_cachedValue"))
       return Promise.resolve(node._cachedValue);
 
     node._isLocked = true;
@@ -183,13 +170,11 @@ class Variables {
       if (!m[1]) {
         hadVarExpr = true;
         return this._resolveExpr(m[2], Object.assign({expr: m[0]}, options)).then(resolvedValue => {
-          if (isPlainObject(resolvedValue) || Array.isArray(resolvedValue)) {
-            if (pos === 0 && len === value.length && !literals.length) {
-              value = resolvedValue;
-              return value;
-            } else {
-              throw error(NON_STRING_MIX, {text: node._orgText});
-            }
+          if (pos === 0 && len === value.length && !literals.length) {
+            value = resolvedValue;
+            return value;
+          } else if (isPlainObject(resolvedValue) || Array.isArray(resolvedValue)) {
+            throw error(NON_STRING_MIX, {text: node._orgText});
           } else {
             value = [
               value.substr(0, pos),
@@ -211,9 +196,7 @@ class Variables {
       }
 
       node._isLocked = false;
-
-      if (value !== circularRef)
-        node._cachedValue = value;
+      node._cachedValue = value;
 
       return value;
     });
@@ -223,49 +206,28 @@ class Variables {
   // reference to a concrete value.
   _resolveExpr(expr, options) {
     const items = expr.split(",");
-    const ref = this._parseRefExpr(items[0] || "", options);
-    return this._resolveRef(ref, options).then(value => {
-      if (value === undefined) {
-        const def = this._parseDefaultExpr(items[1] || "", options);
-        if (!def)
-          return undefined;
-        else if (def.type === "value")
-          return def.value;
-        else
-          return this._resolveRef(def, options);
-      } else {
-        return value;
-      }
-    });
+    let value = 0;
+
+    return forEach(items, ref => {
+      ref = ref.trim();
+
+      const info = this._parseRef(ref, options);
+
+      return this._resolveRef(info, options).then(resolvedValue => {
+        if (resolvedValue !== undefined) {
+          value = resolvedValue;
+          return false;
+        }
+      });
+    }).then(() => value);
   }
 
   // Parses a reference expression (i.e. `ref` in `${ref, def}`) of a variable
   // expression and returns an object with the parsed information.
-  _parseRefExpr(ref, {expr}) {
+  _parseRef(ref, {expr}) {
     ref = ref.trim();
 
-    const m = ref.match(REF_SYNTAX);
-
-    if (!m)
-      throw error(VAR_SYNTAX_ERROR, {expr});
-
-    return {
-      type: "ref",
-      source: m[1] || this._defaultSource,
-      path: decodeURI(m[2]),
-      query: m[3] ? qs.parse(m[3]) : {}
-    };
-  }
-
-  // Parses a default expression (i.e. `def` in `${ref, def}`) of a variable
-  // expression and returns an object with the parsed information.
-  _parseDefaultExpr(def, {expr}) {
-    def = def.trim();
-
-    if (!def)
-      return null;
-
-    const m = def.match(VALUE_SYNTAX);
+    let m = ref.match(VALUE_SYNTAX);
 
     if (m) {
       let value;
@@ -289,14 +251,35 @@ class Variables {
       };
     }
 
-    return this._parseRefExpr(def, {expr});
+    m = ref.match(REF_SYNTAX);
+
+    if (!m)
+      throw error(VAR_SYNTAX_ERROR, {expr});
+
+    return {
+      type: "ref",
+      source: m[1] || this._defaultSource,
+      path: decodeURI(m[2]),
+      query: m[3] ? qs.parse(m[3]) : {}
+    };
   }
 
   _resolveRef(info, options) {
-    const src = this._sources[info.source];
-    if (!src)
-      throw error(INVALID_VAR_SOURCE, {source: info.source, expr: options.expr});
-    return src.resolve(info, options);
+    let res;
+
+    if (info.type === "value") {
+      res = info.value;
+    } else {
+      const src = this._sources[info.source];
+      if (!src)
+        throw error(INVALID_VAR_SOURCE, {source: info.source, expr: options.expr});
+      res = src.resolve(info, options);
+    }
+
+    if (!isPromise(res))
+      return Promise.resolve(res);
+
+    return res;
   }
 
   // Recursively resolves all the values and replace the literal forms to final
@@ -304,9 +287,6 @@ class Variables {
   // user consumption.
   _copyResult(value, path, options) {
     const _replaceLiterals = value => {
-      if (value === circularRef)
-        return value.toString();
-
       if (typeof value !== "string")
         return value;
 
