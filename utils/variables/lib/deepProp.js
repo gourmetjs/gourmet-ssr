@@ -39,8 +39,14 @@ module.exports = function deepProp(obj, path, handler, {strict}) {
       throw error(INVALID_PATH, {path});
 
     if (isPlainObject(value)) {
-      if (strict && !value.hasOwnProperty(prop))
-        throw error(PROPERTY_NOT_FOUND, {path, prop});
+      if (!value.hasOwnProperty(prop)) {
+        if (strict) {
+          throw error(PROPERTY_NOT_FOUND, {path, prop});
+        } else {
+          value = undefined;
+          return false;
+        }
+      }
     } else if (Array.isArray(value)) {
       const index = Number(prop);
       if (Number.isNaN(index))

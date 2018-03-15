@@ -116,26 +116,59 @@ test("nested vars & literals", t => {
   }).then(() => t.end(), t.end);
 });
 
-
-/*
-test("circular reference", t => {
+test("circular reference && strict access mode", t => {
   const vars = _vars({
     a: "${b}",
     b: "${c.d}",
     c: {
       d: "${a}"
+    },
+    e: {
+      f: {
+        g: "${c}",
+        h: "good!"
+      }
     }
   });
 
+  vars.get("a").then(value => {
+    t.equal(value, "!!CIRCULAR_REF!!", "circular ref");
+  }).then(() => {
+    return vars.get("e").then(value => {
+      t.deepEqual(value, {
+        f: {
+          g: {
+            d: "!!CIRCULAR_REF!!"
+          },
+          h: "good!"
+        }
+      }, "circular ref in object");
+    });
+  }).then(() => {
+    return vars.get("a", {strictCircular: true}).then(() => {
+      t.fail();
+    }).catch(err => {
+      t.equal(err.code, "CIRCULAR_VAR_REF");
+    });
+  }).then(() => {
+    return vars.get("e.x.y.z").then(value => {
+      t.equal(value, undefined, "non-existent property");
+    });
+  }).then(() => {
+    return vars.get("e.x.y.z", {strict: true}).then(() => {
+      t.fail();
+    }).catch(err => {
+      t.equal(err.code, "PROPERTY_NOT_FOUND");
+    });
+  }).then(() => t.end(), t.end);
 });
-*/
 
 // * get function
 // * non string value
 // * mixed value error
-// circular ref
-// node replacement
-// options: strict, force, strictCircular
+// * circular ref
+// * node replacement
+// * options: strict, force, strictCircular
 // file source
 // env source
 // opt source
