@@ -7,6 +7,9 @@
   },
   "dependencies": {
     "@gourmet/cli-base": "^0.1.0",
+    "@gourmet/error": "^0.1.0",
+    "@gourmet/variables": "^0.1.0",
+    "promise-box": "^0.1.7",
     "resolve": "^1.5.0"
   }
 }
