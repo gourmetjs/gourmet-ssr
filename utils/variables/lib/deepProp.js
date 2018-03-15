@@ -10,11 +10,6 @@ const INVALID_PATH = {
   code: "INVALID_PATH"
 };
 
-const PROPERTY_NOT_FOUND = {
-  message: "Property '${prop}' doesn't exist",
-  code: "PROPERTY_NOT_FOUND"
-};
-
 const INVALID_INDEX_VALUE = {
   message: "Array index must be a number: '${index}' of '${path}'",
   code: "INVALID_INDEX_VALUE"

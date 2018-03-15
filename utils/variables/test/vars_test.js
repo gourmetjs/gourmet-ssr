@@ -1,16 +1,19 @@
 "use strict";
 
+const npath = require("path");
 const test = require("tape");
 const Variables = require("..");
 const Self = require("../lib/sources/Self");
 const Env = require("../lib/sources/Env");
 const Opt = require("../lib/sources/Opt");
+const File = require("../lib/sources/File");
 
 function _vars(obj) {
   const vars = new Variables(obj);
   vars.addSource("self", new Self(vars));
   vars.addSource("env", new Env({NODE_ENV: "production"}));
   vars.addSource("opt", new Opt({"command": "help", verbose: true}));
+  vars.addSource("file", new File(vars, npath.join(__dirname, "fixture")), {stage: "dev"});
   return vars;
 }
 
@@ -212,6 +215,19 @@ test("opt source", t => {
   }).then(() => t.end(), t.end);
 });
 
+test("file source", t => {
+  const vars = _vars({
+    "config": "${file:./config.json}",
+    "greeting": "${config.message}"
+  });
+
+  return Promise.resolve().then(() => {
+    return vars.get("${config.message}").then(value => {
+      t.equal(value, "Hello, world!");
+    });
+  }).then(() => t.end(), t.end);
+});
+
 // * get function
 // * non string value
 // * mixed value error
@@ -219,9 +235,11 @@ test("opt source", t => {
 // * node replacement
 // * options: strict, force, strictCircular
 // * default value
-// file source
 // * env source
 // * opt source
+// file source
+// url encoded
+
 //${env:FLAT_NAME}
 //${opt:path.to.prop}
 //${self:path.to.prop}
