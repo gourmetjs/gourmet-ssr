@@ -6,7 +6,7 @@ const deepProp = require("../deepProp");
 
 class File {
   constructor(vars, workDir, userCtx) {
-    this._vars;
+    this._vars = vars;
     this._workDir = workDir;
     this._userCtx = userCtx;
   }

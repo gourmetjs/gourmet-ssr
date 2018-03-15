@@ -5,5 +5,5 @@
       "d": "world"
     }
   },
-  "message": "${a.b.c}, ${a.b.d}!"
+  "a=b": "OK"
 }

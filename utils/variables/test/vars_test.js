@@ -13,7 +13,7 @@ function _vars(obj) {
   vars.addSource("self", new Self(vars));
   vars.addSource("env", new Env({NODE_ENV: "production"}));
   vars.addSource("opt", new Opt({"command": "help", verbose: true}));
-  vars.addSource("file", new File(vars, npath.join(__dirname, "fixture")), {stage: "dev"});
+  vars.addSource("file", new File(vars, npath.join(__dirname, "fixture"), {stage: "prod"}));
   return vars;
 }
 
@@ -218,12 +218,33 @@ test("opt source", t => {
 test("file source", t => {
   const vars = _vars({
     "config": "${file:./config.json}",
-    "greeting": "${config.message}"
+    "message": "${config.a.b.c}, ${config.a.b.d}!",
+    "build": "${file:./config.js}"
   });
 
   return Promise.resolve().then(() => {
-    return vars.get("${config.message}").then(value => {
+    return vars.get("config.a.b.c").then(value => {
+      t.equal(value, "Hello");
+    });
+  }).then(() => {
+    return vars.get("message").then(value => {
       t.equal(value, "Hello, world!");
+    });
+  }).then(() => {
+    return vars.eval("${file:./config.json?property=a.b.d}").then(value => {
+      t.equal(value, "world", "?property=path.to.prop");
+    });
+  }).then(() => {
+    return vars.eval("${file:./config.json?property=a%3db}").then(value => {
+      t.equal(value, "OK", "?property=a%3db");
+    });
+  }).then(() => {
+    return vars.eval("${file:./spaced%20file.json?property=message}").then(value => {
+      t.equal(value, "good!", "spaced%20file.json");
+    });
+  }).then(() => {
+    return vars.get("build.minify").then(value => {
+      t.equal(value, true);
     });
   }).then(() => t.end(), t.end);
 });
@@ -237,7 +258,7 @@ test("file source", t => {
 // * default value
 // * env source
 // * opt source
-// file source
+// * file source
 // url encoded
 
 //${env:FLAT_NAME}
