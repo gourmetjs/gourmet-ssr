@@ -4,6 +4,7 @@ const npath = require("path");
 const resolve = require("resolve");
 const omit = require("lodash.omit");
 const repeat = require("promise-box/lib/repeat");
+const isPromise = require("promise-box/lib/isPromise");
 const error = require("@gourmet/error");
 const merge = require("@gourmet/merge");
 const sortPlugins = require("@gourmet/plugin-sort");
@@ -136,6 +137,18 @@ class PluginManager {
 
   runAsync(eventName, ...args) {
     return this.forEachAsync(eventName, handler => handler(...args));
+  }
+
+  runMergeAsync(eventName, obj={}, ...args) {
+    return this.forEachAsync(eventName, handler => {
+      let value = handler(...args);
+      if (!isPromise(value))
+        value = Promise.resolve(value);
+      return value.then(value => {
+        if (value)
+          merge(obj, value);
+      });
+    }).then(() => obj);
   }
 
   toArray() {

@@ -35,7 +35,7 @@ function _merge(des, src) {
 
         if (dt === ARRAY)
           newVal = desVal.concat(srcVal);
-        else if (st === ARRAY)
+        else if (st === ARRAY && desVal != null)
           newVal = [desVal].concat(srcVal);
         else if (st === OBJECT && dt === OBJECT)
           newVal = _merge(desVal, srcVal);

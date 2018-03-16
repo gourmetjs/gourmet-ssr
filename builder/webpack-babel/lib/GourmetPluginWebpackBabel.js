@@ -1,18 +1,8 @@
 "use strict";
 
-const resolveBabelPlugins = require("@gourmet/resolve-babel-plugins");
+const sortPlugins = require("@gourmet/plugin-sort");
 
 class GourmetPluginWebpackBabel {
-  constructor() {
-    this.plugin = {
-      name: "gourmet-plugin-webpack-babel",
-      hooks: {
-        "build:webpack:loaders": this._onWebpackLoaders,
-        "build:webpack:loader_options:babel-loader": this._onBabelLoaderOptions
-      }
-    };
-  }
-
   _onWebpackLoaders(build) {
     // Note that the object returned from this hook is merged with other
     // plugins's result. Arrays are appended by default, so `presets` and
@@ -62,19 +52,40 @@ class GourmetPluginWebpackBabel {
     };
   }
 
-  _onBabelLoaderOptions({options}) {
+  _onBabelLoaderOptions(options) {
     if (options) {
       const presets = Array.isArray(options.presets) && options.presets.length && options.presets;
       const plugins = Array.isArray(options.plugins) && options.plugins.length && options.plugins;
       if (presets || plugins) {
         return Object.assign({}, options, {
-          presets: presets && resolveBabelPlugins(presets),
-          plugins: plugins && resolveBabelPlugins(plugins)
+          presets: presets && this._sortPlugins(presets),
+          plugins: plugins && this._sortPlugins(plugins)
         });
       }
     }
     return options;
   }
+
+  _sortPlugins(items) {
+    return sortPlugins(items, {
+      normalize(item) {
+        return typeof item === "string" ? {name: item} : item;
+      },
+      finalize(item) {
+        if (item.options)
+          return [item.plugin || item.name, item.options];
+        else
+          return item.plugin || item.name;
+      }
+    });
+  }
 }
+
+GourmetPluginWebpackBabel.meta = {
+  hooks: {
+    "build:webpack:loaders": GourmetPluginWebpackBabel.prototype._onWebpackLoaders,
+    "build:webpack:loader_options:babel-loader": GourmetPluginWebpackBabel.prototype._onBabelLoaderOptions
+  }
+};
 
 module.exports = GourmetPluginWebpackBabel;
