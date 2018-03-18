@@ -23,6 +23,7 @@ class GourmetPluginWebpackBabel {
 
                 presets: [{
                   name: "babel-preset-env",
+                  plugin: require.resolve("babel-preset-env"),
                   options: {
                     targets: {
                       // Currently, babel-preset-env doesn't support browserlist config file.
@@ -38,7 +39,8 @@ class GourmetPluginWebpackBabel {
                 }],
 
                 plugins: [{
-                  name: "babel-plugin-syntax-dynamic-import"
+                  name: "babel-plugin-syntax-dynamic-import",
+                  plugin: require.resolve("babel-plugin-syntax-dynamic-import")
                 /*}, {
                   // We can't turn this on by default due to the following issue:
                   // https://github.com/webpack/webpack/issues/4039
@@ -82,10 +84,10 @@ class GourmetPluginWebpackBabel {
 }
 
 GourmetPluginWebpackBabel.meta = {
-  hooks: {
-    "build:webpack:loaders": GourmetPluginWebpackBabel.prototype._onWebpackLoaders,
-    "build:webpack:loader_options:babel-loader": GourmetPluginWebpackBabel.prototype._onBabelLoaderOptions
-  }
+  hooks: (proto => ({
+    "build:webpack:loaders": proto._onWebpackLoaders,
+    "build:webpack:loader_options:babel-loader": proto._onBabelLoaderOptions
+  }))(GourmetPluginWebpackBabel.prototype)
 };
 
 module.exports = GourmetPluginWebpackBabel;

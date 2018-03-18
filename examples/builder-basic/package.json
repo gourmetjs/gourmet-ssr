@@ -6,11 +6,12 @@
     "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build"
   },
   "dependencies": {
+    "@gourmet/gourmet-plugin-webpack-react": "^0.1.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",
-    "@gourmet/gourmet-plugin-webpack-builder": "^0.1.0",
     "@gourmet/gourmet-plugin-webpack-babel": "^0.1.0",
+    "@gourmet/gourmet-plugin-webpack-builder": "^0.1.0",
     "pshell": "^1.1.0",
     "tape": "^4.9.0"
   }

@@ -1,0 +1,12 @@
+{
+  "name": "@gourmet/gourmet-plugin-webpack-react",
+  "version": "0.1.0",
+  "description": "Plugin for adding React support to 'gourmet build' command",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "main": "lib/GourmetPluginWebpackReact.js",
+  "dependencies": {
+    "babel-preset-react": "^6.24.1"
+  }
+}

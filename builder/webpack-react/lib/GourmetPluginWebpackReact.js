@@ -1,16 +1,6 @@
 "use strict";
 
 class GourmetPluginWebpackReact {
-  constructor() {
-    this.plugin = {
-      name: "gourmet-plugin-webpack-react",
-      hooks: {
-        "build:webpack:loaders": this._onWebpackLoaders,
-        "build:webpack:config": this._onWebpackConfig
-      }
-    };
-  }
-
   _onWebpackLoaders() {
     return {
       js: {
@@ -19,10 +9,11 @@ class GourmetPluginWebpackReact {
         pipelines: {
           default: {
             use: [{
-              loader: "babel-loader",
+              loader: "#babel-loader",
               options: {
                 presets: [{
                   name: "babel-preset-react",
+                  plugin: require.resolve("babel-preset-react"),
                   after: "babel-preset-env"
                 }]
               }
@@ -43,5 +34,12 @@ class GourmetPluginWebpackReact {
     };
   }
 }
+
+GourmetPluginWebpackReact.meta = {
+  hooks: (proto => ({
+    "build:webpack:loaders": proto._onWebpackLoaders,
+    "build:webpack:config": proto._onWebpackConfig
+  }))(GourmetPluginWebpackReact.prototype)
+};
 
 module.exports = GourmetPluginWebpackReact;

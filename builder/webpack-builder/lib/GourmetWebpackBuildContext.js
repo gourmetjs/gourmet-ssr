@@ -61,7 +61,14 @@ class GourmetWebpackBuildContext {
   }
 
   getExtensionTester(extensions) {
-    return new RegExp("\\.(" + extensions.join("|") + ")(?:\\?.*)?$");
+    let exts;
+    if (extensions.length > 1)
+      exts = "(?:" + extensions.join("|") + ")";
+    else if (extensions.length)
+      exts = extensions[0];
+    else
+      exts = "";
+    return new RegExp("\\." + exts + "(?:\\?.*)?$");
   }
 
   getResourceType(name) {
