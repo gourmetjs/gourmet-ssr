@@ -1,5 +1,6 @@
 "use strict";
 
+const deepResolve = require("@gourmet/promise-deep-resolve");
 const error = require("@gourmet/error");
 const sortPlugins = require("@gourmet/plugin-sort");
 
@@ -18,15 +19,76 @@ const CIRCULAR_PIPELINE = {
   code: "CIRCULAR_PIPELINE"
 };
 
-class GourmetWebpackBuildContext {
-  constructor(builder, cli, options) {
-    this.builder = builder;
-    this.cli = cli;
-    this.options = options;
+class GourmetWebpackBuildInstance {
+  constructor(context) {
+    this.context = context;
   }
 
-  createModuleRules() {
-    return this.cli.plugins.runMergeAsync("build:webpack:loaders", {}, this).then(defs => {
+  init(context) {
+    return context.vars.get("builder.runtime").then((config={}) => {
+      this.targetRuntimeVersion = {
+        client: config.client || null,
+        server: config.server || "6.1"
+      };
+    });
+  }
+
+  getWebpackConfig(context) {
+    return deepResolve({
+      target: this.getWebpackTarget(context),
+      mode: this.getWebpackMode(context),
+      devtool: this.getWebpackDevTool(context),
+      optimizations: this.getWebpackOptimization(context),
+      module: {
+        rules: this.getWebpackModuleRules(context)
+      }
+    });
+  }
+
+  getWebpackMode(context) {
+    return context.minify ? "production" : "development";
+  }
+
+  getWebpackTarget(context) {
+    return context.target === "client" ? "web" : "node";
+  }
+
+  getWebpackDevTool(context) {
+    return context.vars.get("webpack.devtool").then(value => {
+      if (value !== undefined)
+        return value;
+
+      if (context.target === "client") {
+        if (context.stage === "hot")
+          return context.sourceMap ? "cheap-eval-source-map" : "eval";
+        else if (context.stage === "local")
+          return context.sourceMap ? "eval-source-map" : null;
+      }
+
+      return context.sourceMap ? "source-map" : null;
+    });
+  }
+
+  getWebpackOptimization(context) {
+    return {
+      minimize: context.minify,
+      runtimeChunk: context.target === "client",
+      splitChunks: (() => {
+        if (context.target === "server" || context.stage === "hot" || context.stage === "local")
+          return false;
+
+        return {
+          chunks: "all",
+          minSize: 10000,
+          maxInitialRequests: 20,
+          maxAsyncRequests: 20
+        };
+      })()
+    };
+  }
+
+  getWebpackModuleRules(context) {
+    return context.plugins.runMergeAsync("build:webpack:loaders", {}, context).then(defs => {
       this._resourceTypes = defs;
 
       // Collect all unique extensions that were used by the loaders
@@ -54,6 +116,12 @@ class GourmetWebpackBuildContext {
         };
       });
     });
+  }
+
+  getTargetRuntimeVersion(target) {
+    if (!target)
+      target = this.context.target;
+    return this.targetRuntimeVersion[target];
   }
 
   getVendorDirTester() {
@@ -118,6 +186,8 @@ class GourmetWebpackBuildContext {
   }
 
   _resolveLoaders(items, processed={}) {
+    const context = this.context;
+
     items = items.reduce((arr, item) => {
       if (typeof item === "object" && typeof item.pipeline === "string")
         arr = arr.concat(this._resolvePipeline(item.pipeline, processed));
@@ -135,7 +205,7 @@ class GourmetWebpackBuildContext {
       },
       finalize: item => {
         const loader = item.loader || item.name;
-        const options = this.cli.plugins.runWaterfallSync(`build:webpack:loader_options:${item.name}`, item.options, item.name);
+        const options = context.plugins.runWaterfallSync(`build:webpack:loader_options:${item.name}`, item.options, item.name, context);
         return options ? {loader, options} : loader;
       }
     });
@@ -163,4 +233,4 @@ class GourmetWebpackBuildContext {
   }
 }
 
-module.exports = GourmetWebpackBuildContext;
+module.exports = GourmetWebpackBuildInstance;

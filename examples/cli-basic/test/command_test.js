@@ -9,7 +9,7 @@ test("Running 'gourmet say'", t => {
       "Hello, world!",
       "Greetings!",
       "command: say",
-      "options: {}",
+      "argv: {}",
       ""
     ].join("\n"));
   }).then(() => t.end(), t.end);
@@ -21,7 +21,7 @@ test("Running 'gourmet say -d'", t => {
       "** Hello, world! **",
       "** Greetings! **",
       "command: say",
-      "options: {\"d\":true,\"decorate\":true}",
+      "argv: {\"d\":true,\"decorate\":true}",
       ""
     ].join("\n"));
   }).then(() => t.end(), t.end);

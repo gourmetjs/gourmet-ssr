@@ -1,8 +1,7 @@
 "use strict";
 
 class PluginBuiltinHelp {
-  constructor(options, cli) {
-    this.plugins = cli.plugins;
+  constructor() {
   }
 
   _onHelp() {

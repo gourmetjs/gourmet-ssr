@@ -2,6 +2,7 @@
 
 const npath = require("path");
 const minimist = require("minimist");
+const camelcaseKeys = require("camelcase-keys");
 const omit = require("lodash.omit");
 const runAsMain = require("promise-box/lib/runAsMain");
 const wrap = require("promise-box/lib/wrap");
@@ -38,20 +39,20 @@ class CliBase {
     }, cliConfig);
   }
 
-  runCommand(argv) {
+  runCommand(args) {
     runAsMain(
       wrap(() => {
-        return this.init(argv);
+        return this.init(args);
       }).then(() => {
         return this._applyCommandInfo();
       }).then(() => {
-        const options = this.options;
+        const argv = this.context.argv;
         return Promise.resolve().then(() => {
-          return this.plugins.runAsync("before:command:" + options.$command, options, this);
+          return this.context.plugins.runAsync("before:command:" + argv.$command, this.context);
         }).then(() => {
-          return this.plugins.forEachAsync("command:" + options.$command, handler => {
+          return this.context.plugins.forEachAsync("command:" + argv.$command, handler => {
             return wrap(() => {
-              return handler(options, this);
+              return handler(this.context);
             }).then(res => {
               // Returning `false` from the command handler means a pass-through.
               if (res !== false)
@@ -59,23 +60,33 @@ class CliBase {
             });
           }).then(consumed => {
             if (!consumed)
-              throw error(COMMAND_NOT_HANDLED, {command: options.$command});
+              throw error(COMMAND_NOT_HANDLED, {command: argv.$command});
           });
         }).then(() => {
-          return this.plugins.runAsync("after:command:" + options.$command, options, this);
+          return this.context.plugins.runAsync("after:command:" + argv.$command, this.context);
         });
       })
     );
   }
 
-  init(argv) {
+  init(args) {
     const PluginManager = this._cliConfig.PluginManager;
 
-    argv = minimist(argv);
+    args = minimist(args);
 
-    this.options = this._parseCommandArgs(argv);
-    this.workDir = npath.resolve(process.cwd(), this.options.$workDir);
-    this.plugins = new PluginManager(this);
+    if (this._cliConfig.camelcaseArgs)
+      args = camelcaseKeys(args);
+
+    const argv = this._parseCommandArgs(args);
+    const workDir = npath.resolve(process.cwd(), argv.$workDir);
+
+    this.context = {
+      cli: this,
+      argv,
+      workDir
+    };
+
+    this.context.plugins = new PluginManager(this.context);
 
     return wrap(() => {
       return this.loadBuiltinPlugins();
@@ -88,7 +99,7 @@ class CliBase {
 
   loadBuiltinPlugins() {
     const plugins = this._cliConfig.builtinPlugins;
-    this.plugins.load(plugins, __dirname);
+    this.context.plugins.load(plugins, __dirname);
   }
 
   loadConfig() {
@@ -97,26 +108,26 @@ class CliBase {
   loadUserPlugins() {    
   }
 
-  _parseCommandArgs(argv) {
-    const options = omit(argv, ["_", this._cliConfig.workDirArgName]);
-    const workDir = argv[this._cliConfig.workDirArgName] || "";
-    const command = argv._.join(" ") || this._cliConfig.defaultCommand;
+  _parseCommandArgs(args) {
+    const argv = omit(args, ["_", this._cliConfig.workDirArgName]);
+    const workDir = args[this._cliConfig.workDirArgName] || "";
+    const command = args._.join(" ") || this._cliConfig.defaultCommand;
 
-    // Make `options.$command` & `options.$workDir` invisible to regular enumeration.
-    Object.defineProperty(options, "$command", {value: command});
-    Object.defineProperty(options, "$workDir", {value: workDir});
+    // Make `argv.$command` & `argv.$workDir` invisible to regular enumeration.
+    Object.defineProperty(argv, "$command", {value: command});
+    Object.defineProperty(argv, "$workDir", {value: workDir});
 
-    return options;
+    return argv;
   }
 
   _applyCommandInfo() {
-    const options = this.options;
-    const info = this._findCommandInfo(options.$command);
-    this._verifyCommandOptions(options, info);
+    const argv = this.context.argv;
+    const info = this._findCommandInfo(argv.$command);
+    this._verifyCommandOptions(argv, info);
   }
 
   _findCommandInfo(command) {
-    const plugins = this.plugins.toArray();
+    const plugins = this.context.plugins.toArray();
     for (let idx = 0; idx < plugins.length; idx++) {
       const {meta} = plugins[idx];
       if (meta && meta.commands && meta.commands[command])
@@ -125,23 +136,23 @@ class CliBase {
     throw error(UNKNOWN_COMMAND, {command});
   }
 
-  _verifyCommandOptions(options, info) {
+  _verifyCommandOptions(argv, info) {
     if (!info.options)
       return;
 
     Object.keys(info.options).forEach(name => {
       const def = info.options[name];
 
-      if (def.alias && options[name] === undefined && options[def.alias] !== undefined) {
-        options[name] = options[def.alias];
+      if (def.alias && argv[name] === undefined && argv[def.alias] !== undefined) {
+        argv[name] = argv[def.alias];
         name = def.alias;
       }
 
-      if (def.required && options[name] === undefined)
+      if (def.required && argv[name] === undefined)
         throw error(COMMAND_OPTION_REQUIRED, {name});
 
-      if (def.default !== undefined && options[name] === undefined)
-        options[name] = def.default;
+      if (def.default !== undefined && argv[name] === undefined)
+        argv[name] = def.default;
     });
   }
 }

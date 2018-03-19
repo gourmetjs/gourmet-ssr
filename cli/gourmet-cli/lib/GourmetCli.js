@@ -21,11 +21,11 @@ class GourmetCli extends CliBase {
   loadConfig() {
     const exts = [".js", ".json"];
 
-    this.package = this._loadModuleSafe(npath.join(this.workDir, "package.json"));
+    this.context.package = this._loadModuleSafe(npath.join(this.context.workDir, "package.json"));
 
     for (let idx = 0; idx < exts.length; idx++) {
       const ext = exts[idx];
-      const path = npath.join(this.workDir, "gourmet" + ext);
+      const path = npath.join(this.context.workDir, "gourmet" + ext);
 
       if (fs.existsSync(path)) {
         let config = require(path);
@@ -42,35 +42,31 @@ class GourmetCli extends CliBase {
       }
     }
 
-    throw error(CONFIG_FILE_NOT_FOUND, {workDir: this.workDir});
+    throw error(CONFIG_FILE_NOT_FOUND, {workDir: this.context.workDir});
   }
 
   loadUserPlugins() {
-    return Promise.all([
-      this.vars.get("autoLoadPlugins"),
-      this.vars.get("plugins")
-    ]).then(([
-      auto="prepend",   // false | true | "prepend" | "append"
-      plugins=[]
-    ]) => {
-      if (auto === true) {
-        if (!plugins.length)
-          plugins = this._scanPlugins(auto);
-      } else if (auto === "prepend") {
-        plugins = this._scanPlugins(auto).concat(plugins);
-      } else if (auto === "append") {
-        plugins = plugins.concat(this._scanPlugins(auto));
-      }
-      this.plugins.load(plugins, this.workDir);
+    return this.context.vars.get("autoLoadPlugins").then((auto="prepend") => {
+      return this.context.vars.get("plugins").then((plugins=[]) => {
+        if (auto === true) {
+          if (!plugins.length)
+            plugins = this._scanPlugins(auto);
+        } else if (auto === "prepend") {
+          plugins = this._scanPlugins(auto).concat(plugins);
+        } else if (auto === "append") {
+          plugins = plugins.concat(this._scanPlugins(auto));
+        }
+        this.context.plugins.load(plugins, this.context.workDir);
+      });
     });
   }
 
   _initVars(config) {
-    const vars = this.vars = new Variables(config);
+    const vars = this.context.vars = new Variables(config);
     vars.addSource("self", new Self(vars));
     vars.addSource("env", new Env());
-    vars.addSource("opt", new Opt(this.options));
-    vars.addSource("file", new File(vars, this.workDir, this));
+    vars.addSource("opt", new Opt(this.context.argv));
+    vars.addSource("file", new File(vars, this.context.workDir, this.context));
   }
 
   _loadModuleSafe(path) {
@@ -84,15 +80,15 @@ class GourmetCli extends CliBase {
   }
   
   _scanPlugins(auto) {
-    if (auto && this.package) {
-      const deps = Object.assign({}, this.package.dependencies, this.package.devDependencies);
+    if (auto && this.context.package) {
+      const deps = Object.assign({}, this.context.package.dependencies, this.context.package.devDependencies);
       return Object.keys(deps).filter(dep => this._isAutoLoadablePlugin(dep));
     }
     return [];
   }
 
   _isAutoLoadablePlugin(moduleName) {
-    const path = resolve.sync(moduleName + "/package.json", {basedir: this.workDir});
+    const path = resolve.sync(moduleName + "/package.json", {basedir: this.context.workDir});
     const pkg = require(path);
     const keywords = pkg.keywords;
     return keywords && Array.isArray(keywords) && keywords.indexOf("gourmet-plugin") !== -1;

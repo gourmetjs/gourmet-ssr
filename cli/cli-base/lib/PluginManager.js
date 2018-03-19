@@ -25,8 +25,8 @@ const INVALID_HANDLER_VALUE = {
 };
 
 class PluginManager {
-  constructor(cli) {
-    this._cli = cli;
+  constructor(context) {
+    this._context = context;
     this._plugins = [];
     this._events = null;
   }
@@ -69,7 +69,7 @@ class PluginManager {
 
         item = merge(omit(meta.schema, "name"), item);
 
-        const plugin = new PluginClass(item.options, this._cli);
+        const plugin = new PluginClass(item.options, this._context);
 
         item.meta = meta;
         item.plugin = plugin;

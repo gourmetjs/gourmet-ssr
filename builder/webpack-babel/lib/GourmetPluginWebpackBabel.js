@@ -3,7 +3,7 @@
 const sortPlugins = require("@gourmet/plugin-sort");
 
 class GourmetPluginWebpackBabel {
-  _onWebpackLoaders(build) {
+  _onWebpackLoaders(context) {
     // Note that the object returned from this hook is merged with other
     // plugins's result. Arrays are appended by default, so `presets` and
     // `plugins` are appended too.
@@ -12,40 +12,41 @@ class GourmetPluginWebpackBabel {
         extensions: ["js"],
         pipelines: {
           vendor: {
-            test: [build.getVendorDirTester()],
+            test: [context.build.getVendorDirTester()],
             use: []
           },
           default: {
             use: [{
               loader: "babel-loader",
               options: {
-                cacheDirectory: true,
-
+                //cacheDirectory: true,
                 presets: [{
                   name: "babel-preset-env",
-                  plugin: require.resolve("babel-preset-env"),
                   options: {
-                    targets: {
-                      // Currently, babel-preset-env doesn't support browserlist config file.
-                      // This is a temporary solution until the problem is fixed.
-                      // https://github.com/babel/babel-preset-env/issues/26
-                      //browser: build.getRootPackage().browserslist || ""
-                    },
-                    loose: true,
-                    uglify: true,
+                    targets: this._getBabelEnvTargets(context),
                     modules: false,
+                    loose: true,
                     useBuiltIns: true
                   }
                 }],
 
-                plugins: [{
-                  name: "babel-plugin-syntax-dynamic-import",
-                  plugin: require.resolve("babel-plugin-syntax-dynamic-import")
-                /*}, {
+                plugins: (() => {
+                  const plugins = [];
+
+                  if (context.target === "client")
+                    plugins.push("babel-plugin-syntax-dynamic-import");
+                  else
+                    plugins.push("babel-plugin-dynamic-import-node");
+
+                  // name: "babel-plugin-transform-runtime"
                   // We can't turn this on by default due to the following issue:
                   // https://github.com/webpack/webpack/issues/4039
-                  name: "babel-plugin-transform-runtime"*/
-                }]
+
+                  if (context.stage === "hot")
+                    plugins.push("react-hot-loader/babel");
+
+                  return plugins;
+                })()
               }
             }]
           }
@@ -80,6 +81,14 @@ class GourmetPluginWebpackBabel {
           return item.plugin || item.name;
       }
     });
+  }
+
+  // Please note that `babel-preset-env` doesn't support browserlist's
+  // config file or `package.json` below 7.x.
+  // https://github.com/babel/babel-preset-env/issues/26
+  _getBabelEnvTargets(context) {
+    const ver = context.build.getTargetRuntimeVersion();
+    return context.target === "client" ? {browsers: ver} : {node: ver};
   }
 }
 

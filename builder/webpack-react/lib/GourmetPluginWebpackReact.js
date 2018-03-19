@@ -13,7 +13,6 @@ class GourmetPluginWebpackReact {
               options: {
                 presets: [{
                   name: "babel-preset-react",
-                  plugin: require.resolve("babel-preset-react"),
                   after: "babel-preset-env"
                 }]
               }

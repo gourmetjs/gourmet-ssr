@@ -1,11 +1,11 @@
 "use strict";
 
-const deepResolve = require("@gourmet/promise-deep-resolve");
-const GourmetWebpackBuildContext = require("./GourmetWebpackBuildContext");
+const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 
 // ## Lifecycle events
 //  before:command:build
 //  command:build
+//    command:prepare
 //    build:client
 //      build:webpack:config
 //        build:webpack:loaders
@@ -14,39 +14,71 @@ const GourmetWebpackBuildContext = require("./GourmetWebpackBuildContext");
 //      * same as build:client *
 //  after:command:build
 class GourmetPluginWebpackBuilder {
-  // Plugin options are not used yet.
-  constructor(options, cli) {
-    this.cli = cli;
-  }
-
-  _onBuildCommand(options) {
-    return Promise.resolve().then(() => {
-      if (!options.server)
-        return this.cli.plugins.runAsync("build:client", options);
+  // Main handler for `gourmet build` command.
+  _onBuildCommand(context) {
+    const target = context.argv.target;
+    return context.plugins.runAsync("build:prepare", context).then(() => {
+      if (!target || target === "all" || target === "client")
+        return context.plugins.runAsync("build:client", "client", context);
     }).then(() => {
-      if (!options.client)
-        return this.cli.plugins.runAsync("build:server", options);
+      if (!target || target === "all" || target === "server")
+        return context.plugins.runAsync("build:server", "server", context);
     });
   }
 
-  _onWebpackBuild(options) {
-    const build = new GourmetWebpackBuildContext(this, this.cli, options);
-    return this.cli.plugins.runMergeAsync("build:webpack:config", {}, build).then(config => {
-      console.log(require("util").inspect(config, {colors: true, depth: 10}));
+  // Handler for `build:prepare` event
+  _onPrepare(context) {
+    return context.vars.get("builder").then((config={}) => {
+      ["stage", "debug", "minify", "sourceMap"].forEach(name => {
+        let value;
+
+        if (context.argv[name] !== undefined) {
+          value = context.argv[name];   // CLI option has the highest priority
+        } else if (config[name] !== undefined) {
+          value = config[name];
+        } else {
+          switch (name) {
+            case "stage":
+              value = "dev";
+              break;
+            case "debug":
+              value = !(context.stage === "prod" || context.stage === "production");
+              break;
+            case "minify":
+              value = (context.stage === "prod" || context.stage === "production");
+              break;
+            case "sourceMap":
+              value = (context.stage !== "hot" && context.debug);
+              break;
+            default:
+              throw Error(`Internal error: add '${name}' to the switch/case`);
+          }
+        }
+
+        context[name] = value;
+      });
     });
   }
 
-  _onWebpackConfig(build) {
-    return deepResolve({
-      module: this.cli.plugins.runMergeAsync("build:webpack:config:module", {}, build)
+  // Handler for `build:(client|server)` event
+  _onBuild(target, context) {
+    return Promise.resolve().then(() => {
+      context.target = target;
+      context.build = new GourmetWebpackBuildInstance(context);
+    }).then(() => {
+      return context.build.init(context);
+    }).then(() => {
+      return context.plugins.runMergeAsync("build:webpack:config", {}, context).then(config => {
+        console.log(require("util").inspect(config, {colors: true, depth: 10}));
+      });
+    }).then(() => {
+      context.target = undefined;
+      context.build = undefined;
     });
   }
 
-  // Creates 'module' section of the webpack config.
-  _onWebpackConfigModule(build) {
-    return deepResolve({
-      rules: build.createModuleRules()
-    });
+  _onWebpackConfig(context) {
+    return context.build.getWebpackConfig(context);
   }
 }
 
@@ -57,17 +89,11 @@ GourmetPluginWebpackBuilder.meta = {
       options: {
         stage: {
           help: "Specify the stage (e.g. '--stage prod')",
-          short: "s",
-          default: "dev"
+          short: "s"
         },
-        client: {
-          help: "Build the client bundle only"
-        },
-        server: {
-          help: "Build the server bundle only"
-        },
-        hot: {
-          help: "Build for Hot Module Replacement"
+        target: {
+          help: "Target to build ('client|server|all')",
+          short: "t"
         }
       }
     }
@@ -75,10 +101,10 @@ GourmetPluginWebpackBuilder.meta = {
 
   hooks: (proto => ({
     "command:build": proto._onBuildCommand,
-    "build:client": proto._onWebpackBuild,
-    "build:server": proto._onWebpackBuild,
-    "build:webpack:config": proto._onWebpackConfig,
-    "build:webpack:config:module": proto._onWebpackConfigModule
+    "build:prepare": proto._onPrepare,
+    "build:client": proto._onBuild,
+    "build:server": proto._onBuild,
+    "build:webpack:config": proto._onWebpackConfig
   }))(GourmetPluginWebpackBuilder.prototype)
 };
 

@@ -1,9 +1,9 @@
 "use strict";
 
 class MyPlugin {
-  _onSay(options) {
-    console.log("command:", options.$command);
-    console.log("options:", JSON.stringify(options));
+  _onSay({argv}) {
+    console.log("command:", argv.$command);
+    console.log("argv:", JSON.stringify(argv));
   }
 }
 
