@@ -68,7 +68,7 @@ class GourmetPluginWebpackBuilder {
     }).then(() => {
       return context.build.init(context);
     }).then(() => {
-      return context.plugins.runMergeAsync("build:webpack:config", {}, context).then(config => {
+      return context.plugins.runMergeAsync("build:webpack:config", this._getBaseWebpackConfig(), context).then(config => {
         console.log(require("util").inspect(config, {colors: true, depth: 10}));
       });
     }).then(() => {
@@ -79,6 +79,14 @@ class GourmetPluginWebpackBuilder {
 
   _onWebpackConfig(context) {
     return context.build.getWebpackConfig(context);
+  }
+
+  _getBaseWebpackConfig() {
+    return {
+      resolve: {
+        extensions: [".js"]
+      }
+    };
   }
 }
 

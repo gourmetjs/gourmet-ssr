@@ -38,9 +38,10 @@ class GourmetPluginWebpackBabel {
                   else
                     plugins.push("babel-plugin-dynamic-import-node");
 
-                  // name: "babel-plugin-transform-runtime"
                   // We can't turn this on by default due to the following issue:
                   // https://github.com/webpack/webpack/issues/4039
+                  //
+                  //   "babel-plugin-transform-runtime"
 
                   if (context.stage === "hot")
                     plugins.push("react-hot-loader/babel");
@@ -83,8 +84,8 @@ class GourmetPluginWebpackBabel {
     });
   }
 
-  // Please note that `babel-preset-env` doesn't support browserlist's
-  // config file or `package.json` below 7.x.
+  // Note that `babel-preset-env` below 7.x doesn't support
+  // browserlist's config file or `package.json`.
   // https://github.com/babel/babel-preset-env/issues/26
   _getBabelEnvTargets(context) {
     const ver = context.build.getTargetRuntimeVersion();

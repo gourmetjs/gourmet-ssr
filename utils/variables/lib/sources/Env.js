@@ -5,7 +5,7 @@ class Env {
     this._env = env;
   }
 
-  resolve(info) {
+  resolve(vars, info) {
     return (this._env || process.env)[info.path];
   }
 }

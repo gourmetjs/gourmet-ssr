@@ -5,7 +5,7 @@ class Opt {
     this._options = options;
   }
 
-  resolve(info) {
+  resolve(vars, info) {
     return this._options[info.path];
   }
 }

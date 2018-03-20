@@ -3,17 +3,14 @@
 const npath = require("path");
 const test = require("tape");
 const Variables = require("..");
-const Self = require("../lib/sources/Self");
-const Env = require("../lib/sources/Env");
-const Opt = require("../lib/sources/Opt");
-const File = require("../lib/sources/File");
 
 function _vars(obj) {
-  const vars = new Variables(obj);
-  vars.addSource("self", new Self(vars));
-  vars.addSource("env", new Env({NODE_ENV: "production"}));
-  vars.addSource("opt", new Opt({"command": "help", verbose: true}));
-  vars.addSource("file", new File(vars, npath.join(__dirname, "fixture"), {stage: "prod"}));
+  const vars = new Variables(obj, {handlerContext: {stage: "prod"}});
+  vars.addBuiltinSources({
+    env: {NODE_ENV: "production"},
+    argv: {"command": "help", verbose: true},
+    workDir: npath.join(__dirname, "fixture")
+  });
   return vars;
 }
 
@@ -75,7 +72,7 @@ test("advanced get & eval", t => {
   }).then(() => {
     return vars.get("m").then(value => {
       t.deepEqual(value, {g:{h:{i:{j:{k:"K", l:"L"}}}}});
-      t.equal(vars._context.m.constructor.name, "VarNode", "check if the node is not replaced");
+      t.equal(vars._context.m.constructor.name, "VarExpr", "check if the node is not replaced");
     });
   }).then(() => {
     return vars.eval("#${b.d.0}").then(value => {
@@ -249,21 +246,61 @@ test("file source", t => {
   }).then(() => t.end(), t.end);
 });
 
-// * get function
-// * non string value
-// * mixed value error
-// * circular ref
-// * node replacement
-// * options: strict, force, strictCircular
-// * default value
-// * env source
-// * opt source
-// * file source
-// url encoded
+test("getter", t => {
+  const history = [];
+  const vars = _vars({
+    builder: {
+      minify: Variables.getter(context => {
+        history.push("builder.minify");
+        return context.stage === "prod";
+      }),
+      debug: Variables.getter(() => {
+        history.push("builder.debug");
+        return Promise.resolve("true");
+      }),
+      runtime: Variables.getter(() => {
+        return {
+          client: Variables.getter(() => {
+            history.push("builder.runtime.client");
+            return null;
+          }),
+          server: Variables.getter(() => {
+            history.push("builder.runtime.server");
+            return "6.1";
+          })
+        };
+      })
+    }
+  });
 
-//${env:FLAT_NAME}
-//${opt:path.to.prop}
-//${self:path.to.prop}
-//${file:../path/to/file?abc, self:path.to.prop | "string" | 123 | null | true | false}
-//${s3:bucket/my/path/to/key}
-
+  return Promise.resolve().then(() => {
+    t.deepEqual(history, [], "make sure no getter got called initially");
+  }).then(() => {
+    return vars.get("builder.minify").then(value => {
+      t.equal(value, true, "builder.minify");
+    });
+  }).then(() => {
+    return vars.get("builder.runtime.server").then(value => {
+      t.equal(value, "6.1", "builder.runtime.server");
+    });
+  }).then(() => {
+    t.deepEqual(history, [
+      "builder.minify",
+      "builder.runtime.server"
+    ], "verify history");
+  }).then(() => {
+    return vars.get("builder.runtime").then(value => {
+      t.deepEqual(value, {
+        client: null,
+        server: "6.1"
+      }, "builder.runtime");
+    });
+  }).then(() => {
+    t.deepEqual(history, [
+      "builder.minify",
+      "builder.runtime.server",
+      "builder.runtime.client",
+      "builder.runtime.server",
+    ], "verify history");
+  }).then(() => t.end(), t.end);
+});

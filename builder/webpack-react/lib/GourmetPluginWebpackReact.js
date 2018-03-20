@@ -35,6 +35,9 @@ class GourmetPluginWebpackReact {
 }
 
 GourmetPluginWebpackReact.meta = {
+  schema: {
+    after: "@gourmet/gourmet-plugin-webpack-builder"
+  },
   hooks: (proto => ({
     "build:webpack:loaders": proto._onWebpackLoaders,
     "build:webpack:config": proto._onWebpackConfig

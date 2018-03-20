@@ -7,10 +7,6 @@ const isPromise = require("promise-box/lib/isPromise");
 const error = require("@gourmet/error");
 const CliBase = require("@gourmet/cli-base");
 const Variables = require("@gourmet/variables");
-const Self = require("@gourmet/variables/lib/sources/Self");
-const Env = require("@gourmet/variables/lib/sources/Env");
-const Opt = require("@gourmet/variables/lib/sources/Opt");
-const File = require("@gourmet/variables/lib/sources/File");
 
 const CONFIG_FILE_NOT_FOUND = {
   message: "Config file 'gourmet.js' or 'gourmet.json' not found in directory '${workDir}'",
@@ -22,6 +18,7 @@ class GourmetCli extends CliBase {
     const exts = [".js", ".json"];
 
     this.context.package = this._loadModuleSafe(npath.join(this.context.workDir, "package.json"));
+    this.context.getter = Variables.getter;
 
     for (let idx = 0; idx < exts.length; idx++) {
       const ext = exts[idx];
@@ -31,7 +28,7 @@ class GourmetCli extends CliBase {
         let config = require(path);
 
         if (typeof config === "function")
-          config = config(this);
+          config = config(this.context);
 
         if (!isPromise(config))
           config = Promise.resolve(config);
@@ -62,11 +59,12 @@ class GourmetCli extends CliBase {
   }
 
   _initVars(config) {
-    const vars = this.context.vars = new Variables(config);
-    vars.addSource("self", new Self(vars));
-    vars.addSource("env", new Env());
-    vars.addSource("opt", new Opt(this.context.argv));
-    vars.addSource("file", new File(vars, this.context.workDir, this.context));
+    const context = this.context;
+    context.vars = new Variables(config, {handlerContext: context});
+    context.vars.addBuiltinSources({
+      argv: context.argv,
+      workDir: context.workDir
+    });
   }
 
   _loadModuleSafe(path) {

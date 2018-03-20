@@ -1,12 +1,8 @@
 "use strict";
 
 class Self {
-  constructor(vars) {
-    this.vars = vars;
-  }
-
-  resolve(info, options) {
-    return this.vars.getNode(info.path, options);
+  resolve(vars, info, options) {
+    return vars.getNode(info.path, options);
   }
 }
 

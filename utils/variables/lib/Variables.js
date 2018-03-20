@@ -1,24 +1,16 @@
 "use strict";
 
-const qs = require("querystring");
-const repeat = require("promise-box/lib/repeat");
-const forEach = require("promise-box/lib/forEach");
-const isPromise = require("promise-box/lib/isPromise");
-const isPlainObject = require("@gourmet/is-plain-object");
 const error = require("@gourmet/error");
+const Self = require("./sources/Self");
+const Env = require("./sources/Env");
+const Opt = require("./sources/Opt");
+const File = require("./sources/File");
+const VarNode = require("./VarNode");
+const VarExpr = require("./VarExpr");
+const VarGetter = require("./VarGetter");
 const deepProp = require("./deepProp");
 const deepClone = require("./deepClone");
 const deepCloneSync = require("./deepCloneSync");
-
-const NON_STRING_MIX = {
-  message: "Trying to populate non-string value into a string for variable: \"${text}\"",
-  code: "NON_STRING_MIX"
-};
-
-const VAR_SYNTAX_ERROR = {
-  message: "Variable syntax error: ${expr}",
-  code: "VAR_SYNTAX_ERROR"
-};
 
 const VAR_SOURCE_EXISTS = {
   message: "Variable source already exists: ${source}",
@@ -30,35 +22,22 @@ const INVALID_VAR_SOURCE = {
   code: "INVALID_VAR_SOURCE"
 };
 
-const CIRCULAR_VAR_REF = {
-  message: "Circular variable reference detected while accessing property '${path}'",
-  code: "CIRCULAR_VAR_REF"
-};
-
 const EVAL_STRING_REQUIRED = {
   message: "A text string must be provided to 'vars.eval()'",
   code: "EVAL_STRING_REQUIRED"
 };
 
-const REF_SYNTAX = /^(?:(?:(\w+):)?([\w-.~/%]+)(?:\?(.*))?)$/;
-const VALUE_SYNTAX = /^(?:"([^"]*)"|'([^']*)'|([\d.]+)|(null|true|false))$/;
-
-// Simple wrapper class to indicate a text value yet to be resolved.
-class VarNode {
-  constructor(text) {
-    this._orgText = text;
-  }
-}
-
 class Variables {
   constructor(context, {
     syntax=/(\\?)\${([^{}]+?)}/,
-    defaultSource="self"
+    defaultSource="self",
+    handlerContext={}
   }={}) {
     this._sources = {};
     this.setContext(context);
     this.setSyntax(syntax);
     this.setDefaultSource(defaultSource);
+    this.setHandlerContext(handlerContext);
   }
 
   setContext(context) {
@@ -70,7 +49,18 @@ class Variables {
   }
 
   setDefaultSource(name) {
-    this._defaultSource = name;
+    this.defaultSource = name;
+  }
+
+  setHandlerContext(handlerContext) {
+    this.handlerContext = handlerContext;
+  }
+
+  addBuiltinSources({env, argv, workDir}) {
+    this.addSource("self", new Self());
+    this.addSource("env", new Env(env));
+    this.addSource("opt", new Opt(argv));
+    this.addSource("file", new File(workDir));
   }
 
   // Gets a property value of the context, resolving variable references to
@@ -88,24 +78,11 @@ class Variables {
   get(path, options={}) {
     return deepProp(this._context, path, (value, prop, parent) => {
       if (value instanceof VarNode)
-        return this._resolveNode(value, prop, parent, path, options);
+        return value.resolve(this, prop, parent, path, options);
       else
         return value;
     }).then(value => {
-      return this._copyResult(value, path, options);
-    });
-  }
-
-  // Same as `get` but stops resolving values at the node of `path` and
-  // doesn't go any deeper. Not for end user but for the source development.
-  getNode(path, options={}) {
-    return deepProp(this._context, path, (value, prop, parent) => {
-      if (value instanceof VarNode)
-        return this._resolveNode(value, prop, parent, path, options);
-      else
-        return value;
-    }).then(value => {
-      return deepCloneSync(value, value => value);
+      return this._resolveAllAndClone(value, path, options);
     });
   }
 
@@ -121,17 +98,31 @@ class Variables {
   eval(text, options={}) {
     if (typeof text !== "string")
       throw error(EVAL_STRING_REQUIRED);
-    return this._resolveNode(new VarNode(text), null, null, "", options).then(value => {
-      return this._copyResult(value, "", options);
+    const node = new VarExpr(text);
+    return node.resolve(this, null, null, "", options).then(value => {
+      return this._resolveAllAndClone(value, "", options);
+    });
+  }
+
+  // Same as `get` but stops resolving values at the node of `path` and
+  // doesn't go any deeper. Not for end user but for the source development.
+  getNode(path, options={}) {
+    return deepProp(this._context, path, (value, prop, parent) => {
+      if (value instanceof VarNode)
+        return value.resolve(this, prop, parent, path, options);
+      else
+        return value;
+    }).then(value => {
+      return deepCloneSync(value, value => value);
     });
   }
 
   // Prepares a JavaScript value to be used as a part or entirety of an context.
-  // Specifically, this wraps all text values with `VarNode`.
+  // Specifically, this wraps all text values with `VarExpr`.
   prepareValue(value) {
     return deepCloneSync(value, value => {
       if (typeof value === "string")
-        return new VarNode(value);
+        return new VarExpr(value);
       else
         return value;
     });
@@ -144,148 +135,17 @@ class Variables {
     this._sources[name] = src;
   }
 
-  // `node` must be an instance of `VarNode`.
-  _resolveNode(node, prop, parent, path, options) {
-    if (node._isLocked)
-      throw error(CIRCULAR_VAR_REF, {path});
-
-    if (!options.force && node.hasOwnProperty("_cachedValue"))
-      return Promise.resolve(node._cachedValue);
-
-    node._isLocked = true;
-
-    const literals = [];
-    let value = node._orgText;
-    let hadVarExpr;
-
-    return repeat(() => {
-      const m = value.match(this._syntax);
-
-      if (!m)
-        return value;
-
-      const pos = m.index;
-      const len = m[0].length;
-
-      if (!m[1]) {
-        hadVarExpr = true;
-        return this._resolveExpr(m[2], Object.assign({expr: m[0]}, options)).then(resolvedValue => {
-          if (pos === 0 && len === value.length && !literals.length) {
-            value = resolvedValue;
-            return value;
-          } else if (isPlainObject(resolvedValue) || Array.isArray(resolvedValue)) {
-            throw error(NON_STRING_MIX, {text: node._orgText});
-          } else {
-            value = [
-              value.substr(0, pos),
-              resolvedValue,
-              value.substr(pos + len)
-            ].join("");
-          }
-        });
-      } else {
-        literals.push(value.substr(0, pos + len));
-        value = value.substr(pos + len);
-      }
-    }).then(() => {
-      if (typeof value === "string") {
-        if (literals.length)
-          value = literals.join("") + value;
-        if (parent && !hadVarExpr)  // if the string is var-free, replace the node
-          parent[prop] = value;
-      }
-
-      node._isLocked = false;
-      node._cachedValue = value;
-
-      return value;
-    });
-  }
-
-  // Resolves an expression (i.e. `expr` in `${expr}') of a variable
-  // reference to a concrete value.
-  _resolveExpr(expr, options) {
-    const items = expr.split(",");
-    let value = 0;
-
-    return forEach(items, ref => {
-      ref = ref.trim();
-
-      const info = this._parseRef(ref, options);
-
-      return this._resolveRef(info, options).then(resolvedValue => {
-        if (resolvedValue !== undefined) {
-          value = resolvedValue;
-          return false;
-        }
-      });
-    }).then(() => value);
-  }
-
-  // Parses a reference expression (i.e. `ref` in `${ref, def}`) of a variable
-  // expression and returns an object with the parsed information.
-  _parseRef(ref, {expr}) {
-    ref = ref.trim();
-
-    let m = ref.match(VALUE_SYNTAX);
-
-    if (m) {
-      let value;
-
-      if (m[1] !== undefined)
-        value = m[1];
-      else if (m[2] !== undefined)
-        value = m[2];
-      else if (m[3])
-        value = parseInt(m[3], 10);
-      else if (m[4] === "null")
-        value = null;
-      else if (m[4] === "true")
-        value = true;
-      else
-        value = false;
-
-      return {
-        type: "value",
-        value
-      };
-    }
-
-    m = ref.match(REF_SYNTAX);
-
-    if (!m)
-      throw error(VAR_SYNTAX_ERROR, {expr});
-
-    return {
-      type: "ref",
-      source: m[1] || this._defaultSource,
-      path: decodeURI(m[2]),
-      query: m[3] ? qs.parse(m[3]) : {}
-    };
-  }
-
-  _resolveRef(info, options) {
-    let res;
-
-    if (info.type === "value") {
-      res = info.value;
-    } else {
-      const src = this._sources[info.source];
-      if (!src)
-        throw error(INVALID_VAR_SOURCE, {source: info.source, expr: options.expr});
-      res = src.resolve(info, options);
-    }
-
-    if (!isPromise(res))
-      return Promise.resolve(res);
-
-    return res;
+  getSource(name, expr="") {
+    const src = this._sources[name];
+    if (!src)
+      throw error(INVALID_VAR_SOURCE, {source: name, expr});
+    return src;
   }
 
   // Recursively resolves all the values and replace the literal forms to final
   // strings. This is used for creating a final deep copy of the value for
   // user consumption.
-  _copyResult(value, path, options) {
+  _resolveAllAndClone(value, path, options) {
     const _replaceLiterals = value => {
       if (typeof value !== "string")
         return value;
@@ -317,7 +177,7 @@ class Variables {
 
     return deepClone(value, path, (value, prop, parent, path) => {
       if (value instanceof VarNode) {
-        return this._resolveNode(value, prop, parent, path, options).then(value => {
+        return value.resolve(this, prop, parent, path, options).then(value => {
           return _replaceLiterals(value);
         });
       } else {
@@ -326,5 +186,14 @@ class Variables {
     });
   }
 }
+
+Variables.getter = function(handler) {
+  return new VarGetter(handler);
+};
+
+Variables.Self = Self;
+Variables.Opt = Opt;
+Variables.Env = Env;
+Variables.File = File;
 
 module.exports = Variables;

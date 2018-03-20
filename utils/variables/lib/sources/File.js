@@ -5,19 +5,17 @@ const isPromise = require("promise-box/lib/isPromise");
 const deepProp = require("../deepProp");
 
 class File {
-  constructor(vars, workDir, userCtx) {
-    this._vars = vars;
-    this._workDir = workDir;
-    this._userCtx = userCtx;
+  constructor(workDir) {
+    this.workDir = workDir;
   }
 
-  resolve(info) {
-    const path = npath.resolve(this._workDir, info.path);
+  resolve(vars, info) {
+    const path = npath.resolve(this.workDir, info.path);
 
     let value = require(path);
 
     if (typeof value === "function")
-      value = value(this._userCtx);
+      value = value(vars.handlerContext);
 
     if (!isPromise(value))
       value = Promise.resolve(value);
@@ -28,7 +26,7 @@ class File {
       return value;
     }).then(value => {
       if (value !== undefined)
-        return this._vars.prepareValue(value);
+        return vars.prepareValue(value);
       else
         return value;
     });
