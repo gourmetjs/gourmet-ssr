@@ -75,6 +75,7 @@ class Variables {
   //
   // options:
   //  - force: do not use a cached value
+  //  - default: default value
   get(path, options={}) {
     return deepProp(this._context, path, (value, prop, parent) => {
       if (value instanceof VarNode)
@@ -183,6 +184,10 @@ class Variables {
       } else {
         return _replaceLiterals(value);
       }
+    }).then(value => {
+      if (value !== undefined)
+        return value;
+      return options.default;
     });
   }
 }

@@ -20,6 +20,10 @@ module.exports = context => ({
     }
   },
 
+  babel: {
+    loose: true
+  },
+
   webpack: {
     devtool: context.getter(() => {
       if (context.target === "client") {
@@ -30,5 +34,12 @@ module.exports = context => ({
       }
       return context.sourceMap ? "source-map" : null;
     })
+  },
+
+  entry: {
+    main: {
+      client: "./src/client.js",
+      server: "./src/server.js"
+    }
   }
 });

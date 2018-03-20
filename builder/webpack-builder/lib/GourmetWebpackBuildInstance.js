@@ -24,13 +24,7 @@ class GourmetWebpackBuildInstance {
     this.context = context;
   }
 
-  init(context) {
-    return context.vars.get("builder.runtime").then((config={}) => {
-      this.targetRuntimeVersion = {
-        client: config.client || null,
-        server: config.server || "6.1"
-      };
-    });
+  init() {
   }
 
   getWebpackConfig(context) {
@@ -39,9 +33,10 @@ class GourmetWebpackBuildInstance {
       mode: this.getWebpackMode(context),
       devtool: this.getWebpackDevTool(context),
       optimizations: this.getWebpackOptimization(context),
+      entry: this.getWebpackEntry(context),
       module: {
         rules: this.getWebpackModuleRules(context)
-      }
+      },
     });
   }
 
@@ -87,6 +82,10 @@ class GourmetWebpackBuildInstance {
     };
   }
 
+  getWebpackEntry(context) {
+
+  }
+
   getWebpackModuleRules(context) {
     return context.plugins.runMergeAsync("build:webpack:loaders", {}, context).then(defs => {
       this._resourceTypes = defs;
@@ -116,12 +115,6 @@ class GourmetWebpackBuildInstance {
         };
       });
     });
-  }
-
-  getTargetRuntimeVersion(target) {
-    if (!target)
-      target = this.context.target;
-    return this.targetRuntimeVersion[target];
   }
 
   getVendorDirTester() {
@@ -198,14 +191,14 @@ class GourmetWebpackBuildInstance {
 
     return sortPlugins(items, {
       normalize(item) {
-        return {
+        return Object.assign({}, item, {
           name: item.name || (typeof item.loader === "string" ? item.loader : undefined),
           loader: typeof item.loader === "function" ? item.loader : undefined
-        };
+        });
       },
       finalize: item => {
         const loader = item.loader || item.name;
-        const options = context.plugins.runWaterfallSync(`build:webpack:loader_options:${item.name}`, item.options, item.name, context);
+        const options = context.plugins.runWaterfallSync(`build:webpack:finalize_loader_options:${item.name}`, item.options, item.name, context);
         return options ? {loader, options} : loader;
       }
     });

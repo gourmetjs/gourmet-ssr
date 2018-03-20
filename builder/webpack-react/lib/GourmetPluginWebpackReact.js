@@ -1,7 +1,7 @@
 "use strict";
 
 class GourmetPluginWebpackReact {
-  _onWebpackLoaders() {
+  _onWebpackLoaders(context) {
     return {
       js: {
         extensions: ["jsx"],
@@ -14,7 +14,11 @@ class GourmetPluginWebpackReact {
                 presets: [{
                   name: "babel-preset-react",
                   after: "babel-preset-env"
-                }]
+                }],
+                plugins: (() => {
+                  if (context.stage === "hot")
+                    return ["react-hot-loader/babel"];
+                })()
               }
             }]
           }

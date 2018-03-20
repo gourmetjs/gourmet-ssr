@@ -6,7 +6,8 @@
     "gourmet-plugin"
   ],
   "main": "lib/GourmetPluginWebpackReact.js",
-  "dependencies": {
-    "babel-preset-react": "^6.24.1"
+  "devDependencies": {
+    "babel-preset-react": "^6.24.1",
+    "react-hot-loader": "^4.0.0"
   }
 }

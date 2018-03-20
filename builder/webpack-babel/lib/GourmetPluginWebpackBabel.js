@@ -1,13 +1,14 @@
 "use strict";
 
 const sortPlugins = require("@gourmet/plugin-sort");
+const deepResolve = require("@gourmet/promise-deep-resolve");
 
 class GourmetPluginWebpackBabel {
   _onWebpackLoaders(context) {
     // Note that the object returned from this hook is merged with other
     // plugins's result. Arrays are appended by default, so `presets` and
     // `plugins` are appended too.
-    return {
+    return deepResolve({
       js: {
         extensions: ["js"],
         pipelines: {
@@ -23,10 +24,9 @@ class GourmetPluginWebpackBabel {
                 presets: [{
                   name: "babel-preset-env",
                   options: {
-                    targets: this._getBabelEnvTargets(context),
                     modules: false,
-                    loose: true,
-                    useBuiltIns: true
+                    targets: this._getTargets(context),
+                    loose: this._getLoose()
                   }
                 }],
 
@@ -43,9 +43,6 @@ class GourmetPluginWebpackBabel {
                   //
                   //   "babel-plugin-transform-runtime"
 
-                  if (context.stage === "hot")
-                    plugins.push("react-hot-loader/babel");
-
                   return plugins;
                 })()
               }
@@ -53,10 +50,10 @@ class GourmetPluginWebpackBabel {
           }
         }
       }
-    };
+    });
   }
 
-  _onBabelLoaderOptions(options) {
+  _onFinalizeLoaderOptions(options) {
     if (options) {
       const presets = Array.isArray(options.presets) && options.presets.length && options.presets;
       const plugins = Array.isArray(options.plugins) && options.plugins.length && options.plugins;
@@ -87,16 +84,21 @@ class GourmetPluginWebpackBabel {
   // Note that `babel-preset-env` below 7.x doesn't support
   // browserlist's config file or `package.json`.
   // https://github.com/babel/babel-preset-env/issues/26
-  _getBabelEnvTargets(context) {
-    const ver = context.build.getTargetRuntimeVersion();
-    return context.target === "client" ? {browsers: ver} : {node: ver};
+  _getTargets(context) {
+    return context.vars.get("builder.runtime." + context.target).then(value => {
+      return context.target === "client" ? {browsers: value || null} : {node: value || "6.1"};
+    });
+  }
+
+  _getLoose(context) {
+    return context.vars.get("babel.loose", {default: true});
   }
 }
 
 GourmetPluginWebpackBabel.meta = {
   hooks: (proto => ({
     "build:webpack:loaders": proto._onWebpackLoaders,
-    "build:webpack:loader_options:babel-loader": proto._onBabelLoaderOptions
+    "build:webpack:finalize_loader_options:babel-loader": proto._onFinalizeLoaderOptions
   }))(GourmetPluginWebpackBabel.prototype)
 };
 

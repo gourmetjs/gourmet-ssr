@@ -69,7 +69,7 @@ class GourmetPluginWebpackBuilder {
       return context.build.init(context);
     }).then(() => {
       return context.plugins.runMergeAsync("build:webpack:config", this._getBaseWebpackConfig(), context).then(config => {
-        console.log(require("util").inspect(config, {colors: true, depth: 10}));
+        console.log(require("util").inspect(config, {colors: true, depth: 20}));
       });
     }).then(() => {
       context.target = undefined;
