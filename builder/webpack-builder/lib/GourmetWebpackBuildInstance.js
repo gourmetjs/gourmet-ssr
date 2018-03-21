@@ -1,7 +1,7 @@
 "use strict";
 
-const deepResolve = require("@gourmet/promise-deep-resolve");
 const error = require("@gourmet/error");
+const promiseMap = require("@gourmet/promise-map");
 const sortPlugins = require("@gourmet/plugin-sort");
 
 const UNKNOWN_RESOURCE_TYPE = {
@@ -28,15 +28,19 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackConfig(context) {
-    return deepResolve({
-      target: this.getWebpackTarget(context),
-      mode: this.getWebpackMode(context),
-      devtool: this.getWebpackDevTool(context),
-      optimizations: this.getWebpackOptimization(context),
-      entry: this.getWebpackEntry(context),
-      module: {
-        rules: this.getWebpackModuleRules(context)
-      },
+    return promiseMap([
+      () => this.getWebpackModuleRules(context)
+    ], f => f()).then(([rules]) => {
+      return {
+        target: this.getWebpackTarget(context),
+        mode: this.getWebpackMode(context),
+        devtool: this.getWebpackDevTool(context),
+        optimizations: this.getWebpackOptimization(context),
+        entry: this.getWebpackEntry(context),
+        module: {
+          rules
+        },
+      };
     });
   }
 

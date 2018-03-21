@@ -1,7 +1,7 @@
 "use strict";
 
 const sortPlugins = require("@gourmet/plugin-sort");
-const series = require("@gourmet/promise-series");
+const promiseMap = require("@gourmet/promise-map");
 
 class GourmetPluginWebpackBabel {
   _onWebpackLoaders(context) {
@@ -21,7 +21,7 @@ class GourmetPluginWebpackBabel {
     // Note that the object returned from this hook is merged with other
     // plugins's result. Arrays are appended by default, so `presets` and
     // `plugins` are appended too.
-    return series([_targets, _loose]).then((targets, loose) => {
+    return promiseMap([_targets, _loose], f => f()).then(([targets, loose]) => {
       return {
         js: {
           extensions: ["js"],
