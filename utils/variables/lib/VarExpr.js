@@ -1,10 +1,9 @@
 "use strict";
 
 const qs = require("querystring");
-const isPromise = require("promise-box/lib/isPromise");
-const forEach = require("promise-box/lib/forEach");
-const repeat = require("promise-box/lib/repeat");
 const isPlainObject = require("@gourmet/is-plain-object");
+const promiseEach = require("@gourmet/promise-each");
+const promiseRepeat = require("@gourmet/promise-repeat");
 const error = require("@gourmet/error");
 const VarNode = require("./VarNode");
 
@@ -23,7 +22,7 @@ const CIRCULAR_VAR_REF = {
   code: "CIRCULAR_VAR_REF"
 };
 
-const REF_SYNTAX = /^(?:(?:(\w+):)?([\w-.~/%]+)(?:\?(.*))?)$/;
+const REF_SYNTAX = /^(?:(?:(\w+):)?([\w-.~/%]*)(?:\?(.*))?)$/;
 const VALUE_SYNTAX = /^(?:"([^"]*)"|'([^']*)'|([\d.]+)|(null|true|false))$/;
 
 class VarExpr extends VarNode {
@@ -45,7 +44,7 @@ class VarExpr extends VarNode {
     let value = this._orgText;
     let hadVarExpr;
 
-    return repeat(() => {
+    return promiseRepeat(() => {
       const m = value.match(vars._syntax);
 
       if (!m)
@@ -92,21 +91,13 @@ class VarExpr extends VarNode {
   // Resolves an expression (i.e. `expr` in `${expr}') of a variable
   // reference to a concrete value.
   _resolveExpr(vars, expr, options) {
-    const items = expr.split(",");
-    let value = 0;
-
-    return forEach(items, ref => {
+    return promiseEach(expr.split(","), ref => {
       ref = ref.trim();
 
       const info = this._parseRef(vars, ref, options);
 
-      return this._resolveRef(vars, info, options).then(resolvedValue => {
-        if (resolvedValue !== undefined) {
-          value = resolvedValue;
-          return false;
-        }
-      });
-    }).then(() => value);
+      return this._resolveRef(vars, info, options);
+    });
   }
 
   // Parses a reference expression (i.e. `ref` in `${ref, def}`) of a variable
@@ -160,9 +151,6 @@ class VarExpr extends VarNode {
       const src = vars.getSource(info.source, options.expr);
       res = src.resolve(vars, info, options);
     }
-
-    if (!isPromise(res))
-      return Promise.resolve(res);
 
     return res;
   }

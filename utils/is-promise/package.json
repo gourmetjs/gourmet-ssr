@@ -1,0 +1,6 @@
+{
+  "name": "@gourmet/is-promise",
+  "version": "0.1.0",
+  "description": "Returns true if the object is a promise",
+  "main": "lib/isPromise.js"
+}

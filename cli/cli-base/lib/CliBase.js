@@ -4,8 +4,8 @@ const npath = require("path");
 const minimist = require("minimist");
 const camelcaseKeys = require("camelcase-keys");
 const omit = require("lodash.omit");
-const runAsMain = require("promise-box/lib/runAsMain");
-const wrap = require("promise-box/lib/wrap");
+const promiseMain = require("@gourmet/promise-main");
+const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
 const merge = require("@gourmet/merge");
 const PluginManager = require("./PluginManager");
@@ -40,8 +40,8 @@ class CliBase {
   }
 
   runCommand(args) {
-    runAsMain(
-      wrap(() => {
+    promiseMain(
+      promiseProtect(() => {
         return this.init(args);
       }).then(() => {
         return this._applyCommandInfo();
@@ -51,7 +51,7 @@ class CliBase {
           return this.context.plugins.runAsync("before:command:" + argv.$command, this.context);
         }).then(() => {
           return this.context.plugins.forEachAsync("command:" + argv.$command, handler => {
-            return wrap(() => {
+            return promiseProtect(() => {
               return handler(this.context);
             }).then(res => {
               // Returning `false` from the command handler means a pass-through.
@@ -88,7 +88,7 @@ class CliBase {
 
     this.context.plugins = new PluginManager(this.context);
 
-    return wrap(() => {
+    return promiseProtect(() => {
       return this.loadBuiltinPlugins();
     }).then(() => {
       return this.loadConfig();

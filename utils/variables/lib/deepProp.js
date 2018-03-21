@@ -1,9 +1,9 @@
 "use strict";
 
-const isPromise = require("promise-box/lib/isPromise");
-const forEach = require("promise-box/lib/forEach");
-const error = require("@gourmet/error");
 const isPlainObject = require("@gourmet/is-plain-object");
+const promiseSync = require("@gourmet/promise-sync");
+const promiseEach = require("@gourmet/promise-each");
+const error = require("@gourmet/error");
 
 const INVALID_PATH = {
   message: "Invalid path '${path}'",
@@ -29,14 +29,14 @@ module.exports = function deepProp(obj, path, handler) {
   const props = path ? path.split(".") : [];
   let value = obj;
 
-  return forEach(props, prop => {
+  return promiseEach(props, prop => {
     if (!prop)
       throw error(INVALID_PATH, {path});
 
     if (isPlainObject(value)) {
       if (!value.hasOwnProperty(prop)) {
         value = undefined;
-        return false;
+        return false; // exit the loop
       }
     } else if (Array.isArray(value)) {
       const index = Number(prop);
@@ -52,10 +52,7 @@ module.exports = function deepProp(obj, path, handler) {
     const parent = value;
     value = value[prop];
 
-    let res = handler(value, prop, parent);
-    if (!isPromise(res))
-      res = Promise.resolve(res);
-    return res.then(val => {
+    return promiseSync(handler(value, prop, parent), val => {
       value = val;
     });
   }).then(() => value);

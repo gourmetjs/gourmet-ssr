@@ -1,7 +1,7 @@
 "use strict";
 
 const npath = require("path");
-const isPromise = require("promise-box/lib/isPromise");
+const promiseWrap = require("@gourmet/promise-wrap");
 const deepProp = require("../deepProp");
 
 class File {
@@ -17,10 +17,7 @@ class File {
     if (typeof value === "function")
       value = value(vars.handlerContext);
 
-    if (!isPromise(value))
-      value = Promise.resolve(value);
-
-    return value.then(value => {
+    return promiseWrap(value).then(value => {
       if (info.query.property)
         return deepProp(value, info.query.property, value => value);
       return value;

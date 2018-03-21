@@ -28,7 +28,7 @@ class GourmetPluginWebpackBuilder {
 
   // Handler for `build:prepare` event
   _onPrepare(context) {
-    return context.vars.get("builder").then((config={}) => {
+    return context.vars.get("builder", {}).then(config => {
       ["stage", "debug", "minify", "sourceMap"].forEach(name => {
         let value;
 

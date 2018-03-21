@@ -3,7 +3,7 @@
 const npath = require("path");
 const fs = require("fs");
 const resolve = require("resolve");
-const isPromise = require("promise-box/lib/isPromise");
+const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
 const CliBase = require("@gourmet/cli-base");
 const Variables = require("@gourmet/variables");
@@ -25,15 +25,10 @@ class GourmetCli extends CliBase {
       const path = npath.join(this.context.workDir, "gourmet" + ext);
 
       if (fs.existsSync(path)) {
-        let config = require(path);
-
-        if (typeof config === "function")
-          config = config(this.context);
-
-        if (!isPromise(config))
-          config = Promise.resolve(config);
-
-        return config.then(config => {
+        return promiseProtect(() => {
+          const config = require(path);
+          return typeof config === "function" ? config(this.context) : config;
+        }).then(config => {
           this._initVars(config);
         });
       }
@@ -43,18 +38,16 @@ class GourmetCli extends CliBase {
   }
 
   loadUserPlugins() {
-    return this.context.vars.get("autoLoadPlugins").then((auto="prepend") => {
-      return this.context.vars.get("plugins").then((plugins=[]) => {
-        if (auto === true) {
-          if (!plugins.length)
-            plugins = this._scanPlugins(auto);
-        } else if (auto === "prepend") {
-          plugins = this._scanPlugins(auto).concat(plugins);
-        } else if (auto === "append") {
-          plugins = plugins.concat(this._scanPlugins(auto));
-        }
-        this.context.plugins.load(plugins, this.context.workDir);
-      });
+    return this.context.vars.getMulti(["autoLoadPlugins", "prepend"], ["plugins", []]).then(([auto, plugins]) => {
+      if (auto === true) {
+        if (!plugins.length)
+          plugins = this._scanPlugins(auto);
+      } else if (auto === "prepend") {
+        plugins = this._scanPlugins(auto).concat(plugins);
+      } else if (auto === "append") {
+        plugins = plugins.concat(this._scanPlugins(auto));
+      }
+      this.context.plugins.load(plugins, this.context.workDir);
     });
   }
 

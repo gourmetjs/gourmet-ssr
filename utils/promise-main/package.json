@@ -1,0 +1,6 @@
+{
+  "name": "@gourmet/promise-main",
+  "version": "0.1.0",
+  "description": "Handles the top main promise of a console app",
+  "main": "lib/promiseMain.js"
+}

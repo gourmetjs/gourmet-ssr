@@ -1,0 +1,10 @@
+{
+  "name": "@gourmet/promise-each",
+  "version": "0.1.0",
+  "description": "Promise aware version of JavaScript's `Array.prototype.forEach`",
+  "main": "lib/promiseEach.js",
+  "dependencies": {
+    "@gourmet/promise-repeat": "^0.1.0",
+    "@gourmet/promise-sync": "^0.1.0"
+  }
+}

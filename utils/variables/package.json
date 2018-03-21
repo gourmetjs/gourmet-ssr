@@ -10,7 +10,11 @@
   "dependencies": {
     "@gourmet/error": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",
-    "promise-box": "^0.1.7"
+    "@gourmet/promise-each": "^0.1.0",
+    "@gourmet/promise-map": "^0.1.0",
+    "@gourmet/promise-repeat": "^0.1.0",
+    "@gourmet/promise-sync": "^0.1.0",
+    "@gourmet/promise-wrap": "^0.1.0"
   },
   "devDependencies": {
     "tape": "^4.9.0"

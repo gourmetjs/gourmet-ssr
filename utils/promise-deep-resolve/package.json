@@ -1,9 +1,0 @@
-{
-  "name": "@gourmet/promise-deep-resolve",
-  "version": "0.1.0",
-  "description": "Recursively resolves all the promises in objects and arrays",
-  "main": "lib/deepResolve.js",
-  "dependencies": {
-    "@gourmet/is-plain-object": "^0.1.0"
-  }
-}

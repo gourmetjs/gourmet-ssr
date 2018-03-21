@@ -9,7 +9,6 @@
   "dependencies": {
     "@gourmet/error": "^0.1.0",
     "@gourmet/plugin-sort": "^0.1.0",
-    "@gourmet/promise-deep-resolve": "^0.1.0",
     "webpack": "^4.1.1"
   }
 }

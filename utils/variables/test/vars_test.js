@@ -304,3 +304,33 @@ test("getter", t => {
     ], "verify history");
   }).then(() => t.end(), t.end);
 });
+
+test("getMulti", t => {
+  class Val {
+    resolve() {
+      return value;
+    }
+  }
+
+  const vars = new Variables({
+    a: 1,
+    b: 2,
+    c: {d: 3},
+    e: "${val:}"
+  });
+
+  let value = 5;
+
+  vars.addSource("val", new Val());
+
+  return Promise.resolve().then(() => {
+    return vars.get("e").then(val => {
+      t.equal(val, 5);
+      value++;
+    });
+  }).then(() => {
+    return vars.getMulti("a", "c.d", ["z", 10], "e", {force: true}).then(items => {
+      t.deepEqual(items, [1, 3, 10, 6]);
+    });
+  }).then(() => t.end(), t.end);
+});

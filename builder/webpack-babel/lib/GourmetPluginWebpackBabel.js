@@ -1,55 +1,70 @@
 "use strict";
 
 const sortPlugins = require("@gourmet/plugin-sort");
-const deepResolve = require("@gourmet/promise-deep-resolve");
+const series = require("@gourmet/promise-series");
 
 class GourmetPluginWebpackBabel {
   _onWebpackLoaders(context) {
+    // Note that `babel-preset-env` below 7.x doesn't support
+    // browserlist's config file or `package.json`.
+    // https://github.com/babel/babel-preset-env/issues/26
+    function _targets() {
+      return context.vars.get("builder.runtime." + context.target).then(value => {
+        return context.target === "client" ? {browsers: value || null} : {node: value || "6.1"};
+      });
+    }
+
+    function _loose() {
+      return context.vars.get("babel.loose", true);
+    }
+
     // Note that the object returned from this hook is merged with other
     // plugins's result. Arrays are appended by default, so `presets` and
     // `plugins` are appended too.
-    return deepResolve({
-      js: {
-        extensions: ["js"],
-        pipelines: {
-          vendor: {
-            test: [context.build.getVendorDirTester()],
-            use: []
-          },
-          default: {
-            use: [{
-              loader: "babel-loader",
-              options: {
-                //cacheDirectory: true,
-                presets: [{
-                  name: "babel-preset-env",
-                  options: {
-                    modules: false,
-                    targets: this._getTargets(context),
-                    loose: this._getLoose()
-                  }
-                }],
+    return series([_targets, _loose]).then((targets, loose) => {
+      return {
+        js: {
+          extensions: ["js"],
+          pipelines: {
+            vendor: {
+              test: [context.build.getVendorDirTester()],
+              use: []
+            },
+            default: {
+              use: [{
+                loader: "babel-loader",
+                options: {
+                  //cacheDirectory: true,
+                  presets: [{
+                    name: "babel-preset-env",
+                    options: {
+                      modules: false,
+                      targets: targets,
+                      loose: loose
+                    }
+                  }],
 
-                plugins: (() => {
-                  const plugins = [];
+                  plugins: (() => {
+                    const plugins = [];
 
-                  if (context.target === "client")
-                    plugins.push("babel-plugin-syntax-dynamic-import");
-                  else
-                    plugins.push("babel-plugin-dynamic-import-node");
+                    if (context.target === "client")
+                      plugins.push("babel-plugin-syntax-dynamic-import");
+                    else
+                      plugins.push("babel-plugin-dynamic-import-node");
 
-                  // We can't turn this on by default due to the following issue:
-                  // https://github.com/webpack/webpack/issues/4039
-                  //
-                  //   "babel-plugin-transform-runtime"
+                    // We can't turn this on by default due to the following issue:
+                    // https://github.com/webpack/webpack/issues/4039
+                    //
+                    //   "babel-plugin-transform-runtime"
 
-                  return plugins;
-                })()
-              }
-            }]
+                    return plugins;
+                  })()
+                }
+              }]
+            }
           }
         }
-      }
+      };
     });
   }
 
@@ -79,19 +94,6 @@ class GourmetPluginWebpackBabel {
           return item.plugin || item.name;
       }
     });
-  }
-
-  // Note that `babel-preset-env` below 7.x doesn't support
-  // browserlist's config file or `package.json`.
-  // https://github.com/babel/babel-preset-env/issues/26
-  _getTargets(context) {
-    return context.vars.get("builder.runtime." + context.target).then(value => {
-      return context.target === "client" ? {browsers: value || null} : {node: value || "6.1"};
-    });
-  }
-
-  _getLoose(context) {
-    return context.vars.get("babel.loose", {default: true});
   }
 }
 

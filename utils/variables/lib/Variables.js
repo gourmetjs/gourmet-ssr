@@ -1,6 +1,7 @@
 "use strict";
 
 const error = require("@gourmet/error");
+const promiseMap = require("@gourmet/promise-map");
 const Self = require("./sources/Self");
 const Env = require("./sources/Env");
 const Opt = require("./sources/Opt");
@@ -75,15 +76,14 @@ class Variables {
   //
   // options:
   //  - force: do not use a cached value
-  //  - default: default value
-  get(path, options={}) {
+  get(path, defVal, options={}) {
     return deepProp(this._context, path, (value, prop, parent) => {
       if (value instanceof VarNode)
         return value.resolve(this, prop, parent, path, options);
       else
         return value;
     }).then(value => {
-      return this._resolveAllAndClone(value, path, options);
+      return this._resolveAllAndClone(value, path, defVal, options);
     });
   }
 
@@ -96,12 +96,35 @@ class Variables {
   //    => `"Hello, world!"`
   //
   // See `get` for the options.
-  eval(text, options={}) {
+  eval(text, defVal, options={}) {
     if (typeof text !== "string")
       throw error(EVAL_STRING_REQUIRED);
     const node = new VarExpr(text);
     return node.resolve(this, null, null, "", options).then(value => {
-      return this._resolveAllAndClone(value, "", options);
+      return this._resolveAllAndClone(value, "", defVal, options);
+    });
+  }
+
+  getMulti(...args) {
+    const paths = [];
+    let options;
+
+    for (let idx = 0; idx < args.length; idx++) {
+      const arg = args[idx];
+      if (typeof arg === "string") {
+        paths.push([arg]);
+      } else if (Array.isArray(arg)) {
+        paths.push(arg);
+      } else if (typeof arg === "object") {
+        options = arg;
+        break;
+      } else {
+        throw Error("Invalid argument");
+      }
+    }
+
+    return promiseMap(paths, ([path, defVal]) => {
+      return this.get(path, defVal, options);
     });
   }
 
@@ -146,7 +169,7 @@ class Variables {
   // Recursively resolves all the values and replace the literal forms to final
   // strings. This is used for creating a final deep copy of the value for
   // user consumption.
-  _resolveAllAndClone(value, path, options) {
+  _resolveAllAndClone(value, path, defVal, options) {
     const _replaceLiterals = value => {
       if (typeof value !== "string")
         return value;
@@ -185,9 +208,7 @@ class Variables {
         return _replaceLiterals(value);
       }
     }).then(value => {
-      if (value !== undefined)
-        return value;
-      return options.default;
+      return value === undefined ? defVal : value;
     });
   }
 }

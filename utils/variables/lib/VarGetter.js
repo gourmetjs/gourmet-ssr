@@ -1,6 +1,6 @@
 "use strict";
 
-const isPromise = require("promise-box/lib/isPromise");
+const promiseWrap = require("@gourmet/promise-wrap");
 const VarNode = require("./VarNode");
 
 class VarGetter extends VarNode {
@@ -15,12 +15,7 @@ class VarGetter extends VarNode {
     if (typeof handler !== "function")
       throw Error("Getter must be a function");
 
-    const value = handler(vars.handlerContext);
-
-    if (!isPromise(value))
-      return Promise.resolve(value);
-
-    return value;
+    return promiseWrap(handler(vars.handlerContext));
   }
 }
 

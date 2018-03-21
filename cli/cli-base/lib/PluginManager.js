@@ -3,10 +3,10 @@
 const npath = require("path");
 const resolve = require("resolve");
 const omit = require("lodash.omit");
-const repeat = require("promise-box/lib/repeat");
-const isPromise = require("promise-box/lib/isPromise");
-const error = require("@gourmet/error");
+const promiseRepeat = require("@gourmet/promise-repeat");
+const promiseSync = require("@gourmet/promise-sync");
 const merge = require("@gourmet/merge");
+const error = require("@gourmet/error");
 const sortPlugins = require("@gourmet/plugin-sort");
 
 const INVALID_EXPORTED_PLUGIN = {
@@ -127,7 +127,7 @@ class PluginManager {
   forEachAsync(eventName, callback) {
     const handlers = this._getEventHandlers(eventName);
     let idx = 0;
-    return repeat(() => {
+    return promiseRepeat(() => {
       if (idx >= handlers.length)
         return null;
       const handler = handlers[idx++];
@@ -141,10 +141,8 @@ class PluginManager {
 
   runMergeAsync(eventName, obj={}, ...args) {
     return this.forEachAsync(eventName, handler => {
-      let value = handler(...args);
-      if (!isPromise(value))
-        value = Promise.resolve(value);
-      return value.then(value => {
+      const value = handler(...args);
+      return promiseSync(value, value => {
         if (value)
           merge(obj, value);
       });
