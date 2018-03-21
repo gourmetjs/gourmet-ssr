@@ -13,6 +13,8 @@ module.exports = context => ({
     debug: context.getter(() => !(context.stage === "prod" || context.stage === "production")),
     minify: context.getter(() => (context.stage === "prod" || context.stage === "production")),
     sourceMap: context.getter(() => (context.stage !== "hot" && context.debug)),
+    hashNames: context.getter(() => (context.stage !== "hot" && context.stage !== "local")),
+    staticPrefix: "/s/",
 
     runtime: {
       client: null,   // browserlist's default
@@ -22,18 +24,6 @@ module.exports = context => ({
 
   babel: {
     loose: true
-  },
-
-  webpack: {
-    devtool: context.getter(() => {
-      if (context.target === "client") {
-        if (context.stage === "hot")
-          return context.sourceMap ? "cheap-eval-source-map" : "eval";
-        else if (context.stage === "local")
-          return context.sourceMap ? "eval-source-map" : null;
-      }
-      return context.sourceMap ? "source-map" : null;
-    })
   },
 
   entry: {

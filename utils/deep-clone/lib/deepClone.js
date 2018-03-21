@@ -2,7 +2,7 @@
 
 const isPlainObject = require("@gourmet/is-plain-object");
 
-module.exports = function deepCloneSync(value, handler) {
+module.exports = function deepClone(value, handler=(val => val)) {
   function _clone(value) {
     const res = handler(value);
     if (isPlainObject(res))

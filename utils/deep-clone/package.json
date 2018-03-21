@@ -1,0 +1,9 @@
+{
+  "name": "@gourmet/deep-clone",
+  "version": "0.1.0",
+  "description": "Recursively clones a JavaScript value",
+  "main": "lib/deepClone.js",
+  "dependencies": {
+    "@gourmet/is-plain-object": "^0.1.0"
+  }
+}

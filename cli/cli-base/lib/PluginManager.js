@@ -92,12 +92,11 @@ class PluginManager {
       if (value !== undefined)
         return value;
     }
-    return null;
   }
 
   // Each handler gets called in series. If a handler returns non-undefined,
   // the loop stops with the value as a return value of the function.
-  // If the loop reached to the end, `null` is returned instead.
+  // If the loop reached to the end, `undefined` is returned instead.
   runSync(eventName, ...args) {
     return this.forEachSync(eventName, handler => handler(...args));
   }
@@ -129,7 +128,7 @@ class PluginManager {
     let idx = 0;
     return promiseRepeat(() => {
       if (idx >= handlers.length)
-        return null;
+        return promiseRepeat.UNDEFINED;
       const handler = handlers[idx++];
       return callback(handler);
     });

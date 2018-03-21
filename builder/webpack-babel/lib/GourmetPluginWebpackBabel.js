@@ -68,39 +68,39 @@ class GourmetPluginWebpackBabel {
     });
   }
 
-  _onFinalizeLoaderOptions(options) {
+  _onLoaderOptions(options) {
+    function _sort(items) {
+      return items && sortPlugins(items, {
+        normalize(item) {
+          return typeof item === "string" ? {name: item} : item;
+        },
+        finalize(item) {
+          if (item.options)
+            return [item.plugin || item.name, item.options];
+          else
+            return item.plugin || item.name;
+        }
+      });
+    }
+
     if (options) {
       const presets = Array.isArray(options.presets) && options.presets.length && options.presets;
       const plugins = Array.isArray(options.plugins) && options.plugins.length && options.plugins;
       if (presets || plugins) {
         return Object.assign({}, options, {
-          presets: presets && this._sortPlugins(presets),
-          plugins: plugins && this._sortPlugins(plugins)
+          presets: _sort(presets),
+          plugins: _sort(plugins)
         });
       }
     }
     return options;
-  }
-
-  _sortPlugins(items) {
-    return sortPlugins(items, {
-      normalize(item) {
-        return typeof item === "string" ? {name: item} : item;
-      },
-      finalize(item) {
-        if (item.options)
-          return [item.plugin || item.name, item.options];
-        else
-          return item.plugin || item.name;
-      }
-    });
   }
 }
 
 GourmetPluginWebpackBabel.meta = {
   hooks: (proto => ({
     "build:webpack:loaders": proto._onWebpackLoaders,
-    "build:webpack:finalize_loader_options:babel-loader": proto._onFinalizeLoaderOptions
+    "build:webpack:loader_options:babel-loader": proto._onLoaderOptions
   }))(GourmetPluginWebpackBabel.prototype)
 };
 

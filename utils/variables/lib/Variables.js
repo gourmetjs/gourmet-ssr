@@ -1,7 +1,10 @@
 "use strict";
 
 const error = require("@gourmet/error");
+const deepClone = require("@gourmet/deep-clone");
 const promiseMap = require("@gourmet/promise-map");
+const promiseDeepClone = require("@gourmet/promise-deep-clone");
+const promiseDeepProp = require("@gourmet/promise-deep-prop");
 const Self = require("./sources/Self");
 const Env = require("./sources/Env");
 const Opt = require("./sources/Opt");
@@ -9,9 +12,6 @@ const File = require("./sources/File");
 const VarNode = require("./VarNode");
 const VarExpr = require("./VarExpr");
 const VarGetter = require("./VarGetter");
-const deepProp = require("./deepProp");
-const deepClone = require("./deepClone");
-const deepCloneSync = require("./deepCloneSync");
 
 const VAR_SOURCE_EXISTS = {
   message: "Variable source already exists: ${source}",
@@ -77,7 +77,7 @@ class Variables {
   // options:
   //  - force: do not use a cached value
   get(path, defVal, options={}) {
-    return deepProp(this._context, path, (value, prop, parent) => {
+    return promiseDeepProp(this._context, path, (value, prop, parent) => {
       if (value instanceof VarNode)
         return value.resolve(this, prop, parent, path, options);
       else
@@ -131,20 +131,20 @@ class Variables {
   // Same as `get` but stops resolving values at the node of `path` and
   // doesn't go any deeper. Not for end user but for the source development.
   getNode(path, options={}) {
-    return deepProp(this._context, path, (value, prop, parent) => {
+    return promiseDeepProp(this._context, path, (value, prop, parent) => {
       if (value instanceof VarNode)
         return value.resolve(this, prop, parent, path, options);
       else
         return value;
     }).then(value => {
-      return deepCloneSync(value, value => value);
+      return deepClone(value);
     });
   }
 
   // Prepares a JavaScript value to be used as a part or entirety of an context.
   // Specifically, this wraps all text values with `VarExpr`.
   prepareValue(value) {
-    return deepCloneSync(value, value => {
+    return deepClone(value, value => {
       if (typeof value === "string")
         return new VarExpr(value);
       else
@@ -199,7 +199,7 @@ class Variables {
       return buf.join("") + value;
     };
 
-    return deepClone(value, path, (value, prop, parent, path) => {
+    return promiseDeepClone(value, path, (value, prop, parent, path) => {
       if (value instanceof VarNode) {
         return value.resolve(this, prop, parent, path, options).then(value => {
           return _replaceLiterals(value);

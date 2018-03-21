@@ -25,7 +25,7 @@ const OBJECT_OR_ARRAY_REQUIRED = {
   code: "OBJECT_OR_ARRAY_REQUIRED"
 };
 
-module.exports = function deepProp(obj, path, handler) {
+module.exports = function promiseDeepProp(obj, path, handler) {
   const props = path ? path.split(".") : [];
   let value = obj;
 

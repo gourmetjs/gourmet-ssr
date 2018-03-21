@@ -8,6 +8,8 @@ const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 //    command:prepare
 //    build:client
 //      build:webpack:config
+//        build:webpack:mode
+//        build:webpack:target
 //        build:webpack:loaders
 //        build:webpack:loader_options:{loader-name}
 //    build:server
@@ -29,7 +31,7 @@ class GourmetPluginWebpackBuilder {
   // Handler for `build:prepare` event
   _onPrepare(context) {
     return context.vars.get("builder", {}).then(config => {
-      ["stage", "debug", "minify", "sourceMap"].forEach(name => {
+      ["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
         let value;
 
         if (context.argv[name] !== undefined) {
@@ -49,6 +51,12 @@ class GourmetPluginWebpackBuilder {
               break;
             case "sourceMap":
               value = (context.stage !== "hot" && context.debug);
+              break;
+            case "hashNames":
+              value = (context.stage !== "hot" && context.stage !== "local");
+              break;
+            case "staticPrefix":
+              value = "/s/";
               break;
             default:
               throw Error(`Internal error: add '${name}' to the switch/case`);

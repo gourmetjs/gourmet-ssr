@@ -7,7 +7,7 @@ const promiseEach = require("@gourmet/promise-each");
 const promiseMap = require("@gourmet/promise-map");
 
 // Handler should return a source value.
-module.exports = function deepClone(value, path, handler) {
+module.exports = function promiseDeepClone(value, path, handler) {
   function _clone(value, prop, parent, path) {
     return promiseSync(handler(value, prop, parent, path), value => {
       if (isPlainObject(value))

@@ -2,7 +2,7 @@
 
 const npath = require("path");
 const promiseWrap = require("@gourmet/promise-wrap");
-const deepProp = require("../deepProp");
+const promiseDeepProp = require("@gourmet/promise-deep-prop");
 
 class File {
   constructor(workDir) {
@@ -19,7 +19,7 @@ class File {
 
     return promiseWrap(value).then(value => {
       if (info.query.property)
-        return deepProp(value, info.query.property, value => value);
+        return promiseDeepProp(value, info.query.property, value => value);
       return value;
     }).then(value => {
       if (value !== undefined)
