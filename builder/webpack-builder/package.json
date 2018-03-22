@@ -9,8 +9,11 @@
   "dependencies": {
     "@gourmet/error": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",
+    "@gourmet/merge": "^0.1.0",
     "@gourmet/plugin-sort": "^0.1.0",
     "@gourmet/promise-map": "^0.1.0",
+    "@gourmet/promise-protect": "^0.1.0",
+    "@gourmet/promise-write-file": "^0.1.0",
     "webpack": "^4.1.1",
     "webpack-hot-middleware": "^2.21.2"
   }

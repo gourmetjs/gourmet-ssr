@@ -1,0 +1,8 @@
+{
+  "name": "@gourmet/promise-write-file",
+  "version": "0.1.0",
+  "main": "lib/promiseWriteFile.js",
+  "dependencies": {
+    "@gourmet/promise-create-write-stream": "^0.1.0"
+  }
+}

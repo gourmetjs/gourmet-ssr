@@ -5,6 +5,9 @@ const error = require("@gourmet/error");
 const isPlainObject = require("@gourmet/is-plain-object");
 const promiseMap = require("@gourmet/promise-map");
 const sortPlugins = require("@gourmet/plugin-sort");
+const merge = require("@gourmet/merge");
+const webpack = require("webpack");
+const WebpackPluginGourmetManifest = require("./WebpackPluginGourmetManifest");
 
 const UNKNOWN_RESOURCE_TYPE = {
   message: "Unknown resource type '${typeName}'",
@@ -31,12 +34,41 @@ const INVALID_ENTRY_VALUE = {
   code: "INVALID_ENTRY_VALUE"
 };
 
+const INVALID_ALIAS = {
+  message: "'webpack.alias' must be an object",
+  code: "INVALID_ALIAS"
+};
+
+const INVALID_DEFINE = {
+  message: "'webpack.define' must be an object",
+  code: "INVALID_DEFINE"
+};
+
+const INVALID_PLUGINS = {
+  message: "'webpack.plugins' must be an array",
+  code: "INVALID_PLUGINS"
+};
+
+const INVALID_WEBPACK_PLUGIN = {
+  message: "Webpack plugin entry must be an object with '{name, [plugin]}' shape: ${item}",
+  code: "INVALID_PLUGINS"
+};
+
 class GourmetWebpackBuildInstance {
   constructor(context) {
     this.context = context;
   }
 
-  init() {
+  init(context) {
+    return context.vars.getMulti("builder", "webpack", "entry").then(([builder, webpack, entry]) => {
+      this._varsCache = {
+        builder: builder || {},
+        webpack: webpack || {},
+        entry: entry || {}
+      };
+      const outputDir = this._varsCache.builder.outputDir || ".gourmet";
+      this.outputDir = npath.join(context.workDir, outputDir, context.stage);
+    });
   }
 
   getWebpackConfig(context) {
@@ -47,8 +79,10 @@ class GourmetWebpackBuildInstance {
       () => this.getWebpackDevTool(context),
       () => this.getWebpackOptimization(context),
       () => this.getWebpackEntry(context),
+      () => this.getWebpackResolve(context),
       () => this.getWebpackModuleRules(context),
-      () => this.getWebpackOutput(context)
+      () => this.getWebpackOutput(context),
+      () => this.getWebpackPlugins(context)
     ], f => f()).then(([
       context,
       target,
@@ -56,8 +90,10 @@ class GourmetWebpackBuildInstance {
       devtool,
       optimizations,
       entry,
+      resolve,
       rules,
-      output
+      output,
+      plugins
     ]) => {
       return {
         context,
@@ -66,10 +102,12 @@ class GourmetWebpackBuildInstance {
         devtool,
         optimizations,
         entry,
+        resolve,
         module: {
           rules
         },
-        output
+        output,
+        plugins
       };
     });
   }
@@ -122,39 +160,58 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackEntry(context) {
-    return context.vars.get("entry").then(entry => {
-      if (!isPlainObject(entry))
-        throw error(INVALID_ENTRY);
+    const entry = this._varsCache.entry;
 
-      const names = Object.keys(entry);
+    if (!isPlainObject(entry))
+      throw error(INVALID_ENTRY);
 
-      if (!names.length)
-        throw error(INVALID_ENTRY);
+    const names = Object.keys(entry);
 
-      const output = {};
+    if (!names.length)
+      throw error(INVALID_ENTRY);
 
-      names.forEach(name => {
-        function _value(val) {
-          if (typeof val === "string")
-            return [val];
-          else if (Array.isArray(val))
-            return [].concat(val);
-          throw error(INVALID_ENTRY_VALUE, {name});
-        }
+    const output = {};
 
-        const def = entry[name];
-        let entryValue = _value(isPlainObject(def) ? def[context.target] : def);
+    names.forEach(name => {
+      function _value(val) {
+        if (typeof val === "string")
+          return [val];
+        else if (Array.isArray(val))
+          return [].concat(val);
+        throw error(INVALID_ENTRY_VALUE, {name});
+      }
 
-        if (context.target === "client" && context.stage === "hot")
-          entryValue.unshift("webpack-hot-middleware/client");
+      const def = entry[name];
+      let entryValue = _value(isPlainObject(def) ? def[context.target] : def);
 
-        entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context);
+      if (context.target === "client" && context.stage === "hot")
+        entryValue.unshift("webpack-hot-middleware/client");
 
-        output[name] = entryValue;
-      });
+      entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context);
 
-      return output;
+      output[name] = entryValue;
     });
+
+    return output;
+  }
+
+  getWebpackResolve(context) {
+    const alias = this.getWebpackAlias(context);
+    const resolve = {
+      extensions: [".js"]
+    };
+    if (alias)
+      resolve.alias = alias;
+    return context.plugins.runWaterfallSync("build:webpack:resolve", resolve, context);
+  }
+
+  getWebpackAlias(context) {
+    const alias = this._varsCache.webpack.alias;
+
+    if (alias !== undefined && !isPlainObject(alias))
+      throw error(INVALID_ALIAS);
+
+    return context.plugins.runWaterfallSync("build:webpack:alias", alias, context);
   }
 
   getWebpackModuleRules(context) {
@@ -189,16 +246,88 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackOutput(context) {
-    return context.vars.get("builder.outputDir", ".gourmet").then(outputDir => {
-      const filename = (context.target === "server" || !context.hashNames) ? "[name]_bundle.js" : "[chunkHash].js";
-      const output = {
-        hashDigestLength: 33,
-        filename,
-        chunkFilename: filename,
-        path: npath.join(context.workDir, outputDir, context.stage, context.target),
-        publicPath: context.staticPrefix
-      };
-      return context.plugins.runWaterfallSync("build:webpack:output", output, context);
+    const filename = (context.target === "server" || !context.hashNames) ? "[name]_bundle.js" : "[chunkHash].js";
+    const output = {
+      hashDigestLength: 33,
+      filename,
+      chunkFilename: filename,
+      path: npath.join(this.outputDir, context.target),
+      publicPath: context.staticPrefix
+    };
+    return context.plugins.runWaterfallSync("build:webpack:output", output, context);
+  }
+
+  getWebpackDefine(context) {
+    const define = {
+      "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
+      "DEBUG": JSON.stringify(context.debug),
+      "SERVER": JSON.stringify(context.target === "server"),
+      "CLIENT": JSON.stringify(context.target === "client")
+    };
+    const userDef = this._varsCache.webpack.define;
+
+    if (userDef) {
+      if (!isPlainObject(define))
+        throw error(INVALID_DEFINE);
+      merge(define, userDef);
+    }
+
+    return context.plugins.runWaterfallSync("build:webpack:define", define, context);
+  }
+
+  getWebpackPlugins(context) {
+    const define = this.getWebpackDefine(context);
+    let plugins = [];
+
+    if (isPlainObject(define) && Object.keys(define).length > 1) {
+      plugins.push({
+        name: "webpack/define-plugin",
+        plugin: webpack.DefinePlugin,
+        options: define
+      });
+    }
+
+    if (context.target === "client" && context.stage === "hot") {
+      plugins.push({
+        name: "webpack/hot-module-replacement-plugin",
+        plugin: webpack.HotModuleReplacementPlugin
+      });
+    }
+
+    plugins.push({
+      name: "@gourmet/webpack-plugin-gourmet-manifest",
+      plugin: WebpackPluginGourmetManifest,
+      options: {
+        outputPath: npath.join(this.outputDir, "server", `${context.target}_manifest.json`),
+        indent: context.minify ? 0 : 2,
+        context
+      }
+    });
+
+    const userPlugins = this._varsCache.webpack.plugins;
+
+    if (userPlugins) {
+      if (!Array.isArray(userPlugins))
+        throw error(INVALID_PLUGINS);
+      plugins = plugins.concat(userPlugins);
+    }
+
+    plugins = context.plugins.runWaterfallSync("build:webpack:plugins", plugins, context);
+
+    return sortPlugins(plugins, {
+      normalize(item) {
+        if (!isPlainObject(item) || !item.name || typeof item.name !== "string")
+          throw error(INVALID_WEBPACK_PLUGIN, {item});
+        return item;
+      },
+      finalize(item) {
+        let plugin = item.plugin;
+        if (!plugin)
+          plugin = require(item.name);
+        if (typeof plugin === "function")
+          plugin = new plugin(item.options);
+        return plugin;
+      }
     });
   }
 

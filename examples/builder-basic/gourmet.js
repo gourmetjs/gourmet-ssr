@@ -9,6 +9,7 @@ module.exports = context => ({
 
   // Builder configuration
   builder: {
+    // These properties are provisioned to `context`.
     stage: "dev",
     debug: context.getter(() => !(context.stage === "prod" || context.stage === "production")),
     minify: context.getter(() => (context.stage === "prod" || context.stage === "production")),
@@ -19,11 +20,19 @@ module.exports = context => ({
     runtime: {
       client: null,   // browserlist's default
       server: "6.1"   // node 6.10
-    }
+    },
+
+    outputDir: ".gourmet"
   },
 
   babel: {
     loose: true
+  },
+
+  webpack: {
+    alias: {},
+    define: {},
+    plugins: []
   },
 
   entry: {

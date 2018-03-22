@@ -1,0 +1,9 @@
+{
+  "name": "@gourmet/promise-create-write-stream",
+  "version": "0.1.0",
+  "description": "Creates a writable file stream and returns a promise to indicate the completion",
+  "main": "lib/promiseCreateWriteStream.js",
+  "dependencies": {
+    "mkdirp": "^0.5.1"
+  }
+}

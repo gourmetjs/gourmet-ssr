@@ -8,10 +8,17 @@ const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 //    command:prepare
 //    build:client
 //      build:webpack:config
-//        build:webpack:mode
+//        build:webpack:context
 //        build:webpack:target
+//        build:webpack:mode
+//        build:webpack:devtool
+//        build:webpack:optimization
+//        build:webpack:entry
+//        build:webpack:resolve
 //        build:webpack:loaders
 //        build:webpack:loader_options:{loader-name}
+//        build:webpack:output
+//        build:webpack:plugins
 //    build:server
 //      * same as build:client *
 //  after:command:build
@@ -76,7 +83,7 @@ class GourmetPluginWebpackBuilder {
     }).then(() => {
       return context.build.init(context);
     }).then(() => {
-      return context.plugins.runMergeAsync("build:webpack:config", this._getBaseWebpackConfig(), context).then(config => {
+      return context.plugins.runMergeAsync("build:webpack:config", {}, context).then(config => {
         console.log(require("util").inspect(config, {colors: true, depth: 20}));
       });
     }).then(() => {
@@ -87,14 +94,6 @@ class GourmetPluginWebpackBuilder {
 
   _onWebpackConfig(context) {
     return context.build.getWebpackConfig(context);
-  }
-
-  _getBaseWebpackConfig() {
-    return {
-      resolve: {
-        extensions: [".js"]
-      }
-    };
   }
 }
 

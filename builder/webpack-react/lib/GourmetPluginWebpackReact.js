@@ -1,5 +1,7 @@
 "use strict";
 
+const merge = require("@gourmet/merge");
+
 class GourmetPluginWebpackReact {
   _onWebpackLoaders(context) {
     return {
@@ -27,24 +29,19 @@ class GourmetPluginWebpackReact {
     };
   }
 
-  _onWebpackConfig() {
+  _onWebpackResolve(resolve) {
     // Appends `.jsx` to `resolve.extensions` so that `.jsx` can be omitted
     // in `require` or `import`.
-    return {
-      resolve: {
-        extensions: [".jsx"]
-      }
-    };
+    return merge.intact(resolve, {
+      extensions: [".jsx"]
+    });
   }
 }
 
 GourmetPluginWebpackReact.meta = {
-  schema: {
-    after: "@gourmet/gourmet-plugin-webpack-builder"
-  },
   hooks: (proto => ({
     "build:webpack:loaders": proto._onWebpackLoaders,
-    "build:webpack:config": proto._onWebpackConfig
+    "build:webpack:resolve": proto._onWebpackResolve
   }))(GourmetPluginWebpackReact.prototype)
 };
 
