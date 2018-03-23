@@ -260,9 +260,10 @@ class GourmetWebpackBuildInstance {
   getWebpackDefine(context) {
     const define = {
       "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
-      "DEBUG": JSON.stringify(context.debug),
-      "SERVER": JSON.stringify(context.target === "server"),
-      "CLIENT": JSON.stringify(context.target === "client")
+      DEBUG: JSON.stringify(context.debug),
+      SERVER: JSON.stringify(context.target === "server"),
+      CLIENT: JSON.stringify(context.target === "client"),
+      STAGE: JSON.stringify(context.stage)
     };
     const userDef = this._varsCache.webpack.define;
 

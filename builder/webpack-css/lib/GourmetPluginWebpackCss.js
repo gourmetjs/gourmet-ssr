@@ -13,8 +13,49 @@ class GourmetPluginWebpackCss {
     };
   }
 
-  _onWebpackLoaders(build) {
+  _onWebpackPipelines() {
     return {
+      pipelines: {
+        css: [{
+          loader: "css-loader",
+          options: {
+            // If you set `importLoaders` to 0, imported CSS files (`@import`) will not
+            // be processed by `postcss-loader` which results in bypassing `autoprefixed`.
+            // This is not a desirable behavior in default setup but you may see other
+            // side effects if you use other PostCSS plugins. This is a tricky issue.
+            importLoaders: 1
+          }
+        }, {
+          loader: "postcss-loader",
+          options: {
+            plugins: [
+              // Autoprefixer uses `browserslist` and putting options under `browserslist`
+              // key of `package.json` is recommended way of configuring it as opposed to
+              // specifying options here.
+              "autoprefixer"
+            ]
+          }
+        }],
+        css_modules: [{
+          pipeline: "css"
+        }, {
+          loader: "#css-loader",
+          options: {
+            modules: true
+          }
+        }]
+      }
+    };
+  }
+
+  _onWebpackLoaders({build}) {
+    return {
+      test: 
+    };
+  }
+
+      rules: {}
+
       css: {
         extensions: ["css"],
         pipelines: {
