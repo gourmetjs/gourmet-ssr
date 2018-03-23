@@ -67,7 +67,7 @@ class GourmetWebpackBuildInstance {
         entry: entry || {}
       };
       const outputDir = this._varsCache.builder.outputDir || ".gourmet";
-      this.outputDir = npath.join(context.workDir, outputDir, context.stage);
+      this.outputDir = npath.resolve(context.workDir, outputDir);
     });
   }
 
@@ -88,7 +88,7 @@ class GourmetWebpackBuildInstance {
       target,
       mode,
       devtool,
-      optimizations,
+      optimization,
       entry,
       resolve,
       rules,
@@ -100,7 +100,7 @@ class GourmetWebpackBuildInstance {
         target,
         mode,
         devtool,
-        optimizations,
+        optimization,
         entry,
         resolve,
         module: {
@@ -132,9 +132,9 @@ class GourmetWebpackBuildInstance {
         if (context.stage === "hot")
           return context.sourceMap ? "cheap-eval-source-map" : "eval";
         else if (context.stage === "local")
-          return context.sourceMap ? "eval-source-map" : null;
+          return context.sourceMap ? "eval-source-map" : false;
       }
-      return context.sourceMap ? "source-map" : null;
+      return context.sourceMap ? "source-map" : false;
     }
 
     return context.plugins.runWaterfallSync("build:webpack:devtool", _devtool(), context);
@@ -189,7 +189,7 @@ class GourmetWebpackBuildInstance {
 
       entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context);
 
-      output[name] = entryValue;
+      output[name] = entryValue.length > 1 ? entryValue : entryValue[0];
     });
 
     return output;
@@ -251,7 +251,7 @@ class GourmetWebpackBuildInstance {
       hashDigestLength: 33,
       filename,
       chunkFilename: filename,
-      path: npath.join(this.outputDir, context.target),
+      path: npath.join(this.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix
     };
     return context.plugins.runWaterfallSync("build:webpack:output", output, context);
@@ -298,9 +298,10 @@ class GourmetWebpackBuildInstance {
       name: "@gourmet/webpack-plugin-gourmet-manifest",
       plugin: WebpackPluginGourmetManifest,
       options: {
-        outputPath: npath.join(this.outputDir, "server", `${context.target}_manifest.json`),
-        indent: context.minify ? 0 : 2,
-        context
+        context,
+        onComplete: obj => {
+          this.outputManifest = obj;
+        }
       }
     });
 

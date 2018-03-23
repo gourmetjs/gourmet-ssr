@@ -153,6 +153,9 @@ class CliBase {
 
       if (def.default !== undefined && argv[name] === undefined)
         argv[name] = def.default;
+
+      if (typeof def.coerce === "function")
+        argv[name] = def.coerce(argv[name]);
     });
   }
 }

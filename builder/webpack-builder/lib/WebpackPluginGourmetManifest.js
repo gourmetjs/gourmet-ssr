@@ -2,14 +2,12 @@
 
 const util = require("util");
 const promiseProtect = require("@gourmet/promise-protect");
-const promiseWriteFile = require("@gourmet/promise-write-file");
 
 // Webpack plugin that emits a manifest file for Gourmet Framework.
 module.exports = class WebpackPluginGourmetManifest {
-  constructor({context, outputPath, indent}) {
+  constructor({context, onComplete}) {
     this.context = context;
-    this.outputPath = outputPath;
-    this.indent = indent;
+    this.onComplete = onComplete;
   }
 
   apply(compiler) {
@@ -37,11 +35,6 @@ module.exports = class WebpackPluginGourmetManifest {
       return promiseProtect(() => {
         if (typeof this.onComplete === "function")
           return this.onComplete(obj);
-      }).then(() => {
-        if (this.outputPath) {
-          const content = JSON.stringify(obj, null, this.indent || 0);
-          return promiseWriteFile(this.outputPath, content, {useOriginalPath: true});
-        }
       });
     });
   }
@@ -62,10 +55,6 @@ module.exports = class WebpackPluginGourmetManifest {
   }
 
   [util.inspect.custom]() {
-    return "WebpackPluginGourmetManifest " + util.inspect({
-      outputPath: this.outputPath,
-      indent: this.indent,
-      context: {}
-    });
+    return "WebpackPluginGourmetManifest {}";
   }
 };

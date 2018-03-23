@@ -1,12 +1,10 @@
 "use strict";
 
-module.exports = function promiseMain(promise, waitForExit) {
+module.exports = function promiseMain(promise, gracefulExit) {
   return promise.catch(err => {
-    if (waitForExit) {
+    if (gracefulExit) {
       console.error(err);
-      process.on("exit", function() {
-        process.exit(1);
-      });
+      process.exitCode = 1;
     } else {
       setImmediate(() => {
         throw err;

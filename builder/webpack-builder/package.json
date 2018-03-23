@@ -7,10 +7,12 @@
   ],
   "main": "lib/GourmetPluginWebpackBuilder.js",
   "dependencies": {
+    "@gourmet/colors": "^0.1.0",
     "@gourmet/error": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",
     "@gourmet/merge": "^0.1.0",
     "@gourmet/plugin-sort": "^0.1.0",
+    "@gourmet/promise-each": "^0.1.0",
     "@gourmet/promise-map": "^0.1.0",
     "@gourmet/promise-protect": "^0.1.0",
     "@gourmet/promise-write-file": "^0.1.0",
