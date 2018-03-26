@@ -4,7 +4,7 @@ const sortPlugins = require("@gourmet/plugin-sort");
 const promiseMap = require("@gourmet/promise-map");
 
 class GourmetPluginWebpackBabel {
-  _onWebpackLoaders(context) {
+  _onWebpackInit(context) {
     // Note that `babel-preset-env` below 7.x doesn't support
     // browserlist's config file or `package.json`.
     // https://github.com/babel/babel-preset-env/issues/26
@@ -18,54 +18,59 @@ class GourmetPluginWebpackBabel {
       return context.vars.get("babel.loose", true);
     }
 
+    return promiseMap([_targets, _loose], f => f()).then(([targets, loose]) => {
+      this._varCache = {targets, loose};
+    });
+  }
+
+  _onWebpackPipelines(context) {
     // Note that the object returned from this hook is merged with other
     // plugins's result. Arrays are appended by default, so `presets` and
     // `plugins` are appended too.
-    return promiseMap([_targets, _loose], f => f()).then(([targets, loose]) => {
-      return {
-        js: {
-          extensions: ["js"],
-          pipelines: {
-            vendor: {
-              test: [context.build.getVendorDirTester()],
-              use: []
-            },
-            default: {
-              use: [{
-                loader: "babel-loader",
-                options: {
-                  //cacheDirectory: true,
-                  presets: [{
-                    name: "babel-preset-env",
-                    options: {
-                      modules: false,
-                      targets: targets,
-                      loose: loose
-                    }
-                  }],
-
-                  plugins: (() => {
-                    const plugins = [];
-
-                    if (context.target === "client")
-                      plugins.push("babel-plugin-syntax-dynamic-import");
-                    else
-                      plugins.push("babel-plugin-dynamic-import-node");
-
-                    // We can't turn this on by default due to the following issue:
-                    // https://github.com/webpack/webpack/issues/4039
-                    //
-                    //   "babel-plugin-transform-runtime"
-
-                    return plugins;
-                  })()
-                }
-              }]
+    return {
+      js: [{
+        loader: "babel-loader",
+        options: {
+          //cacheDirectory: true,
+          presets: [{
+            name: "babel-preset-env",
+            options: {
+              modules: false,
+              targets: this._varCache.targets,
+              loose: this._varCache.loose
             }
-          }
+          }],
+
+          plugins: (() => {
+            const plugins = [];
+
+            if (context.target === "client")
+              plugins.push("babel-plugin-syntax-dynamic-import");
+            else
+              plugins.push("babel-plugin-dynamic-import-node");
+
+            // We can't turn this on by default due to the following issue:
+            // https://github.com/webpack/webpack/issues/4039
+            //
+            //   "babel-plugin-transform-runtime"
+
+            return plugins;
+          })()
         }
-      };
-    });
+      }]
+    };
+  }
+
+  _onWebpackLoaders() {
+    return {
+      js: {
+        extensions: [".js"],
+        oneOf: [{
+          order: 9999,
+          pipeline: "js"
+        }]
+      }
+    };
   }
 
   _onLoaderOptions(options) {
@@ -99,6 +104,8 @@ class GourmetPluginWebpackBabel {
 
 GourmetPluginWebpackBabel.meta = {
   hooks: (proto => ({
+    "build:webpack:init": proto._onWebpackInit,
+    "build:webpack:pipelines": proto._onWebpackPipelines,
     "build:webpack:loaders": proto._onWebpackLoaders,
     "build:webpack:loader_options:babel-loader": proto._onLoaderOptions
   }))(GourmetPluginWebpackBabel.prototype)

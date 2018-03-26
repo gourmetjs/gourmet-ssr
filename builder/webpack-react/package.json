@@ -7,7 +7,6 @@
   ],
   "main": "lib/GourmetPluginWebpackReact.js",
   "devDependencies": {
-    "@gourmet/merge": "^0.1.0",
     "babel-preset-react": "^6.24.1",
     "react-hot-loader": "^4.0.0"
   }

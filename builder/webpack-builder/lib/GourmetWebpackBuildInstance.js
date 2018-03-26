@@ -1,26 +1,22 @@
 "use strict";
 
+const util = require("util");
 const npath = require("path");
 const error = require("@gourmet/error");
 const isPlainObject = require("@gourmet/is-plain-object");
-const promiseMap = require("@gourmet/promise-map");
 const sortPlugins = require("@gourmet/plugin-sort");
 const merge = require("@gourmet/merge");
+const omit = require("lodash.omit");
 const webpack = require("webpack");
 const WebpackPluginGourmetManifest = require("./WebpackPluginGourmetManifest");
 
-const UNKNOWN_RESOURCE_TYPE = {
-  message: "Unknown resource type '${typeName}'",
-  code: "UNKNOWN_RESOURCE_TYPE"
-};
-
 const INVALID_PIPELINE = {
-  message: "Pipeline '${pipelineName}' is not defined or invalid",
+  message: "Pipeline '${pipeline}' is not defined or invalid",
   code: "INVALID_PIPELINE"
 };
 
 const CIRCULAR_PIPELINE = {
-  message: "Pipeline '${pipelinePath}' is has a circular reference",
+  message: "Pipeline '${pipeline}' has a circular reference",
   code: "CIRCULAR_PIPELINE"
 };
 
@@ -68,48 +64,24 @@ class GourmetWebpackBuildInstance {
       };
       const outputDir = this._varsCache.builder.outputDir || ".gourmet";
       this.outputDir = npath.resolve(context.workDir, outputDir);
+    }).then(() => {
+      return context.plugins.runAsync("build:webpack:init", context);
     });
   }
 
   getWebpackConfig(context) {
-    return promiseMap([
-      () => this.getWebpackContext(context),
-      () => this.getWebpackTarget(context),
-      () => this.getWebpackMode(context),
-      () => this.getWebpackDevTool(context),
-      () => this.getWebpackOptimization(context),
-      () => this.getWebpackEntry(context),
-      () => this.getWebpackResolve(context),
-      () => this.getWebpackModuleRules(context),
-      () => this.getWebpackOutput(context),
-      () => this.getWebpackPlugins(context)
-    ], f => f()).then(([
-      context,
-      target,
-      mode,
-      devtool,
-      optimization,
-      entry,
-      resolve,
-      rules,
-      output,
-      plugins
-    ]) => {
-      return {
-        context,
-        target,
-        mode,
-        devtool,
-        optimization,
-        entry,
-        resolve,
-        module: {
-          rules
-        },
-        output,
-        plugins
-      };
-    });
+    return {
+      context: this.getWebpackContext(context),
+      target: this.getWebpackTarget(context),
+      mode: this.getWebpackMode(context),
+      devtool: this.getWebpackDevTool(context),
+      optimization: this.getWebpackOptimization(context),
+      entry: this.getWebpackEntry(context),
+      resolve: this.getWebpackResolve(context),
+      module: this.getWebpackModule(context),
+      output: this.getWebpackOutput(context),
+      plugins: this.getWebpackPlugins(context)
+    };
   }
 
   getWebpackContext(context) {
@@ -197,51 +169,117 @@ class GourmetWebpackBuildInstance {
 
   getWebpackResolve(context) {
     const alias = this.getWebpackAlias(context);
-    const resolve = {
-      extensions: [".js"]
-    };
-    if (alias)
-      resolve.alias = alias;
-    return context.plugins.runWaterfallSync("build:webpack:resolve", resolve, context);
+    const resolve = {extensions: [".js"], alias};
+    return context.plugins.runMergeSync("build:webpack:resolve", resolve, context);
   }
 
   getWebpackAlias(context) {
-    const alias = this._varsCache.webpack.alias;
-
+    let alias = this._varsCache.webpack.alias;
     if (alias !== undefined && !isPlainObject(alias))
       throw error(INVALID_ALIAS);
-
-    return context.plugins.runWaterfallSync("build:webpack:alias", alias, context);
+    alias = Object.assign({}, alias);
+    return context.plugins.runMergeSync("build:webpack:alias", alias, context);
   }
 
-  getWebpackModuleRules(context) {
-    return context.plugins.runMergeAsync("build:webpack:loaders", {}, context).then(defs => {
-      this._resourceTypes = defs;
+  getWebpackModule(context) {
+    const rules = this.getWebpackRules(context);
+    const module = {rules};
+    return context.plugins.runMergeSync("build:webpack:module", module, context);
+  }
 
-      // Collect all unique extensions that were used by the loaders
-      const allExts = Object.keys(this._resourceTypes).reduce((exts, name) => {
-        const def = this._resourceTypes[name];
-        if (Array.isArray(def.extensions))
-          return exts.concat(def.extensions);
+  getWebpackRules(context) {
+    function _resolve(items) {
+      function _sort() {
+        return items.map((item, idx) => {
+          return [item.order !== undefined ? item.order : 5000, idx, item];
+        }).sort((a, b) => {
+          const oa = a[0] * 10000 + a[1];
+          const ob = b[0] * 10000 + b[1];
+          return oa - ob;
+        }).map(item => item[2]);
+      }
+
+      items = _sort();
+
+      return items.map(item => {
+        return Object.assign(omit(item, ["pipeline", "order"]), {
+          use: _pipeline(item.pipeline)
+        });
+      });
+    }
+
+    function _pipeline(name, processed={}) {
+      if (processed[name])
+        throw error(CIRCULAR_PIPELINE, {pipeline: name});
+
+      processed[name] = true;
+
+      const pipeline = pipelines[name];
+
+      if (!pipeline || !Array.isArray(pipeline) || !pipeline.length)
+        throw error(INVALID_PIPELINE, {pipeline: name});
+
+      return _loaders(pipeline, processed);
+    }
+
+    function _loaders(items, processed) {
+      items = items.reduce((arr, item) => {
+        if (typeof item === "object" && typeof item.pipeline === "string")
+          arr = arr.concat(_pipeline(item.pipeline, processed));
         else
-          return exts;
+          arr.push(item);
+        return arr;
       }, []);
 
-      return Object.keys(this._resourceTypes).map(name => {
-        const def = this._resourceTypes[name];
-        const resource = Object.assign({}, def.resource);
-
-        if (Array.isArray(def.extensions) && def.extensions.length)
-          resource.test = this.getExtensionTester(def.extensions);
-        else if (def.extensions === "*")
-          resource.exclude = this.getExtensionTester(allExts);
-
-        return {
-          resource,
-          issuer: def.issuer,
-          oneOf: this._createRulesFromPipelines(def.pipelines)
-        };
+      return sortPlugins(items, {
+        normalize(item) {
+          return Object.assign({}, item, {
+            name: item.name || (typeof item.loader === "string" ? item.loader : undefined),
+            loader: typeof item.loader === "function" ? item.loader : undefined
+          });
+        },
+        finalize: item => {
+          const loader = item.loader || item.name;
+          const options = context.plugins.runWaterfallSync(`build:webpack:loader_options:${item.name}`, item.options, item.name, context);
+          return options ? {loader, options} : loader;
+        }
       });
+    }
+
+    const pipelines = context.plugins.runMergeSync("build:webpack:pipelines", {}, context);
+    const defs = context.plugins.runMergeSync("build:webpack:loaders", {}, context);
+
+    const keys = Object.keys(defs);
+
+    const allExts = Object.keys(defs).reduce((exts, name) => {
+      const def = defs[name];
+      if (Array.isArray(def.extensions))
+        return exts.concat(def.extensions);
+      else
+        return exts;
+    }, []);
+
+    return keys.map(key => {
+      const def = defs[key];
+      let resource = def.resource;
+
+      if (!resource) {
+        if (Array.isArray(def.extensions) && def.extensions.length) {
+          resource = {
+            test: this.getExtensionTester(def.extensions)
+          };
+        } else if (def.extensions === "*") {
+          resource = {
+            test: this.getTestNegator(this.getExtensionTester(allExts))
+          };
+        }
+      }
+
+      return {
+        resource,
+        issuer: def.issuer,
+        oneOf: def.oneOf ? _resolve(def.oneOf) : undefined
+      };
     });
   }
 
@@ -254,7 +292,7 @@ class GourmetWebpackBuildInstance {
       path: npath.join(this.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix
     };
-    return context.plugins.runWaterfallSync("build:webpack:output", output, context);
+    return context.plugins.runMergeSync("build:webpack:output", output, context);
   }
 
   getWebpackDefine(context) {
@@ -273,7 +311,7 @@ class GourmetWebpackBuildInstance {
       merge(define, userDef);
     }
 
-    return context.plugins.runWaterfallSync("build:webpack:define", define, context);
+    return context.plugins.runMergeSync("build:webpack:define", define, context);
   }
 
   getWebpackPlugins(context) {
@@ -314,7 +352,7 @@ class GourmetWebpackBuildInstance {
       plugins = plugins.concat(userPlugins);
     }
 
-    plugins = context.plugins.runWaterfallSync("build:webpack:plugins", plugins, context);
+    context.plugins.runMergeSync("build:webpack:plugins", {plugins}, context);
 
     return sortPlugins(plugins, {
       normalize(item) {
@@ -333,112 +371,37 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  getVendorDirTester() {
-    return /[\\/]node_modules[\\/]/;
-  }
-
   getExtensionTester(extensions) {
-    let exts;
-    if (extensions.length > 1)
-      exts = "(?:" + extensions.join("|") + ")";
-    else if (extensions.length)
-      exts = extensions[0];
-    else
-      exts = "";
-    return new RegExp("\\." + exts + "(?:\\?.*)?$");
+    const exts = extensions.reduce((exts, ext) => {
+      exts[ext] = true;
+      return exts;
+    }, {});
+
+    const tester = function(path) {
+      const idx = path.indexOf("?");
+      if (idx !== -1)
+        path = path.substr(0, idx);
+      const ext = npath.extname(path);
+      return exts[ext];
+    };
+
+    tester[util.inspect.custom] = function() {
+      return `extensionTester(${JSON.stringify(extensions)})`;
+    };
+
+    return tester;
   }
 
-  getResourceType(name) {
-    const type = this._resourceTypes[name];
-    if (!type)
-      throw error(UNKNOWN_RESOURCE_TYPE, {typeName: name});
-    return type;
-  }
+  getTestNegator(tester) {
+    const negator = function(path) {
+      return !tester(path);
+    };
 
-  _createRulesFromPipelines(pipelines) {
-    function _order(name) {
-      const n = pipelines[name].order;
-      if (typeof n === "number")
-        return n;
-      if (name === "default")
-        return 9999;
-      if (name === "vendor")
-        return 9000;
-      return 5000;
-    }
+    negator[util.inspect.custom] = function(depth, options) {
+      return "!" + util.inspect(tester, options);
+    };
 
-    const names = Object.keys(pipelines).sort((a, b) => {
-      const ia = _order(a);
-      const ib = _order(b);
-      if (ia === ib) {
-        if (a > b)
-          return 1;
-        else if (a < b)
-          return -1;
-        else
-          return 0;
-      } else {
-        return ia - ib;
-      }
-    });
-
-    return names.map(name => {
-      const pipeline = pipelines[name];
-      const rule = {};
-      for (const prop in pipeline) {
-        if (pipeline.hasOwnProperty(prop) && prop !== "use" && prop !== "order")
-          rule[prop] = pipeline[prop];
-      }
-      rule.use = this._resolveLoaders(pipeline.use);
-      return rule;
-    });
-  }
-
-  _resolveLoaders(items, processed={}) {
-    const context = this.context;
-
-    items = items.reduce((arr, item) => {
-      if (typeof item === "object" && typeof item.pipeline === "string")
-        arr = arr.concat(this._resolvePipeline(item.pipeline, processed));
-      else
-        arr.push(item);
-      return arr;
-    }, []);
-
-    return sortPlugins(items, {
-      normalize(item) {
-        return Object.assign({}, item, {
-          name: item.name || (typeof item.loader === "string" ? item.loader : undefined),
-          loader: typeof item.loader === "function" ? item.loader : undefined
-        });
-      },
-      finalize: item => {
-        const loader = item.loader || item.name;
-        const options = context.plugins.runWaterfallSync(`build:webpack:loader_options:${item.name}`, item.options, item.name, context);
-        return options ? {loader, options} : loader;
-      }
-    });
-  }
-
-  _resolvePipeline(name, processed={}) {
-    if (processed[name])
-      throw error(CIRCULAR_PIPELINE, {pipelinePath: name});
-
-    processed[name] = true;
-
-    try {
-      const [typeName, pipelineName] = name.split(".");
-      const def = this.getResourceType(typeName);
-      const pipeline = def.pipelines[pipelineName];
-      if (!pipeline || !Array.isArray(pipeline.use) || !pipeline.use.length)
-        throw error(INVALID_PIPELINE, {pipelinePath: name});
-      const items = pipeline.use;
-      return this._resolveLoaders(items, processed);
-    } catch (err) {
-      if (err.code === "UNKNOWN_RESOURCE_TYPE")
-        throw error(INVALID_PIPELINE, {pipelinePath: name});
-      throw err;
-    }
+    return negator;
   }
 }
 

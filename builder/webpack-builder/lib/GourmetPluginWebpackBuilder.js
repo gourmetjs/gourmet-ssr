@@ -96,7 +96,7 @@ class GourmetPluginWebpackBuilder {
         const build = context.build;
         const colors = context.colors;
 
-        //console.log(require("util").inspect(config, {colors: true, depth: 20}));
+        console.log(require("util").inspect(config, {colors: true, depth: 20}));
         console.log(colors.brightYellow(`\n>>> Building '${context.stage}' stage for '${context.target}' target...\n`));
 
         return this._runWebpack(config, context).then(stats => {
@@ -135,10 +135,7 @@ class GourmetPluginWebpackBuilder {
         compiler = webpack(config);
       } catch (err) {
         if (err.name === "WebpackOptionsValidationError") {
-          if (context.argv.colors)
-            console.error(`\u001b[1m\u001b[31m${err.message}\u001b[39m\u001b[22m`);
-          else
-            console.error(err.message);
+          console.error(context.colors.red(err.message));
           process.exit(1);
         } else {
           return reject(err);

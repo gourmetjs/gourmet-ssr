@@ -1,50 +1,35 @@
 "use strict";
 
 class GourmetPluginWebpackLess {
-  constructor() {
-    this.plugin = {
-      name: "gourmet-plugin-webpack-less",
-      hooks: {
-        "build:webpack:loaders": this._onWebpackLoaders
-      }
+  _onWebpackPipelines() {
+    return {
+      less: [{
+        pipeline: "css"
+      }, {
+        loader: "less-loader",
+        options: {}
+      }]
     };
   }
 
-  _onWebpackLoaders(build) {
+  _onWebpackRules() {
     return {
       less: {
-        extensions: ["less"],
-        pipelines: {
-          vendor: {
-            test: [build.getVendorDirTester()],
-            use: [{
-              pipeline: "css.vendor"
-            }, {
-              loader: "less-loader",
-              options: {}
-            }]
-          },
-          default: {
-            use: [{
-              pipeline: "css.default"
-            }, {
-              loader: "less-loader",
-              options: {}
-            }]
-          },
-          css_modules: {
-            test: [],
-            use: [{
-              pipeline: "css.css_modules"
-            }, {
-              loader: "less-loader",
-              options: {}
-            }]
-          }
-        }
+        extensions: [".less"],
+        oneOf: [{
+          order: 9999,
+          pipeline: "less"
+        }]
       }
     };
   }
 }
+
+GourmetPluginWebpackLess.meta = {
+  hooks: (proto => ({
+    "build:webpack:pipelines": proto._onWebpackPipelines,
+    "build:webpack:rules": proto._onWebpackRules
+  }))(GourmetPluginWebpackLess.prototype)
+};
 
 module.exports = GourmetPluginWebpackLess;
