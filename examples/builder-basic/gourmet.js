@@ -39,6 +39,7 @@ module.exports = context => ({
     main: {
       client: "./src/client.js",
       server: "./src/server.js"
-    }
+    },
+    admin: "./src/admin.js"
   }
 });

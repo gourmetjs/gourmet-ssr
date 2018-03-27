@@ -1,11 +1,17 @@
 "use strict";
 
-const resolvePostCssPlugins = require("@gourmet/resolve-postcss-plugins");
+const sortPlugins = require("@gourmet/plugin-sort");
 
-class GourmetPluginWebpackCss {
-  _onWebpackPipelines() {
+class GourmetPluginWebpackCssFile {
+  _onWebpackPipelines(context) {
     return {
       css: [{
+        loader: "file-loader",
+        options: {emitFile: context.target === "client"}
+      }, {
+        loader: "extract-loader",
+        options: {publicPath: context.staticPrefix},
+      }, {
         loader: "css-loader",
         options: {
           // If you set `importLoaders` to 0, imported CSS files (`@import`) will not
@@ -28,7 +34,7 @@ class GourmetPluginWebpackCss {
     };
   }
 
-  _onWebpackRules() {
+  _onWebpackLoaders() {
     return {
       css: {
         extensions: [".css"],
@@ -45,7 +51,20 @@ class GourmetPluginWebpackCss {
       const plugins = Array.isArray(options.plugins) && options.plugins.length && options.plugins;
       if (plugins) {
         return Object.assign({}, options, {
-          plugins: resolvePostCssPlugins(plugins)
+          plugins: sortPlugins(plugins, {
+            normalize(item) {
+              return typeof item === "string" ? {name: item} : item;
+            },
+            finalize(item) {
+              if (!item.plugin)
+                item.plugin = require(item.name);
+
+              if (item.options)
+                return item.plugin(item.options);
+              else
+                return item.plugin();
+            }
+          })
         });
       }
     }
@@ -53,12 +72,12 @@ class GourmetPluginWebpackCss {
   }
 }
 
-GourmetPluginWebpackCss.meta = {
+GourmetPluginWebpackCssFile.meta = {
   hooks: (proto => ({
     "build:webpack:pipelines": proto._onWebpackPipelines,
-    "build:webpack:rules": proto._onWebpackRules,
+    "build:webpack:loaders": proto._onWebpackLoaders,
     "build:webpack:loader_options:postcss-loader": proto._onPostCssLoaderOptions
-  }))(GourmetPluginWebpackCss.prototype)
+  }))(GourmetPluginWebpackCssFile.prototype)
 };
 
-module.exports = GourmetPluginWebpackCss;
+module.exports = GourmetPluginWebpackCssFile;

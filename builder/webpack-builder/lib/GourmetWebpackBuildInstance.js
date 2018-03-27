@@ -234,8 +234,7 @@ class GourmetWebpackBuildInstance {
       return sortPlugins(items, {
         normalize(item) {
           return Object.assign({}, item, {
-            name: item.name || (typeof item.loader === "string" ? item.loader : undefined),
-            loader: typeof item.loader === "function" ? item.loader : undefined
+            name: item.name || (typeof item.loader === "string" ? item.loader : undefined)
           });
         },
         finalize: item => {

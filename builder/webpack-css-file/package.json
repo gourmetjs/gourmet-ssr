@@ -1,0 +1,16 @@
+{
+  "name": "@gourmet/gourmet-plugin-webpack-css-file",
+  "version": "0.1.0",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "main": "lib/GourmetPluginWebpackCssFile.js",
+  "dependencies": {
+    "@gourmet/plugin-sort": "^0.1.0",
+    "autoprefixer": "^8.2.0",
+    "css-loader": "^0.28.11",
+    "extract-loader": "^2.0.1",
+    "file-loader": "^1.1.11",
+    "postcss-loader": "^2.1.3"
+  }
+}
