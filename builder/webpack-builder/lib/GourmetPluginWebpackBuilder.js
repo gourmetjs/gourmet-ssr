@@ -1,9 +1,7 @@
 "use strict";
 
-const npath = require("path");
 const promiseEach = require("@gourmet/promise-each");
 const colors = require("@gourmet/colors");
-const promiseWriteFile = require("@gourmet/promise-write-file");
 const webpack = require("webpack");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 
@@ -102,18 +100,14 @@ class GourmetPluginWebpackBuilder {
         return this._runWebpack(config, context).then(stats => {
           this._printResults(stats, context);
 
-          if (stats.hasErrors() && !context.argv.ignoreCompileErrors) {
-            const count = stats.compilation.errors.length;
-            console.error(colors.brightRed(`\n${count} compilation error(s)`));
-            process.exitCode = 1;
-            return true;
-          }
-
-          if (build.outputManifest) {
-            const path = npath.join(build.outputDir, context.stage, "server", `${context.target}_manifest.json`);
-            const content = JSON.stringify(build.outputManifest, null, context.minify ? 0 : 2);
-            return promiseWriteFile(path, content, {useOriginalPath: true});
-          }
+          return build.finish(stats, context).then(errorExit => {
+            if (errorExit) {
+              const count = stats.compilation.errors.length;
+              console.error(colors.brightRed(`\n${count} compilation error(s)`));
+              process.exitCode = 1;
+              return true;
+            }
+          });
         });
       });
     }).then(res => {
@@ -206,6 +200,9 @@ GourmetPluginWebpackBuilder.meta = {
         },
         ignoreCompileErrors: {
           help: "Ignore compilation errors and keep continuing"
+        },
+        records: {
+          help: "Update the records file ('reset|update')"
         }
       }
     }

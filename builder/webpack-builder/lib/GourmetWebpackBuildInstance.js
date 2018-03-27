@@ -2,13 +2,18 @@
 
 const util = require("util");
 const npath = require("path");
+const fs = require("fs");
 const error = require("@gourmet/error");
 const isPlainObject = require("@gourmet/is-plain-object");
 const sortPlugins = require("@gourmet/plugin-sort");
 const merge = require("@gourmet/merge");
+const promiseReadFile = require("@gourmet/promise-read-file");
+const promiseWriteFile = require("@gourmet/promise-write-file");
+const promiseProtect = require("@gourmet/promise-protect");
 const omit = require("lodash.omit");
 const webpack = require("webpack");
-const WebpackPluginGourmetManifest = require("./WebpackPluginGourmetManifest");
+
+const promiseUnlink = util.promisify(fs.unlink);
 
 const INVALID_PIPELINE = {
   message: "Pipeline '${pipeline}' is not defined or invalid",
@@ -47,14 +52,15 @@ const INVALID_PLUGINS = {
 
 const INVALID_WEBPACK_PLUGIN = {
   message: "Webpack plugin entry must be an object with '{name, [plugin]}' shape: ${item}",
-  code: "INVALID_PLUGINS"
+  code: "INVALID_WEBPACK_PLUGIN"
+};
+
+const RECORDS_PATH_REQUIRED = {
+  message: "You must set 'builder.records' configuration to use '--records' option",
+  code: "RECORDS_PATH_REQUIRED"
 };
 
 class GourmetWebpackBuildInstance {
-  constructor(context) {
-    this.context = context;
-  }
-
   init(context) {
     return context.vars.getMulti("builder", "webpack", "entry").then(([builder, webpack, entry]) => {
       this._varsCache = {
@@ -65,7 +71,22 @@ class GourmetWebpackBuildInstance {
       const outputDir = this._varsCache.builder.outputDir || ".gourmet";
       this.outputDir = npath.resolve(context.workDir, outputDir);
     }).then(() => {
+      if (context.argv.records === "reset" && context.target === "client")
+        return this._removeRecordsFile(context);
+    }).then(() => {
       return context.plugins.runAsync("build:webpack:init", context);
+    });
+  }
+
+  finish(stats, context) {
+    return promiseProtect(() => {
+      if (stats.hasErrors() && !context.argv.ignoreCompileErrors)
+        return true;
+
+      if (context.argv.records === "reset" || context.argv.records === "update" && context.target === "client")
+        this._updateRecordsFile(context);
+
+      return this.writeManifest(stats, context);
     });
   }
 
@@ -80,7 +101,9 @@ class GourmetWebpackBuildInstance {
       resolve: this.getWebpackResolve(context),
       module: this.getWebpackModule(context),
       output: this.getWebpackOutput(context),
-      plugins: this.getWebpackPlugins(context)
+      plugins: this.getWebpackPlugins(context),
+      recordsInputPath: this.getWebpackRecordsInputPath(context),
+      recordsOutputPath: this.getWebpackRecordsOutputPath(context)
     };
   }
 
@@ -332,17 +355,6 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    plugins.push({
-      name: "@gourmet/webpack-plugin-gourmet-manifest",
-      plugin: WebpackPluginGourmetManifest,
-      options: {
-        context,
-        onComplete: obj => {
-          this.outputManifest = obj;
-        }
-      }
-    });
-
     const userPlugins = this._varsCache.webpack.plugins;
 
     if (userPlugins) {
@@ -368,6 +380,52 @@ class GourmetWebpackBuildInstance {
         return plugin;
       }
     });
+  }
+
+  getWebpackRecordsInputPath(context) {
+    if (context.target === "client") {
+      if (this._varsCache.builder.records)
+        return npath.resolve(context.workDir, this._varsCache.builder.records);
+    }
+  }
+
+  getWebpackRecordsOutputPath(context) {
+    if (context.target === "client")
+      return npath.join(this.outputDir, context.stage, "info", "webpack_records.json");
+  }
+
+  writeManifest(stats, context) {
+    function _deps() {
+      const eps = compilation.entrypoints;
+      const deps = {};
+      if (eps) {
+        eps.forEach((ep, name) => {
+          deps[name] = ep.getFiles();
+        });
+      }
+      return deps;
+    }
+
+    function _files() {
+      return Object.keys(compilation.assets);
+    }
+
+    const compilation = stats.compilation;
+    const obj = {};
+
+    ["target", "stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
+      obj[name] = context[name];
+    });
+
+    Object.assign(obj, {
+      compilation: compilation.hash,
+      dependencies: _deps(),
+      files: _files()
+    });
+
+    const path = npath.join(this.outputDir, context.stage, "server", `${context.target}_manifest.json`);
+    const content = JSON.stringify(obj, null, context.minify ? 0 : 2);
+    return promiseWriteFile(path, content, {useOriginalPath: true});
   }
 
   getExtensionTester(extensions) {
@@ -401,6 +459,25 @@ class GourmetWebpackBuildInstance {
     };
 
     return negator;
+  }
+
+  _removeRecordsFile(context) {
+    const path = this.getWebpackRecordsInputPath(context);
+    if (!path)
+      throw error(RECORDS_PATH_REQUIRED);
+    return promiseUnlink(path);
+  }
+
+  _updateRecordsFile(context) {
+    const srcPath = this.getWebpackRecordsOutputPath(context);
+    const desPath = this.getWebpackRecordsInputPath(context);
+
+    if (!desPath)
+      throw error(RECORDS_PATH_REQUIRED);
+
+    return promiseReadFile(srcPath, null).then(content => {
+      return promiseWriteFile(desPath, content, {useOriginalPath: true});
+    });
   }
 }
 

@@ -8,6 +8,7 @@
   "dependencies": {
     "@gourmet/cli-base": "^0.1.0",
     "@gourmet/error": "^0.1.0",
+    "@gourmet/promise-deep-prop": "^0.1.0",
     "@gourmet/promise-protect": "^0.1.0",
     "@gourmet/variables": "^0.1.0",
     "resolve": "^1.5.0"

@@ -22,7 +22,9 @@ module.exports = context => ({
       server: "6.1"   // node 6.10
     },
 
-    outputDir: ".gourmet"
+    outputDir: ".gourmet",
+
+    records: "webpack_records.json"
   },
 
   babel: {

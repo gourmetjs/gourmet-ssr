@@ -7,6 +7,7 @@ const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
 const CliBase = require("@gourmet/cli-base");
 const Variables = require("@gourmet/variables");
+const ContextSource = require("./ContextSource");
 
 const CONFIG_FILE_NOT_FOUND = {
   message: "Config file 'gourmet.js' or 'gourmet.json' not found in directory '${workDir}'",
@@ -58,6 +59,7 @@ class GourmetCli extends CliBase {
       argv: context.argv,
       workDir: context.workDir
     });
+    context.vars.addSource("context", new ContextSource(context));
   }
 
   _loadModuleSafe(path) {

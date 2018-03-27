@@ -15,6 +15,7 @@
     "@gourmet/promise-each": "^0.1.0",
     "@gourmet/promise-map": "^0.1.0",
     "@gourmet/promise-protect": "^0.1.0",
+    "@gourmet/promise-read-file": "^0.1.0",
     "@gourmet/promise-write-file": "^0.1.0",
     "lodash.omit": "^4.5.0",
     "webpack": "^4.1.1",
