@@ -2,9 +2,9 @@
 
 const fs = require("fs");
 
-module.exports = function promiseReadFile(path, opts="utf8") {
+module.exports = function promiseReadFile(path, options) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, opts, (err, data) => {
+    fs.readFile(path, options, (err, data) => {
       if (err)
         return reject(err);
       resolve(data);

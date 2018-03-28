@@ -10,7 +10,10 @@ const promiseRename = util.promisify(fs.rename);
 module.exports = function promiseCreateWriteStream(path, callback, options) {
   const orgPath = path;
 
-  options = options || {};
+  if (typeof options === "string")
+    options = {encoding: options};
+  else if (!options)
+    options = {};
 
   return new Promise(function(resolve, reject) {
     function createStream() {

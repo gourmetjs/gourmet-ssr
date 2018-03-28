@@ -1,9 +1,24 @@
 "use strict";
 
+const util = require("util");
+const npath = require("path");
+const fs = require("fs");
 const promiseEach = require("@gourmet/promise-each");
+const promiseReadFile = require("@gourmet/promise-read-file");
+const promiseProtect = require("@gourmet/promise-protect");
 const colors = require("@gourmet/colors");
+const error = require("@gourmet/error");
 const webpack = require("webpack");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
+const GourmetWebpackAssetManager = require("./GourmetWebpackAssetManager");
+
+const promiseUnlink = util.promisify(fs.unlink);
+
+const INVALID_STAGE_TYPES = {
+  message: "'builder.stageTypes' configuration must be an object or a function",
+  code: "INVALID_STAGE_TYPES"
+};
+
 
 // ## Lifecycle events
 //  before:command:build
@@ -11,17 +26,7 @@ const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 //    command:prepare
 //    build:client
 //      build:webpack:config
-//        build:webpack:context
-//        build:webpack:target
-//        build:webpack:mode
-//        build:webpack:devtool
-//        build:webpack:optimization
-//        build:webpack:entry
-//        build:webpack:resolve
-//        build:webpack:loaders
-//        build:webpack:loader_options:{loader-name}
-//        build:webpack:output
-//        build:webpack:plugins
+//        build:webpack:*
 //    build:server
 //      * same as build:client *
 //  after:command:build
@@ -42,43 +47,73 @@ class GourmetPluginWebpackBuilder {
     });
   }
 
+  _prepareStageTypes(context) {
+    return context.vars.get("builder.stageTypes").then(checker => {
+      if (checker === undefined) {
+        checker = {
+          "local": ["hot", "local"],
+          "hot": ["hot"],
+          "production": ["prod", "production"]
+        };
+      }
+
+      if (typeof checker === "object") {
+        const types = checker;
+        checker = function(stage, type) {
+          const entry = types[type];
+          return entry && entry.indexOf(stage) !== -1;
+        };
+      } else if (typeof checker !== "function") {
+        throw error(INVALID_STAGE_TYPES);
+      }
+
+      context.stageIs = function(type) {
+        return checker(this.stage, type);
+      };
+    });
+  }
+
   // Handler for `build:prepare` event
   _onPrepare(context) {
-    return promiseEach(["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"], name => {
-      return context.vars.get("builder." + name).then(userValue => {
-        let value;
+    return this._prepareStageTypes(context).then(() => {
+      return promiseEach(["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"], name => {
+        return context.vars.get("builder." + name).then(userValue => {
+          let value;
 
-        if (context.argv[name] !== undefined) {
-          value = context.argv[name];   // CLI option has the highest priority
-        } else if (userValue !== undefined) {
-          value = userValue;
-        } else {
-          switch (name) {
-            case "stage":
-              value = "dev";
-              break;
-            case "debug":
-              value = !(context.stage === "prod" || context.stage === "production");
-              break;
-            case "minify":
-              value = (context.stage === "prod" || context.stage === "production");
-              break;
-            case "sourceMap":
-              value = (context.stage !== "hot" && context.debug);
-              break;
-            case "hashNames":
-              value = (context.stage !== "hot" && context.stage !== "local");
-              break;
-            case "staticPrefix":
-              value = "/s/";
-              break;
-            default:
-              throw Error(`Internal error: add '${name}' to the switch/case`);
+          if (context.argv[name] !== undefined) {
+            value = context.argv[name];   // CLI option has the highest priority
+          } else if (userValue !== undefined) {
+            value = userValue;
+          } else {
+            switch (name) {
+              case "stage":
+                value = "dev";
+                break;
+              case "debug":
+                value = !context.stageIs("production");
+                break;
+              case "minify":
+                value = context.stageIs("production");
+                break;
+              case "sourceMap":
+                value = (!context.stageIs("hot") && context.debug);
+                break;
+              case "hashNames":
+                value = !context.stageIs("local");
+                break;
+              case "staticPrefix":
+                value = "/s/";
+                break;
+              default:
+                throw Error(`Internal error: add '${name}' to the switch/case`);
+            }
           }
-        }
 
-        context[name] = value;
+          context[name] = value;
+        });
       });
+    }).then(() => {
+      return this._prepareAssetRecords(context);
     });
   }
 
@@ -154,6 +189,27 @@ class GourmetPluginWebpackBuilder {
       errors: true
     };
     console.log(stats.toString(options));
+  }
+
+  _prepareAssetRecords(context) {
+    return promiseProtect(() => {
+      if (context.hashNames) {
+        return this._getAssetRecordsPath(context).then(path => {
+          if (context.argv.records === "reset")
+            return promiseUnlink(path);
+          else
+            return promiseReadFile(path);
+        });
+      }
+    }).then(records => {
+      context.assets = new GourmetWebpackAssetManager(records, context);
+    });
+  }
+
+  _getAssetRecordsPath(context) {
+    return context.vars.get("webpack.recordsDir", ".webpack").then(dir => {
+      return npath.resolve(context.workDir, dir, `assets.${context.stage}-${context.target}.json`);
+    });
   }
 }
 

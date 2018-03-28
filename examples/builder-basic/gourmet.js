@@ -9,12 +9,16 @@ module.exports = context => ({
 
   // Builder configuration
   builder: {
-    // These properties are provisioned to `context`.
+    stageTypes: {
+      "local": ["hot", "local"],
+      "hot": ["hot"],
+      "production": ["prod", "production"]
+    },
     stage: "dev",
-    debug: context.getter(() => !(context.stage === "prod" || context.stage === "production")),
-    minify: context.getter(() => (context.stage === "prod" || context.stage === "production")),
-    sourceMap: context.getter(() => (context.stage !== "hot" && context.debug)),
-    hashNames: context.getter(() => (context.stage !== "hot" && context.stage !== "local")),
+    debug: context.getter(() => !context.stageIs("production")),
+    minify: context.getter(() => context.stageIs("production")),
+    sourceMap: context.getter(() => !context.stageIs("hot") && context.debug),
+    hashNames: context.getter(() => !context.stageIs("local")),
     staticPrefix: "/s/",
 
     runtime: {
@@ -22,9 +26,7 @@ module.exports = context => ({
       server: "6.1"   // node 6.10
     },
 
-    outputDir: ".gourmet",
-
-    records: "webpack_records.json"
+    outputDir: ".gourmet"
   },
 
   babel: {
@@ -32,6 +34,7 @@ module.exports = context => ({
   },
 
   webpack: {
+    recordsDir: ".webpack",
     alias: {},
     define: {},
     plugins: []

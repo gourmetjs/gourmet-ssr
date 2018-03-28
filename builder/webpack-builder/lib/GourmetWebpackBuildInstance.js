@@ -55,11 +55,6 @@ const INVALID_WEBPACK_PLUGIN = {
   code: "INVALID_WEBPACK_PLUGIN"
 };
 
-const RECORDS_PATH_REQUIRED = {
-  message: "You must set 'builder.records' configuration to use '--records' option",
-  code: "RECORDS_PATH_REQUIRED"
-};
-
 class GourmetWebpackBuildInstance {
   init(context) {
     return context.vars.getMulti("builder", "webpack", "entry").then(([builder, webpack, entry]) => {
@@ -68,11 +63,9 @@ class GourmetWebpackBuildInstance {
         webpack: webpack || {},
         entry: entry || {}
       };
-      const outputDir = this._varsCache.builder.outputDir || ".gourmet";
-      this.outputDir = npath.resolve(context.workDir, outputDir);
+      this.outputDir = npath.resolve(context.workDir, this._varsCache.builder.outputDir || ".gourmet");
     }).then(() => {
-      if (context.argv.records === "reset" && context.target === "client")
-        return this._removeRecordsFile(context);
+      return this._prepareRecordsFile(context);
     }).then(() => {
       return context.plugins.runAsync("build:webpack:init", context);
     });
@@ -82,11 +75,9 @@ class GourmetWebpackBuildInstance {
     return promiseProtect(() => {
       if (stats.hasErrors() && !context.argv.ignoreCompileErrors)
         return true;
-
-      if (context.argv.records === "reset" || context.argv.records === "update" && context.target === "client")
-        this._updateRecordsFile(context);
-
-      return this.writeManifest(stats, context);
+      return this._updateRecordsFile(context).then(() => {
+        return this.writeManifest(stats, context);
+      });
     });
   }
 
@@ -102,8 +93,8 @@ class GourmetWebpackBuildInstance {
       module: this.getWebpackModule(context),
       output: this.getWebpackOutput(context),
       plugins: this.getWebpackPlugins(context),
-      recordsInputPath: this.getWebpackRecordsInputPath(context),
-      recordsOutputPath: this.getWebpackRecordsOutputPath(context)
+      recordsInputPath: this._recordsInputPath,
+      recordsOutputPath: this._recordsOutputPath
     };
   }
 
@@ -124,9 +115,9 @@ class GourmetWebpackBuildInstance {
   getWebpackDevTool(context) {
     function _devtool() {
       if (context.target === "client") {
-        if (context.stage === "hot")
+        if (context.stageIs("hot"))
           return context.sourceMap ? "cheap-eval-source-map" : "eval";
-        else if (context.stage === "local")
+        else if (context.stageIs("local"))
           return context.sourceMap ? "eval-source-map" : false;
       }
       return context.sourceMap ? "source-map" : false;
@@ -140,7 +131,7 @@ class GourmetWebpackBuildInstance {
       minimize: context.minify,
       runtimeChunk: context.target === "client",
       splitChunks: (() => {
-        if (context.target === "server" || context.stage === "hot" || context.stage === "local")
+        if (context.target === "server" || context.stageIs("local"))
           return false;
 
         return {
@@ -308,7 +299,7 @@ class GourmetWebpackBuildInstance {
   getWebpackOutput(context) {
     const filename = (context.target === "server" || !context.hashNames) ? "[name]_bundle.js" : "[chunkHash].js";
     const output = {
-      hashDigestLength: 33,
+      //hashDigestLength: 33,
       filename,
       chunkFilename: filename,
       path: npath.join(this.outputDir, context.stage, context.target),
@@ -382,18 +373,6 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  getWebpackRecordsInputPath(context) {
-    if (context.target === "client") {
-      if (this._varsCache.builder.records)
-        return npath.resolve(context.workDir, this._varsCache.builder.records);
-    }
-  }
-
-  getWebpackRecordsOutputPath(context) {
-    if (context.target === "client")
-      return npath.join(this.outputDir, context.stage, "info", "webpack_records.json");
-  }
-
   writeManifest(stats, context) {
     function _deps() {
       const eps = compilation.entrypoints;
@@ -461,23 +440,40 @@ class GourmetWebpackBuildInstance {
     return negator;
   }
 
-  _removeRecordsFile(context) {
-    const path = this.getWebpackRecordsInputPath(context);
-    if (!path)
-      throw error(RECORDS_PATH_REQUIRED);
-    return promiseUnlink(path);
+  _prepareRecordsFile(context) {
+    return promiseProtect(() => {
+      if (context.hashNames) {
+        const path = this._getUserRecordsPath(context);
+        if (context.argv.records === "reset")
+          return promiseUnlink(path);
+        else
+          this._recordsInputPath = path;
+      }
+    }).then(() => {
+      this._recordsOutputPath = this._getWebpackRecordsPath(context);
+    });
   }
 
   _updateRecordsFile(context) {
-    const srcPath = this.getWebpackRecordsOutputPath(context);
-    const desPath = this.getWebpackRecordsInputPath(context);
-
-    if (!desPath)
-      throw error(RECORDS_PATH_REQUIRED);
-
-    return promiseReadFile(srcPath, null).then(content => {
-      return promiseWriteFile(desPath, content, {useOriginalPath: true});
+    return promiseProtect(() => {
+      if (context.hashNames && (context.argv.records === "reset" || context.argv.records === "update")) {
+        const srcPath = this._getWebpackRecordsPath(context);
+        const desPath = this._getUserRecordsPath(context);
+        return promiseReadFile(srcPath).then(content => {
+          return promiseWriteFile(desPath, content, {useOriginalPath: true});
+        });
+      }
     });
+  }
+
+  _getUserRecordsPath(context) {
+    const dir = npath.resolve(context.workDir, this._varsCache.webpack.recordsDir || ".webpack");
+    return npath.join(dir, `webpack_ids.${context.stage}-${context.target}.json`);
+  }
+
+  _getWebpackRecordsPath(context) {
+    const dir = npath.join(this.outputDir, context.stage, "info");
+    return npath.join(dir, `webpack_ids.${context.stage}-${context.target}.json`);
   }
 }
 
