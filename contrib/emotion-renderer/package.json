@@ -1,0 +1,9 @@
+{
+  "name": "@gourmet/emotion-renderer",
+  "version": "0.1.0",
+  "main": "client.js",
+  "dependencies": {
+    "@gourmet/react-renderer": "^0.1.0",
+    "emotion-server": "^9.1.0"
+  }
+}

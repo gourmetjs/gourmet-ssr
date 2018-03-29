@@ -1,0 +1,8 @@
+{
+  "name": "@gourmet/serialize-request-error",
+  "version": "0.1.0",
+  "main": "lib/serializeRequestError.js",
+  "dependencies": {
+    "@gourmet/serialize-error": "^0.1.0"
+  }
+}

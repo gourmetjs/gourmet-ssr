@@ -1,0 +1,5 @@
+{
+  "name": "@gourmet/send-content",
+  "version": "0.1.0",
+  "main": "lib/sendContent.js"
+}

@@ -5,6 +5,8 @@
     "utils/*",
     "cli/*",
     "builder/*",
+    "runtime/*",
+    "contrib/*",
     "examples/*"
   ],
   "hoist": true,

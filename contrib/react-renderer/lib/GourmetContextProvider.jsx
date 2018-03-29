@@ -4,7 +4,7 @@ const React = require("react");
 const {Component, Fragment} = React;
 const PropTypes = require("prop-types");
 
-class ContextProvider extends Component {
+class GourmetContextProvider extends Component {
   getChildContext() {
     return this.props.gmctx;
   }
@@ -18,8 +18,8 @@ class ContextProvider extends Component {
   }
 }
 
-ContextProvider.childContextTypes = {
+GourmetContextProvider.childContextTypes = {
   gmctx: PropTypes.object
 };
 
-module.exports = ContextProvider;
+module.exports = GourmetContextProvider;
