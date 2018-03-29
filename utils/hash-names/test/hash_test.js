@@ -6,10 +6,10 @@ const HashNames = require("..");
 test("HashNames basics", t => {
   const hashNames = new HashNames();
 
-  let info = hashNames.getHashName("Hello, world!");
+  let info = hashNames.getEntry("Hello, world!");
 
   t.deepEqual(info, {
-    key: "l9hRRUOhKqFuQZcPLvN7M8r5mlz",
+    hash: "l9hRRUOhKqFuQZcPLvN7M8r5mlz",
     name: "l9hR"
   });
 
@@ -19,17 +19,17 @@ test("HashNames basics", t => {
     namei: "1hyp"
   };
 
-  info = hashNames.getHashName("foo");
+  info = hashNames.getEntry("foo");
 
   t.deepEqual(info, {
-    key: "1HyPQr2xj1nmnkQXBCJXUdQoy5l",
+    hash: "1HyPQr2xj1nmnkQXBCJXUdQoy5l",
     name: "1HyPQ"  // 5 chars due to a conflict
   });
 
-  info = hashNames.getHashName("Hello, world!", {addNew: false});
+  info = hashNames.getEntry("Hello, world!", {addNew: false});
 
   t.deepEqual(info, {
-    key: "l9hRRUOhKqFuQZcPLvN7M8r5mlz",
+    hash: "l9hRRUOhKqFuQZcPLvN7M8r5mlz",
     name: "l9hR"
   });
 
@@ -64,8 +64,8 @@ test("HashNames long conflicts", t => {
     };
   }
 
-  t.deepEqual(hashNames.getHashName("bar"), {
-    key: "1H7lwuiRG1ZBDSTfkgKopQ",
+  t.deepEqual(hashNames.getEntry("bar"), {
+    hash: "1H7lwuiRG1ZBDSTfkgKopQ",
     name: "1H7lwuiRG1ZBDSTfkgKopQ3"
   });
 

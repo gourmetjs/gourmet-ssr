@@ -9,6 +9,6 @@
     "@gourmet/gourmet-cli": "^0.1.0",
     "@gourmet/gourmet-plugin-webpack-babel": "^0.1.0",
     "@gourmet/gourmet-plugin-webpack-builder": "^0.1.0",
-    "@gourmet/gourmet-plugin-webpack-css-file": "^0.1.0"
+    "@gourmet/gourmet-plugin-webpack-global-css": "^0.1.0"
   }
 }

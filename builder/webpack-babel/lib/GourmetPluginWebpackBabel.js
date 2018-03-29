@@ -29,11 +29,13 @@ class GourmetPluginWebpackBabel {
     // `plugins` are appended too.
     return {
       js: [{
-        loader: "babel-loader",
+        name: "babel-loader",
+        loader: require.resolve("babel-loader"),
         options: {
           //cacheDirectory: true,
           presets: [{
             name: "babel-preset-env",
+            preset: require.resolve("babel-preset-env"),
             options: {
               modules: false,
               targets: this._varCache.targets,
@@ -44,10 +46,17 @@ class GourmetPluginWebpackBabel {
           plugins: (() => {
             const plugins = [];
 
-            if (context.target === "client")
-              plugins.push("babel-plugin-syntax-dynamic-import");
-            else
-              plugins.push("babel-plugin-dynamic-import-node");
+            if (context.target === "client") {
+              plugins.push({
+                name: "babel-plugin-syntax-dynamic-import",
+                plugin: require.resolve("babel-plugin-syntax-dynamic-import")
+              });
+            } else {
+              plugins.push({
+                name: "babel-plugin-dynamic-import-node",
+                plugin: require.resolve("babel-plugin-dynamic-import-node")
+              });
+            }
 
             // We can't turn this on by default due to the following issue:
             // https://github.com/webpack/webpack/issues/4039
@@ -81,9 +90,9 @@ class GourmetPluginWebpackBabel {
         },
         finalize(item) {
           if (item.options)
-            return [item.plugin || item.name, item.options];
+            return [item.preset || item.plugin || item.name, item.options];
           else
-            return item.plugin || item.name;
+            return item.preset || item.plugin || item.name;
         }
       });
     }

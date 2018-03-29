@@ -2,17 +2,23 @@
 
 const sortPlugins = require("@gourmet/plugin-sort");
 
-class GourmetPluginWebpackCssFile {
+class GourmetPluginWebpackGlobalCss {
   _onWebpackPipelines(context) {
     return {
       css: [{
-        loader: "file-loader",
-        options: {emitFile: context.target === "client"}
+        name: "@gourmet/webpack-file-loader",
+        loader: require.resolve("@gourmet/webpack-file-loader"),
+        options: {
+          name: context.build.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
+          emitFile: context.target === "client"
+        }
       }, {
-        loader: "extract-loader",
+        name: "extract-loader",
+        loader: require.resolve("extract-loader"),
         options: {publicPath: context.staticPrefix},
       }, {
-        loader: "css-loader",
+        name: "css-loader",
+        loader: require.resolve("css-loader"),
         options: {
           // If you set `importLoaders` to 0, imported CSS files (`@import`) will not
           // be processed by `postcss-loader` which results in bypassing `autoprefixed`.
@@ -21,14 +27,16 @@ class GourmetPluginWebpackCssFile {
           importLoaders: 1
         }
       }, {
-        loader: "postcss-loader",
+        name: "postcss-loader",
+        loader: require.resolve("postcss-loader"),
         options: {
-          plugins: [
+          plugins: [{
             // Autoprefixer uses `browserslist` and putting options under `browserslist`
             // key of `package.json` is recommended way of configuring it as opposed to
             // specifying options here.
-            "autoprefixer"
-          ]
+            name: "autoprefixer",
+            plugin: require("autoprefixer")
+          }]
         }
       }]
     };
@@ -72,12 +80,12 @@ class GourmetPluginWebpackCssFile {
   }
 }
 
-GourmetPluginWebpackCssFile.meta = {
+GourmetPluginWebpackGlobalCss.meta = {
   hooks: (proto => ({
     "build:webpack:pipelines": proto._onWebpackPipelines,
     "build:webpack:loaders": proto._onWebpackLoaders,
     "build:webpack:loader_options:postcss-loader": proto._onPostCssLoaderOptions
-  }))(GourmetPluginWebpackCssFile.prototype)
+  }))(GourmetPluginWebpackGlobalCss.prototype)
 };
 
-module.exports = GourmetPluginWebpackCssFile;
+module.exports = GourmetPluginWebpackGlobalCss;

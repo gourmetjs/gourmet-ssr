@@ -8,11 +8,18 @@ class GourmetPluginWebpackReact {
         options: {
           presets: [{
             name: "babel-preset-react",
+            preset: require.resolve("babel-preset-react"),
             after: "babel-preset-env"
           }],
           plugins: (() => {
-            if (context.stage === "hot")
-              return ["react-hot-loader/babel"];
+            const plugins = [];
+            if (context.stage === "hot") {
+              plugins.push({
+                name: "react-hot-loader/babel",
+                plugin: require.resolve("react-hot-loader/babel")
+              });
+            }
+            return plugins;
           })()
         }
       }]

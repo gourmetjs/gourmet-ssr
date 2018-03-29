@@ -7,12 +7,9 @@
   },
   "dependencies": {
     "@gourmet/error": "^0.1.0",
-    "@gourmet/promise-read-file": "^0.1.0",
-    "@gourmet/promise-write-file": "^0.1.0",
     "base-x": "^3.0.4"
   },
   "devDependencies": {
-    "@gourmet/promise-write-file": "^0.1.0",
     "tape": "^4.9.0"
   }
 }

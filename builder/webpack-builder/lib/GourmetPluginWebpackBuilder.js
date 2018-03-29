@@ -1,18 +1,17 @@
 "use strict";
 
-const util = require("util");
 const npath = require("path");
-const fs = require("fs");
 const promiseEach = require("@gourmet/promise-each");
 const promiseReadFile = require("@gourmet/promise-read-file");
+const promiseWriteFile = require("@gourmet/promise-write-file");
 const promiseProtect = require("@gourmet/promise-protect");
 const colors = require("@gourmet/colors");
 const error = require("@gourmet/error");
+const HashNames = require("@gourmet/hash-names");
 const webpack = require("webpack");
+const omit = require("lodash.omit");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
-const GourmetWebpackAssetManager = require("./GourmetWebpackAssetManager");
-
-const promiseUnlink = util.promisify(fs.unlink);
+const recordsFile = require("./recordsFile");
 
 const INVALID_STAGE_TYPES = {
   message: "'builder.stageTypes' configuration must be an object or a function",
@@ -37,39 +36,18 @@ class GourmetPluginWebpackBuilder {
 
     // TODO: move to a place that makes more sense
     context.colors = argv.colors ? colors : colors.disabled;
+    context.buildResult = {};
 
     return context.plugins.runAsync("build:prepare", context).then(() => {
       if (argv.target === "all" || argv.target === "client")
         return context.plugins.runAsync("build:client", "client", context);
-    }).then(stop => {
-      if (!stop && argv.target === "all" || argv.target === "server")
+    }).then(res => {
+      context.buildResult.client = res;
+      if (!res.errorExit && argv.target === "all" || argv.target === "server")
         return context.plugins.runAsync("build:server", "server", context);
-    });
-  }
-
-  _prepareStageTypes(context) {
-    return context.vars.get("builder.stageTypes").then(checker => {
-      if (checker === undefined) {
-        checker = {
-          "local": ["hot", "local"],
-          "hot": ["hot"],
-          "production": ["prod", "production"]
-        };
-      }
-
-      if (typeof checker === "object") {
-        const types = checker;
-        checker = function(stage, type) {
-          const entry = types[type];
-          return entry && entry.indexOf(stage) !== -1;
-        };
-      } else if (typeof checker !== "function") {
-        throw error(INVALID_STAGE_TYPES);
-      }
-
-      context.stageIs = function(type) {
-        return checker(this.stage, type);
-      };
+    }).then(res => {
+      context.buildResult.server = res;
+      return context.plugins.runAsync("build:finish", context);
     });
   }
 
@@ -113,13 +91,13 @@ class GourmetPluginWebpackBuilder {
         });
       });
     }).then(() => {
-      return this._prepareAssetRecords(context);
+      return this._prepareBuildRecords(context);
     });
   }
 
   // Handler for `build:(client|server)` event
   _onBuild(target, context) {
-    return Promise.resolve().then(() => {
+    return promiseProtect(() => {
       context.target = target;
       context.build = new GourmetWebpackBuildInstance(context);
     }).then(() => {
@@ -135,13 +113,13 @@ class GourmetPluginWebpackBuilder {
         return this._runWebpack(config, context).then(stats => {
           this._printResults(stats, context);
 
-          return build.finish(stats, context).then(errorExit => {
-            if (errorExit) {
+          return build.finish(stats, context).then(res => {
+            if (res.errorExit) {
               const count = stats.compilation.errors.length;
               console.error(colors.brightRed(`\n${count} compilation error(s)`));
               process.exitCode = 1;
-              return true;
             }
+            return res;
           });
         });
       });
@@ -149,6 +127,40 @@ class GourmetPluginWebpackBuilder {
       context.target = undefined;
       context.build = undefined;
       return res;
+    });
+  }
+
+  _onFinish(context) {
+    return promiseProtect(() => {
+      const res = context.buildResult;
+      if (res.client && !res.client.errorExit && res.server && !res.server.errorExit)
+        return this._finishBuildRecords(context);
+    });
+  }
+
+  _prepareStageTypes(context) {
+    return context.vars.get("builder.stageTypes").then(checker => {
+      if (checker === undefined) {
+        checker = {
+          "local": ["hot", "local"],
+          "hot": ["hot"],
+          "production": ["prod", "production"]
+        };
+      }
+
+      if (typeof checker === "object") {
+        const types = checker;
+        checker = function(stage, type) {
+          const entry = types[type];
+          return entry && entry.indexOf(stage) !== -1;
+        };
+      } else if (typeof checker !== "function") {
+        throw error(INVALID_STAGE_TYPES);
+      }
+
+      context.stageIs = function(type) {
+        return checker(this.stage, type);
+      };
     });
   }
 
@@ -191,24 +203,68 @@ class GourmetPluginWebpackBuilder {
     console.log(stats.toString(options));
   }
 
-  _prepareAssetRecords(context) {
-    return promiseProtect(() => {
-      if (context.hashNames) {
-        return this._getAssetRecordsPath(context).then(path => {
-          if (context.argv.records === "reset")
-            return promiseUnlink(path);
-          else
-            return promiseReadFile(path);
+  _prepareBuildRecords(context) {
+    return this._getUserBuildRecordsPath(context).then(userPath => {
+      return this._getBuildRecordsPath(context).then(recPath => {
+        return recordsFile.prepare(userPath, recPath, context.argv.records).then(() => {
+          return this._loadBuildRecords(recPath).then(records => {
+            context.records = records;
+          });
         });
-      }
-    }).then(records => {
-      context.assets = new GourmetWebpackAssetManager(records, context);
+      });
     });
   }
 
-  _getAssetRecordsPath(context) {
+  _finishBuildRecords(context) {
+    return this._getUserBuildRecordsPath(context).then(userPath => {
+      return this._getBuildRecordsPath(context).then(recPath => {
+        return this._saveBuildRecords(recPath, context.records).then(() => {
+          return recordsFile.finish(userPath, recPath, context.argv.records);
+        });
+      });
+    });
+  }
+
+  _loadBuildRecords(path) {
+    const records = {
+      chunks: new HashNames(),
+      files: new HashNames()
+    };
+    return promiseReadFile(path, "utf8").then(content => {
+      const obj = JSON.parse(content);
+      if (obj.chunks)
+        records.chunks.deserialize(obj.chunks);
+      if (obj.files)
+        records.files.deserialize(obj.files);
+      Object.assign(records, omit(obj, ["chunks", "files"]));
+      return records;
+    }).catch(err => {
+      if (err.code !== "ENOENT")
+        throw err;
+      return records;
+    });
+  }
+
+  _saveBuildRecords(path, records) {
+    const obj = Object.assign({
+      chunks: records.chunks.serialize(),
+      files: records.files.serialize()
+    }, omit(records, ["chunks", "files"]));
+    const content = JSON.stringify(obj, null, 2);
+    return promiseWriteFile(path, content, "utf8");
+  }
+
+  _getUserBuildRecordsPath(context) {
     return context.vars.get("webpack.recordsDir", ".webpack").then(dir => {
-      return npath.resolve(context.workDir, dir, `assets.${context.stage}-${context.target}.json`);
+      dir = npath.resolve(context.workDir, dir);
+      return npath.join(dir, context.stage, "build.json");
+    });
+  }
+
+  _getBuildRecordsPath(context) {
+    return context.vars.get("builder.outputDir", ".gourmet").then(dir => {
+      dir = npath.resolve(context.workDir, dir);
+      return npath.join(dir, context.stage, "info", "build.json");
     });
   }
 }
@@ -258,7 +314,7 @@ GourmetPluginWebpackBuilder.meta = {
           help: "Ignore compilation errors and keep continuing"
         },
         records: {
-          help: "Update the records file ('reset|update')"
+          help: "Update the records file ('save|revert|clean|update')"
         }
       }
     }
@@ -269,7 +325,8 @@ GourmetPluginWebpackBuilder.meta = {
     "build:prepare": proto._onPrepare,
     "build:client": proto._onBuild,
     "build:server": proto._onBuild,
-    "build:webpack:config": proto._onWebpackConfig
+    "build:webpack:config": proto._onWebpackConfig,
+    "build:finish": proto._onFinish
   }))(GourmetPluginWebpackBuilder.prototype)
 };
 

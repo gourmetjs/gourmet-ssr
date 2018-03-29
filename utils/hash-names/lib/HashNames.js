@@ -1,14 +1,8 @@
 "use strict";
 
-const util = require("util");
-const fs = require("fs");
 const crypto = require("crypto");
 const baseX = require("base-x");
 const error = require("@gourmet/error");
-const promiseReadFile = require("@gourmet/promise-read-file");
-const promiseWriteFile = require("@gourmet/promise-write-file");
-
-const promiseUnlink = util.promisify(fs.unlink);
 
 // This table is extracted from `https://github.com/webpack/loader-utils`
 const baseChars = {
@@ -23,7 +17,7 @@ const baseChars = {
 };
 
 const INVALID_HASH_KEY = {
-  message: "Hash key '${key}' conflicts with existing keys in case-insensitive setup",
+  message: "Hash key '${hash}' conflicts with existing keys in case-insensitive setup",
   code: "INVALID_HASH_KEY"
 };
 
@@ -50,7 +44,7 @@ class HashNames {
     this._names = {};
   }
 
-  getHashName(content, {addNew=true}={}) {
+  getEntry(content, {addNew=true}={}) {
     const _find = name => {
       const keys = Object.keys(names);
       const namei = this.converter(name);
@@ -62,11 +56,11 @@ class HashNames {
       return false;
     };
 
-    const key = this.getFullHash(content);
+    const hash = this.getHash(content);
     const names = this._names;
 
-    if (names[key])
-      return {key, name: names[key].name};
+    if (names[hash])
+      return {hash, name: names[hash].name};
 
     if (!addNew)
       return undefined;
@@ -74,31 +68,37 @@ class HashNames {
     let name;
     let idx;
 
-    for (idx = this.minLength; idx <= key.length; idx++) {
-      name = key.substr(0, idx);
+    for (idx = this.minLength; idx <= hash.length; idx++) {
+      name = hash.substr(0, idx);
       if (!_find(name))
         break;
     }
 
-    if (idx > key.length) {
+    if (idx > hash.length) {
       for (let idx = 0; idx < 65536; idx++) {
-        name = key + idx.toString(16);
+        name = hash + idx.toString(16);
         if (!_find(name))
           break;
       }
       if (idx >= 65536)
-        throw error(INVALID_HASH_KEY, key);
+        throw error(INVALID_HASH_KEY, {hash});
     }
 
-    names[key] = {
+    names[hash] = {
       name,
       namei: this.converter(name)
     };
 
-    return {key, name};
+    return {hash, name};
   }
 
-  getFullHash(content) {
+  // Gets a short ID for the content
+  getName(content, options) {
+    return this.getEntry(content, options).name;
+  }
+
+  // Gets a full hash of the content
+  getHash(content) {
     const hash = crypto.createHash(this.hashType);
     hash.update(content);
     return this.encoder(hash.digest());
@@ -106,44 +106,21 @@ class HashNames {
 
   serialize() {
     const names = this._names;
-    return Object.keys(names).reduce((obj, key) => {
-      obj[key] = names[key].name;
+    return Object.keys(names).reduce((obj, hash) => {
+      obj[hash] = names[hash].name;
       return obj;
     }, {});
   }
 
   deserialize(obj) {
-    this._names = Object.keys(obj).reduce((names, key) => {
-      const name = obj[key];
-      names[key] = {
+    this._names = Object.keys(obj).reduce((names, hash) => {
+      const name = obj[hash];
+      names[hash] = {
         name,
         namei: this.converter(name)
       };
       return names;
     }, {});
-  }
-
-  load(path) {
-    return promiseReadFile(path, "utf8").then(content => {
-      const obj = JSON.parse(content);
-      this.deserialize(obj);
-    }).catch(err => {
-      if (err.code === "???")
-        this.deserialize({});
-      else
-        throw err;
-    });
-  }
-
-  save(path) {
-    const obj = this.serialize();
-    const content = JSON.stringify(obj, null, 2);
-    return promiseWriteFile(path, content, "utf8");
-  }
-
-  reset(path) {
-    this.deserialize({});
-    return promiseUnlink(path);
   }
 }
 
