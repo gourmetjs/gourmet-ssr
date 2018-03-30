@@ -1,4 +1,4 @@
 {
-  "extends": "gourmet/gourmet",
+  "extends": "gourmet/gourmet_jsx",
   "root": true
 }

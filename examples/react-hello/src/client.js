@@ -1,4 +1,4 @@
 import reactRenderer from "@gourmet/react-renderer";
-import Hello from "./Hello";
+import renderApp from "./renderApp";
 
-reactRenderer(() => <Hello/>).render();
+reactRenderer(renderApp).render();

@@ -8,9 +8,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",
     "@gourmet/preset-builder": "^0.1.0",
-    "@gourmet/preset-react": "^0.1.0"
-  },
-  "dependencies": {
+    "@gourmet/preset-react": "^0.1.0",
     "bootstrap": "^4.0.0"
   }
 }

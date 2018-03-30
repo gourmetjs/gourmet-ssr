@@ -46,7 +46,7 @@ module.exports = class HtmlServerRenderer {
   }
 
   // Options
-  //  - entryName
+  //  - entrypoint
   //  - serverManifest
   //  - clientManifest
   getRenderer(opts) {
@@ -62,7 +62,7 @@ module.exports = class HtmlServerRenderer {
   }
 
   createContext(req, res, {
-    entryName,
+    entrypoint,
     serverManifest,
     clientManifest
   }) {
@@ -76,14 +76,14 @@ module.exports = class HtmlServerRenderer {
         bodyTop: [],
         bodyBottom: []
       }, this.options.html),
-      entryName,
+      entrypoint,
       serverManifest,
       clientManifest,
       params: this.getParams(req),
       data: {
         // There are no fields automatically transfered to the client
         // because overriding this behavior is very easy in user code.
-        //  - entryName,
+        //  - entrypoint,
         //  - staticPrefix: clientManifest.staticPrefix,
         //  - serverUrl: req.url
       }
@@ -158,21 +158,12 @@ module.exports = class HtmlServerRenderer {
   }
 
   addDependencies(gmctx) {
-    const entryName = gmctx.entryName;
+    const entrypoint = gmctx.entrypoint;
     const manifest = gmctx.clientManifest;
     const staticPrefix = manifest.staticPrefix;
-    const deps = manifest.dependencies[entryName];
-    const files = manifest.files;
+    const deps = manifest.entrypoints[entrypoint];
     const styles = [];
     const scripts = [];
-
-    // TODO: fix this temporary solution so that only CSS files used by this entry get injected.
-    //       Also, this has to be moved to `GourmetManifestPlugin`.
-    files.forEach(filename => {
-      const ext = npath.posix.extname(filename).toLowerCase();
-      if (ext === ".css")
-        styles.push(`<link rel="stylesheet" type="text/css" href="${staticPrefix}${filename}">`);
-    });
 
     deps.forEach(filename => {
       const ext = npath.posix.extname(filename).toLowerCase();

@@ -1,9 +1,9 @@
 import reactRenderer from "@gourmet/react-renderer/server";
-import Hello from "./Hello";
+import renderApp from "./renderApp";
 
 __gourmet_module__.exports = reactRenderer(() => {
   if (STAGE !== "hot") {
-    return <Hello/>;
+    return renderApp();
   } else {
     return null;
   }
