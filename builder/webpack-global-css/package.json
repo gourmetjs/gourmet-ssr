@@ -1,5 +1,5 @@
 {
-  "name": "@gourmet/gourmet-plugin-webpack-global-css",
+  "name": "@gourmet/plugin-webpack-global-css",
   "version": "0.1.0",
   "keywords": [
     "gourmet-plugin"

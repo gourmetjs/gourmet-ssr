@@ -1,5 +1,5 @@
 {
-  "name": "@gourmet/example-builder-basic",
+  "name": "@gourmet/example-react-hello",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -7,7 +7,10 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",
-    "@gourmet/plugin-webpack-babel": "^0.1.0",
-    "@gourmet/plugin-webpack-builder": "^0.1.0"
+    "@gourmet/preset-builder": "^0.1.0",
+    "@gourmet/preset-react": "^0.1.0"
+  },
+  "dependencies": {
+    "bootstrap": "^4.0.0"
   }
 }

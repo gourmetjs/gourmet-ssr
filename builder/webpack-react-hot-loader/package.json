@@ -1,0 +1,12 @@
+{
+  "name": "@gourmet/plugin-webpack-react-hot-loader",
+  "version": "0.1.0",
+  "main": "lib/GourmetPluginWebpackReactHotLoader.js",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "dependencies": {
+    "@gourmet/module-dir": "^0.1.0",
+    "react-hot-loader": "^4.0.0"
+  }
+}

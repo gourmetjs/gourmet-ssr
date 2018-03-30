@@ -1,0 +1,20 @@
+{
+  "name": "@gourmet/example-fake-github",
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build"
+  },
+  "_devDependencies": {
+    "@gourmet/gourmet-cli": "^0.1.0",
+    "@gourmet/preset-builder": "^0.1.0",
+    "@gourmet/preset-emotion": "^0.1.0",
+    "@gourmet/preset-react": "^0.1.0"
+  },
+  "dependencies": {
+    "bootstrap": "^4.0.0",
+    "classnames": "^2.2.5",
+    "ionicons": "^3.0.0",
+    "reactstrap": "^5.0.0"
+  }
+}

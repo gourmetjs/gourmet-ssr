@@ -1,5 +1,5 @@
 {
-  "name": "@gourmet/gourmet-plugin-webpack-builder",
+  "name": "@gourmet/plugin-webpack-builder",
   "version": "0.1.0",
   "description": "Main plugin for 'gourmet build' command",
   "keywords": [
@@ -19,7 +19,7 @@
     "@gourmet/promise-read-file": "^0.1.0",
     "@gourmet/promise-write-file": "^0.1.0",
     "lodash.omit": "^4.5.0",
-    "webpack": "^4.1.1",
+    "webpack": "4.3.0",
     "webpack-hot-middleware": "^2.21.2"
   }
 }

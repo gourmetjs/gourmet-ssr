@@ -1,0 +1,18 @@
+{
+  "name": "@gourmet/preset-react",
+  "version": "0.1.0",
+  "main": "lib/GourmetPresetReact.js",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "dependencies": {
+    "@gourmet/module-dir": "^0.1.0",
+    "@gourmet/plugin-webpack-react": "^0.1.0",
+    "@gourmet/plugin-webpack-react-hot-loader": "^0.1.0",
+    "@gourmet/react-context-provider": "^0.1.0",
+    "@gourmet/react-renderer": "^0.1.0",
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
+    "prop-types": "^15.6.1"
+  }
+}

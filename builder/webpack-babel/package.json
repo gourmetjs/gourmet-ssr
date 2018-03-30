@@ -1,5 +1,5 @@
 {
-  "name": "@gourmet/gourmet-plugin-webpack-babel",
+  "name": "@gourmet/plugin-webpack-babel",
   "version": "0.1.0",
   "description": "Script build plugin using Babel",
   "keywords": [
