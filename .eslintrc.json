@@ -1,4 +1,4 @@
 {
-  "extends": "gourmet",
+  "extends": "gourmet/gourmet_lib",
   "root": true
 }

@@ -3,6 +3,8 @@
 //
 // 2/22/2016: updated to 1.8.0
 
+/* eslint-disable */
+
 "use strict";
 
 /**

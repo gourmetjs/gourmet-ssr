@@ -3,9 +3,13 @@
     "ladd": "lerna add",
     "lrun": "lerna run",
     "bootstrap": "lerna bootstrap",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "lint": "eslint . --ext .js,.jsx"
   },
   "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-gourmet": "^2.2.0",
+    "eslint-plugin-react": "^7.7.0",
     "lerna": "^2.9.0"
   }
 }

@@ -12,7 +12,7 @@ const sendContent = require("@gourmet/send-content");
 const pageTemplate = require("./pageTemplate");
 const errorTemplate = require("./errorTemplate");
 
-const INTERPOLATE_RE = /{{(\w[\w\.]*)}}/g;
+const INTERPOLATE_RE = /{{(\w[\w.]*)}}/g;
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
 
 // Options
