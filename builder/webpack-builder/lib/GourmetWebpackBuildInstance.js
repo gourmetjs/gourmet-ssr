@@ -177,7 +177,7 @@ class GourmetWebpackBuildInstance {
       const def = entry[name];
       let entryValue = _value(isPlainObject(def) ? def[context.target] : def);
 
-      if (context.target === "client" && context.stage === "hot")
+      if (context.target === "client" && context.stageIs("hot"))
         entryValue.unshift("webpack-hot-middleware/client");
 
       entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context);
@@ -347,7 +347,7 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    if (context.target === "client" && context.stage === "hot") {
+    if (context.target === "client" && context.stageIs("hot")) {
       plugins.push({
         name: "webpack/hot-module-replacement-plugin",
         plugin: webpack.HotModuleReplacementPlugin

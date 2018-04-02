@@ -8,7 +8,7 @@ class GourmetPluginWebpackReactHotLoader {
       js: [{
         loader: "#babel-loader",
         options: {
-          plugins: context.stage === "hot" ? [{
+          plugins: context.stageIs("hot") ? [{
             name: "react-hot-loader/babel",
             plugin: require.resolve("react-hot-loader/babel")
           }] : []
@@ -17,10 +17,12 @@ class GourmetPluginWebpackReactHotLoader {
     };
   }
 
-  _onWebpackAlias() {
-    return {
-      "react-hot-loader": moduleDir("react-hot-loader")
-    };
+  _onWebpackAlias(context) {
+    if (context.stageIs("hot")) {
+      return {
+        "react-hot-loader": moduleDir("react-hot-loader")
+      };
+    }
   }
 }
 
