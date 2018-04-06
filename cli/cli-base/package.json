@@ -4,6 +4,8 @@
   "description": "Base class for the command line interface apps with flexible plugin architecture",
   "main": "lib/CliBase.js",
   "dependencies": {
+    "@gourmet/console": "^0.1.0",
+    "@gourmet/console-mem": "^0.1.0",
     "@gourmet/error": "^0.1.0",
     "@gourmet/merge": "^0.1.0",
     "@gourmet/plugin-sort": "^0.1.0",

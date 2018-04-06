@@ -1,0 +1,12 @@
+{
+  "name": "@gourmet/console-env",
+  "version": "0.1.0",
+  "description": "Injects console options detected from the environment",
+  "main": "lib/installFactory.js",
+  "peerDependencies": {
+    "@gourmet/console": "^0.1.0"
+  },
+  "devDependencies": {
+    "@gourmet/console": "^0.1.0"
+  }
+}

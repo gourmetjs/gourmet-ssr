@@ -4,6 +4,8 @@ const npath = require("path");
 const minimist = require("minimist");
 const camelcaseKeys = require("camelcase-keys");
 const omit = require("lodash.omit");
+const getConsole = require("@gourmet/console");
+const installMemConsole = require("@gourmet/console-mem");
 const promiseMain = require("@gourmet/promise-main");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
@@ -30,6 +32,7 @@ class CliBase {
   constructor(cliConfig={}) {
     this._cliConfig = merge({
       workDirArgName: "dir",
+      colorsArgName: "colors",
       builtinPlugins: [{
         name: PluginBuiltinHelp.meta.name,
         plugin: PluginBuiltinHelp
@@ -47,6 +50,7 @@ class CliBase {
         return this._applyCommandInfo();
       }).then(() => {
         const argv = this.context.argv;
+        this.context.console.info("Running command with argv:", Object.assign({$command: argv.$command, $workDir: argv.$workDir}, argv));
         return Promise.resolve().then(() => {
           return this.context.plugins.runAsync("before:command:" + argv.$command, this.context);
         }).then(() => {
@@ -77,13 +81,18 @@ class CliBase {
     if (this._cliConfig.camelcaseArgs)
       args = camelcaseKeys(args);
 
+    installMemConsole({
+      useColors: args[this._cliConfig.colorsArgName]
+    });
+
     const argv = this._parseCommandArgs(args);
     const workDir = npath.resolve(process.cwd(), argv.$workDir);
 
     this.context = {
       cli: this,
       argv,
-      workDir
+      workDir,
+      console: getConsole("gourmet:cli")
     };
 
     this.context.plugins = new PluginManager(this.context);
@@ -99,17 +108,19 @@ class CliBase {
 
   loadBuiltinPlugins() {
     const plugins = this._cliConfig.builtinPlugins;
+    if (plugins.length)
+      this.context.console.info("Loading builtin plugins...");
     this.context.plugins.load(plugins, __dirname);
   }
 
   loadConfig() {
   }
 
-  loadUserPlugins() {    
+  loadUserPlugins() {
   }
 
   _parseCommandArgs(args) {
-    const argv = omit(args, ["_", this._cliConfig.workDirArgName]);
+    const argv = omit(args, ["_", this._cliConfig.workDirArgName,  this._cliConfig.colorsArgName]);
     const workDir = args[this._cliConfig.workDirArgName] || "";
     const command = args._.join(" ") || this._cliConfig.defaultCommand;
 

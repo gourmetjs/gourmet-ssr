@@ -2,6 +2,7 @@
 
 const util = require("util");
 const npath = require("path");
+const getConsole = require("@gourmet/console");
 const error = require("@gourmet/error");
 const isPlainObject = require("@gourmet/is-plain-object");
 const sortPlugins = require("@gourmet/plugin-sort");
@@ -52,14 +53,19 @@ const INVALID_WEBPACK_PLUGIN = {
   code: "INVALID_WEBPACK_PLUGIN"
 };
 
-const SERVER_ASSET_HASH_CHANGED = {
-  message: "An asset's hash value has changed from the last client build. Asset path: ${path}",
-  code: "SERVER_ASSET_HASH_CHANGED"
+const COMPILATION_ERROR = {
+  message: "${count} compilation error(s)",
+  code: "COMPILATION_ERROR"
 };
 
 class GourmetWebpackBuildInstance {
-  constructor() {
-    this._globalAssets = [];
+  constructor(context) {
+    this.webpack = {};
+
+    this.console = getConsole({
+      name: "gourmet:builder",
+      target: context.target
+    });
   }
 
   init(context) {
@@ -77,14 +83,42 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  finish(stats, context) {
-    return promiseProtect(() => {
-      if (stats.hasErrors() && !context.argv.ignoreCompileErrors)
-        return {errorExit: true, stats};
-      return this._finishWebpackRecords(context).then(() => {
-        return this.writeManifest(stats, context).then(manifest => {
-          return {errorExit: false, manifest, stats};
+  run(context) {
+    return context.plugins.runMergeAsync("build:webpack:config", {}, context).then(config => {
+      this.webpack.config = config;
+      this.webpack.compiler = webpack(config);
+
+      if (context.watchMode)
+        return;
+
+      const con = this.console;
+
+      con.info(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
+      con.writeln({level: "info", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
+
+      con.log(con.colors.brightYellow(`\n>>> Building '${context.stage}' stage for '${context.target}' target...\n`));
+
+      return new Promise((resolve, reject) => {
+        this.webpack.compiler.run((err, stats) => {
+          if (err) {
+            this.webpack.compiler.purgeInputFileSystem();
+            return reject(err);
+          }
+          this.webpack.stats = stats;
+          resolve();
         });
+      });
+    });
+  }
+
+  finish(context) {
+    return promiseProtect(() => {
+      this.printWebpackResult(context);
+      if (this.webpack.stats.hasErrors() && (!context.watchMode && !context.argv.ignoreCompileErrors))
+        throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});
+      return this.writeManifest(context).then(() => {
+        if (!context.watchMode)
+          return this._finishWebpackRecords(context);
       });
     });
   }
@@ -286,11 +320,11 @@ class GourmetWebpackBuildInstance {
       if (!resource) {
         if (Array.isArray(def.extensions) && def.extensions.length) {
           resource = {
-            test: this.getExtensionTester(def.extensions)
+            test: context.builder.getExtensionTester(def.extensions)
           };
         } else if (def.extensions === "*") {
           resource = {
-            test: this.getTestNegator(this.getExtensionTester(allExts))
+            test: context.builder.getTestNegator(context.builder.getExtensionTester(allExts))
           };
         }
       }
@@ -304,7 +338,7 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackOutput(context) {
-    const getter = this.getChunkFilenameGetter(context);
+    const getter = context.builder.getChunkFilenameGetter(context);
     const output = {
       filename: getter,
       chunkFilename: getter,
@@ -381,7 +415,7 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  writeManifest(stats, context) {
+  writeManifest(context) {
     function _eps() {
       const eps = compilation.entrypoints;
       const res = {};
@@ -397,8 +431,8 @@ class GourmetWebpackBuildInstance {
       return Object.keys(compilation.assets);
     }
 
-    const globalAssets = context.target === "client" ? this._globalAssets : [];
-    const compilation = stats.compilation;
+    const globalAssets = context.target === "client" ? context.builder.globalAssets : [];
+    const compilation = this.webpack.stats.compilation;
     const obj = {};
 
     ["target", "stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
@@ -413,76 +447,18 @@ class GourmetWebpackBuildInstance {
 
     const path = npath.join(this.outputDir, context.stage, "server", `${context.target}_manifest.json`);
     const content = JSON.stringify(obj, null, context.minify ? 0 : 2);
-    return promiseWriteFile(path, content, {useOriginalPath: true}).then(() => obj);
+    return promiseWriteFile(path, content, {useOriginalPath: true}).then(() => {
+      this.manifest = obj;
+    });
   }
 
-  getExtensionTester(extensions) {
-    const exts = extensions.reduce((exts, ext) => {
-      exts[ext] = true;
-      return exts;
-    }, {});
-
-    const tester = function(path) {
-      const idx = path.indexOf("?");
-      if (idx !== -1)
-        path = path.substr(0, idx);
-      const ext = npath.extname(path);
-      return exts[ext];
+  printWebpackResult() {
+    const options = {
+      colors: this.console.enabled("colors"),
+      warnings: true,
+      errors: true
     };
-
-    tester[util.inspect.custom] = function() {
-      return `extensionTester(${JSON.stringify(extensions)})`;
-    };
-
-    return tester;
-  }
-
-  getTestNegator(tester) {
-    const negator = function(path) {
-      return !tester(path);
-    };
-
-    negator[util.inspect.custom] = function(depth, options) {
-      return "!" + util.inspect(tester, options);
-    };
-
-    return negator;
-  }
-
-  getChunkFilenameGetter(context) {
-    return function({chunk}) {
-      if (context.target === "server" || !context.hashNames)
-        return `${chunk.name || chunk.id}_bundle.js`;
-      else
-        return context.records.chunks.getName(chunk.hash) + ".js";
-    };
-  }
-
-  getAssetFilenameGetter(context, {ext, isGlobal}={}) {
-    return function({content, path}) {
-      let name = context.records.files.getName(content, {addNew: context.target === "client"});
-
-      if (!name)
-        throw error(SERVER_ASSET_HASH_CHANGED, {path});
-
-      const extname = npath.extname(path);
-      const basename = npath.basename(path, extname);
-
-      if (!context.hashNames)
-        name += "." + basename;
-
-      name += (ext || extname);
-
-      if (isGlobal)
-        context.build.addGlobalAsset(name);
-
-      return name;
-    };
-  }
-
-  addGlobalAsset(filename) {
-    if (this._globalAssets.indexOf(filename) === -1)
-      this._globalAssets.push(filename);
+    this.console.log(this.webpack.stats.toString(options));
   }
 
   _prepareWebpackRecords(context) {

@@ -28,6 +28,7 @@ class GourmetCli extends CliBase {
       if (fs.existsSync(path)) {
         return promiseProtect(() => {
           const config = require(path);
+          this.context.console.info("Project configuration:", path);
           return typeof config === "function" ? config(this.context) : config;
         }).then(config => {
           this._initVars(config);
@@ -48,6 +49,7 @@ class GourmetCli extends CliBase {
       } else if (auto === "append") {
         plugins = plugins.concat(this._scanPlugins(auto));
       }
+      this.context.console.info(`Loading user plugins (autoLoadPlugins=${auto})...`);
       this.context.plugins.load(plugins, this.context.workDir);
     });
   }

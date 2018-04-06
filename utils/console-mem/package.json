@@ -1,0 +1,19 @@
+{
+  "name": "@gourmet/console-mem",
+  "version": "0.1.0",
+  "main": "lib/installFactory.js",
+  "scripts": {
+    "test": "tape test/*_test.js"
+  },
+  "dependencies": {
+    "@gourmet/console-env": "^0.1.0",
+    "strip-ansi": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@gourmet/console": "^0.1.0"
+  },
+  "devDependencies": {
+    "@gourmet/console": "^0.1.0",
+    "tape": "^4.9.0"
+  }
+}

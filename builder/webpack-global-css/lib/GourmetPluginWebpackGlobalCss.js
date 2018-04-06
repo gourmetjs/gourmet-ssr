@@ -9,7 +9,7 @@ class GourmetPluginWebpackGlobalCss {
         name: "@gourmet/webpack-file-loader",
         loader: require.resolve("@gourmet/webpack-file-loader"),
         options: {
-          name: context.build.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
+          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
           emitFile: context.target === "client"
         }
       }, {

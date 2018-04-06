@@ -1,14 +1,15 @@
 "use strict";
 
 const npath = require("path");
+const util = require("util");
+const getConsole = require("@gourmet/console");
+const prefixLines = require("@gourmet/prefix-lines");
 const promiseEach = require("@gourmet/promise-each");
 const promiseReadFile = require("@gourmet/promise-read-file");
 const promiseWriteFile = require("@gourmet/promise-write-file");
 const promiseProtect = require("@gourmet/promise-protect");
-const colors = require("@gourmet/colors");
 const error = require("@gourmet/error");
 const HashNames = require("@gourmet/hash-names");
-const webpack = require("webpack");
 const omit = require("lodash.omit");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 const recordsFile = require("./recordsFile");
@@ -22,31 +23,117 @@ const INVALID_STAGE_TYPES = {
 // ## Lifecycle events
 //  before:command:build
 //  command:build
-//    command:prepare
-//    build:client
-//      build:webpack:config
-//        build:webpack:*
-//    build:server
-//      * same as build:client *
+//    build:go
+//      build:prepare
+//      build:client
+//        build:webpack:config
+//          build:webpack:*
+//      build:server
+//        * same as build:client *
+//      build:finish
 //  after:command:build
 class GourmetPluginWebpackBuilder {
-  // Main handler for `gourmet build` command.
-  _onBuildCommand(context) {
-    const argv = context.argv;
+  constructor(options, context) {
+    this.globalAssets = [];
+    context.builder = this;
 
-    // TODO: move to a place that makes more sense
-    context.colors = argv.colors ? colors : colors.disabled;
-    context.buildResult = {};
+    // TODO: implement separate consoles for client and server
+    const factory = getConsole.defaultFactory;
+    const flush = factory.flush.bind(factory);
+    factory.flush = function(info, text) {
+      const target = info.target || this.baseInfo.target;
+      if (target) {
+        const color = target === "server" ? factory.colors.green : factory.colors.magenta;
+        //console.log(text);
+        text = prefixLines(color(`${target}>`) + " ", text);
+      }
+      flush(info, text);
+    };
+  }
+
+  addGlobalAsset(filename) {
+    if (this.globalAssets.indexOf(filename) === -1)
+      this.globalAssets.push(filename);
+  }
+
+  getExtensionTester(extensions) {
+    const exts = extensions.reduce((exts, ext) => {
+      exts[ext] = true;
+      return exts;
+    }, {});
+
+    const tester = function(path) {
+      const idx = path.indexOf("?");
+      if (idx !== -1)
+        path = path.substr(0, idx);
+      const ext = npath.extname(path);
+      return exts[ext];
+    };
+
+    tester[util.inspect.custom] = function() {
+      return `extensionTester(${JSON.stringify(extensions)})`;
+    };
+
+    return tester;
+  }
+
+  getTestNegator(tester) {
+    const negator = function(path) {
+      return !tester(path);
+    };
+
+    negator[util.inspect.custom] = function(depth, options) {
+      return "!" + util.inspect(tester, options);
+    };
+
+    return negator;
+  }
+
+  getChunkFilenameGetter(context) {
+    return function({chunk}) {
+      if (context.target === "server" || !context.hashNames)
+        return `${chunk.name || chunk.id}_bundle.js`;
+      else
+        return context.records.chunks.getName(chunk.hash) + ".js";
+    };
+  }
+
+  getAssetFilenameGetter(context, {ext, isGlobal}={}) {
+    return function({content, path}) {
+      let name = context.records.files.getName(content);
+
+      const extname = npath.extname(path);
+      const basename = npath.basename(path, extname);
+
+      if (!context.hashNames)
+        name += "." + basename;
+
+      name += (ext || extname);
+
+      if (isGlobal)
+        context.builder.addGlobalAsset(name);
+
+      return name;
+    };
+  }
+
+  // Main handler for `gourmet build` command.
+  _onCommand(context) {
+    context.console.info("@gourmet/gourmet-plugin-webpack-builder: executing 'build' command...");
+    return context.plugins.runAsync("build:go", context);
+  }
+
+  _onGo(context) {
+    // Build instances
+    context.builds = {};
 
     return context.plugins.runAsync("build:prepare", context).then(() => {
-      if (argv.target === "all" || argv.target === "client")
-        return context.plugins.runAsync("build:client", "client", context);
-    }).then(res => {
-      context.buildResult.client = res;
-      if (!res.errorExit && argv.target === "all" || argv.target === "server")
+      if (context.watchMode || context.argv.target === "all" || context.argv.target === "server")
         return context.plugins.runAsync("build:server", "server", context);
-    }).then(res => {
-      context.buildResult.server = res;
+    }).then(() => {
+      if (context.watchMode || context.argv.target === "all" || context.argv.target === "client")
+        return context.plugins.runAsync("build:client", "client", context);
+    }).then(() => {
       return context.plugins.runAsync("build:finish", context);
     });
   }
@@ -97,43 +184,24 @@ class GourmetPluginWebpackBuilder {
 
   // Handler for `build:(client|server)` event
   _onBuild(target, context) {
+    let build;
     return promiseProtect(() => {
       context.target = target;
-      context.build = new GourmetWebpackBuildInstance(context);
+      build = context.builds[target] = new GourmetWebpackBuildInstance(context);
+      return build.init(context);
     }).then(() => {
-      return context.build.init(context);
+      return build.run(context);
     }).then(() => {
-      return context.plugins.runMergeAsync("build:webpack:config", {}, context).then(config => {
-        const build = context.build;
-        const colors = context.colors;
-
-        console.log(require("util").inspect(config, {colors: true, depth: 20}));
-        console.log(colors.brightYellow(`\n>>> Building '${context.stage}' stage for '${context.target}' target...\n`));
-
-        return this._runWebpack(config, context).then(stats => {
-          this._printResults(stats, context);
-
-          return build.finish(stats, context).then(res => {
-            if (res.errorExit) {
-              const count = stats.compilation.errors.length;
-              console.error(colors.brightRed(`\n${count} compilation error(s)`));
-              process.exitCode = 1;
-            }
-            return res;
-          });
-        });
-      });
-    }).then(res => {
+      if (!context.watchMode)
+        return build.finish(context);
+    }).then(() => {
       context.target = undefined;
-      context.build = undefined;
-      return res;
     });
   }
 
   _onFinish(context) {
     return promiseProtect(() => {
-      const res = context.buildResult;
-      if (res.client && !res.client.errorExit && res.server && !res.server.errorExit)
+      if (!context.watchMode && context.builds.server.webpack.stats && context.builds.client.webpack.stats)
         return this._finishBuildRecords(context);
     });
   }
@@ -165,42 +233,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   _onWebpackConfig(context) {
-    return context.build.getWebpackConfig(context);
-  }
-
-  _runWebpack(config, context) {
-    return new Promise((resolve, reject) => {
-      let compiler;
-
-      try {
-        compiler = webpack(config);
-      } catch (err) {
-        if (err.name === "WebpackOptionsValidationError") {
-          console.error(context.colors.red(err.message));
-          process.exit(1);
-        } else {
-          return reject(err);
-        }
-      }
-
-      compiler.run((err, stats) => {
-        if (err) {
-          compiler.purgeInputFileSystem();
-          return reject(err);
-        }
-        resolve(stats);
-      });
-    });
-  }
-
-  _printResults(stats, context) {
-    const argv = context.argv;
-    const options = {
-      colors: argv.colors,
-      warnings: true,
-      errors: true
-    };
-    console.log(stats.toString(options));
+    return context.builds[context.target].getWebpackConfig(context);
   }
 
   _prepareBuildRecords(context) {
@@ -305,10 +338,7 @@ GourmetPluginWebpackBuilder.meta = {
           help: "Static prefix URL (default: '/s/')"
         },
         colors: {
-          help: "Use colors in console output (default: true)",
-          coerce(value) {
-            return value === undefined ? true : value;
-          }
+          help: "Use colors in console output (default: auto)"
         },
         ignoreCompileErrors: {
           help: "Ignore compilation errors and keep continuing"
@@ -321,7 +351,8 @@ GourmetPluginWebpackBuilder.meta = {
   },
 
   hooks: (proto => ({
-    "command:build": proto._onBuildCommand,
+    "command:build": proto._onCommand,
+    "build:go": proto._onGo,
     "build:prepare": proto._onPrepare,
     "build:client": proto._onBuild,
     "build:server": proto._onBuild,

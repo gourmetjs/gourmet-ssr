@@ -32,7 +32,13 @@ class PluginManager {
   }
 
   // Recursively load the whole trees of plugins
-  load(items, baseDir) {
+  load(items, baseDir, parent, indent=0) {
+    const con = this._context.console;
+
+    const prefix = !parent ? "=>" : `${parent} =>`;
+    const plugins = items.map(item => typeof item === "string" ? item : item.name);
+    con.writeln({level: "info", indent: (indent + 1) * 2}, prefix, plugins);
+
     // Plugins are ordered in each batch (main `plugins` or each plugin's
     // `subplugins`) in loading phase.
     // Because all the plugins are re-ordered in event dispatch phase again,
@@ -65,7 +71,7 @@ class PluginManager {
         const meta = PluginClass.meta || {};
 
         if (meta.subplugins)
-          this.load(meta.subplugins, pluginDir || baseDir);
+          this.load(meta.subplugins, pluginDir || baseDir, item.name, indent + 1);
 
         item = merge(omit(meta.schema, "name"), item);
 
