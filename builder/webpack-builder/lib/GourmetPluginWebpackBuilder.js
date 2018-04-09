@@ -38,17 +38,17 @@ class GourmetPluginWebpackBuilder {
     context.builder = this;
 
     // TODO: implement separate consoles for client and server
-    const factory = getConsole.defaultFactory;
-    const flush = factory.flush.bind(factory);
-    factory.flush = function(info, text) {
-      const target = info.target || this.baseInfo.target;
-      if (target) {
-        const color = target === "server" ? factory.colors.green : factory.colors.magenta;
-        //console.log(text);
-        text = prefixLines(color(`${target}>`) + " ", text);
+    const con = getConsole();
+    getConsole.install({
+      writeToConsole(opts, text) {
+        const target = opts.target || this.target;
+        if (target) {
+          const color = target === "server" ? con.colors.green : con.colors.magenta;
+          text = prefixLines(color(`${target}>`) + " ", text);
+        }
+        con.writeToConsole(opts, text);
       }
-      flush(info, text);
-    };
+    });
   }
 
   addGlobalAsset(filename) {
@@ -340,8 +340,12 @@ GourmetPluginWebpackBuilder.meta = {
         colors: {
           help: "Use colors in console output (default: auto)"
         },
+        verbose: {
+          short: "v",
+          help: "Set verbosity level (0-5, default: 3)"
+        },
         ignoreCompileErrors: {
-          help: "Ignore compilation errors and keep continuing"
+          help: "Ignore compilation errors and continue"
         },
         records: {
           help: "Update the records file ('save|revert|clean|update')"

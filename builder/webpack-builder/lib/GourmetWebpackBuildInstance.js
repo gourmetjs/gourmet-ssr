@@ -94,9 +94,11 @@ class GourmetWebpackBuildInstance {
       const con = this.console;
 
       con.info(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
-      con.writeln({level: "info", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
+      con.print({level: "info", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
 
-      con.log(con.colors.brightYellow(`\n>>> Building '${context.stage}' stage for '${context.target}' target...\n`));
+      con.log();
+      con.log(con.colors.brightYellow(`>>> Building '${context.stage}' stage for '${context.target}' target...`));
+      con.log();
 
       return new Promise((resolve, reject) => {
         this.webpack.compiler.run((err, stats) => {

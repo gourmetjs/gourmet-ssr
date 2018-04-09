@@ -12,12 +12,12 @@ const app = express();
 
 app.use(morgan("dev"));
 
-app.use("/s", express.static(npath.resolve(__dirname, "../react-hello/.gourmet/prod/client"), {
+app.use("/s", express.static(npath.resolve(__dirname, "../../react-hello/.gourmet/dev/client"), {
   fallthrough: false
 }));
 
 const renderer = loadRenderer({
-  serverDir: npath.join(__dirname, "../react-hello/.gourmet/prod/server")
+  serverDir: npath.join(__dirname, "../../react-hello/.gourmet/dev/server")
 });
 
 // Should be changed to render API

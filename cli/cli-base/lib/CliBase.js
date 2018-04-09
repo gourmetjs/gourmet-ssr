@@ -31,8 +31,9 @@ const COMMAND_NOT_HANDLED = {
 class CliBase {
   constructor(cliConfig={}) {
     this._cliConfig = merge({
-      workDirArgName: "dir",
-      colorsArgName: "colors",
+      workDirArgNames: ["dir", "d"],
+      colorsArgNames: ["colors"],
+      verbosityArgNames: ["verbose", "v"],
       builtinPlugins: [{
         name: PluginBuiltinHelp.meta.name,
         plugin: PluginBuiltinHelp
@@ -74,15 +75,21 @@ class CliBase {
   }
 
   init(args) {
-    const PluginManager = this._cliConfig.PluginManager;
+    function _verbosityToLevel(v) {
+      return (6 - parseInt(v, 10)) || undefined;
+    }
+
+    const cfg = this._cliConfig;
+    const PluginManager = cfg.PluginManager;
 
     args = minimist(args);
 
-    if (this._cliConfig.camelcaseArgs)
+    if (cfg.camelcaseArgs)
       args = camelcaseKeys(args);
 
     installMemConsole({
-      useColors: args[this._cliConfig.colorsArgName]
+      useColors: this._findCommandArg(args, cfg.colorsArgNames),
+      minLevel: _verbosityToLevel(this._findCommandArg(args, cfg.verbosityArgNames))
     });
 
     const argv = this._parseCommandArgs(args);
@@ -119,10 +126,19 @@ class CliBase {
   loadUserPlugins() {
   }
 
+  _findCommandArg(args, names) {
+    for (let idx = 0; idx < names.length; idx++) {
+      const name = names[idx];
+      if (args[name])
+        return args[name];
+    }
+  }
+
   _parseCommandArgs(args) {
-    const argv = omit(args, ["_", this._cliConfig.workDirArgName,  this._cliConfig.colorsArgName]);
-    const workDir = args[this._cliConfig.workDirArgName] || "";
-    const command = args._.join(" ") || this._cliConfig.defaultCommand;
+    const cfg = this._cliConfig;
+    const argv = omit(args, ["_"].concat(cfg.workDirArgNames).concat(cfg.colorsArgNames).concat(cfg.verbosityArgNames));
+    const workDir = this._findCommandArg(args, cfg.workDirArgNames) || "";
+    const command = args._.join(" ") || cfg.defaultCommand;
 
     // Make `argv.$command` & `argv.$workDir` invisible to regular enumeration.
     Object.defineProperty(argv, "$command", {value: command});

@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/console-mem",
   "version": "0.1.0",
-  "main": "lib/installFactory.js",
+  "main": "lib/install.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },

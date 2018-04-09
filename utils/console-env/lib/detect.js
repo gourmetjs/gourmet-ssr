@@ -2,7 +2,7 @@
 
 const tty = require("tty");
 
-module.exports = function detectOptions(options) {
+module.exports = function detect(options) {
   options = Object.assign({}, options);
   if (options.useColors === undefined)
     options.useColors = process.env.DEBUG_COLORS ? true : tty.isatty(process.stdout.fd);
