@@ -111,17 +111,25 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  // This function gets called just once for a normal build. But in watch mode,
-  // this will be called multiple times whenever a compilation finishes.
+  // This function gets called after a normal build.
+  // This is not used in watch mode.
   finish(context) {
     return promiseProtect(() => {
       this.printWebpackResult(context);
-      if (this.webpack.stats.hasErrors() && (!context.watchMode && !context.argv.ignoreCompileErrors))
+      if (this.webpack.stats.hasErrors() && !context.argv.ignoreCompileErrors)
         throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});
       return this.writeManifest(context).then(() => {
-        if (!context.watchMode)
-          return this._finishWebpackRecords(context);
+        return this._finishWebpackRecords(context);
       });
+    });
+  }
+
+  // This function gets called multiple times whenever a compilation finishes
+  // in watch mode.
+  update(context) {
+    return promiseProtect(() => {
+      this.printWebpackResult(context);
+      this.writeManifest(context);
     });
   }
 
@@ -157,6 +165,8 @@ class GourmetWebpackBuildInstance {
 
   getWebpackDevTool(context) {
     function _devtool() {
+      return context.watchMode ? "eval" : false;
+      /*
       if (context.target === "client") {
         if (context.watchMode === "hot")
           return context.sourceMap ? "cheap-eval-source-map" : "eval";
@@ -164,6 +174,7 @@ class GourmetWebpackBuildInstance {
           return context.sourceMap ? "eval-source-map" : false;
       }
       return context.sourceMap ? "source-map" : false;
+    */
     }
 
     return context.plugins.runWaterfallSync("build:webpack:devtool", _devtool(), context);
@@ -423,8 +434,7 @@ class GourmetWebpackBuildInstance {
       return Object.keys(compilation.assets);
     }
 
-    const globalAssets = context.target === "client" ? Object.keys(context.builder.globalAssets) : [];
-    const compiler = this.webpack.compiler;
+    const globalAssets = this.target === "client" ? Object.keys(context.builder.globalAssets) : [];
     const compilation = this.webpack.stats.compilation;
     const obj = {target: this.target};
 
@@ -441,7 +451,7 @@ class GourmetWebpackBuildInstance {
     const path = npath.join(context.builder.outputDir, context.stage, "server", `${this.target}_manifest.json`);
     const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
 
-    return context.builder.emitFile(path, content, compiler.outputFileSystem).then(() => {
+    return context.builder.emitFile(path, content).then(() => {
       this.manifest = obj;
     });
   }

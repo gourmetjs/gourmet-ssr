@@ -127,9 +127,8 @@ class GourmetPluginWebpackDevServer {
     const clientComp = context.builds.client.webpack.compiler;
     const watchOptions = this._getWatchOptions(context.argv);
 
-    // Configure `outputFileSystem` so that output of both server and client
-    // compilation goes to a memory buffer.
-    serverComp.outputFileSystem = clientComp.outputFileSystem = new MemoryFs();
+    if (!context.argv.watchFs)
+      serverComp.outputFileSystem = context.builder.serverOutputFileSystem = new MemoryFs();
 
     this._runWatch(serverComp, watchOptions, (err, stats) => {
       this._printResult("server", err, stats, context).then(changed => {
@@ -273,7 +272,7 @@ class GourmetPluginWebpackDevServer {
         this._lastCompilationHash[target] = hash;
         con.log("Compilation finished, updating...");
         build.webpack.stats = stats;
-        return build.finish(context).then(() => true);
+        return build.update(context).then(() => true);
       } else {
         con.log("Compilation hash didn't change, ignoring...");
         return false;
@@ -288,7 +287,7 @@ class GourmetPluginWebpackDevServer {
     let renderer = this._renderers[key];
     if (!renderer) {
       const serverDir = npath.join(context.builder.outputDir, context.stage, "server");
-      const fs = context.watchMode ? context.builds.server.webpack.compiler.outputFileSystem : undefined;
+      const fs = context.builder.serverOutputFileSystem;
       renderer = loadRenderer(Object.assign({serverDir, fs}, params));
       this._renderers[key] = renderer;
     }
@@ -320,6 +319,9 @@ GourmetPluginWebpackDevServer.meta = {
         },
         "watch-ignore": {
           help: "Ignore a specified pattern from watching"
+        },
+        "watch-fs": {
+          help: "Use filesystem instead of memory for server bundles"
         }
         // Supports the same options as 'build' command
       }

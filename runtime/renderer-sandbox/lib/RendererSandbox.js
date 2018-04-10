@@ -43,7 +43,7 @@ module.exports = class RendererSandbox {
 
     this._wrapperFunc = vm.runInThisContext(source, Object.assign({
       displayErrors: true,
-      lineOffset: 1
+      lineOffset: -1
     }, vmOptions));
   }
 

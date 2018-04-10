@@ -20,6 +20,7 @@
     "@gourmet/promise-read-file": "^0.1.0",
     "@gourmet/promise-write-file": "^0.1.0",
     "lodash.omit": "^4.5.0",
+    "mkdirp": "^0.5.1",
     "webpack": "4.3.0"
   }
 }

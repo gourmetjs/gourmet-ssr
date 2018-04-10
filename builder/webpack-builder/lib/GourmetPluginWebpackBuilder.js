@@ -1,7 +1,9 @@
 "use strict";
 
 const npath = require("path");
+const nfs = require("fs");
 const util = require("util");
+const mkdirp = require("mkdirp");
 const getConsole = require("@gourmet/console");
 const prefixLines = require("@gourmet/prefix-lines");
 const promiseEach = require("@gourmet/promise-each");
@@ -117,7 +119,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   // From: https://github.com/webpack/webpack/blob/3047bed42761a0bed8b48a1d2b8ed292308ea3a1/lib/Compiler.js#L312
-  emitFile(path, content, fs) {
+  emitFile(path, content) {
     return new Promise((resolve, reject) => {
       function _writeFile() {
         fs.writeFile(path, content, err => {
@@ -126,6 +128,15 @@ class GourmetPluginWebpackBuilder {
           else
             resolve();
         });
+      }
+
+      let fs = this.serverOutputFileSystem;
+
+      if (!fs) {
+        fs = {
+          writeFile: nfs.writeFile,
+          mkdirp: mkdirp
+        };
       }
 
       const idx1 = path.lastIndexOf("/");
@@ -202,7 +213,7 @@ class GourmetPluginWebpackBuilder {
 
   _onFinish(context) {
     return promiseProtect(() => {
-      if (!context.watchMode && context.builds.server.webpack.stats && context.builds.client.webpack.stats)
+      if (context.builds.server.webpack.stats && context.builds.client.webpack.stats)
         return this._finishBuildRecords(context);
     });
   }

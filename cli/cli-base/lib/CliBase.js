@@ -31,6 +31,7 @@ const COMMAND_NOT_HANDLED = {
 class CliBase {
   constructor(cliConfig={}) {
     this._cliConfig = merge({
+      camelcaseArgs: true,
       workDirArgNames: ["dir", "d"],
       colorsArgNames: ["colors"],
       verbosityArgNames: ["verbose", "v"],
