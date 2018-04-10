@@ -16,7 +16,7 @@ module.exports = context => ({
     stage: "local",
     debug: context.getter(() => !context.stageIs("production")),
     optimize: context.getter(() => context.stageIs("production")),
-    sourceMap: context.getter(() => context.debug),
+    sourceMap: false,
     staticPrefix: "/s/",
 
     runtime: {

@@ -66,15 +66,21 @@ class GourmetPluginWebpackBabel {
             return plugins;
           })()
         }
-      }]
+      }],
+      js_vendor: []
     };
   }
 
-  _onWebpackLoaders() {
+  _onWebpackLoaders(context) {
     return {
       js: {
         extensions: [".js"],
         oneOf: [{
+          order: 9990,
+          test: context.builder.getDirTester("node_modules"),
+          exclude: context.builder.getDirTester("src"),
+          pipeline: "js_vendor"
+        }, {
           order: 9999,
           pipeline: "js"
         }]

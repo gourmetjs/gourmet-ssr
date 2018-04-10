@@ -38,15 +38,28 @@ class GourmetPluginWebpackGlobalCss {
             plugin: require("autoprefixer")
           }]
         }
+      }],
+      css_vendor: [{
+        name: "@gourmet/webpack-file-loader",
+        loader: require.resolve("@gourmet/webpack-file-loader"),
+        options: {
+          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
+          emitFile: context.target === "client"
+        }
       }]
     };
   }
 
-  _onWebpackLoaders() {
+  _onWebpackLoaders(context) {
     return {
       css: {
         extensions: [".css"],
         oneOf: [{
+          order: 9990,
+          test: context.builder.getDirTester("node_modules"),
+          exclude: context.builder.getDirTester("src"),
+          pipeline: "css_vendor"
+        }, {
           order: 9999,
           pipeline: "css"
         }]

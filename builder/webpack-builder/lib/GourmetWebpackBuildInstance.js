@@ -129,7 +129,7 @@ class GourmetWebpackBuildInstance {
   update(context) {
     return promiseProtect(() => {
       this.printWebpackResult(context);
-      this.writeManifest(context);
+      return this.writeManifest(context);
     });
   }
 
@@ -165,8 +165,6 @@ class GourmetWebpackBuildInstance {
 
   getWebpackDevTool(context) {
     function _devtool() {
-      return context.watchMode ? "eval" : false;
-      /*
       if (context.target === "client") {
         if (context.watchMode === "hot")
           return context.sourceMap ? "cheap-eval-source-map" : "eval";
@@ -174,7 +172,6 @@ class GourmetWebpackBuildInstance {
           return context.sourceMap ? "eval-source-map" : false;
       }
       return context.sourceMap ? "source-map" : false;
-    */
     }
 
     return context.plugins.runWaterfallSync("build:webpack:devtool", _devtool(), context);
@@ -281,7 +278,7 @@ class GourmetWebpackBuildInstance {
 
       const pipeline = pipelines[name];
 
-      if (!pipeline || !Array.isArray(pipeline) || !pipeline.length)
+      if (!pipeline || !Array.isArray(pipeline))
         throw error(INVALID_PIPELINE, {pipeline: name});
 
       return _loaders(pipeline, processed);

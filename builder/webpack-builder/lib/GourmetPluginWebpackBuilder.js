@@ -21,7 +21,6 @@ const INVALID_STAGE_TYPES = {
   code: "INVALID_STAGE_TYPES"
 };
 
-
 // ## Lifecycle events
 //  before:command:build
 //  command:build
@@ -76,6 +75,21 @@ class GourmetPluginWebpackBuilder {
     };
 
     return tester;
+  }
+
+  getDirTester(dir) {
+    function _isSep(ch) {
+      return ch === "\\" || ch === "/";
+    }
+
+    return function tester(path) {
+      const idx = path.indexOf(dir);
+      if (idx !== -1) {
+        if (_isSep(path[idx - 1]) && _isSep(path[dir.length]))
+          return true;
+      }
+      return false;
+    };
   }
 
   getTestNegator(tester) {
@@ -270,7 +284,7 @@ class GourmetPluginWebpackBuilder {
               value = context.stageIs("production");
               break;
             case "sourceMap":
-              value = context.debug;
+              value = false;
               break;
             case "staticPrefix":
               value = "/s/";

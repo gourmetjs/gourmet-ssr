@@ -7,7 +7,7 @@ class Hello extends PureComponent {
     return (
       <div className="container">
         <div className="alert alert-primary">
-          <h1>Hello, world?!</h1>
+          <h1>Hello, world!</h1>
         </div>
       </div>
     );
