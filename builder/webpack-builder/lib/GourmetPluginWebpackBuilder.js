@@ -90,7 +90,7 @@ class GourmetPluginWebpackBuilder {
 
   getChunkFilenameGetter(context) {
     return function({chunk}) {
-      if (context.target === "server" || !context.hashNames)
+      if (context.target === "server" || !context.optimize)
         return `${chunk.name || chunk.id}_bundle.js`;
       else
         return context.records.chunks.getName(chunk.hash) + ".js";
@@ -104,7 +104,7 @@ class GourmetPluginWebpackBuilder {
       const extname = npath.extname(path);
       const basename = npath.basename(path, extname);
 
-      if (!context.hashNames)
+      if (!context.optimize)
         name += "." + basename;
 
       name += (ext || extname);
@@ -159,11 +159,12 @@ class GourmetPluginWebpackBuilder {
     // Build instances
     context.builds = {};
 
+    const target = context.argv.target;
     return context.plugins.runAsync("build:prepare", context).then(() => {
-      if (context.watchMode || context.argv.target === "all" || context.argv.target === "server")
+      if (context.watchMode || target === undefined || target === "all" || target === "server")
         return context.plugins.runAsync("build:server", "server", context);
     }).then(() => {
-      if (context.watchMode || context.argv.target === "all" || context.argv.target === "client")
+      if (context.watchMode || target === undefined || target === "all" || target === "client")
         return context.plugins.runAsync("build:client", "client", context);
     }).then(() => {
       if (!context.watchMode)
@@ -216,6 +217,7 @@ class GourmetPluginWebpackBuilder {
     return context.vars.get("builder.stageTypes").then(checker => {
       if (checker === undefined) {
         checker = {
+          "local": ["local"],
           "production": ["prod", "production"]
         };
       }
@@ -237,7 +239,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   _prepareContextVars(context) {
-    return promiseEach(["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"], name => {
+    return promiseEach(["stage", "debug", "optimize", "sourceMap", "staticPrefix"], name => {
       return context.vars.get("builder." + name).then(userValue => {
         let value;
 
@@ -248,19 +250,16 @@ class GourmetPluginWebpackBuilder {
         } else {
           switch (name) {
             case "stage":
-              value = "dev";
+              value = "local";
               break;
             case "debug":
               value = !context.stageIs("production");
               break;
-            case "minify":
+            case "optimize":
               value = context.stageIs("production");
               break;
             case "sourceMap":
-              value = context.watchMode !== "hot" && context.debug;
-              break;
-            case "hashNames":
-              value = context.minify;
+              value = context.debug;
               break;
             case "staticPrefix":
               value = "/s/";
@@ -353,26 +352,16 @@ GourmetPluginWebpackBuilder.meta = {
         },
         target: {
           help: "Target to build ('client|server|all*')",
-          short: "t",
-          coerce(value) {
-            if (!value)
-              return "all";
-            else if (value !== "client" && value !== "server")
-              throw Error("Invalid '--target' option");
-            return value;
-          }
+          short: "t"
         },
         debug: {
           help: "Enable debug mode ('--no-debug' to disable)"
         },
-        minify: {
-          help: "Minify assets ('--no-minify' to disable)"
+        optimize: {
+          help: "Enable optimization ('--no-optimize' to disable)"
         },
         sourceMap: {
           help: "Enable source map ('--no-source-map' to disable)"
-        },
-        hashNames: {
-          help: "Hash asset names for long-term caching ('--no-hash-names' to disable)"
         },
         staticPrefix: {
           help: "Static prefix URL (default: '/s/')"

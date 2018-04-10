@@ -151,7 +151,7 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackMode(context) {
-    const mode = context.minify ? "production" : "development";
+    const mode = context.optimize ? "production" : "development";
     return context.plugins.runWaterfallSync("build:webpack:mode", mode, context);
   }
 
@@ -171,10 +171,10 @@ class GourmetWebpackBuildInstance {
 
   getWebpackOptimization(context) {
     const optimization = {
-      minimize: context.minify,
+      minimize: context.optimize,
       runtimeChunk: context.target === "client",
       splitChunks: (() => {
-        if (context.target === "server" || !context.minify)
+        if (context.target === "server" || !context.optimize)
           return false;
 
         return {
@@ -428,7 +428,7 @@ class GourmetWebpackBuildInstance {
     const compilation = this.webpack.stats.compilation;
     const obj = {target: this.target};
 
-    ["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
+    ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
       obj[name] = context[name];
     });
 
@@ -439,7 +439,7 @@ class GourmetWebpackBuildInstance {
     });
 
     const path = npath.join(context.builder.outputDir, context.stage, "server", `${this.target}_manifest.json`);
-    const content = JSON.stringify(obj, null, context.minify ? 0 : 2);
+    const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
 
     return context.builder.emitFile(path, content, compiler.outputFileSystem).then(() => {
       this.manifest = obj;

@@ -32,7 +32,9 @@ class GourmetPluginWebpackDevServer {
       context.watchMode = "hot";
     else if (watch === "mon")
       context.watchMode = true;
-    else if (watch !== "off")
+    else if (watch === "off")
+      context.watchMode = false;
+    else
       throw Error("Unknown '--watch' option: " + watch);
 
     context.console.debug("context.watchMode:", context.watchMode);
@@ -45,14 +47,89 @@ class GourmetPluginWebpackDevServer {
   _runServer(context) {
     const con = context.console;
     const serverCon = context.builds.server.console;
+    const mlogs = serverCon.get("gourmet:http");
+    const wdm = context.watchMode && this._configureWatch(context);
+    const app = this._connectApp = connectLite();
+
+    app.use(morgan("dev", {
+      // Currently, morgan just use 'write' method of the output stream so
+      // we can easily redirect output to our own console.
+      stream: {
+        write(text) {
+          if (text.substr(-1) === "\n")
+            text = text.substr(0, text.length - 1);
+          mlogs.info(text);
+        }
+      }
+    }));
+
+    if (context.watchMode) {
+      app.use((req, res, next) => {
+        if (this._isBusy()) {
+          this._busy.queue.push(() => {
+            return wdm(req, res, next);
+          });
+        } else {
+          return wdm(req, res, next);
+        }
+      });
+    } else {
+      const clientDir = npath.join(context.builder.outputDir, context.stage, "client");
+      const ssm = serveStatic(clientDir, {
+        fallthrough: false,
+        index: false,
+        redirect: false
+      });
+
+      app.use((req, res, next) => {
+        if (req.url.startsWith(context.staticPrefix)) {
+          req.originalUrl = req.url;
+          req.url = req.url.substr(context.staticPrefix.length - 1);
+          ssm(req, res, err => {
+            req.url = req.originalUrl;
+            next(err);
+          });
+        } else {
+          next();
+        }
+      });
+    }
+
+    app.use((req, res) => {
+      const entrypoint = req.headers["x-gourmet-endpoint"] || "main";
+      const renderer = this._getRenderer({entrypoint}, context);
+      renderer(req, res);
+    });
+
+    app.use((err, req, res, next) => { // eslint-disable-line
+      handleRequestError(err, req, res, {console: serverCon});
+    });
+
+    const host = context.argv.host || "0.0.0.0";
+    const port = context.argv.port || 3939;
+
+    this._httpServer = http.createServer(app);
+
+    this._httpServer.listen(port, host, () => {
+      con.log(con.colors.brightYellow(`GourmetDevServer listening on port ${port}`));
+
+      if (!context.watchMode) {
+        con.log(con.colors.green(">>>"));
+        con.log(con.colors.green(">>> Bundles are ready to be served by both server and client"));
+        con.log(con.colors.green(">>>"));
+      }
+    });
+  }
+
+  _configureWatch(context) {
+    const clientCon = context.builds.client.console;
     const serverComp = context.builds.server.webpack.compiler;
     const clientComp = context.builds.client.webpack.compiler;
     const watchOptions = this._getWatchOptions(context.argv);
 
-    // Simply calling `compiler.watch()` doesn't enable `memory-fs` in
-    // `outputFileSystem`. It's the job of `webpack-dev-middleware` so we
-    // have to manually configure it for the server.
-    serverComp.outputFileSystem = new MemoryFs();
+    // Configure `outputFileSystem` so that output of both server and client
+    // compilation goes to a memory buffer.
+    serverComp.outputFileSystem = clientComp.outputFileSystem = new MemoryFs();
 
     this._runWatch(serverComp, watchOptions, (err, stats) => {
       this._printResult("server", err, stats, context).then(changed => {
@@ -72,76 +149,16 @@ class GourmetPluginWebpackDevServer {
       hot: context.watchMode === "hot"
     });
 
-    const wdm = webpackDevMiddleware(clientComp, {
+    return webpackDevMiddleware(clientComp, {
       publicPath: context.staticPrefix,
       index: false,
       reporter() {},
       logger: {
         error() {},
         warn() {},
-        info: con.info,
-        log: con.log
+        info: clientCon.info,
+        log: clientCon.log
       }
-    });
-    const mlogs = serverCon.get("gourmet:http");
-
-    this._connectApp = connectLite();
-
-    this._connectApp.use(morgan("dev", {
-      // Currently, morgan just use 'write' method of the output stream so
-      // we can easily redirect output to our own console.
-      stream: {
-        write(text) {
-          if (text.substr(-1) === "\n")
-            text = text.substr(0, text.length - 1);
-          mlogs.info(text);
-        }
-      }
-    }));
-
-    /*
-    const clientDir = npath.join(context.builder.outputDir, context.stage, "client");
-    const ssm = serveStatic(clientDir, {
-      fallthrough: false,
-      index: false,
-      redirect: false
-    });
-
-    this._connectApp.use((req, res, next) => {
-      if (req.url.startsWith(context.staticPrefix))
-        ssm(req, res, next);
-      else
-        next();
-    });
-    */
-
-    this._connectApp.use((req, res, next) => {
-      if (this._isBusy()) {
-        this._busy.queue.push(() => {
-          return wdm(req, res, next);
-        });
-      } else {
-        return wdm(req, res, next);
-      }
-    });
-
-    this._connectApp.use((req, res) => {
-      const entrypoint = req.headers["x-gourmet-endpoint"] || "main";
-      const renderer = this._getRenderer({entrypoint}, context);
-      renderer(req, res);
-    });
-
-    this._connectApp.use((err, req, res, next) => { // eslint-disable-line
-      handleRequestError(err, req, res, {console: serverCon});
-    });
-
-    const host = context.argv.host || "0.0.0.0";
-    const port = context.argv.port || 3939;
-
-    this._httpServer = http.createServer(this._connectApp);
-
-    this._httpServer.listen(port, host, () => {
-      con.log(con.colors.brightYellow(`GourmetDevServer listening on port ${port}`));
     });
   }
 
@@ -271,7 +288,7 @@ class GourmetPluginWebpackDevServer {
     let renderer = this._renderers[key];
     if (!renderer) {
       const serverDir = npath.join(context.builder.outputDir, context.stage, "server");
-      const fs = context.builds.server.webpack.compiler.outputFileSystem;
+      const fs = context.watchMode ? context.builds.server.webpack.compiler.outputFileSystem : undefined;
       renderer = loadRenderer(Object.assign({serverDir, fs}, params));
       this._renderers[key] = renderer;
     }
@@ -287,6 +304,10 @@ GourmetPluginWebpackDevServer.meta = {
         stage: {
           help: "Specify the stage (e.g. '--stage prod')",
           short: "s"
+        },
+        target: {
+          help: "Target to build ('client|server|all*')",
+          short: "t"
         },
         watch: {
           help: "Specify the watch mode ('hot*|mon|off')"

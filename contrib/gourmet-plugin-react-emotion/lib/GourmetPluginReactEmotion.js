@@ -10,7 +10,7 @@ class GourmetPluginReactEmotion {
             name: "babel-plugin-emotion",
             plugin: require.resolve("babel-plugin-emotion"),
             options: {
-              hoist: context.minify,
+              hoist: context.optimize,
               sourceMap: context.sourceMap,
               autoLabel: context.debug
             }
