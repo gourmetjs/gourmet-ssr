@@ -82,7 +82,7 @@ class GourmetPluginWebpackBuilder {
       return ch === "\\" || ch === "/";
     }
 
-    return function tester(path) {
+    const tester = function(path) {
       const idx = path.indexOf(dir);
       if (idx !== -1) {
         if (_isSep(path[idx - 1]) && _isSep(path[dir.length]))
@@ -90,6 +90,12 @@ class GourmetPluginWebpackBuilder {
       }
       return false;
     };
+
+    tester[util.inspect.custom] = function() {
+      return `dirTester(${JSON.stringify(dir)})`;
+    };
+
+    return tester;
   }
 
   getTestNegator(tester) {
