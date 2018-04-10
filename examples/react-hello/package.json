@@ -4,8 +4,9 @@
   "scripts": {
     "build": "gourmet build",
     "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build",
-    "hot": "gourmet dev-server --stage hot --exec 'node dev-server/lib/index.js'",
-    "local": "gourmet dev-server --stage local --exec 'node dev-server/lib/index.js'"
+    "hot": "gourmet serve --watch hot --exec 'node dev-server/lib/index.js'",
+    "mon": "gourmet serve --watch mon --exec 'node dev-server/lib/index.js'",
+    "start": "gourmet service --watch off --exec 'node dev-server/lib/index.js'"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",

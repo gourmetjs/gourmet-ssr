@@ -8,6 +8,7 @@
   "dependencies": {
     "@gourmet/plugin-webpack-babel": "^0.1.0",
     "@gourmet/plugin-webpack-builder": "^0.1.0",
+    "@gourmet/plugin-webpack-dev-server": "^0.1.0",
     "@gourmet/plugin-webpack-global-css": "^0.1.0"
   }
 }

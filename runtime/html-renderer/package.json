@@ -3,14 +3,10 @@
   "version": "0.1.0",
   "main": "client.js",
   "dependencies": {
-    "@gourmet/inspect-error": "^0.1.0",
+    "@gourmet/console": "^0.1.0",
+    "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/merge": "^0.1.0",
-    "@gourmet/send-content": "^0.1.0",
-    "@gourmet/serialize-request-error": "^0.1.0",
-    "debug": "^3.1.0",
-    "http-status": "^1.0.1",
-    "is-absolute-url": "^2.1.0",
-    "is-stream": "^1.1.0",
-    "lodash.template": "^4.4.0"
+    "@gourmet/resolve-template": "^0.1.0",
+    "is-stream": "^1.1.0"
   }
 }

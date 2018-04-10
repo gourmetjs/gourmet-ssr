@@ -7,7 +7,6 @@ const error = require("@gourmet/error");
 const isPlainObject = require("@gourmet/is-plain-object");
 const sortPlugins = require("@gourmet/plugin-sort");
 const merge = require("@gourmet/merge");
-const promiseWriteFile = require("@gourmet/promise-write-file");
 const promiseProtect = require("@gourmet/promise-protect");
 const omit = require("lodash.omit");
 const webpack = require("webpack");
@@ -60,8 +59,8 @@ const COMPILATION_ERROR = {
 
 class GourmetWebpackBuildInstance {
   constructor(context) {
+    this.target = context.target;
     this.webpack = {};
-
     this.console = getConsole({
       name: "gourmet:builder",
       target: context.target
@@ -75,7 +74,6 @@ class GourmetWebpackBuildInstance {
         webpack: webpack || {},
         entry: entry || {}
       };
-      this.outputDir = npath.resolve(context.workDir, this._varsCache.builder.outputDir || ".gourmet");
     }).then(() => {
       return this._prepareWebpackRecords(context);
     }).then(() => {
@@ -88,13 +86,13 @@ class GourmetWebpackBuildInstance {
       this.webpack.config = config;
       this.webpack.compiler = webpack(config);
 
-      if (context.watchMode)
-        return;
-
       const con = this.console;
 
       con.info(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
       con.print({level: "info", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
+
+      if (context.watchMode)
+        return;
 
       con.log();
       con.log(con.colors.brightYellow(`>>> Building '${context.stage}' stage for '${context.target}' target...`));
@@ -113,6 +111,8 @@ class GourmetWebpackBuildInstance {
     });
   }
 
+  // This function gets called just once for a normal build. But in watch mode,
+  // this will be called multiple times whenever a compilation finishes.
   finish(context) {
     return promiseProtect(() => {
       this.printWebpackResult(context);
@@ -158,9 +158,9 @@ class GourmetWebpackBuildInstance {
   getWebpackDevTool(context) {
     function _devtool() {
       if (context.target === "client") {
-        if (context.stageIs("hot"))
+        if (context.watchMode === "hot")
           return context.sourceMap ? "cheap-eval-source-map" : "eval";
-        else if (context.stageIs("local"))
+        else if (context.watchMode)
           return context.sourceMap ? "eval-source-map" : false;
       }
       return context.sourceMap ? "source-map" : false;
@@ -174,7 +174,7 @@ class GourmetWebpackBuildInstance {
       minimize: context.minify,
       runtimeChunk: context.target === "client",
       splitChunks: (() => {
-        if (context.target === "server" || context.stageIs("local"))
+        if (context.target === "server" || !context.minify)
           return false;
 
         return {
@@ -213,12 +213,9 @@ class GourmetWebpackBuildInstance {
       const def = entry[name];
       let entryValue = _value(isPlainObject(def) ? def[context.target] : def);
 
-      if (context.target === "client" && context.stageIs("hot"))
-        entryValue.unshift("webpack-hot-middleware/client");
-
       entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context);
 
-      res[name] = entryValue.length > 1 ? entryValue : entryValue[0];
+      res[name] = (context.watchMode || entryValue.length > 1) ? entryValue : entryValue[0];
     });
 
     return res;
@@ -344,7 +341,7 @@ class GourmetWebpackBuildInstance {
     const output = {
       filename: getter,
       chunkFilename: getter,
-      path: npath.join(this.outputDir, context.stage, context.target),
+      path: npath.join(context.builder.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix,
       hashFunction: "sha1",
       hashDigestLength: 40
@@ -380,13 +377,6 @@ class GourmetWebpackBuildInstance {
         name: "webpack/define-plugin",
         plugin: webpack.DefinePlugin,
         options: define
-      });
-    }
-
-    if (context.target === "client" && context.stageIs("hot")) {
-      plugins.push({
-        name: "webpack/hot-module-replacement-plugin",
-        plugin: webpack.HotModuleReplacementPlugin
       });
     }
 
@@ -433,11 +423,12 @@ class GourmetWebpackBuildInstance {
       return Object.keys(compilation.assets);
     }
 
-    const globalAssets = context.target === "client" ? context.builder.globalAssets : [];
+    const globalAssets = context.target === "client" ? Object.keys(context.builder.globalAssets) : [];
+    const compiler = this.webpack.compiler;
     const compilation = this.webpack.stats.compilation;
-    const obj = {};
+    const obj = {target: this.target};
 
-    ["target", "stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
+    ["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
       obj[name] = context[name];
     });
 
@@ -447,16 +438,17 @@ class GourmetWebpackBuildInstance {
       files: _files()
     });
 
-    const path = npath.join(this.outputDir, context.stage, "server", `${context.target}_manifest.json`);
+    const path = npath.join(context.builder.outputDir, context.stage, "server", `${this.target}_manifest.json`);
     const content = JSON.stringify(obj, null, context.minify ? 0 : 2);
-    return promiseWriteFile(path, content, {useOriginalPath: true}).then(() => {
+
+    return context.builder.emitFile(path, content, compiler.outputFileSystem).then(() => {
       this.manifest = obj;
     });
   }
 
   printWebpackResult() {
     const options = {
-      colors: this.console.enabled("colors"),
+      colors: this.console.useColors,
       warnings: true,
       errors: true
     };
@@ -481,12 +473,12 @@ class GourmetWebpackBuildInstance {
 
   _getUserWebpackRecordsPath(context) {
     const dir = npath.resolve(context.workDir, this._varsCache.webpack.recordsDir || ".webpack");
-    return npath.join(dir, context.stage, `webpack.${context.target}.json`);
+    return npath.join(dir, context.stage, `webpack.${this.target}.json`);
   }
 
   _getWebpackRecordsPath(context) {
-    const dir = npath.join(this.outputDir, context.stage, "info");
-    return npath.join(dir, `webpack.${context.target}.json`);
+    const dir = npath.join(context.builder.outputDir, context.stage, "info");
+    return npath.join(dir, `webpack.${this.target}.json`);
   }
 }
 

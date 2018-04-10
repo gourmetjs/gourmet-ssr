@@ -1,11 +1,11 @@
 "use strict";
 
 const npath = require("path");
-const fs = require("fs");
+const nfs = require("fs");
 const RendererSandbox = require("@gourmet/renderer-sandbox");
 const getExported = require("@gourmet/get-exported");
 
-function _loadInfo(serverDir, entrypoint) {
+function _loadInfo(serverDir, entrypoint, fs) {
   const serverManifest = JSON.parse(fs.readFileSync(npath.join(serverDir, "server_manifest.json"), "utf8"));
   const clientManifest = JSON.parse(fs.readFileSync(npath.join(serverDir, "client_manifest.json"), "utf8"));
   const bundles = serverManifest.entrypoints[entrypoint];
@@ -28,7 +28,8 @@ module.exports = function loadRenderer({
   serverDir,
   entrypoint="main",
   handlerName,
-  sandbox: vars
+  sandbox: vars,
+  fs=nfs
 }) {
   let renderer = (req, res) => {
     const {
@@ -36,7 +37,7 @@ module.exports = function loadRenderer({
       clientManifest,
       serverBundle,
       serverBundlePath
-    } = _loadInfo(serverDir, entrypoint);
+    } = _loadInfo(serverDir, entrypoint, fs);
 
     const sandbox = new RendererSandbox({
       code: serverBundle,

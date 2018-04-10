@@ -10,15 +10,13 @@ module.exports = context => ({
   // Builder configuration
   builder: {
     stageTypes: {
-      "local": ["hot", "local"],
-      "hot": ["hot"],
       "production": ["prod", "production"]
     },
     stage: "dev",
     debug: context.getter(() => !context.stageIs("production")),
     minify: context.getter(() => context.stageIs("production")),
-    sourceMap: context.getter(() => !context.stageIs("hot") && context.debug),
-    hashNames: context.getter(() => !context.stageIs("local")),
+    sourceMap: context.getter(() => context.watchMode !== "hot" && context.debug),
+    hashNames: context.getter(() => context.minify),
     staticPrefix: "/s/",
 
     runtime: {

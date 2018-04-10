@@ -1,0 +1,20 @@
+{
+  "name": "@gourmet/plugin-webpack-dev-server",
+  "version": "0.1.0",
+  "description": "Main plugin for 'gourmet serve' command",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "main": "lib/GourmetPluginWebpackDevServer.js",
+  "dependencies": {
+    "@gourmet/connect-lite": "^0.1.0",
+    "@gourmet/handle-request-error": "^0.1.0",
+    "@gourmet/load-renderer": "^0.1.0",
+    "@gourmet/promise-protect": "^0.1.0",
+    "memory-fs": "^0.4.1",
+    "morgan": "^1.9.0",
+    "serve-static": "^1.13.2",
+    "webpack-dev-middleware": "^3.1.2",
+    "webpack-hot-client": "^2.2.2"
+  }
+}

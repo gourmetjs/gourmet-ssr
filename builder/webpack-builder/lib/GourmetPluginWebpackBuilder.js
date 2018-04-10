@@ -34,7 +34,7 @@ const INVALID_STAGE_TYPES = {
 //  after:command:build
 class GourmetPluginWebpackBuilder {
   constructor(options, context) {
-    this.globalAssets = [];
+    this.globalAssets = {};
     context.builder = this;
 
     // TODO: implement separate consoles for client and server
@@ -43,7 +43,7 @@ class GourmetPluginWebpackBuilder {
       writeToConsole(opts, text) {
         const target = opts.target || this.target;
         if (target) {
-          const color = target === "server" ? con.colors.green : con.colors.magenta;
+          const color = target === "server" ? con.colors.yellow : con.colors.magenta;
           text = prefixLines(color(`${target}>`) + " ", text);
         }
         con.writeToConsole(opts, text);
@@ -52,8 +52,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   addGlobalAsset(filename) {
-    if (this.globalAssets.indexOf(filename) === -1)
-      this.globalAssets.push(filename);
+    this.globalAssets[filename] = true;
   }
 
   getExtensionTester(extensions) {
@@ -117,9 +116,42 @@ class GourmetPluginWebpackBuilder {
     };
   }
 
+  // From: https://github.com/webpack/webpack/blob/3047bed42761a0bed8b48a1d2b8ed292308ea3a1/lib/Compiler.js#L312
+  emitFile(path, content, fs) {
+    return new Promise((resolve, reject) => {
+      function _writeFile() {
+        fs.writeFile(path, content, err => {
+          if (err)
+            reject(err);
+          else
+            resolve();
+        });
+      }
+
+      const idx1 = path.lastIndexOf("/");
+      const idx2 = path.lastIndexOf("\\");
+
+      let dir = null;
+
+      if (idx1 > idx2)
+        dir = path.substr(0, idx1);
+      else if (idx1 < idx2)
+        dir = path.substr(0, idx2);
+
+      if (!dir)
+        return _writeFile();
+
+      fs.mkdirp(dir, err => {
+        if (err)
+          return reject(err);
+        _writeFile();
+      });
+    });
+  }
+
   // Main handler for `gourmet build` command.
   _onCommand(context) {
-    context.console.info("@gourmet/gourmet-plugin-webpack-builder: executing 'build' command...");
+    context.console.info("GourmetBuilder: executing 'build' command...");
     return context.plugins.runAsync("build:go", context);
   }
 
@@ -134,49 +166,17 @@ class GourmetPluginWebpackBuilder {
       if (context.watchMode || context.argv.target === "all" || context.argv.target === "client")
         return context.plugins.runAsync("build:client", "client", context);
     }).then(() => {
-      return context.plugins.runAsync("build:finish", context);
+      if (!context.watchMode)
+        return context.plugins.runAsync("build:finish", context);
     });
   }
 
   // Handler for `build:prepare` event
   _onPrepare(context) {
-    return this._prepareStageTypes(context).then(() => {
-      return promiseEach(["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"], name => {
-        return context.vars.get("builder." + name).then(userValue => {
-          let value;
-
-          if (context.argv[name] !== undefined) {
-            value = context.argv[name];   // CLI option has the highest priority
-          } else if (userValue !== undefined) {
-            value = userValue;
-          } else {
-            switch (name) {
-              case "stage":
-                value = "dev";
-                break;
-              case "debug":
-                value = !context.stageIs("production");
-                break;
-              case "minify":
-                value = context.stageIs("production");
-                break;
-              case "sourceMap":
-                value = (!context.stageIs("hot") && context.debug);
-                break;
-              case "hashNames":
-                value = !context.stageIs("local");
-                break;
-              case "staticPrefix":
-                value = "/s/";
-                break;
-              default:
-                throw Error(`Internal error: add '${name}' to the switch/case`);
-            }
-          }
-
-          context[name] = value;
-        });
-      });
+    return this._init(context).then(() => {
+      return this._prepareStageTypes(context);
+    }).then(() => {
+      return this._prepareContextVars(context);
     }).then(() => {
       return this._prepareBuildRecords(context);
     });
@@ -206,12 +206,16 @@ class GourmetPluginWebpackBuilder {
     });
   }
 
+  _init(context) {
+    return context.vars.get("builder.outputDir", ".gourmet").then(dir => {
+      this.outputDir = npath.resolve(context.workDir, dir);
+    });
+  }
+
   _prepareStageTypes(context) {
     return context.vars.get("builder.stageTypes").then(checker => {
       if (checker === undefined) {
         checker = {
-          "local": ["hot", "local"],
-          "hot": ["hot"],
           "production": ["prod", "production"]
         };
       }
@@ -229,6 +233,45 @@ class GourmetPluginWebpackBuilder {
       context.stageIs = function(type) {
         return checker(this.stage, type);
       };
+    });
+  }
+
+  _prepareContextVars(context) {
+    return promiseEach(["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"], name => {
+      return context.vars.get("builder." + name).then(userValue => {
+        let value;
+
+        if (context.argv[name] !== undefined) {
+          value = context.argv[name];   // CLI option has the highest priority
+        } else if (userValue !== undefined) {
+          value = userValue;
+        } else {
+          switch (name) {
+            case "stage":
+              value = "dev";
+              break;
+            case "debug":
+              value = !context.stageIs("production");
+              break;
+            case "minify":
+              value = context.stageIs("production");
+              break;
+            case "sourceMap":
+              value = context.watchMode !== "hot" && context.debug;
+              break;
+            case "hashNames":
+              value = context.minify;
+              break;
+            case "staticPrefix":
+              value = "/s/";
+              break;
+            default:
+              throw Error(`Internal error: add '${name}' to the switch/case`);
+          }
+        }
+
+        context[name] = value;
+      });
     });
   }
 
@@ -295,10 +338,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   _getBuildRecordsPath(context) {
-    return context.vars.get("builder.outputDir", ".gourmet").then(dir => {
-      dir = npath.resolve(context.workDir, dir);
-      return npath.join(dir, context.stage, "info", "build.json");
-    });
+    return Promise.resolve(npath.join(this.outputDir, context.stage, "info", "build.json"));
   }
 }
 

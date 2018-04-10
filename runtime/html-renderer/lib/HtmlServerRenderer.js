@@ -1,29 +1,26 @@
 "use strict";
 
 const npath = require("path");
-const template = require("lodash.template");
-const errlog = require("debug")("error:html-renderer");
 const isStream = require("is-stream");
-const HttpStatus = require("http-status");
 const merge = require("@gourmet/merge");
-const serializeRequestError = require("@gourmet/serialize-request-error");
-const inspectError = require("@gourmet/inspect-error");
-const sendContent = require("@gourmet/send-content");
+const con = require("@gourmet/console")("gourmet:html-renderer");
+const handleRequestError = require("@gourmet/handle-request-error");
+const resolveTemplate = require("@gourmet/resolve-template");
 const pageTemplate = require("./pageTemplate");
-const errorTemplate = require("./errorTemplate");
 
-const INTERPOLATE_RE = /{{(\w[\w.]*)}}/g;
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
 
 // Options
 //  - html: object / base content of html sections
 //  - pageTemplate: string or compiled function
+//  - renderParamsHeaderName: string (default: "x-gourmet-render-params")
+//  - dataPropertyName: string (default: "__gourmet_data__")
+//
+// handleRequestError's options
 //  - errorTemplate: string or compiled function
 //  - hideErrorMessage: hide error message and show HTTP status text instead
 //  - hideErrorStack: hide stack information from error response
 //  - setUnhandledErrorHeader: string (default: "x-gourmet-unhandled-error")
-//  - renderParamsHeaderName: string (default: "x-gourmet-render-params")
-//  - dataPropertyName: string (default: "__gourmet_data__")
 //
 // Params
 //
@@ -31,8 +28,7 @@ module.exports = class HtmlServerRenderer {
   constructor(render, options={}) {
     this.options = options;
     this._userRenderer = render;
-    this._pageTemplate = this._getTemplate("pageTemplate", pageTemplate);
-    this._errorTemplate = this._getTemplate("errorTemplate", errorTemplate);
+    this._pageTemplate = resolveTemplate(options.pageTemplate, pageTemplate);
   }
 
   invokeUserRenderer(gmctx) {
@@ -57,7 +53,7 @@ module.exports = class HtmlServerRenderer {
         return this.renderToMedium(gmctx, content);
       }).then(bodyMain => {
         return this.sendHtml(gmctx, bodyMain);
-      }).catch(err => this.handleError(err, req, res));
+      }).catch(err => handleRequestError(err, req, res, this.options));
     };
   }
 
@@ -133,7 +129,7 @@ module.exports = class HtmlServerRenderer {
     const idx = content.indexOf(BODY_MAIN_PLACEHOLDER);
 
     if (idx === -1) {
-      errlog("Page template doesn't have a placeholder for the body main");
+      con.error("Page template doesn't have a placeholder for the body main");
       res.end(content);
       return;
     }
@@ -148,7 +144,7 @@ module.exports = class HtmlServerRenderer {
         res.end(content.substr(idx + BODY_MAIN_PLACEHOLDER.length));
       });
       bodyMain.once("error", err => {
-        this.handleError(err, req, res);
+        handleRequestError(err, req, res, this.options);
       });
     } else {
       if (bodyMain)
@@ -178,67 +174,5 @@ module.exports = class HtmlServerRenderer {
 
     if (scripts.length)
       gmctx.html.headMain.push(scripts.join("\n"));
-  }
-
-  handleError(err, req, res) {
-    const _handle = () => {
-      if (res.headersSent) {
-        errlog("Response headers already sent, destroying socket.");
-        if (res.socket)
-          res.socket.destroy();
-        return;
-      }
-
-      const options = this.options;
-      const obj = serializeRequestError(req, err);
-
-      if (obj.statusCode === undefined)
-        obj.statusCode = 500;
-
-      let message;
-
-      if (options.hideErrorMessage) {
-        message = HttpStatus[obj.statusCode];
-        if (message === undefined)
-          message = "Unknown error";
-      } else {
-        message = obj.message;
-      }
-
-      const content = this._errorTemplate({
-        message: message,
-        statusCode: obj.statusCode,
-        detail: options.hideErrorStack ? null :  inspectError(obj)
-      });
-      const headers = {};
-
-      // LATER: serialize err and send
-      if (options.setUnhandledErrorHeader === undefined || options.setUnhandledErrorHeader)
-        headers[options.setUnhandledErrorHeader || "x-gourmet-unhandled-error"] = "true";
-
-      sendContent(res, content, obj.statusCode, headers);
-
-      if (errlog.enabled)
-        errlog("Error in rendering\n", inspectError(obj, 1));
-    };
-
-    try {
-      _handle();
-    } catch (e) {
-      console.error("Exception thrown from handleError");
-      console.error("  original:", err);
-      console.error("  exception:", e);
-    }
-  }
-
-  _getTemplate(name, defaultTemplate) {
-    const options = this.options;
-    if (typeof options[name] === "function") {
-      return options[name];
-    } else if (typeof options[name] === "string") {
-      return template(options[name], {interpolate: INTERPOLATE_RE});
-    } else {
-      return template(defaultTemplate, {interpolate: INTERPOLATE_RE});
-    }
   }
 };
