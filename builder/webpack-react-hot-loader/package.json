@@ -6,7 +6,6 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/module-dir": "^0.1.0",
     "react-hot-loader": "^4.0.0"
   }
 }

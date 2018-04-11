@@ -4,6 +4,7 @@ const util = require("util");
 const npath = require("path");
 const getConsole = require("@gourmet/console");
 const error = require("@gourmet/error");
+const HandledError = require("@gourmet/error/lib/HandledError");
 const isPlainObject = require("@gourmet/is-plain-object");
 const sortPlugins = require("@gourmet/plugin-sort");
 const merge = require("@gourmet/merge");
@@ -53,6 +54,7 @@ const INVALID_WEBPACK_PLUGIN = {
 };
 
 const COMPILATION_ERROR = {
+  ErrorClass: HandledError,
   message: "${count} compilation error(s)",
   code: "COMPILATION_ERROR"
 };
@@ -250,9 +252,10 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackRules(context) {
-    function _resolve(items) {
+    function _resolve(select) {
       function _sort() {
-        return items.map((item, idx) => {
+        return Object.keys(select).map((key, idx) => {
+          const item = select[key];
           return [item.order !== undefined ? item.order : 5000, idx, item];
         }).sort((a, b) => {
           const oa = a[0] * 10000 + a[1];
@@ -261,7 +264,7 @@ class GourmetWebpackBuildInstance {
         }).map(item => item[2]);
       }
 
-      items = _sort();
+      const items = _sort();
 
       return items.map(item => {
         return Object.assign(omit(item, ["pipeline", "order"]), {
@@ -322,24 +325,17 @@ class GourmetWebpackBuildInstance {
 
     return keys.map(key => {
       const def = defs[key];
-      let resource = def.resource;
+      let test = [];
 
-      if (!resource) {
-        if (Array.isArray(def.extensions) && def.extensions.length) {
-          resource = {
-            test: context.builder.getExtensionTester(def.extensions)
-          };
-        } else if (def.extensions === "*") {
-          resource = {
-            test: context.builder.getTestNegator(context.builder.getExtensionTester(allExts))
-          };
-        }
-      }
+      if (Array.isArray(def.extensions))
+        test = context.builder.getExtensionTester(def.extensions);
+      else if (def.extensions === "*")
+        test = context.builder.getTestNegator(context.builder.getExtensionTester(allExts));
 
       return {
-        resource,
+        test,
         issuer: def.issuer,
-        oneOf: def.oneOf ? _resolve(def.oneOf) : undefined
+        oneOf: def.select ? _resolve(def.select) : undefined
       };
     });
   }

@@ -6,7 +6,6 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/module-dir": "^0.1.0",
     "@gourmet/plugin-webpack-react": "^0.1.0",
     "@gourmet/plugin-webpack-react-hot-loader": "^0.1.0",
     "@gourmet/react-context-provider": "^0.1.0",

@@ -166,6 +166,14 @@ class Variables {
     return src;
   }
 
+  cleanCache() {
+    this._context = deepClone(this._context, value => {
+      if (value instanceof VarExpr)
+        value.cleanCache();
+      return value;
+    });
+  }
+
   // Recursively resolves all the values and replace the literal forms to final
   // strings. This is used for creating a final deep copy of the value for
   // user consumption.

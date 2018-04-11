@@ -15,7 +15,7 @@
     "@gourmet/promise-sync": "^0.1.0",
     "lodash.omit": "^4.5.0",
     "minimist": "^1.2.0",
-    "resolve": "^1.5.0",
+    "resolve": "^1.6.0",
     "test": "^0.6.0"
   }
 }

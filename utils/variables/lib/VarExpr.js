@@ -88,6 +88,10 @@ class VarExpr extends VarNode {
     });
   }
 
+  cleanCache() {
+    delete this._cachedValue;
+  }
+
   // Resolves an expression (i.e. `expr` in `${expr}') of a variable
   // reference to a concrete value.
   _resolveExpr(vars, expr, options) {

@@ -9,6 +9,7 @@ const installMemConsole = require("@gourmet/console-mem");
 const promiseMain = require("@gourmet/promise-main");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
+const HandledError = require("@gourmet/error/lib/HandledError");
 const merge = require("@gourmet/merge");
 const PluginManager = require("./PluginManager");
 const PluginBuiltinHelp = require("./PluginBuiltinHelp");
@@ -71,6 +72,16 @@ class CliBase {
         }).then(() => {
           return this.context.plugins.runAsync("after:command:" + argv.$command, this.context);
         });
+      }).catch(err => {
+        if (err instanceof HandledError) {
+          const con = (this.context && this.context.console) || getConsole("gourmet:cli");
+          con.error(con.colors.brightRed(">>>"));
+          con.error(con.colors.brightRed(">>> " + err.message));
+          con.error(con.colors.brightRed(">>>"));
+          process.exitCode = err.exitCode || 2;
+        } else {
+          throw err;
+        }
       })
     );
   }

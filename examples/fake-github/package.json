@@ -3,18 +3,20 @@
   "private": true,
   "scripts": {
     "build": "gourmet build",
-    "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build"
+    "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build",
+    "hot": "gourmet serve",
+    "watch": "gourmet serve --watch mon",
+    "start": "gourmet serve --watch off"
   },
-  "_devDependencies": {
+  "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",
     "@gourmet/preset-builder": "^0.1.0",
-    "@gourmet/preset-emotion": "^0.1.0",
-    "@gourmet/preset-react": "^0.1.0"
-  },
-  "dependencies": {
-    "bootstrap": "^4.0.0",
+    "@gourmet/preset-react-emotion": "^0.1.0",
+    "bootstrap": "^4.1.0",
     "classnames": "^2.2.5",
-    "ionicons": "^3.0.0",
-    "reactstrap": "^5.0.0"
+    "ionicons": "^2.0.1",
+    "reactstrap": "^5.0.0",
+    "tinycolor2": "^1.4.1",
+    "react-prepare": "asyncmax/react-prepare"
   }
 }

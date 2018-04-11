@@ -5,13 +5,13 @@
     "build": "gourmet build",
     "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build",
     "hot": "gourmet serve --watch hot --exec 'node dev-server/lib/index.js'",
-    "mon": "gourmet serve --watch mon --exec 'node dev-server/lib/index.js'",
+    "watch": "gourmet serve --watch mon --exec 'node dev-server/lib/index.js'",
     "start": "gourmet service --watch off --exec 'node dev-server/lib/index.js'"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",
     "@gourmet/preset-builder": "^0.1.0",
     "@gourmet/preset-react": "^0.1.0",
-    "bootstrap": "^4.0.0"
+    "bootstrap": "^4.1.0"
   }
 }

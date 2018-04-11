@@ -1,7 +1,5 @@
 "use strict";
 
-const moduleDir = require("@gourmet/module-dir")(__dirname);
-
 class GourmetPluginWebpackReactHotLoader {
   _onWebpackPipelines(context) {
     return {
@@ -20,7 +18,7 @@ class GourmetPluginWebpackReactHotLoader {
   _onWebpackAlias(context) {
     if (context.watchMode === "hot") {
       return {
-        "react-hot-loader": moduleDir("react-hot-loader")
+        "react-hot-loader": context.builder.moduleDir(__dirname)("react-hot-loader")
       };
     }
   }

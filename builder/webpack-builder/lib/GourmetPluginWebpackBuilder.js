@@ -10,6 +10,7 @@ const promiseEach = require("@gourmet/promise-each");
 const promiseReadFile = require("@gourmet/promise-read-file");
 const promiseWriteFile = require("@gourmet/promise-write-file");
 const promiseProtect = require("@gourmet/promise-protect");
+const moduleDir = require("@gourmet/module-dir");
 const error = require("@gourmet/error");
 const HashNames = require("@gourmet/hash-names");
 const omit = require("lodash.omit");
@@ -50,6 +51,8 @@ class GourmetPluginWebpackBuilder {
         con.writeToConsole(opts, text);
       }
     });
+
+    this.moduleDir = moduleDir;
   }
 
   addGlobalAsset(filename) {
@@ -93,6 +96,21 @@ class GourmetPluginWebpackBuilder {
 
     tester[util.inspect.custom] = function() {
       return `dirTester(${JSON.stringify(dir)})`;
+    };
+
+    return tester;
+  }
+
+  getVendorDistTester() {
+    const mod = this.getDirTester("node_modules");
+    const src = this.getDirTester("src");
+
+    const tester = function(path) {
+      return mod(path) && !src(path);
+    };
+
+    tester[util.inspect.custom] = function() {
+      return "vendorDistTester()";
     };
 
     return tester;
@@ -218,6 +236,7 @@ class GourmetPluginWebpackBuilder {
   _onBuild(target, context) {
     let build;
     return promiseProtect(() => {
+      context.vars.cleanCache();
       context.target = target;
       build = context.builds[target] = new GourmetWebpackBuildInstance(context);
       return build.init(context);

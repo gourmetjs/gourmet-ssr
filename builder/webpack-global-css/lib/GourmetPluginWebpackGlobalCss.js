@@ -5,6 +5,7 @@ const sortPlugins = require("@gourmet/plugin-sort");
 class GourmetPluginWebpackGlobalCss {
   _onWebpackPipelines(context) {
     return {
+      // "css": performs a full transformation of CSS file
       css: [{
         name: "@gourmet/webpack-file-loader",
         loader: require.resolve("@gourmet/webpack-file-loader"),
@@ -39,7 +40,26 @@ class GourmetPluginWebpackGlobalCss {
           }]
         }
       }],
-      css_vendor: [{
+
+      // "css_resolve": performs a resolution of 'url' and '@import', skipping PostCSS
+      css_resolve: [{
+        name: "@gourmet/webpack-file-loader",
+        loader: require.resolve("@gourmet/webpack-file-loader"),
+        options: {
+          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
+          emitFile: context.target === "client"
+        }
+      }, {
+        name: "extract-loader",
+        loader: require.resolve("extract-loader"),
+        options: {publicPath: context.staticPrefix},
+      }, {
+        name: "css-loader",
+        loader: require.resolve("css-loader")
+      }],
+
+      // "css_copy": performs a simple copy, no transformation at all
+      css_copy: [{
         name: "@gourmet/webpack-file-loader",
         loader: require.resolve("@gourmet/webpack-file-loader"),
         options: {
@@ -54,15 +74,22 @@ class GourmetPluginWebpackGlobalCss {
     return {
       css: {
         extensions: [".css"],
-        oneOf: [{
-          order: 9990,
-          test: context.builder.getDirTester("node_modules"),
-          exclude: context.builder.getDirTester("src"),
-          pipeline: "css_vendor"
-        }, {
-          order: 9999,
-          pipeline: "css"
-        }]
+        select: {
+          css_copy: {
+            order: 9800,
+            test: [],
+            pipeline: "css_copy"
+          },
+          css_resolve: {
+            order: 9900,
+            test: [context.builder.getVendorDistTester()],
+            pipeline: "css_resolve"
+          },
+          css: {
+            order: 9999,
+            pipeline: "css"
+          }
+        }
       }
     };
   }

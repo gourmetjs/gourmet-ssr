@@ -67,7 +67,7 @@ class GourmetPluginWebpackBabel {
           })()
         }
       }],
-      js_vendor: []
+      js_copy: []
     };
   }
 
@@ -75,15 +75,17 @@ class GourmetPluginWebpackBabel {
     return {
       js: {
         extensions: [".js"],
-        oneOf: [{
-          order: 9990,
-          test: context.builder.getDirTester("node_modules"),
-          exclude: context.builder.getDirTester("src"),
-          pipeline: "js_vendor"
-        }, {
-          order: 9999,
-          pipeline: "js"
-        }]
+        select: {
+          js_copy: {
+            order: 9900,
+            test: [context.builder.getVendorDistTester()],
+            pipeline: "js_copy"
+          },
+          js: {
+            order: 9999,
+            pipeline: "js"
+          }
+        }
       }
     };
   }

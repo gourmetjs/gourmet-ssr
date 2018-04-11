@@ -1,9 +1,8 @@
 "use strict";
 
-const moduleDir = require("@gourmet/module-dir")(__dirname);
-
 class GourmetPresetReact {
-  _onWebpackAlias() {
+  _onWebpackAlias(context) {
+    const moduleDir = context.builder.moduleDir(__dirname);
     return {
       "react": moduleDir("react"),
       "react-dom": moduleDir("react-dom"),
