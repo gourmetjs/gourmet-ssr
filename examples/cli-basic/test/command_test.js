@@ -16,12 +16,12 @@ test("Running 'gourmet say'", t => {
 });
 
 test("Running 'gourmet say -d'", t => {
-  shell("gourmet say -d", {echoCommand: false, captureOutput: true}).then(res => {
+  shell("gourmet say -e", {echoCommand: false, captureOutput: true}).then(res => {
     t.equal(res.stdout, [
       "** Hello, world! **",
       "** Greetings! **",
       "command: say",
-      "argv: {\"d\":true,\"decorate\":true}",
+      "argv: {\"e\":true,\"decorate\":true}",
       ""
     ].join("\n"));
   }).then(() => t.end(), t.end);

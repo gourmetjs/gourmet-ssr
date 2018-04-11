@@ -302,11 +302,7 @@ GourmetPluginWebpackDevServer.meta = {
       options: {
         stage: {
           help: "Specify the stage (e.g. '--stage prod')",
-          short: "s"
-        },
-        target: {
-          help: "Target to build ('client|server|all*')",
-          short: "t"
+          alias: "s"
         },
         watch: {
           help: "Specify the watch mode ('hot*|mon|off')"

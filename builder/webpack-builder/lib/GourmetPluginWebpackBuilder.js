@@ -379,11 +379,11 @@ GourmetPluginWebpackBuilder.meta = {
       options: {
         stage: {
           help: "Specify the stage (e.g. '--stage prod')",
-          short: "s"
+          alias: "s"
         },
         target: {
           help: "Target to build ('client|server|all*')",
-          short: "t"
+          alias: "t"
         },
         debug: {
           help: "Enable debug mode ('--no-debug' to disable)"
@@ -401,7 +401,7 @@ GourmetPluginWebpackBuilder.meta = {
           help: "Use colors in console output (default: auto)"
         },
         verbose: {
-          short: "v",
+          alias: "v",
           help: "Set verbosity level (0-5, default: 3)"
         },
         ignoreCompileErrors: {

@@ -12,7 +12,7 @@ MyPlugin.meta = {
     say: {
       options: {
         decorate: {
-          alias: "d"
+          alias: "e"
         }
       }
     }
