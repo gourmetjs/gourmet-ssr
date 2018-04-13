@@ -1,11 +1,10 @@
 "use strict";
 
 const npath = require("path");
-const isStream = require("is-stream");
+const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
-const con = require("@gourmet/console")("gourmet:html-renderer");
-const handleRequestError = require("@gourmet/handle-request-error");
 const resolveTemplate = require("@gourmet/resolve-template");
+const MultiStream = require("@gourmet/multi-stream");
 const pageTemplate = require("./pageTemplate");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
@@ -13,16 +12,7 @@ const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
 // Options
 //  - html: object / base content of html sections
 //  - pageTemplate: string or compiled function
-//  - renderParamsHeaderName: string (default: "x-gourmet-render-params")
 //  - dataPropertyName: string (default: "__gourmet_data__")
-//
-// handleRequestError's options
-//  - errorTemplate: string or compiled function
-//  - hideErrorMessage: hide error message and show HTTP status text instead
-//  - hideErrorStack: hide stack information from error response
-//  - setUnhandledErrorHeader: string (default: "x-gourmet-unhandled-error")
-//
-// Params
 //
 module.exports = class HtmlServerRenderer {
   constructor(render, options={}) {
@@ -43,27 +33,25 @@ module.exports = class HtmlServerRenderer {
 
   // Options
   //  - entrypoint
-  //  - serverManifest
-  //  - clientManifest
+  //  - manifest
   getRenderer(opts) {
-    return (req, res) => {
-      const gmctx = this.createContext(req, res, opts);
+    return reqObj => {
+      const gmctx = this.createContext(reqObj, opts);
       this.addDependencies(gmctx);
       this.invokeUserRenderer(gmctx).then(content => {
         return this.renderToMedium(gmctx, content);
       }).then(bodyMain => {
-        return this.sendHtml(gmctx, bodyMain);
-      }).catch(err => handleRequestError(err, req, res, this.options));
+        return this.renderHtml(gmctx, bodyMain);
+      });
     };
   }
 
-  createContext(req, res, {
-    entrypoint,
-    serverManifest,
-    clientManifest
-  }) {
+  createContext({path, query, params}, {entrypoint, manifest}) {
+    const config = manifest.config || {};
     return {
-      req, res,
+      path,
+      query,
+      params,
       html: merge({
         lang: "en",
         headTop: [],
@@ -71,42 +59,29 @@ module.exports = class HtmlServerRenderer {
         headBottom: [],
         bodyTop: [],
         bodyBottom: []
-      }, this.options.html),
+      }, config.html),
+      res: {
+        statusCode: 200,
+        headers: {}
+      },
       entrypoint,
-      serverManifest,
-      clientManifest,
-      params: this.getParams(req),
+      manifest,
       data: {
         // There are no fields automatically transfered to the client
         // because overriding this behavior is very easy in user code.
-        //  - entrypoint,
-        //  - staticPrefix: clientManifest.staticPrefix,
-        //  - serverUrl: req.url
+        //  - entrypoint
+        //  - path
+        //  - staticPrefix: manifest.staticPrefix
       }
     };
-  }
-
-  getParams(req) {
-    const header = req.headers[this.options.renderParamsHeaderName || "x-gourmet-render-params"];
-    if (header) {
-      try {
-        return JSON.parse(header);
-      } catch (err) {
-        if (err instanceof SyntaxError)
-          return {};
-        throw err;
-      }
-    } else {
-      return {};
-    }
   }
 
   // bodyMain can be one of the following:
   //  - string
   //  - buffer
   //  - stream
-  sendHtml(gmctx, bodyMain) {
-    const {req, res, html} = gmctx;
+  renderHtml(gmctx, bodyMain) {
+    const {html, res} = gmctx;
 
     // Because bundles are loaded with `defer` option, this data init code
     // always gets executed before the main entry code.
@@ -117,7 +92,7 @@ module.exports = class HtmlServerRenderer {
       `<script>window.${prop}=${data};</script>`
     );
 
-    const content = this._pageTemplate({
+    const frame = this._pageTemplate({
       gmctx,
       lang: html.lang,
       headTop: html.headTop.join("\n"),
@@ -126,38 +101,41 @@ module.exports = class HtmlServerRenderer {
       bodyTop: html.bodyTop.join("\n"),
       bodyBottom: html.bodyBottom.join("\n")
     });
-    const idx = content.indexOf(BODY_MAIN_PLACEHOLDER);
+    const idx = frame.indexOf(BODY_MAIN_PLACEHOLDER);
 
-    if (idx === -1) {
-      con.error("Page template doesn't have a placeholder for the body main");
-      res.end(content);
-      return;
-    }
+    if (idx === -1)
+      throw Error("Page template doesn't have a placeholder for the body main");
 
-    res.setHeader("content-type", "text/html");
-
-    res.write(content.substr(0, idx));
+    const header = Buffer.from(frame.substr(0, idx));
+    const footer = Buffer.from(frame.substr(idx + BODY_MAIN_PLACEHOLDER.length));
+    let content;
 
     if (isStream(bodyMain)) {
-      bodyMain.pipe(res, {end: false});
-      bodyMain.once("end", () => {
-        res.end(content.substr(idx + BODY_MAIN_PLACEHOLDER.length));
-      });
-      bodyMain.once("error", err => {
-        handleRequestError(err, req, res, this.options);
-      });
+      content = new MultiStream([
+        header,
+        bodyMain,
+        footer
+      ]);
     } else {
-      if (bodyMain)
-        res.write(bodyMain);
-      res.end(content.substr(idx + BODY_MAIN_PLACEHOLDER.length));
+      content = Buffer.concat([
+        header,
+        Buffer.isBuffer(bodyMain) ? bodyMain : Buffer.from(bodyMain),
+        footer
+      ]);
     }
+
+    return {
+      statusCode: res.statusCode,
+      headers: res.headers,
+      content
+    };
   }
 
   addDependencies(gmctx) {
     const entrypoint = gmctx.entrypoint;
-    const manifest = gmctx.clientManifest;
+    const manifest = gmctx.manifest;
     const staticPrefix = manifest.staticPrefix;
-    const deps = manifest.entrypoints[entrypoint];
+    const deps = manifest.entrypoints[entrypoint].client;
     const styles = [];
     const scripts = [];
 

@@ -1,5 +1,9 @@
 {
   "name": "@gourmet/send-content",
   "version": "0.1.0",
-  "main": "lib/sendContent.js"
+  "main": "lib/sendContent.js",
+  "dependencies": {
+    "@gourmet/is-plain-object": "^0.1.0",
+    "@gourmet/is-stream": "^0.1.0"
+  }
 }

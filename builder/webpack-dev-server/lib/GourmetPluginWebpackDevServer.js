@@ -35,7 +35,7 @@ class GourmetPluginWebpackDevServer {
     else if (watch === "off")
       context.watchMode = false;
     else
-      throw Error("Unknown '--watch' option: " + watch);
+      throw Error("Unknown value for '--watch' option: " + watch);
 
     context.console.debug("context.watchMode:", context.watchMode);
 

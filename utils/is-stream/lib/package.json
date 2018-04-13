@@ -1,0 +1,5 @@
+{
+  "name": "@gourmet/is-stream",
+  "version": "0.1.0",
+  "main": "lib/isStream.js"
+}

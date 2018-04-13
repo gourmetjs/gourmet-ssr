@@ -4,9 +4,8 @@
   "main": "client.js",
   "dependencies": {
     "@gourmet/console": "^0.1.0",
-    "@gourmet/handle-request-error": "^0.1.0",
+    "@gourmet/is-stream": "^0.1.0",
     "@gourmet/merge": "^0.1.0",
-    "@gourmet/resolve-template": "^0.1.0",
-    "is-stream": "^1.1.0"
+    "@gourmet/resolve-template": "^0.1.0"
   }
 }

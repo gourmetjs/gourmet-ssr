@@ -15,7 +15,7 @@ const XMLHttpRequest = require("./XMLHttpRequest");
 module.exports = class RendererSandbox {
   constructor({
     code,       // Code script
-    vars={},       // Global variables
+    vars={},    // Global variables
     vmOptions   // options for `vm.runInThisContext(...)`
   }) {
     const keys = Object.keys(vars);

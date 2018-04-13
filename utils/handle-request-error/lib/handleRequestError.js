@@ -47,7 +47,7 @@ module.exports = function handleRequestError(err, req, res, options={}) {
     if (options.setUnhandledErrorHeader === undefined || options.setUnhandledErrorHeader)
       headers[options.setUnhandledErrorHeader || "x-gourmet-unhandled-error"] = "true";
 
-    sendContent(res, content, obj.statusCode, headers);
+    sendContent(res, {content, statusCode: obj.statusCode, headers});
 
     con.error("Error in serving a request\n", inspectError(obj, 1));
   };

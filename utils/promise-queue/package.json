@@ -1,0 +1,8 @@
+{
+  "name": "@gourmet/promise-queue",
+  "version": "0.1.0",
+  "main": "lib/promiseQueue.js",
+  "dependencies": {
+    "@gourmet/is-promise": "^0.1.0"
+  }
+}

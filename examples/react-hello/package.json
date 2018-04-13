@@ -2,11 +2,15 @@
   "name": "@gourmet/example-react-hello",
   "private": true,
   "scripts": {
-    "build": "gourmet build",
-    "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build",
-    "hot": "gourmet serve --watch hot --exec 'node dev-server/lib/index.js'",
-    "watch": "gourmet serve --watch mon --exec 'node dev-server/lib/index.js'",
-    "start": "gourmet service --watch off --exec 'node dev-server/lib/index.js'"
+    "hot": "node server/lib/index.js --hot",
+    "watch": "node server/lib/index.js --watch",
+    "build": "gourmet build --stage prod",
+    "start": "node server/lib/index.js --stage prod"
+  },
+  "_dependencies": {
+    "@gourmet/watch-http": "^0.1.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",
