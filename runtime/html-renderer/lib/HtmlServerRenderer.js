@@ -1,10 +1,11 @@
 "use strict";
 
 const npath = require("path");
+const MultiStream = require("multistream");
+const toStream = require("buffer-to-stream");
 const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
 const resolveTemplate = require("@gourmet/resolve-template");
-const MultiStream = require("@gourmet/multi-stream");
 const pageTemplate = require("./pageTemplate");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
@@ -112,9 +113,9 @@ module.exports = class HtmlServerRenderer {
 
     if (isStream(bodyMain)) {
       content = new MultiStream([
-        header,
+        toStream(header),
         bodyMain,
-        footer
+        toStream(footer)
       ]);
     } else {
       content = Buffer.concat([
