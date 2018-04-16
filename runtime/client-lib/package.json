@@ -1,0 +1,12 @@
+{
+  "name": "@gourmet/client-lib",
+  "version": "0.1.0",
+  "main": "lib/clientLib.js",
+  "dependencies": {
+    "@gourmet/get-exported": "^0.1.0",
+    "@gourmet/promise-protect": "^0.1.0",
+    "@gourmet/renderer-sandbox": "^0.1.0",
+    "@gourmet/send-content": "^0.1.0",
+    "@gourmet/storage-fs": "^0.1.0"
+  }
+}

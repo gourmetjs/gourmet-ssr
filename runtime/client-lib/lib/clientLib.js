@@ -110,10 +110,14 @@ function clientLib(storage=_defaultStorage) {
     }
 
     renderRaw(_req_obj(), options, (err, resObj) => {
-      if (err)
+      if (err) {
         next(err);
-      else
-        sendContent(res, resObj);
+      } else {
+        sendContent(res, resObj, err => {
+          if (err)
+            next(err);
+        });
+      }
     });
   }
 

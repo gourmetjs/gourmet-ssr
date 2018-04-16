@@ -1,14 +1,23 @@
 "use strict";
 
 const npath = require("path");
+const stream = require("stream");
 const MultiStream = require("multistream");
-const toStream = require("buffer-to-stream");
 const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
 const resolveTemplate = require("@gourmet/resolve-template");
 const pageTemplate = require("./pageTemplate");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
+
+function _bufStream(buf) {
+  return new stream.Readable({
+    _read() {
+      this.push(buf);
+      this.push(null);
+    }
+  });
+}
 
 // Options
 //  - html: object / base content of html sections
@@ -113,9 +122,9 @@ module.exports = class HtmlServerRenderer {
 
     if (isStream(bodyMain)) {
       content = new MultiStream([
-        toStream(header),
+        _bufStream(header),
         bodyMain,
-        toStream(footer)
+        _bufStream(footer)
       ]);
     } else {
       content = Buffer.concat([
