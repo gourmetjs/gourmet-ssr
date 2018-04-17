@@ -15,7 +15,7 @@ app.use(morgan("dev"));
 
 let gourmet, opts;
 
-if (args.watchMode) {
+if (args.watch) {
   const watch = require("@gourmet/watch-middleware");
   gourmet = require("@gourmet/client-lib");
   app.use(watch(args, gourmet));

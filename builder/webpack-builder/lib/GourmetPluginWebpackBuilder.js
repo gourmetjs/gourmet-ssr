@@ -36,7 +36,7 @@ const INVALID_STAGE_TYPES = {
 //  after:command:build
 class GourmetPluginWebpackBuilder {
   constructor(options, context) {
-    this.globalAssets = {};
+    this._globalAssets = {};
     context.builder = this;
 
     // TODO: implement separate consoles for client and server
@@ -56,7 +56,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   addGlobalAsset(filename) {
-    this.globalAssets[filename] = true;
+    this._globalAssets[filename] = true;
   }
 
   getExtensionTester(extensions) {
@@ -208,16 +208,14 @@ class GourmetPluginWebpackBuilder {
     // Build instances
     context.builds = {};
 
-    const target = context.argv.target;
-    return context.plugins.runAsync("build:prepare", context).then(() => {
-      if (context.watchMode || target === undefined || target === "all" || target === "server")
-        return context.plugins.runAsync("build:server", "server", context);
+    return promiseProtect(() => {
+      return context.plugins.runAsync("build:prepare", context);
     }).then(() => {
-      if (context.watchMode || target === undefined || target === "all" || target === "client")
-        return context.plugins.runAsync("build:client", "client", context);
+      return context.plugins.runAsync("build:server", "server", context);
     }).then(() => {
-      if (!context.watchMode)
-        return context.plugins.runAsync("build:finish", context);
+      return context.plugins.runAsync("build:client", "client", context);
+    }).then(() => {
+      return context.plugins.runAsync("build:finish", context);
     });
   }
 
@@ -243,17 +241,21 @@ class GourmetPluginWebpackBuilder {
     }).then(() => {
       return build.run(context);
     }).then(() => {
-      if (!context.watchMode)
-        return build.finish(context);
+      return build.finish(context);
     }).then(() => {
       context.target = undefined;
     });
   }
 
   _onFinish(context) {
+    if (!context.builds.server.webpack.stats || !context.builds.client.webpack.stats)
+      return;
+
     return promiseProtect(() => {
-      if (context.builds.server.webpack.stats && context.builds.client.webpack.stats)
+      if (!context.watch)
         return this._finishBuildRecords(context);
+    }).then(() => {
+      return this._writeManifest(context);
     });
   }
 
@@ -389,6 +391,51 @@ class GourmetPluginWebpackBuilder {
   _getBuildRecordsPath(context) {
     return Promise.resolve(npath.join(this.outputDir, context.stage, "info", "build.json"));
   }
+
+  _writeManifest(context) {
+    function _section(target) {
+      function _eps() {
+        const eps = compilation.entrypoints;
+        const res = {};
+        if (eps) {
+          eps.forEach((ep, name) => {
+            const assets = target === "client" ? globalAssets : [];
+            res[name] = assets.concat(ep.getFiles().filter(name => !name.endsWith(".map")));
+          });
+        }
+        return res;
+      }
+
+      function _files() {
+        return Object.keys(compilation.assets);
+      }
+
+      const compilation = context.builds[target].webpack.stats.compilation;
+
+      return {
+        compilation: compilation.hash,
+        entrypoints: _eps(compilation),
+        files: _files(compilation)
+      };
+    }
+
+    const globalAssets = Object.keys(this._globalAssets);
+    const obj = {};
+
+    ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
+      obj[name] = context[name];
+    });
+
+    obj.server = _section("server");
+    obj.client = _section("client");
+
+    const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
+    const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
+
+    return this.emitFile(path, content).then(() => {
+      this.manifest = obj;
+    });
+  }
 }
 
 GourmetPluginWebpackBuilder.meta = {
@@ -399,10 +446,6 @@ GourmetPluginWebpackBuilder.meta = {
         stage: {
           help: "Specify the stage (e.g. '--stage prod')",
           alias: "s"
-        },
-        target: {
-          help: "Target to build ('client|server|all*')",
-          alias: "t"
         },
         debug: {
           help: "Enable debug mode ('--no-debug' to disable)"

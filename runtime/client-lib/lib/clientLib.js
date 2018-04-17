@@ -26,11 +26,11 @@ function clientLib(storage=_defaultStorage) {
     function _loadBundle() {
       return storage.readFile(npath.join(serverDir, "manifest.json")).then(manifest => {
         manifest = JSON.parse(manifest.toString());
-        const bundles = manifest.entrypoints.server[entrypoint];
+        const bundles = manifest.server.entrypoints[entrypoint];
         if (!bundles)
-          throw Error(`There is no '${entrypoint}.server' entrypoint in 'manifest.json'`);
+          throw Error(`There is no '${entrypoint}' entrypoint in 'manifest.json'`);
         if (bundles.length !== 1)
-          throw Error(`'${entrypoint}.server' should have only one bundle file`);
+          throw Error(`'${entrypoint}' should have only one bundle file`);
         const path = npath.join(serverDir, bundles[0]);
         return storage.readFile(path).then(bundle => {
           const sandbox = new RendererSandbox({
@@ -53,7 +53,7 @@ function clientLib(storage=_defaultStorage) {
       if (err)
         return callback(err);
 
-      if (!item.render && siloed)
+      if (!item.render || siloed)
         item.render = _getRenderer(item);
 
       promiseProtect(() => {

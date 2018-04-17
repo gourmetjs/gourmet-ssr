@@ -6,7 +6,7 @@
     "gourmet-plugin"
   ],
   "main": "lib/GourmetPluginWebpackDevServer.js",
-  "dependencies": {
+  "_dependencies": {
     "@gourmet/connect-lite": "^0.1.0",
     "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/load-renderer": "^0.1.0",

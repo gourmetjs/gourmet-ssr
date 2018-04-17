@@ -5,6 +5,7 @@ const stream = require("stream");
 const MultiStream = require("multistream");
 const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
+const promiseProtect = require("@gourmet/promise-protect");
 const resolveTemplate = require("@gourmet/resolve-template");
 const pageTemplate = require("./pageTemplate");
 
@@ -12,7 +13,7 @@ const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
 
 function _bufStream(buf) {
   return new stream.Readable({
-    _read() {
+    read() {
       this.push(buf);
       this.push(null);
     }
@@ -32,7 +33,7 @@ module.exports = class HtmlServerRenderer {
   }
 
   invokeUserRenderer(gmctx) {
-    return Promise.resolve().then(() => {
+    return promiseProtect(() => {
       return this._userRenderer(gmctx);
     });
   }
@@ -48,7 +49,7 @@ module.exports = class HtmlServerRenderer {
     return reqObj => {
       const gmctx = this.createContext(reqObj, opts);
       this.addDependencies(gmctx);
-      this.invokeUserRenderer(gmctx).then(content => {
+      return this.invokeUserRenderer(gmctx).then(content => {
         return this.renderToMedium(gmctx, content);
       }).then(bodyMain => {
         return this.renderHtml(gmctx, bodyMain);
@@ -145,7 +146,7 @@ module.exports = class HtmlServerRenderer {
     const entrypoint = gmctx.entrypoint;
     const manifest = gmctx.manifest;
     const staticPrefix = manifest.staticPrefix;
-    const deps = manifest.entrypoints[entrypoint].client;
+    const deps = manifest.client.entrypoints[entrypoint];
     const styles = [];
     const scripts = [];
 

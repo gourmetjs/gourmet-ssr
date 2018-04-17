@@ -6,7 +6,7 @@ class GourmetPluginWebpackReactHotLoader {
       js: [{
         loader: "#babel-loader",
         options: {
-          plugins: context.target === "client" && context.watchMode === "hot" ? [{
+          plugins: context.target === "client" && context.watch === "hot" ? [{
             name: "react-hot-loader/babel",
             plugin: require.resolve("react-hot-loader/babel")
           }] : []
@@ -16,7 +16,7 @@ class GourmetPluginWebpackReactHotLoader {
   }
 
   _onWebpackAlias(context) {
-    if (context.watchMode === "hot") {
+    if (context.watch === "hot") {
       return {
         "react-hot-loader": context.builder.moduleDir(__dirname)("react-hot-loader")
       };

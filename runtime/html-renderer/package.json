@@ -6,6 +6,8 @@
     "@gourmet/console": "^0.1.0",
     "@gourmet/is-stream": "^0.1.0",
     "@gourmet/merge": "^0.1.0",
-    "@gourmet/resolve-template": "^0.1.0"
+    "@gourmet/promise-protect": "^0.1.0",
+    "@gourmet/resolve-template": "^0.1.0",
+    "multistream": "^2.1.0"
   }
 }

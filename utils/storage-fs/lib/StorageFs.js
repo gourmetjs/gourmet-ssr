@@ -7,7 +7,7 @@ const isStream = require("@gourmet/is-stream");
 const promiseQueue = require("@gourmet/promise-queue");
 
 class StorageFs {
-  constructor({basePath="", fs=base_fs, mkdirp=base_mkdirp}) {
+  constructor({basePath="", fs=base_fs, mkdirp=base_mkdirp}={}) {
     this.basePath = npath.resolve(process.cwd(), basePath);
     this.fs = fs;
     this.mkdirp = mkdirp;
@@ -141,7 +141,7 @@ class StorageFs {
   }
 
   _getPath(path) {
-    return npath.join(this.basePath, path);
+    return npath.resolve(this.basePath, path);
   }
 
   _createWriteStream(path) {

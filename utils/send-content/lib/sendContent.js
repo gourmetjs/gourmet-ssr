@@ -13,7 +13,7 @@ function _defaultDone(err) {
 }
 
 // `callback(err)` is called when sending a stream is finished.
-module.exports = function sendContent(res, {statusCode=200, headers={}, content}, callback=_defaultDone) {
+module.exports = function sendContent(res, {statusCode=200, headers={}, content}={}, callback=_defaultDone) {
   function _has(key) {
     key = key.toLowerCase();
     return keys.indexOf(key) !== -1;

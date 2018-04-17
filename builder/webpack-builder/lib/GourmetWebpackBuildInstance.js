@@ -93,7 +93,7 @@ class GourmetWebpackBuildInstance {
       con.info(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
       con.print({level: "info", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
 
-      if (context.watchMode)
+      if (context.watch)
         return;
 
       con.log();
@@ -113,25 +113,16 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  // This function gets called after a normal build.
-  // This is not used in watch mode.
+  // In a normal build, this function gets called just once. In a watch mode,
+  // this function gets called multiple times whenever a compilation finishes.
   finish(context) {
     return promiseProtect(() => {
       this.printWebpackResult(context);
-      if (this.webpack.stats.hasErrors() && !context.argv.ignoreCompileErrors)
-        throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});
-      return this.writeManifest(context).then(() => {
+      if (!context.watch) {
+        if (this.webpack.stats.hasErrors() && !context.argv.ignoreCompileErrors)
+          throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});
         return this._finishWebpackRecords(context);
-      });
-    });
-  }
-
-  // This function gets called multiple times whenever a compilation finishes
-  // in watch mode.
-  update(context) {
-    return promiseProtect(() => {
-      this.printWebpackResult(context);
-      return this.writeManifest(context);
+      }
     });
   }
 
@@ -168,9 +159,9 @@ class GourmetWebpackBuildInstance {
   getWebpackDevTool(context) {
     function _devtool() {
       if (context.target === "client") {
-        if (context.watchMode === "hot")
+        if (context.watch === "hot")
           return context.sourceMap ? "cheap-eval-source-map" : "eval";
-        else if (context.watchMode)
+        else if (context.watch)
           return context.sourceMap ? "eval-source-map" : false;
       }
       return context.sourceMap ? "source-map" : false;
@@ -225,7 +216,7 @@ class GourmetWebpackBuildInstance {
 
       entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context);
 
-      res[name] = (context.watchMode || entryValue.length > 1) ? entryValue : entryValue[0];
+      res[name] = (context.watch || entryValue.length > 1) ? entryValue : entryValue[0];
     });
 
     return res;
@@ -408,44 +399,6 @@ class GourmetWebpackBuildInstance {
           plugin = new plugin(item.options);
         return plugin;
       }
-    });
-  }
-
-  writeManifest(context) {
-    function _eps() {
-      const eps = compilation.entrypoints;
-      const res = {};
-      if (eps) {
-        eps.forEach((ep, name) => {
-          res[name] = globalAssets.concat(ep.getFiles().filter(name => !name.endsWith(".map")));
-        });
-      }
-      return res;
-    }
-
-    function _files() {
-      return Object.keys(compilation.assets);
-    }
-
-    const globalAssets = this.target === "client" ? Object.keys(context.builder.globalAssets) : [];
-    const compilation = this.webpack.stats.compilation;
-    const obj = {target: this.target};
-
-    ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
-      obj[name] = context[name];
-    });
-
-    Object.assign(obj, {
-      compilation: compilation.hash,
-      entrypoints: _eps(),
-      files: _files()
-    });
-
-    const path = npath.join(context.builder.outputDir, context.stage, "server", `${this.target}_manifest.json`);
-    const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
-
-    return context.builder.emitFile(path, content).then(() => {
-      this.manifest = obj;
     });
   }
 

@@ -7,8 +7,9 @@
     "build": "gourmet build --stage prod",
     "start": "node server/lib/index.js --stage prod"
   },
-  "_dependencies": {
-    "@gourmet/watch-lib": "^0.1.0",
+  "dependencies": {
+    "@gourmet/client-lib": "^0.1.0",
+    "@gourmet/server-args": "^0.1.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },

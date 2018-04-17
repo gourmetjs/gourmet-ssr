@@ -1,9 +1,0 @@
-{
-  "name": "@gourmet/load-renderer",
-  "version": "0.1.0",
-  "main": "lib/loadRenderer.js",
-  "dependencies": {
-    "@gourmet/renderer-sandbox": "^0.1.0",
-    "@gourmet/get-exported": "^0.1.0"
-  }
-}

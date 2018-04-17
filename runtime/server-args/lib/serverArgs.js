@@ -1,7 +1,7 @@
 "use strict";
 
 const npath = require("path");
-const minimist = require("miminist");
+const minimist = require("minimist");
 const camelcaseKeys = require("camelcase-keys");
 
 module.exports = function serverArgs(argv) {
