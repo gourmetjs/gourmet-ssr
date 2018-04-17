@@ -156,46 +156,67 @@ class GourmetPluginWebpackBuilder {
     };
   }
 
-  // From: https://github.com/webpack/webpack/blob/3047bed42761a0bed8b48a1d2b8ed292308ea3a1/lib/Compiler.js#L312
   emitFile(path, content) {
-    return new Promise((resolve, reject) => {
-      function _writeFile() {
-        fs.writeFile(path, content, err => {
-          if (err)
-            reject(err);
-          else
-            resolve();
-        });
+    let fs = this.serverOutputFileSystem;
+
+    if (!fs) {
+      fs = {
+        writeFileSync: nfs.writeFileSync,
+        mkdirpSync: mkdirp.sync
+      };
+    }
+
+    const dir = npath.dirname(path);
+
+    if (dir)
+      fs.mkdirpSync(dir);
+
+    fs.writeFileSync(path, content);
+  }
+
+  writeManifest(context) {
+    function _section(target) {
+      function _eps() {
+        const eps = compilation.entrypoints;
+        const res = {};
+        if (eps) {
+          eps.forEach((ep, name) => {
+            const assets = target === "client" ? globalAssets : [];
+            res[name] = assets.concat(ep.getFiles().filter(name => !name.endsWith(".map")));
+          });
+        }
+        return res;
       }
 
-      let fs = this.serverOutputFileSystem;
-
-      if (!fs) {
-        fs = {
-          writeFile: nfs.writeFile,
-          mkdirp: mkdirp
-        };
+      function _files() {
+        return Object.keys(compilation.assets);
       }
 
-      const idx1 = path.lastIndexOf("/");
-      const idx2 = path.lastIndexOf("\\");
+      const compilation = context.builds[target].webpack.stats.compilation;
 
-      let dir = null;
+      return {
+        compilation: compilation.hash,
+        entrypoints: _eps(compilation),
+        files: _files(compilation)
+      };
+    }
 
-      if (idx1 > idx2)
-        dir = path.substr(0, idx1);
-      else if (idx1 < idx2)
-        dir = path.substr(0, idx2);
+    const globalAssets = Object.keys(this._globalAssets);
+    const obj = {};
 
-      if (!dir)
-        return _writeFile();
-
-      fs.mkdirp(dir, err => {
-        if (err)
-          return reject(err);
-        _writeFile();
-      });
+    ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
+      obj[name] = context[name];
     });
+
+    obj.server = _section("server");
+    obj.client = _section("client");
+
+    const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
+    const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
+
+    this.emitFile(path, content);
+
+    this.manifest = obj;
   }
 
   // Main handler for `gourmet build` command.
@@ -254,7 +275,7 @@ class GourmetPluginWebpackBuilder {
         if (!context.watch)
           return this._finishBuildRecords(context);
       }).then(() => {
-        return this._writeManifest(context);
+        return this.writeManifest(context);
       });
     }
   }
@@ -388,51 +409,6 @@ class GourmetPluginWebpackBuilder {
 
   _getBuildRecordsPath(context) {
     return Promise.resolve(npath.join(this.outputDir, context.stage, "info", "build.json"));
-  }
-
-  _writeManifest(context) {
-    function _section(target) {
-      function _eps() {
-        const eps = compilation.entrypoints;
-        const res = {};
-        if (eps) {
-          eps.forEach((ep, name) => {
-            const assets = target === "client" ? globalAssets : [];
-            res[name] = assets.concat(ep.getFiles().filter(name => !name.endsWith(".map")));
-          });
-        }
-        return res;
-      }
-
-      function _files() {
-        return Object.keys(compilation.assets);
-      }
-
-      const compilation = context.builds[target].webpack.stats.compilation;
-
-      return {
-        compilation: compilation.hash,
-        entrypoints: _eps(compilation),
-        files: _files(compilation)
-      };
-    }
-
-    const globalAssets = Object.keys(this._globalAssets);
-    const obj = {};
-
-    ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
-      obj[name] = context[name];
-    });
-
-    obj.server = _section("server");
-    obj.client = _section("client");
-
-    const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
-    const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
-
-    return this.emitFile(path, content).then(() => {
-      this.manifest = obj;
-    });
   }
 }
 

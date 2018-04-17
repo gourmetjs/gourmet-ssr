@@ -59,17 +59,15 @@ class GourmetWatchMiddleware {
     serverComp.outputFileSystem = context.builder.serverOutputFileSystem = this._outputFileSystem;
 
     this._runWatch(serverComp, watchOptions, (err, stats) => {
-      this._printResult("server", err, stats, context).then(changed => {
-        if (changed && !err && stats)
-          this.gourmet.cleanCache();
-        this._setBusy("server", !err && !stats, context);
-      });
+      const changed = this._printResult("server", err, stats, context);
+      if (changed && !err && stats)
+        this.gourmet.cleanCache();
+      this._setBusy("server", !err && !stats, context);
     });
 
     this._runWatch(clientComp, Object.assign({wrapWatcher: true}, watchOptions), (err, stats) => {
-      this._printResult("client", err, stats, context).then(() => {
-        this._setBusy("client", !err && !stats, context);
-      });
+      this._printResult("client", err, stats, context);
+      this._setBusy("client", !err && !stats, context);
     });
 
     hotClient(clientComp, {
@@ -94,21 +92,23 @@ class GourmetWatchMiddleware {
   }
 
   _setBusy(target, busy, context) {
+    const con = context.console;
     const oldBusy = this._isBusy();
     this._busy[target] = busy;
     const newBusy = this._isBusy();
 
     if (!newBusy && oldBusy !== newBusy) {
-      const con = context.console;
+      context.builder.writeManifest(context);
+
       con.log(con.colors.green(">>>"));
       con.log(con.colors.green(">>> Bundles are ready to be served by both server and client"));
       con.log(con.colors.green(">>>"));
-    }
 
-    if (!newBusy && this._busy.queue.length) {
-      const q = this._busy.queue;
-      this._busy.queue = [];
-      q.forEach(callback => callback());
+      if (this._busy.queue.length) {
+        const q = this._busy.queue;
+        this._busy.queue = [];
+        q.forEach(callback => callback());
+      }
     }
   }
 
@@ -177,35 +177,29 @@ class GourmetWatchMiddleware {
     const build = context.builds[target];
     const con = build.console;
 
-    return promiseProtect(() => {
-      if (!err && !stats) {
-        con.log("Compiling...");
-        return false;
-      }
+    if (!err && !stats) {
+      con.log("Compiling...");
+      return false;
+    }
 
-      if (err) {
-        con.error(err.stack || err);
-        if (err.details)
-          con.error(err.details);
-        return false;
-      }
+    if (err) {
+      con.error(err.stack || err);
+      if (err.details)
+        con.error(err.details);
+      return false;
+    }
 
-      const hash = stats.compilation.hash;
+    const hash = stats.compilation.hash;
 
-      if (this._lastCompilationHash[target] !== hash) {
-        this._lastCompilationHash[target] = hash;
-        con.log("Compilation finished, updating...");
-        build.webpack.stats = stats;
-        return context.plugins.runAsync("build:finish", context).then(() => {
-          return true;
-        });
-      } else {
-        con.log("Compilation hash didn't change, ignoring...");
-        return false;
-      }
-    }).catch(err => {
-      con.error(err);
-    });
+    if (this._lastCompilationHash[target] !== hash) {
+      this._lastCompilationHash[target] = hash;
+      build.webpack.stats = stats;
+      build.printWebpackResult(context);
+      return true;
+    } else {
+      con.log("Compilation hash didn't change, ignoring...");
+      return false;
+    }
   }
 }
 

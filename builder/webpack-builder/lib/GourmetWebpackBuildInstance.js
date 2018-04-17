@@ -113,13 +113,10 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  // In a normal build, this function gets called just once. In a watch mode,
-  // this function gets called multiple times whenever a compilation finishes.
   finish(context) {
     return promiseProtect(() => {
-      if (this.webpack.stats)
-        this.printWebpackResult(context);
       if (!context.watch) {
+        this.printWebpackResult(context);
         if (this.webpack.stats.hasErrors() && !context.argv.ignoreCompileErrors)
           throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});
         return this._finishWebpackRecords(context);
