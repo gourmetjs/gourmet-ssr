@@ -71,7 +71,8 @@ class GourmetWatchMiddleware {
     });
 
     hotClient(clientComp, {
-      hot: context.watch === "hot"
+      hot: context.watch === "hot",
+      port: context.argv.watchPort || 3938
     });
 
     return webpackDevMiddleware(clientComp, {
