@@ -13,7 +13,6 @@ module.exports = context => ({
       "local": ["local"],
       "production": ["prod", "production"]
     },
-    stage: "local",
     debug: context.getter(() => !context.stageIs("production")),
     optimize: context.getter(() => context.stageIs("production")),
     sourceMap: false,
@@ -22,9 +21,7 @@ module.exports = context => ({
     runtime: {
       client: null,   // browserlist's default
       server: "6.1"   // node 6.10
-    },
-
-    outputDir: ".gourmet"
+    }
   },
 
   babel: {

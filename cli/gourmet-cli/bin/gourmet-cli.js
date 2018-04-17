@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 "use strict";
 
-const GourmetCli = require("../lib/GourmetCli");
+const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const cli = new GourmetCli();
-cli.runCommand(process.argv.slice(2));
+cli.runCommand(cli.parseArgs(process.argv.slice(2)));

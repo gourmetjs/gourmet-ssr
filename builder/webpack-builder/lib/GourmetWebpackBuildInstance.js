@@ -117,7 +117,8 @@ class GourmetWebpackBuildInstance {
   // this function gets called multiple times whenever a compilation finishes.
   finish(context) {
     return promiseProtect(() => {
-      this.printWebpackResult(context);
+      if (this.webpack.stats)
+        this.printWebpackResult(context);
       if (!context.watch) {
         if (this.webpack.stats.hasErrors() && !context.argv.ignoreCompileErrors)
           throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});

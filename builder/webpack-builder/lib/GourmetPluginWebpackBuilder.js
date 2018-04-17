@@ -205,9 +205,6 @@ class GourmetPluginWebpackBuilder {
   }
 
   _onGo(context) {
-    // Build instances
-    context.builds = {};
-
     return promiseProtect(() => {
       return context.plugins.runAsync("build:prepare", context);
     }).then(() => {
@@ -221,7 +218,9 @@ class GourmetPluginWebpackBuilder {
 
   // Handler for `build:prepare` event
   _onPrepare(context) {
-    return this._init(context).then(() => {
+    return promiseProtect(() => {
+      return this._init(context);
+    }).then(() => {
       return this._prepareStageTypes(context);
     }).then(() => {
       return this._prepareContextVars(context);
@@ -247,22 +246,24 @@ class GourmetPluginWebpackBuilder {
     });
   }
 
+  // In a normal build, "build:finish" event is fired just once. In a watch mode,
+  // it is fired multiple times whenever a compilation finishes.
   _onFinish(context) {
-    if (!context.builds.server.webpack.stats || !context.builds.client.webpack.stats)
-      return;
-
-    return promiseProtect(() => {
-      if (!context.watch)
-        return this._finishBuildRecords(context);
-    }).then(() => {
-      return this._writeManifest(context);
-    });
+    if (context.builds.server.webpack.stats && context.builds.client.webpack.stats) {
+      return promiseProtect(() => {
+        if (!context.watch)
+          return this._finishBuildRecords(context);
+      }).then(() => {
+        return this._writeManifest(context);
+      });
+    }
   }
 
   _init(context) {
-    return context.vars.get("builder.outputDir", ".gourmet").then(dir => {
-      this.outputDir = npath.resolve(context.workDir, dir);
-    });
+    const argv = context.argv;
+    context.stage = argv.stage || argv.s || "local";
+    context.builds = {};
+    this.outputDir = npath.resolve(argv.workDir, argv.out || ".gourmet");
   }
 
   _prepareStageTypes(context) {
@@ -291,7 +292,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   _prepareContextVars(context) {
-    return promiseEach(["stage", "debug", "optimize", "sourceMap", "staticPrefix"], name => {
+    return promiseEach(["debug", "optimize", "sourceMap", "staticPrefix"], name => {
       return context.vars.get("builder." + name).then(userValue => {
         let value;
 
@@ -301,9 +302,6 @@ class GourmetPluginWebpackBuilder {
           value = userValue;
         } else {
           switch (name) {
-            case "stage":
-              value = "local";
-              break;
             case "debug":
               value = !context.stageIs("production");
               break;
@@ -441,7 +439,8 @@ class GourmetPluginWebpackBuilder {
 GourmetPluginWebpackBuilder.meta = {
   commands: {
     build: {
-      help: "Build the bundles & manifests",
+      help: "Build the Gourmet project",
+      requireConfig: true,
       options: {
         stage: {
           help: "Specify the stage (e.g. '--stage prod')",

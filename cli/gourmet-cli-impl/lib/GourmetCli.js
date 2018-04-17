@@ -3,6 +3,7 @@
 const npath = require("path");
 const fs = require("fs");
 const resolve = require("resolve");
+const omit = require("lodash.omit");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
 const CliBase = require("@gourmet/cli-base");
@@ -10,12 +11,29 @@ const Variables = require("@gourmet/variables");
 const ContextSource = require("./ContextSource");
 
 const CONFIG_FILE_NOT_FOUND = {
-  message: "Config file 'gourmet.js' or 'gourmet.json' not found in directory '${workDir}'",
+  message: "Project config file 'gourmet.js' or 'gourmet.json' not found in directory '${workDir}'",
   code: "CONFIG_FILE_NOT_FOUND"
 };
 
 class GourmetCli extends CliBase {
-  loadConfig() {
+  init(argv) {
+    return promiseProtect(() => {
+      super.init(argv);
+    }).then(() => {
+      return this._loadConfig();
+    }).then(() => {
+      if (this.context.vars)
+        return this._loadUserPlugins();
+    });
+  }
+
+  verifyArgs(argv, info) {
+    super.verifyArgs(argv, info);
+    if (info.requireConfig && !this.context.vars)
+      throw error(CONFIG_FILE_NOT_FOUND, {workDir: this.context.workDir});
+  }
+
+  _loadConfig() {
     const exts = [".js", ".json"];
 
     this.context.package = this._loadModuleSafe(npath.join(this.context.workDir, "package.json"));
@@ -35,11 +53,9 @@ class GourmetCli extends CliBase {
         });
       }
     }
-
-    throw error(CONFIG_FILE_NOT_FOUND, {workDir: this.context.workDir});
   }
 
-  loadUserPlugins() {
+  _loadUserPlugins() {
     return this.context.vars.getMulti(["autoLoadPlugins", "prepend"], ["plugins", []]).then(([auto, plugins]) => {
       if (auto === true) {
         if (!plugins.length)

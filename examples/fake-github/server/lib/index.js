@@ -4,6 +4,7 @@ const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
 const serverArgs = require("@gourmet/server-args");
+const handleRequestError = require("@gourmet/handle-request-error");
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,10 +19,14 @@ let gourmet;
 if (args.watch) {
   const watch = require("@gourmet/watch-middleware")(args);
   app.use(watch);
-  gourmet = watch.client;
+  gourmet = watch.gourmet;
 } else {
   gourmet = require("@gourmet/client-lib")();
-  app.use("/s/", express.static(args.clientDir));
+  app.use("/s/", express.static(args.clientDir, {
+    fallthrough: false,
+    index: false,
+    redirect: false
+  }));
 }
 
 app.get("/", (req, res, next) => {
@@ -33,6 +38,10 @@ app.get("/", (req, res, next) => {
       delay: 500
     }
   });
+});
+
+app.use((err, req, res, next) => {  // eslint-disable-line no-unused-vars
+  handleRequestError(err, req, res);
 });
 
 const server = http.createServer(app);
