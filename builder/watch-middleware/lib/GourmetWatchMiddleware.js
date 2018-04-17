@@ -36,7 +36,7 @@ class GourmetWatchMiddleware {
     if (!argv.watchFs)
       this._outputFileSystem = new MemoryFs();
 
-    this.gourmet = clientLib(new StorageFs({fs: context.builder.serverOutputFileSystem}));
+    this.gourmet = clientLib(new StorageFs({fs: this._outputFileSystem}));
 
     cli.init(argv).then(() => {
       cli.verifyArgs(argv, cli.findCommandInfo(argv.command));
@@ -56,8 +56,7 @@ class GourmetWatchMiddleware {
     const clientComp = context.builds.client.webpack.compiler;
     const watchOptions = this._getWatchOptions(context.argv);
 
-    if (!context.argv.watchFs)
-      serverComp.outputFileSystem = context.builder.serverOutputFileSystem = new MemoryFs();
+    serverComp.outputFileSystem = context.builder.serverOutputFileSystem = this._outputFileSystem;
 
     this._runWatch(serverComp, watchOptions, (err, stats) => {
       this._printResult("server", err, stats, context).then(changed => {
