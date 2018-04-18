@@ -4,7 +4,7 @@ const serializeError = require("@gourmet/serialize-error");
 
 module.exports = function serializeRequestError(req, err, options={}) {
   const obj = serializeError(err);
-  const props = options.props || ["url", "method", "headers"];
+  const props = options.requestProps || ["url", "method", "headers"];
   const copied = {};
 
   for (let idx = 0; idx < props.length; idx++) {

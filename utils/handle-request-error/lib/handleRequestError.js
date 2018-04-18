@@ -19,7 +19,7 @@ module.exports = function handleRequestError(err, req, res, options={}) {
       return;
     }
 
-    const obj = serializeRequestError(req, err);
+    const obj = serializeRequestError(req, err, options);
 
     if (obj.statusCode === undefined)
       obj.statusCode = 500;
@@ -42,10 +42,6 @@ module.exports = function handleRequestError(err, req, res, options={}) {
       detail: options.hideErrorStack ? null :  inspectError(obj)
     });
     const headers = {};
-
-    // LATER: serialize err and send
-    if (options.setUnhandledErrorHeader === undefined || options.setUnhandledErrorHeader)
-      headers[options.setUnhandledErrorHeader || "x-gourmet-unhandled-error"] = "true";
 
     sendContent(res, {content, statusCode: obj.statusCode, headers});
 

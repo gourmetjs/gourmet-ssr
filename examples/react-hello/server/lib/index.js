@@ -4,6 +4,7 @@ const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
 const serverArgs = require("@gourmet/server-args");
+const handleRequestError = require("@gourmet/handle-request-error");
 
 const PORT = process.env.PORT || 3000;
 
@@ -43,6 +44,10 @@ app.use(gourmet.getRenderer(Object.assign({
     message: "Hello"
   }
 }, opts)));
+
+app.use((err, req, res, next) => {  // eslint-disable-line no-unused-vars
+  handleRequestError(err, req, res);
+});
 
 const server = http.createServer(app);
 

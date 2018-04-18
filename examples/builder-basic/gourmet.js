@@ -32,7 +32,8 @@ module.exports = context => ({
     recordsDir: ".webpack",
     alias: {},
     define: {},
-    plugins: []
+    plugins: [],
+    config: {}
   },
 
   entry: {
@@ -41,5 +42,8 @@ module.exports = context => ({
       server: "./src/server.js"
     },
     admin: "./src/admin.js"
+  },
+
+  config: {
   }
 });

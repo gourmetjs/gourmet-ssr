@@ -43,11 +43,6 @@ const INVALID_DEFINE = {
   code: "INVALID_DEFINE"
 };
 
-const INVALID_PLUGINS = {
-  message: "'webpack.plugins' must be an array",
-  code: "INVALID_PLUGINS"
-};
-
 const INVALID_WEBPACK_PLUGIN = {
   message: "Webpack plugin entry must be an object with '{name, [plugin]}' shape: ${item}",
   code: "INVALID_WEBPACK_PLUGIN"
@@ -125,7 +120,7 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackConfig(context) {
-    return {
+    const config = {
       context: this.getWebpackContext(context),
       target: this.getWebpackTarget(context),
       mode: this.getWebpackMode(context),
@@ -138,6 +133,10 @@ class GourmetWebpackBuildInstance {
       plugins: this.getWebpackPlugins(context),
       recordsPath: this._recordsPath
     };
+    const userConfig = this._varsCache.webpack.config;
+    if (userConfig)
+      merge(config, userConfig);
+    return config;
   }
 
   getWebpackContext(context) {
@@ -227,11 +226,11 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackAlias(context) {
-    let alias = this._varsCache.webpack.alias;
-    if (alias !== undefined && !isPlainObject(alias))
+    const alias = context.plugins.runMergeSync("build:webpack:alias", {}, context);
+    const userAlias = this._varsCache.webpack.alias;
+    if (userAlias && !isPlainObject(userAlias))
       throw error(INVALID_ALIAS);
-    alias = Object.assign({}, alias);
-    return context.plugins.runMergeSync("build:webpack:alias", alias, context);
+    return Object.assign(alias, userAlias);
   }
 
   getWebpackModule(context) {
@@ -343,47 +342,38 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackDefine(context) {
-    const define = {
+    const define = context.plugins.runMergeSync("build:webpack:define", {
       "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
       DEBUG: JSON.stringify(context.debug),
       SERVER: JSON.stringify(context.target === "server"),
       CLIENT: JSON.stringify(context.target === "client"),
       STAGE: JSON.stringify(context.stage)
-    };
+    }, context);
     const userDef = this._varsCache.webpack.define;
-
-    if (userDef) {
-      if (!isPlainObject(define))
-        throw error(INVALID_DEFINE);
-      merge(define, userDef);
-    }
-
-    return context.plugins.runMergeSync("build:webpack:define", define, context);
+    if (userDef && !isPlainObject(userDef))
+      throw error(INVALID_DEFINE);
+    return merge(define, userDef);
   }
 
   getWebpackPlugins(context) {
     const define = this.getWebpackDefine(context);
-    let plugins = [];
+    const wrapper = {plugins: []};
 
     if (isPlainObject(define) && Object.keys(define).length > 1) {
-      plugins.push({
+      wrapper.plugins.push({
         name: "webpack/define-plugin",
         plugin: webpack.DefinePlugin,
         options: define
       });
     }
 
+    context.plugins.runMergeSync("build:webpack:plugins", wrapper, context);
+
     const userPlugins = this._varsCache.webpack.plugins;
+    if (userPlugins)
+      merge(wrapper, {plugins: userPlugins});
 
-    if (userPlugins) {
-      if (!Array.isArray(userPlugins))
-        throw error(INVALID_PLUGINS);
-      plugins = plugins.concat(userPlugins);
-    }
-
-    context.plugins.runMergeSync("build:webpack:plugins", {plugins}, context);
-
-    return sortPlugins(plugins, {
+    return sortPlugins(wrapper.plugins, {
       normalize(item) {
         if (!isPlainObject(item) || !item.name || typeof item.name !== "string")
           throw error(INVALID_WEBPACK_PLUGIN, {item});

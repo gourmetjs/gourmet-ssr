@@ -3,9 +3,7 @@
   "private": true,
   "scripts": {
     "hot": "node server/lib/index.js --hot",
-    "watch": "node server/lib/index.js --watch",
-    "build": "gourmet build --stage prod",
-    "start": "node server/lib/index.js --stage prod"
+    "watch": "node server/lib/index.js --watch"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.1.0",

@@ -11,6 +11,7 @@ const promiseReadFile = require("@gourmet/promise-read-file");
 const promiseWriteFile = require("@gourmet/promise-write-file");
 const promiseProtect = require("@gourmet/promise-protect");
 const moduleDir = require("@gourmet/module-dir");
+const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
 const HashNames = require("@gourmet/hash-names");
 const omit = require("lodash.omit");
@@ -210,6 +211,7 @@ class GourmetPluginWebpackBuilder {
 
     obj.server = _section("server");
     obj.client = _section("client");
+    obj.config = this._manifestConfig;
 
     const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
     const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
@@ -267,13 +269,12 @@ class GourmetPluginWebpackBuilder {
     });
   }
 
-  // In a normal build, "build:finish" event is fired just once. In a watch mode,
-  // it is fired multiple times whenever a compilation finishes.
   _onFinish(context) {
     if (context.builds.server.webpack.stats && context.builds.client.webpack.stats) {
       return promiseProtect(() => {
-        if (!context.watch)
-          return this._finishBuildRecords(context);
+        return this._finishBuildRecords(context);
+      }).then(() => {
+        return this._collectManifestConfig(context);
       }).then(() => {
         return this.writeManifest(context);
       });
@@ -409,6 +410,13 @@ class GourmetPluginWebpackBuilder {
 
   _getBuildRecordsPath(context) {
     return Promise.resolve(npath.join(this.outputDir, context.stage, "info", "build.json"));
+  }
+
+  _collectManifestConfig(context) {
+    this._manifestConfig = context.plugins.runMergeSync("build:manifest:config", {}, context);
+    return context.vars.get("config").then(config => {
+      merge(this._manifestConfig, config);
+    });
   }
 }
 

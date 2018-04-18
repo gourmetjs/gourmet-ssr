@@ -59,6 +59,7 @@ module.exports = class HtmlServerRenderer {
 
   createContext({path, query, params}, {entrypoint, manifest}) {
     const config = manifest.config || {};
+    console.log(manifest);
     return {
       path,
       query,

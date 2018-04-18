@@ -5,6 +5,7 @@ const minimist = require("minimist");
 const camelcaseKeys = require("camelcase-keys");
 const getConsole = require("@gourmet/console");
 const installMemConsole = require("@gourmet/console-mem");
+const parseArgs = require("@gourmet/parse-args");
 const promiseMain = require("@gourmet/promise-main");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
@@ -91,8 +92,8 @@ class CliBase {
 
   init(argv) {
     installMemConsole({
-      useColors: argv.colors,
-      minLevel: (6 - parseInt(argv.verbose || argv.v, 10)) || undefined
+      useColors: parseArgs.bool(argv.colors, parseArgs.undef),
+      minLevel: parseArgs.verbosity(argv.verbose || argv.v)
     });
 
     this.context = {

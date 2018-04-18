@@ -4,18 +4,21 @@
   "scripts": {
     "hot": "node server/lib/index.js --hot",
     "watch": "node server/lib/index.js --watch",
-    "build": "gourmet build --stage prod",
-    "start": "node server/lib/index.js --stage prod"
+    "local": "gourmet build && gourmet-http-server && node server/lib/index.js",
+    "dev": "gourmet build --stage dev && gourmet-http-server --stage dev && node server/lib/index.js --stage dev",
+    "prod": "gourmet build --stage prod && gourmet-http-server --stage prod && node server/lib/index.js --stage prod"
   },
-  "_dependencies": {
-    "@gourmet/watch-http": "^0.1.0",
+  "dependencies": {
+    "@gourmet/client-lib": "^0.1.0",
+    "@gourmet/handle-request-error": "^0.1.0",
+    "@gourmet/server-args": "^0.1.0",
+    "@gourmet/watch-middleware": "^0.1.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.0",
     "@gourmet/preset-builder": "^0.1.0",
-    "@gourmet/preset-react": "^0.1.0",
-    "bootstrap": "^4.1.0"
+    "@gourmet/preset-react": "^0.1.0"
   }
 }

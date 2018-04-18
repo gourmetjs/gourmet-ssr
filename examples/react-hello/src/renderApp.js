@@ -1,4 +1,3 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import React, {PureComponent} from "react";
 import {hot} from "react-hot-loader";
 
