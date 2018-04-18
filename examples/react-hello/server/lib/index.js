@@ -16,22 +16,24 @@ app.use(morgan("dev"));
 let gourmet, opts;
 
 if (args.watch) {
-  const watch = require("@gourmet/watch-middleware");
   gourmet = require("@gourmet/client-lib");
-  app.use(watch(args, gourmet));
+  const watch = require("@gourmet/watch-middleware")(args, gourmet);
+  app.use(watch);
   opts = {serverDir: args.serverDir};
+} else if (args.stage === "dev") {
+  gourmet = require("@gourmet/client-http");
+  opts = {serverUrl: args.argv.serverUrl || "http://localhost:3939"};
+} else if (args.stage === "prod") {
+  gourmet = require("@gourmet/client-lambda");
+  opts = {lambda: args.argv.lambda || process.env.RENDERER_LAMBDA};   // Lambda function name or ARN
 } else {
-  app.use("/s/", express.static(args.clientDir));
-  if (process.env.RENDERER_URL) {
-    gourmet = require("@gourmet/client-http");
-    opts = {serverUrl: process.env.RENDERER_URL};
-  } else if (process.env.RENDERER_LAMBDA) {
-    gourmet = require("@gourmet/client-lambda");
-    opts = {lambda: process.env.RENDERER_LAMBDA};   // Lambda function name or ARN
-  } else {
-    gourmet = require("@gourmet/client-lib");
-    opts = {serverDir: args.serverDir};
-  }
+  gourmet = require("@gourmet/client-lib");
+  app.use("/s/", express.static(args.clientDir, {
+    fallthrough: false,
+    index: false,
+    redirect: false
+  }));
+  opts = {serverDir: args.serverDir};
 }
 
 app.use(gourmet.getRenderer(Object.assign({

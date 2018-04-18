@@ -3,6 +3,7 @@
 const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
+const gourmet = require("@gourmet/client-lib");
 const serverArgs = require("@gourmet/server-args");
 const handleRequestError = require("@gourmet/handle-request-error");
 
@@ -14,14 +15,10 @@ const app = express();
 
 app.use(morgan("dev"));
 
-let gourmet;
-
 if (args.watch) {
-  const watch = require("@gourmet/watch-middleware")(args);
+  const watch = require("@gourmet/watch-middleware")(args, gourmet);
   app.use(watch);
-  gourmet = watch.gourmet;
-} else {
-  gourmet = require("@gourmet/client-lib")();
+} else if (args.stage === "local") {
   app.use("/s/", express.static(args.clientDir, {
     fallthrough: false,
     index: false,

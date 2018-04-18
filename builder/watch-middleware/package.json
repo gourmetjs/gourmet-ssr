@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "main": "lib/index.js",
   "dependencies": {
-    "@gourmet/client-lib": "^0.1.0",
     "@gourmet/gourmet-cli-impl": "^0.1.0",
     "@gourmet/storage-fs": "^0.1.0",
     "memory-fs": "^0.4.1",

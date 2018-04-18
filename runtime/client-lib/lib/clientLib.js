@@ -11,6 +11,7 @@ const sendContent = require("@gourmet/send-content");
 const _defaultStorage = new StorageFs();
 
 function clientLib(storage=_defaultStorage) {
+  let _storage = storage;
   let _cache = {};
 
   // Base renderer getting `reqObj` and returning `resObj`.
@@ -24,7 +25,7 @@ function clientLib(storage=_defaultStorage) {
     }
 
     function _loadBundle() {
-      return storage.readFile(npath.join(serverDir, "manifest.json")).then(manifest => {
+      return _storage.readFile(npath.join(serverDir, "manifest.json")).then(manifest => {
         manifest = JSON.parse(manifest.toString());
         const bundles = manifest.server.entrypoints[entrypoint];
         if (!bundles)
@@ -32,7 +33,7 @@ function clientLib(storage=_defaultStorage) {
         if (bundles.length !== 1)
           throw Error(`'${entrypoint}' should have only one bundle file`);
         const path = npath.join(serverDir, bundles[0]);
-        return storage.readFile(path).then(bundle => {
+        return _storage.readFile(path).then(bundle => {
           const sandbox = new RendererSandbox({
             code: bundle.toString(),
             vmOptions: {
@@ -131,12 +132,22 @@ function clientLib(storage=_defaultStorage) {
     _cache = {};
   }
 
+  function setStorage(storage) {
+    _storage = storage;
+  }
+
+  function create(storage) {
+    return clientLib(storage);
+  }
+
   return {
+    setStorage,
     renderRaw,
     render,
     getRenderer,
-    cleanCache
+    cleanCache,
+    create
   };
 }
 
-module.exports = clientLib;
+module.exports = clientLib();

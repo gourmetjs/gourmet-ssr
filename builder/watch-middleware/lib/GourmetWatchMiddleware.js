@@ -4,18 +4,20 @@ const webpackDevMiddleware = require("webpack-dev-middleware");
 const hotClient = require("webpack-hot-client");
 const MemoryFs = require("memory-fs");
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
-const clientLib = require("@gourmet/client-lib");
 const StorageFs = require("@gourmet/storage-fs");
 
 class GourmetWatchMiddleware {
-  constructor(options) {
+  constructor(args, gourmet) {
+    if (!gourmet)
+      throw Error("Instance of Gourmet Client is required");
+    this.gourmet = gourmet;
     this._busy = {
       server: true,
       client: true,
       queue: []
     };
     this._lastCompilationHash = {};
-    this._start(options);
+    this._start(args);
   }
 
   handle(req, res, next) {
@@ -33,10 +35,10 @@ class GourmetWatchMiddleware {
 
     argv._ = ["build"];
 
-    if (!argv.watchFs)
+    if (!argv.watchFs) {
       this._outputFileSystem = new MemoryFs();
-
-    this.gourmet = clientLib(new StorageFs({fs: this._outputFileSystem}));
+      this.gourmet.setStorage(new StorageFs({fs: this._outputFileSystem}));
+    }
 
     cli.init(argv).then(() => {
       cli.verifyArgs();
