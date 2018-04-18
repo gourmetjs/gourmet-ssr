@@ -3,7 +3,6 @@
 const npath = require("path");
 const minimist = require("minimist");
 const camelcaseKeys = require("camelcase-keys");
-const omit = require("lodash.omit");
 const getConsole = require("@gourmet/console");
 const installMemConsole = require("@gourmet/console-mem");
 const promiseMain = require("@gourmet/promise-main");
@@ -46,10 +45,10 @@ class CliBase {
         return this.init(argv);
       }).then(() => {
         const context = this.context;
-        this.verifyArgs(argv, this.findCommandInfo(argv.command));
+        this.verifyArgs();
         context.console.info("Running command with argv:", argv);
-        return context.plugins.runAsync("before:command:" + argv.command, context).then(() => {
-          return context.plugins.forEachAsync("command:" + argv.command, handler => {
+        return context.plugins.runAsync("before:command:" + context.command, context).then(() => {
+          return context.plugins.forEachAsync("command:" + context.command, handler => {
             return promiseProtect(() => {
               return handler(context);
             }).then(res => {
@@ -59,10 +58,10 @@ class CliBase {
             });
           }).then(consumed => {
             if (!consumed)
-              throw error(COMMAND_NOT_HANDLED, {command: argv.command});
+              throw error(COMMAND_NOT_HANDLED, {command: context.command});
           });
         }).then(() => {
-          return context.plugins.runAsync("after:command:" + argv.command, context);
+          return context.plugins.runAsync("after:command:" + context.command, context);
         });
       }).catch(err => {
         if (err instanceof HandledError) {
@@ -79,11 +78,15 @@ class CliBase {
   }
 
   parseArgs(args) {
-    const argv = camelcaseKeys(minimist(args));
-    return Object.assign({
-      command: argv._.join(" ") || this.defaultCommand,
-      workDir: argv.dir || argv.d || ""
-    }, omit(argv, ["_", "dir", "d"]));
+    return camelcaseKeys(minimist(args));
+  }
+
+  getCommand(argv) {
+    return argv._.join(" ") || this.defaultCommand;
+  }
+
+  getWorkDir(argv) {
+    return npath.resolve(process.cwd(), argv.dir || argv.d || "");
   }
 
   init(argv) {
@@ -95,7 +98,8 @@ class CliBase {
     this.context = {
       cli: this,
       argv,
-      workDir: npath.resolve(process.cwd(), argv.workDir),
+      command: this.getCommand(argv),
+      workDir: this.getWorkDir(argv),
       console: getConsole("gourmet:cli")
     };
 
@@ -122,14 +126,16 @@ class CliBase {
     throw error(UNKNOWN_COMMAND, {command});
   }
 
-  verifyArgs(argv, info) {
+  verifyArgs() {
+    const info = this.findCommandInfo(this.context.command);
     if (info.options) {
       Object.keys(info.options).forEach(name => {
         const def = info.options[name];
-        if (def.required && argv[name] === undefined)
+        if (def.required && this.context.argv[name] === undefined)
           throw error(COMMAND_OPTION_REQUIRED, {name});
       });
     }
+    return info;
   }
 }
 

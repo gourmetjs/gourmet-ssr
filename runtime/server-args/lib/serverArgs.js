@@ -15,6 +15,7 @@ module.exports = function serverArgs(args) {
   const clientDir = npath.join(outputDir, stage, "client");
 
   return {
+    argv,
     watch,
     stage,
     workDir,

@@ -1,6 +1,5 @@
 "use strict";
 
-const promiseProtect = require("@gourmet/promise-protect");
 const webpackDevMiddleware = require("webpack-dev-middleware");
 const hotClient = require("webpack-hot-client");
 const MemoryFs = require("memory-fs");
@@ -29,9 +28,10 @@ class GourmetWatchMiddleware {
     }
   }
 
-  _start({watch, workDir}) {
+  _start({watch, argv}) {
     const cli = new GourmetCli();
-    const argv = Object.assign(cli.parseArgs(process.argv.slice(2)), {workDir, command: "build"});
+
+    argv._ = ["build"];
 
     if (!argv.watchFs)
       this._outputFileSystem = new MemoryFs();
@@ -39,7 +39,7 @@ class GourmetWatchMiddleware {
     this.gourmet = clientLib(new StorageFs({fs: this._outputFileSystem}));
 
     cli.init(argv).then(() => {
-      cli.verifyArgs(argv, cli.findCommandInfo(argv.command));
+      cli.verifyArgs();
       cli.context.watch = watch;
       return cli.context.plugins.runAsync("build:go", cli.context).then(() => {
         this._webpackDevMiddleware = this._configureWatch(cli.context);

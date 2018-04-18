@@ -3,7 +3,6 @@
 const npath = require("path");
 const fs = require("fs");
 const resolve = require("resolve");
-const omit = require("lodash.omit");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
 const CliBase = require("@gourmet/cli-base");
@@ -27,8 +26,8 @@ class GourmetCli extends CliBase {
     });
   }
 
-  verifyArgs(argv, info) {
-    super.verifyArgs(argv, info);
+  verifyArgs() {
+    const info = super.verifyArgs();
     if (info.requireConfig && !this.context.vars)
       throw error(CONFIG_FILE_NOT_FOUND, {workDir: this.context.workDir});
   }
