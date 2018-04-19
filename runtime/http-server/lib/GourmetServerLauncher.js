@@ -118,7 +118,8 @@ class GourmetServerLauncher {
       "  --params.x.y         Set the arbitrary 'params' object (result: '{x: {y: true}}')",
       "  --help, -h           Show this help screen",
       "  --colors             Use ANSI colors in console output (default: auto detect)",
-      "  --verbose, -v <n>    Set the verbosity level (debug|info|log|warn|error|0-5 / default: log)",
+      "  --verbose, -v <n>    Set the verbosity level (debug|info|log*|warn|error|0-5)",
+      "  --log-format <s>     Set the Morgan log format (dev*|combined|common|short|tiny)"
     ].join("\n"));
   }
 

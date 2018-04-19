@@ -15,7 +15,8 @@ class GourmetHttpServer {
   }
 
   installLogger() {
-    this.app.use(morgan("dev", {
+    const format = this.argv.logFormat || "dev";
+    this.app.use(morgan(format, {
       // Currently, morgan just use 'write' method of the output stream so
       // we can easily redirect output to our own console.
       stream: {
