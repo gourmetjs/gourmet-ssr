@@ -157,7 +157,7 @@ class GourmetPluginWebpackBuilder {
     };
   }
 
-  emitFile(path, content) {
+  emitFileSync(path, content) {
     let fs = this.serverOutputFileSystem;
 
     if (!fs) {
@@ -175,7 +175,7 @@ class GourmetPluginWebpackBuilder {
     fs.writeFileSync(path, content);
   }
 
-  writeManifest(context) {
+  writeManifest(context, stats) {
     function _section(target) {
       function _eps() {
         const eps = compilation.entrypoints;
@@ -193,7 +193,7 @@ class GourmetPluginWebpackBuilder {
         return Object.keys(compilation.assets);
       }
 
-      const compilation = context.builds[target].webpack.stats.compilation;
+      const compilation = stats[target].compilation;
 
       return {
         compilation: compilation.hash,
@@ -205,20 +205,29 @@ class GourmetPluginWebpackBuilder {
     const globalAssets = Object.keys(this._globalAssets);
     const obj = {};
 
-    ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
-      obj[name] = context[name];
+    if (!stats) {
+      stats = {
+        server: context.builds.server.webpack.stats,
+        client: context.builds.client.webpack.stats
+      };
+    }
+
+    return this._collectManifestConfig(context).then(config => {
+      ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
+        obj[name] = context[name];
+      });
+
+      obj.server = _section("server");
+      obj.client = _section("client");
+      obj.config = config;
+
+      const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
+      const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
+
+      this.emitFileSync(path, content);
+
+      this.manifest = obj;
     });
-
-    obj.server = _section("server");
-    obj.client = _section("client");
-    obj.config = this._manifestConfig;
-
-    const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
-    const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
-
-    this.emitFile(path, content);
-
-    this.manifest = obj;
   }
 
   // Main handler for `gourmet build` command.
@@ -273,8 +282,6 @@ class GourmetPluginWebpackBuilder {
     if (context.builds.server.webpack.stats && context.builds.client.webpack.stats) {
       return promiseProtect(() => {
         return this._finishBuildRecords(context);
-      }).then(() => {
-        return this._collectManifestConfig(context);
       }).then(() => {
         return this.writeManifest(context);
       });
@@ -413,9 +420,13 @@ class GourmetPluginWebpackBuilder {
   }
 
   _collectManifestConfig(context) {
+    if (this._manifestConfig)
+      return Promise.resolve(this._manifestConfig);
+
     this._manifestConfig = context.plugins.runMergeSync("build:manifest:config", {}, context);
+
     return context.vars.get("config").then(config => {
-      merge(this._manifestConfig, config);
+      return merge(this._manifestConfig, config);
     });
   }
 }

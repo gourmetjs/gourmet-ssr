@@ -14,7 +14,8 @@ class GourmetWatchMiddleware {
     this._busy = {
       server: true,
       client: true,
-      queue: []
+      reqQueue: [],
+      compQueue: []
     };
     this._lastCompilationHash = {};
     this._start(args);
@@ -22,7 +23,7 @@ class GourmetWatchMiddleware {
 
   handle(req, res, next) {
     if (this._isBusy()) {
-      this._busy.queue.push(() => {
+      this._busy.reqQueue.push(() => {
         return this._webpackDevMiddleware(req, res, next);
       });
     } else {
@@ -91,28 +92,69 @@ class GourmetWatchMiddleware {
   }
 
   _isBusy() {
-    return Boolean(this._busy.server || this._busy.client);
+    const busy = this._busy;
+    return Boolean(busy.server || busy.client || busy.compQueue.length);
+  }
+
+  _isCompiling() {
+    const busy = this._busy;
+    return Boolean(busy.server || busy.client);
   }
 
   _setBusy(target, busy, context) {
-    const con = context.console;
-    const oldBusy = this._isBusy();
+    const oldBusy = this._isCompiling();
     this._busy[target] = busy;
-    const newBusy = this._isBusy();
+    const newBusy = this._isCompiling();
 
     if (!newBusy && oldBusy !== newBusy) {
-      context.builder.writeManifest(context);
+      const stats = {
+        server: context.builds.server.webpack.stats,
+        client: context.builds.client.webpack.stats
+      };
+      this._addToCompQueue(() => {
+        return context.builder.writeManifest(context, stats);
+      }, context);
+    }
+  }
 
+  _addToCompQueue(func, context) {
+    function _run() {
+      const func = busy.compQueue[0];
+      func().then(() => {
+        _finish();
+      }).catch(err => {
+        con.error(err);
+        _finish();
+      });
+    }
+
+    function _finish() {
+      busy.compQueue.shift();
+      if (busy.compQueue.length)
+        _run();
+      else
+        _flush();
+    }
+
+    function _flush() {
       con.log(con.colors.green(">>>"));
       con.log(con.colors.green(">>> Bundles are ready to be served by both server and client"));
       con.log(con.colors.green(">>>"));
 
-      if (this._busy.queue.length) {
-        const q = this._busy.queue;
-        this._busy.queue = [];
+      if (busy.reqQueue.length) {
+        const q = busy.reqQueue;
+        busy.reqQueue = [];
         q.forEach(callback => callback());
       }
     }
+
+    const con = context.console;
+    const busy = this._busy;
+
+    busy.compQueue.push(func);
+
+    if (busy.compQueue.length === 1)
+      _run();
   }
 
   _runWatch(compiler, options, handler) {
