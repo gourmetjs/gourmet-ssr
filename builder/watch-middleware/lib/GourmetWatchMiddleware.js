@@ -7,7 +7,7 @@ const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const StorageFs = require("@gourmet/storage-fs");
 
 class GourmetWatchMiddleware {
-  constructor(args, gourmet) {
+  constructor({watch, argv}, gourmet) {
     if (!gourmet)
       throw Error("Instance of Gourmet Client is required");
     this.gourmet = gourmet;
@@ -18,7 +18,7 @@ class GourmetWatchMiddleware {
       compQueue: []
     };
     this._lastCompilationHash = {};
-    this._start(args);
+    this._start({watch, argv});
   }
 
   handle(req, res, next) {

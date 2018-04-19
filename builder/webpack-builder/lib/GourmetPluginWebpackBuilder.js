@@ -292,7 +292,7 @@ class GourmetPluginWebpackBuilder {
     const argv = context.argv;
     context.stage = argv.stage || argv.s || "local";
     context.builds = {};
-    this.outputDir = npath.resolve(context.workDir, argv.out || ".gourmet");
+    this.outputDir = npath.resolve(context.workDir, argv.build || ".gourmet");
   }
 
   _prepareStageTypes(context) {

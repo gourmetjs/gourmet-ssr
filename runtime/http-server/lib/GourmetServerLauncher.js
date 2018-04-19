@@ -105,9 +105,10 @@ class GourmetServerLauncher {
     con.log([
       "gourmet-http-server [options]",
       "",
+      "  --help, -h           Show this help screen",
       "  --dir, -d <d>        Set the working directory (default: current directory)",
       "  --stage, -s <s>      Set the stage (default: 'local')",
-      "  --out <s>            Set the output directory (default: '.gourmet')",
+      "  --build <s>          Set the build directory (default: '.gourmet')",
       "  --port <n>           Set the listening port (default: '3939')",
       "  --host <h>           Set the listening host (default: '0.0.0.0')",
       "  --no-static          Do not serve static assets (default: '--static')",
@@ -116,7 +117,6 @@ class GourmetServerLauncher {
       "  --entrypoint <s>     Set the default entrypoint (default: 'main')",
       "  --siloed             Set the default 'siloed' option (default: '--no-siloed')",
       "  --params.x.y         Set the arbitrary 'params' object (result: '{x: {y: true}}')",
-      "  --help, -h           Show this help screen",
       "  --colors             Use ANSI colors in console output (default: auto detect)",
       "  --verbose, -v <n>    Set the verbosity level (debug|info|log*|warn|error|0-5)",
       "  --log-format <s>     Set the Morgan log format (dev*|combined|common|short|tiny)"

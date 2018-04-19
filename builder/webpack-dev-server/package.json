@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/plugin-webpack-dev-server",
   "version": "0.1.0",
-  "description": "Main plugin for 'gourmet serve' command",
+  "description": "Standalone HTTP dev server",
   "keywords": [
     "gourmet-plugin"
   ],

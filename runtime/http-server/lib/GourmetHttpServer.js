@@ -5,13 +5,14 @@ const morgan = require("morgan");
 const connect = require("connect");
 const serveStatic = require("serve-static");
 const con = require("@gourmet/console")("gourmet:http");
-const gourmet = require("@gourmet/client-lib");
 const parseArgs = require("@gourmet/parse-args");
 const handleRequestError = require("@gourmet/handle-request-error");
 
 class GourmetHttpServer {
-  constructor(args) {
-    Object.assign(this, args);
+  constructor({argv, serverDir, clientDir}) {
+    this.argv = argv;
+    this.serverDir = serverDir;
+    this.clientDir = clientDir;
   }
 
   installLogger() {
@@ -58,6 +59,7 @@ class GourmetHttpServer {
   }
 
   installRenderer() {
+    const gourmet = this.getClientLib();
     const argv = this.argv;
     const mount = argv.mount || "/";
     const entrypoint = argv.entrypoint || "main";
@@ -79,6 +81,10 @@ class GourmetHttpServer {
     this.app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
       handleRequestError(err, req, res, {console: con, requestProps: ["url", "method", "headers", "gourmet"]});
     });
+  }
+
+  getClientLib() {
+    return require("@gourmet/client-lib")();
   }
 
   createApp() {
