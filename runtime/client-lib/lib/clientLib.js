@@ -1,31 +1,25 @@
 "use strict";
 
 const npath = require("path");
-const nurl = require("url");
 const promiseProtect = require("@gourmet/promise-protect");
+const omit = require("@gourmet/omit");
+const merge = require("@gourmet/merge");
 const StorageFs = require("@gourmet/storage-fs");
+const getReqArgs = require("@gourmet/get-req-args");
 const RendererSandbox = require("@gourmet/renderer-sandbox");
 const getExported = require("@gourmet/get-exported");
 const sendContent = require("@gourmet/send-content");
 
 const _defaultStorage = new StorageFs();
 
-function clientLib(storage=_defaultStorage) {
-  let _storage = storage;
-  let _cache = {};
-
-  // Base renderer getting `reqObj` and returning `resObj`.
-  function renderRaw(reqObj, {
-    serverDir,
-    entrypoint,
-    siloed
-  }, callback) {
+function clientLib(baseArgs) {
+  function invoke(args, callback) {
     function _getCacheKey() {
       return `${serverDir}:${entrypoint}`;
     }
 
     function _loadBundle() {
-      return _storage.readFile(npath.join(serverDir, "manifest.json")).then(manifest => {
+      return storage.readFile(npath.join(serverDir, "manifest.json")).then(manifest => {
         manifest = JSON.parse(manifest.toString());
         const bundles = manifest.server.entrypoints[entrypoint];
         if (!bundles)
@@ -33,7 +27,7 @@ function clientLib(storage=_defaultStorage) {
         if (bundles.length !== 1)
           throw Error(`'${entrypoint}' should have only one bundle file`);
         const path = npath.join(serverDir, bundles[0]);
-        return _storage.readFile(path).then(bundle => {
+        return storage.readFile(path).then(bundle => {
           const sandbox = new RendererSandbox({
             code: bundle.toString(),
             vmOptions: {
@@ -58,11 +52,15 @@ function clientLib(storage=_defaultStorage) {
         item.render = _getRenderer(item);
 
       promiseProtect(() => {
-        return item.render(reqObj);
-      }).then(resObj => {
-        callback(null, resObj);
+        return item.render(args);
+      }).then(result => {
+        callback(null, result);
       }).catch(callback);
     }
+
+    args = merge.intact(baseArgs, args);
+    const {storage=_storage, serverDir, entrypoint, siloed} = args;
+    args = omit(args, ["storage", "serverDir"]);
 
     const key = _getCacheKey();
     let item = _cache[key];
@@ -91,30 +89,15 @@ function clientLib(storage=_defaultStorage) {
     }
   }
 
-  // HTTP renderer getting `req` and sending the result to `res`.
+  // HTTP renderer extracting `args` from `req` and sending the result to `res`.
   // `next` is used only as an error handler.
-  function render(req, res, next, options) {
-    function _req_obj() {
-      function _url() {
-        if (!parsedUrl)
-          parsedUrl = nurl.parse(req.url, true);
-        return parsedUrl;
-      }
-
-      let parsedUrl;
-
-      const path = typeof req.path === "string" ? req.path : _url().pathname;
-      const query = req.query ? req.query : _url().query;
-      return {
-        path, query, params: options.params || {}
-      };
-    }
-
-    renderRaw(_req_obj(), options, (err, resObj) => {
+  function render(req, res, next, args) {
+    args = Object.assign(getReqArgs(req), args);
+    invoke(args, (err, result) => {
       if (err) {
         next(err);
       } else {
-        sendContent(res, resObj, err => {
+        sendContent(res, result, err => {
           if (err)
             next(err);
         });
@@ -122,9 +105,9 @@ function clientLib(storage=_defaultStorage) {
     });
   }
 
-  function getRenderer(options) {
+  function getRenderer(args) {
     return function(req, res, next) {
-      render(req, res, next, options);
+      render(req, res, next, args);
     };
   }
 
@@ -136,13 +119,16 @@ function clientLib(storage=_defaultStorage) {
     _storage = storage;
   }
 
-  function create(storage) {
-    return clientLib(storage);
+  function create(options) {
+    return clientLib(options);
   }
+
+  let _storage = _defaultStorage;
+  let _cache = {};
 
   return {
     setStorage,
-    renderRaw,
+    invoke,
     render,
     getRenderer,
     cleanCache,

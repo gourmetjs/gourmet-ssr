@@ -9,7 +9,7 @@ const isPlainObject = require("@gourmet/is-plain-object");
 const sortPlugins = require("@gourmet/plugin-sort");
 const merge = require("@gourmet/merge");
 const promiseProtect = require("@gourmet/promise-protect");
-const omit = require("lodash.omit");
+const omit = require("@gourmet/omit");
 const webpack = require("webpack");
 const recordsFile = require("./recordsFile");
 

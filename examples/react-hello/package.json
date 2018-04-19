@@ -9,6 +9,7 @@
     "prod": "gourmet build --stage prod && gourmet-http-server --stage prod && node server/lib/index.js --stage prod"
   },
   "dependencies": {
+    "@gourmet/client-http": "^0.1.0",
     "@gourmet/client-lib": "^0.1.0",
     "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/server-args": "^0.1.0",

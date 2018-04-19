@@ -14,7 +14,7 @@ const moduleDir = require("@gourmet/module-dir");
 const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
 const HashNames = require("@gourmet/hash-names");
-const omit = require("lodash.omit");
+const omit = require("@gourmet/omit");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 const recordsFile = require("./recordsFile");
 

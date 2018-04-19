@@ -1,0 +1,11 @@
+{
+  "name": "@gourmet/client-http",
+  "version": "0.1.0",
+  "main": "lib/clientHttp.js",
+  "dependencies": {
+    "@gourmet/get-req-args": "^0.1.0",
+    "@gourmet/merge": "^0.1.0",
+    "@gourmet/omit": "^0.1.0",
+    "@gourmet/send-content": "^0.1.0"
+  }
+}

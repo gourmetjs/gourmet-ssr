@@ -2,7 +2,7 @@
 
 const npath = require("path");
 const resolve = require("resolve");
-const omit = require("lodash.omit");
+const omit = require("@gourmet/omit");
 const promiseRepeat = require("@gourmet/promise-repeat");
 const promiseSync = require("@gourmet/promise-sync");
 const merge = require("@gourmet/merge");
@@ -73,7 +73,7 @@ class PluginManager {
         if (meta.subplugins)
           this.load(meta.subplugins, pluginDir || baseDir, item.name, indent + 1);
 
-        item = merge(omit(meta.schema, "name"), item);
+        item = merge.intact(omit(meta.schema, "name"), item);
 
         const plugin = new PluginClass(item.options, this._context);
 

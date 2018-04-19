@@ -38,6 +38,8 @@ if (args.watch) {
 }
 
 app.use(gourmet.getRenderer(Object.assign({
+  path: "/",
+  query: null,
   entrypoint: "main",
   siloed: false,
   params: {

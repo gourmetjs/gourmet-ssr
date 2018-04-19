@@ -28,6 +28,8 @@ if (args.watch) {
 
 app.get("/", (req, res, next) => {
   gourmet.render(req, res, next, {
+    path: "/",
+    query: null,
     serverDir: args.serverDir,
     entrypoint: "main",
     siloed: false,

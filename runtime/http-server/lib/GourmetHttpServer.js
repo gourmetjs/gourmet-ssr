@@ -40,7 +40,7 @@ class GourmetHttpServer {
   }
 
   installArgsParser() {
-    this.use((req, res, next) => {
+    this.app.use((req, res, next) => {
       const args = req.headers["x-gourmet-args"];
       if (args) {
         try {
@@ -105,10 +105,7 @@ class GourmetHttpServer {
   listen() {
     const port = this.argv.port || 3939;
     const host = this.argv.host || "0.0.0.0";
-
-    this.httpServer.listen(port, host, () => {
-      con.log(con.colors.brightYellow(`gourmet-http-server listening on port ${port}`));
-    });
+    this.httpServer.listen(port, host);
   }
 
   start() {

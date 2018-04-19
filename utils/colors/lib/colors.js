@@ -1,8 +1,12 @@
 "use strict";
 
+function _escape(n) {
+  return `\u001b[${n}m`;
+}
+
 function _conv(tbl) {
   return Object.keys(tbl).reduce((obj, name) => {
-    obj[name] = `\u001b[${tbl[name]}m`;
+    obj[name] = _escape(tbl[name]);
     return obj;
   }, {});
 }
@@ -77,6 +81,7 @@ const colors = Object.keys(code).reduce((obj, name) => {
   return obj;
 }, {});
 
+colors.escape = _escape;
 colors.code = code;
 colors.off = off;
 
@@ -85,6 +90,7 @@ const disabled = Object.keys(code).reduce((obj, name) => {
   return obj;
 }, {});
 
+disabled.escape = () => "";
 disabled.code = _null(code);
 disabled.off = _null(off);
 

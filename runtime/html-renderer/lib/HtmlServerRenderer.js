@@ -46,8 +46,8 @@ module.exports = class HtmlServerRenderer {
   //  - entrypoint
   //  - manifest
   getRenderer(opts) {
-    return reqObj => {
-      const gmctx = this.createContext(reqObj, opts);
+    return args => {
+      const gmctx = this.createContext(args, opts);
       this.addDependencies(gmctx);
       return this.invokeUserRenderer(gmctx).then(content => {
         return this.renderToMedium(gmctx, content);
@@ -71,7 +71,7 @@ module.exports = class HtmlServerRenderer {
         bodyTop: [],
         bodyBottom: []
       }, config.html),
-      res: {
+      result: {
         statusCode: 200,
         headers: {}
       },
@@ -92,7 +92,7 @@ module.exports = class HtmlServerRenderer {
   //  - buffer
   //  - stream
   renderHtml(gmctx, bodyMain) {
-    const {html, res} = gmctx;
+    const {html, result} = gmctx;
 
     // Because bundles are loaded with `defer` option, this data init code
     // always gets executed before the main entry code.
@@ -136,8 +136,8 @@ module.exports = class HtmlServerRenderer {
     }
 
     return {
-      statusCode: res.statusCode,
-      headers: res.headers,
+      statusCode: result.statusCode,
+      headers: result.headers,
       content
     };
   }
