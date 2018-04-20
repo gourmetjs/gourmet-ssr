@@ -5,6 +5,7 @@
   "bin": {
     "gourmet": "bin/gourmet-http-server.js"
   },
+  "main": "lib/GourmetHttpServer.js",
   "dependencies": {
     "connect": "^3.6.6",
     "morgan": "^1.9.0",

@@ -138,7 +138,7 @@ class GourmetWatchMiddleware {
 
     function _flush() {
       con.log(con.colors.green(">>>"));
-      con.log(con.colors.green(">>> Bundles are ready to be served by both server and client"));
+      con.log(con.colors.green(">>> Bundles are ready to be served!"));
       con.log(con.colors.green(">>>"));
 
       if (busy.reqQueue.length) {

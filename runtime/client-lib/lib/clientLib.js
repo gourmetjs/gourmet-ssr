@@ -1,6 +1,7 @@
 "use strict";
 
 const npath = require("path");
+const serveStatic = require("serve-static");
 const promiseProtect = require("@gourmet/promise-protect");
 const omit = require("@gourmet/omit");
 const merge = require("@gourmet/merge");
@@ -59,8 +60,11 @@ function clientLib(baseArgs) {
     }
 
     args = merge.intact(baseArgs, args);
-    const {storage=_storage, serverDir, entrypoint, siloed} = args;
+    const {storage=_storage, serverDir, entrypoint="main", siloed} = args;
     args = omit(args, ["storage", "serverDir"]);
+
+    if (!serverDir)
+      throw Error("'serverDir' is required");
 
     const key = _getCacheKey();
     let item = _cache[key];
@@ -106,7 +110,7 @@ function clientLib(baseArgs) {
     });
   }
 
-  function getRenderer(args) {
+  function renderer(args) {
     return function(req, res, next) {
       render(req, res, next, args);
     };
@@ -120,21 +124,29 @@ function clientLib(baseArgs) {
     _storage = storage;
   }
 
-  function create(options) {
+  function staticServer({clientDir}) {
+    return serveStatic(clientDir, {
+      fallthrough: false,
+      index: false,
+      redirect: false
+    });
+  }
+
+  function context(options) {
     return clientLib(options);
   }
 
   let _storage = _defaultStorage;
   let _cache = {};
 
-  return {
-    setStorage,
-    invoke,
-    render,
-    getRenderer,
-    cleanCache,
-    create
-  };
+  context.setStorage = setStorage;
+  context.invoke = invoke;
+  context.render = render;
+  context.renderer = renderer;
+  context.cleanCache = cleanCache;
+  context.static = staticServer;
+
+  return context;
 }
 
 module.exports = clientLib();

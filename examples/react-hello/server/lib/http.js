@@ -3,39 +3,27 @@
 const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
-const gourmet = require("@gourmet/client-lib");
+const gourmet = require("@gourmet/client-http");
 const serverArgs = require("@gourmet/server-args");
 const handleRequestError = require("@gourmet/handle-request-error");
 
 const PORT = process.env.PORT || 3000;
 
-const args = serverArgs(process.argv.slice(2));
+const {argv, staticPrefix} = serverArgs(process.argv.slice(2));
+const serverUrl = argv.serverUrl || "http://localhost:3939";
 
 const app = express();
 
 app.use(morgan("dev"));
 
-if (args.watch) {
-  const watch = require("@gourmet/watch-middleware")(args, gourmet);
-  app.use(watch);
-} else if (args.stage === "local") {
-  app.use(args.staticPrefix, gourmet.static({
-    clientDir: args.clientDir
-  }));
-}
+app.use(staticPrefix, gourmet.static({
+  serverUrl
+}));
 
-app.get("/", (req, res, next) => {
-  gourmet.render(req, res, next, {
-    path: "/",
-    query: null,
-    serverDir: args.serverDir,
-    entrypoint: "main",
-    siloed: false,
-    params: {
-      delay: 500
-    }
-  });
-});
+app.use(gourmet.renderer({
+  serverUrl,
+  entrypoint: "main"
+}));
 
 app.use((err, req, res, next) => {  // eslint-disable-line no-unused-vars
   handleRequestError(err, req, res, {

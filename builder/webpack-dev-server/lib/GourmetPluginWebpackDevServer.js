@@ -1,31 +1,15 @@
 "use strict";
 
-const GourmetHttpServer = require("@gourmet/http-server/lib/GourmetHttpServer");
-
-class DevHttpServer extends GourmetHttpServer {
-  installWatcher() {
-    const gourmet = this._clientLib = require("@gourmet/client-lib")();
-    const watch = require("@gourmet/watch-middleware")({
-      watch: this.watch,
-      argv: this.argv
-    }, gourmet);
-    this.use(watch);
-  }
-
-  installInitialMiddleware() {
-    this.installLogger();
-    this.installWatcher();
-  }
-
-  getClientLib() {
-    return this._clientLib;
-  }
-}
-
 class GourmetPluginWebpackDevServer {
   _onCommand(context) {
-    context.console.info(`GourmetDevServer: executing '${context.command}' command...`);
+    // We defer the calls to `require` to the point where 'hot' or 'watch' command is
+    // actually executed to minimize the impact on startup time of 'gourmet'
+    // CLI. All plugins are loaded and instantiated at startup.
+    const con = context.console;
 
+    con.info(`GourmetDevServer: executing '${context.command}' command...`);
+
+    const DevHttpServer = require("./DevHttpServer");
     const serverArgs = require("@gourmet/server-args");
     const {serverDir, clientDir} = serverArgs.parse(context.argv);
 
@@ -37,6 +21,10 @@ class GourmetPluginWebpackDevServer {
         clientDir
       });
       server.start();
+      server.httpServer.on("listening", function() {
+        const port = this.address().port;
+        con.log(con.colors.brightYellow(`GourmetDevServer is listening on ${port}`));
+      });
     });
   }
 }
@@ -44,10 +32,10 @@ class GourmetPluginWebpackDevServer {
 GourmetPluginWebpackDevServer.meta = {
   commands: {
     "hot": {
-      help: "Run a standalone HTTP development server - HMR mode",
+      help: "Run a HTTP server in the Hot Module Replacement mode for development",
     },
     "watch": {
-      help: "Run a standalone HTTP development server - watch mode"
+      help: "Run a HTTP server in the watch mode (automatically monitoring file changes) for development"
     }
   },
   hooks: (proto => ({

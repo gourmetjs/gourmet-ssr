@@ -2,11 +2,10 @@
   "name": "@gourmet/example-react-hello",
   "private": true,
   "scripts": {
-    "hot": "node server/lib/index.js --hot",
-    "watch": "node server/lib/index.js --watch",
-    "local": "gourmet build && gourmet-http-server && node server/lib/index.js",
-    "dev": "gourmet build --stage dev && gourmet-http-server --stage dev && node server/lib/index.js --stage dev",
-    "prod": "gourmet build --stage prod && gourmet-http-server --stage prod && node server/lib/index.js --stage prod"
+    "hot": "node server/lib/local.js --hot",
+    "watch": "node server/lib/local.js --watch",
+    "local": "gourmet build && gourmet-http-server && node server/lib/local.js",
+    "http": "gourmet build && gourmet-http-server && node server/lib/http.js"
   },
   "dependencies": {
     "@gourmet/client-http": "^0.1.0",

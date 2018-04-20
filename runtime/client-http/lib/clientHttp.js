@@ -5,16 +5,9 @@ const nurl = require("url");
 const merge = require("@gourmet/merge");
 const omit = require("@gourmet/omit");
 const getReqArgs = require("@gourmet/get-req-args");
+const ProxyHeaders = require("@gourmet/proxy-headers");
 const sendContent = require("@gourmet/send-content");
-
-const HOP_BY_HOP_HEADERS = {
-  "connection": true,
-  "keep-alive": true,
-  "public": true,
-  "proxy-authenticate": true,
-  "transfer-encoding": true,
-  "upgrade": true
-};
+const webProxy = require("@gourmet/web-proxy");
 
 const _defaultAgent = new http.Agent({
   keepAlive: true,
@@ -23,21 +16,23 @@ const _defaultAgent = new http.Agent({
   maxFreeSockets: 128
 });
 
-function _copyHeaders(headers, rawHeaders) {
-  const headerCaseMap = {};
-  for (let idx = 0; idx < rawHeaders.length; idx += 2) {
-    const key = rawHeaders[idx];
-    headerCaseMap[key.toLowerCase()] = key;
+function clientHttp(baseArgs) {
+  function _parseUrl(serverUrl) {
+    let reqOpts;
+
+    if (typeof serverUrl === "string")
+      reqOpts = nurl.parse(serverUrl);
+    else if (typeof serverUrl === "object")
+      reqOpts = Object.assign({}, serverUrl);
+    else
+      throw Error("serverUrl is invalid");
+
+    if (reqOpts.agent)
+      reqOpts.agent = _defaultAgent;
+
+    return reqOpts;
   }
 
-  return Object.keys(headers).reduce((obj, key) => {
-    if (!HOP_BY_HOP_HEADERS[key])
-      obj[headerCaseMap[key]] = headers[key];
-    return obj;
-  }, {});
-}
-
-function clientHttp(baseArgs) {
   function invoke(args, callback) {
     function _encodeArgs() {
       const content = JSON.stringify(args);
@@ -81,7 +76,7 @@ function clientHttp(baseArgs) {
     const clientReq = request(info, clientRes => {
       const result = {
         statusCode: clientRes.statusCode,
-        headers: _copyHeaders(clientRes.headers, clientRes.rawHeaders),
+        headers: new ProxyHeaders(clientRes).getHeadersCase(),
         content: clientRes
       };
       _done(null, result);
@@ -106,22 +101,32 @@ function clientHttp(baseArgs) {
     });
   }
 
-  function getRenderer(args) {
+  function renderer(args) {
     return function(req, res, next) {
       render(req, res, next, args);
     };
   }
 
-  function create(options) {
+  function staticServer({serverUrl}) {
+    return (req, res, next) => {
+      webProxy(req, res, {
+
+      }, {
+        handleError: next
+      });
+    };
+  }
+
+  function context(options) {
     return clientHttp(options);
   }
 
-  return {
-    invoke,
-    render,
-    getRenderer,
-    create
-  };
+  context.invoke = invoke;
+  context.render = render;
+  context.renderer = renderer;
+  context.static = staticServer;
+
+  return context;
 }
 
 module.exports = clientHttp();

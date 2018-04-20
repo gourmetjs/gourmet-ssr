@@ -66,7 +66,7 @@ class GourmetServerLauncher {
       }
     }));
 
-    con = getConsole("gourmet:http");
+    con = getConsole("gourmet:net");
   }
 
   forkWorkers(count) {
@@ -119,7 +119,8 @@ class GourmetServerLauncher {
       "  --params.x.y         Set the arbitrary 'params' object (result: '{x: {y: true}}')",
       "  --colors             Use ANSI colors in console output (default: auto detect)",
       "  --verbose, -v <n>    Set the verbosity level (debug|info|log*|warn|error|0-5)",
-      "  --log-format <s>     Set the Morgan log format (dev*|combined|common|short|tiny)"
+      "  --log-format <s>     Set the Morgan log format (dev*|combined|common|short|tiny|off)",
+      "  --no-debug           Do not show details in error response (default: '--debug')"
     ].join("\n"));
   }
 

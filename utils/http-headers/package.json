@@ -1,0 +1,6 @@
+{
+  "name": "g--http-headers",
+  "version": "0.1.0",
+  "private": true,
+  "main": "lib/HttpHeaders.js"
+}

@@ -1,6 +1,6 @@
 "use strict";
 
-const con = require("@gourmet/console")("gourmet:http");
+const con = require("@gourmet/console")("gourmet:net");
 const isPlainObject = require("@gourmet/is-plain-object");
 const isStream = require("@gourmet/is-stream");
 const inspectError = require("@gourmet/inspect-error");
@@ -9,7 +9,7 @@ const eos = require("end-of-stream");
 
 function _defaultDone(err) {
   if (err)
-    con.error("Error in sendContent\n", inspectError(err, 1));
+    con.error(`Error in sendContent\n${inspectError(err, 1)}`);
 }
 
 // `callback(err)` is called when sending a stream is finished.

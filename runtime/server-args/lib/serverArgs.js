@@ -16,6 +16,7 @@ function parse(argv) {
   const outputDir = npath.resolve(workDir, argv.build || ".gourmet");
   const serverDir = npath.join(outputDir, stage, "server");
   const clientDir = npath.join(outputDir, stage, "client");
+  const staticPrefix = argv.staticPrefix || "/s/";
 
   return {
     argv,
@@ -24,7 +25,8 @@ function parse(argv) {
     workDir,
     outputDir,
     clientDir,
-    serverDir
+    serverDir,
+    staticPrefix
   };
 }
 

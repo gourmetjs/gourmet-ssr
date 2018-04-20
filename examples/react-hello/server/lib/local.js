@@ -10,6 +10,7 @@ const handleRequestError = require("@gourmet/handle-request-error");
 const PORT = process.env.PORT || 3000;
 
 const args = serverArgs(process.argv.slice(2));
+const {serverDir, clientDir, staticPrefix} = args;
 
 const app = express();
 
@@ -18,24 +19,22 @@ app.use(morgan("dev"));
 if (args.watch) {
   const watch = require("@gourmet/watch-middleware")(args, gourmet);
   app.use(watch);
-} else if (args.stage === "local") {
-  app.use(args.staticPrefix, gourmet.static({
-    clientDir: args.clientDir
+} else {
+  app.use(staticPrefix, gourmet.static({
+    clientDir
   }));
 }
 
-app.get("/", (req, res, next) => {
-  gourmet.render(req, res, next, {
-    path: "/",
-    query: null,
-    serverDir: args.serverDir,
-    entrypoint: "main",
-    siloed: false,
-    params: {
-      delay: 500
-    }
-  });
-});
+app.use(gourmet.renderer({
+  serverDir,
+  path: "/",
+  query: null,
+  entrypoint: "main",
+  siloed: false,
+  params: {
+    message: "Hello"
+  }
+}));
 
 app.use((err, req, res, next) => {  // eslint-disable-line no-unused-vars
   handleRequestError(err, req, res, {

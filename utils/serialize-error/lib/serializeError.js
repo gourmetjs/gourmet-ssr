@@ -30,7 +30,7 @@ function _serializeObject(obj, objs) {
 
   objs.push(obj);
 
-  const stockProps = ["name", "message", "stack"];
+  const stockProps = ["name", "message", "code", "stack"];
   const props = Object.keys(obj);
   const res = {};
 
