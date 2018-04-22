@@ -1,0 +1,6 @@
+{
+  "name": "@gourmet/http-module",
+  "version": "0.1.0",
+  "description": "Selects between 'http' and 'https' module based on value of protocol string",
+  "main": "lib/httpModule.js"
+}

@@ -1,7 +1,9 @@
 "use strict";
 
 const http = require("http");
+const https = require("https");
 const nurl = require("url");
+const httpModule = require("@gourmet/http-module");
 const merge = require("@gourmet/merge");
 const omit = require("@gourmet/omit");
 const getReqArgs = require("@gourmet/get-req-args");
@@ -9,31 +11,52 @@ const ProxyHeaders = require("@gourmet/proxy-headers");
 const sendContent = require("@gourmet/send-content");
 const webProxy = require("@gourmet/web-proxy");
 
-const _defaultAgent = new http.Agent({
-  keepAlive: true,
-  keepAliveMsecs: 30 * 1000,
-  maxSockets: 256,
-  maxFreeSockets: 128
-});
+const _defaultAgent = {
+  http: new http.Agent({
+    keepAlive: true,
+    keepAliveMsecs: 30 * 1000,
+    maxSockets: 256,
+    maxFreeSockets: 128
+  }),
+  https: new http.Agent({
+    keepAlive: true,
+    keepAliveMsecs: 30 * 1000,
+    maxSockets: 256,
+    maxFreeSockets: 128
+  })
+};
 
 function clientHttp(baseArgs) {
-  function _parseUrl(serverUrl) {
-    let reqOpts;
+  function _extractUrl(args) {
+    args = merge.intact(baseArgs, args);
+    const {
+      serverUrl={
+        protocol: "http:",
+        hostname: "localhost",
+        port: 3939,
+        pathname: "/"
+      }
+    } = args;
+    args = omit(args, ["serverUrl"]);
+
+    let rops;
 
     if (typeof serverUrl === "string")
-      reqOpts = nurl.parse(serverUrl);
+      rops = nurl.parse(serverUrl);
     else if (typeof serverUrl === "object")
-      reqOpts = Object.assign({}, serverUrl);
+      rops = Object.assign({}, serverUrl);
     else
       throw Error("serverUrl is invalid");
 
-    if (reqOpts.agent)
-      reqOpts.agent = _defaultAgent;
+    const httpm = httpModule(rops);
 
-    return reqOpts;
+    if (!rops.agent)
+      rops.agent = httpm === https ? _defaultAgent.https : _defaultAgent.http;
+
+    return {args, rops, httpm};
   }
 
-  function invoke(args, callback) {
+  function invoke(args_, callback) {
     function _encodeArgs() {
       const content = JSON.stringify(args);
       return Buffer.from(content).toString("base64");
@@ -46,34 +69,14 @@ function clientHttp(baseArgs) {
       }
     }
 
-    args = merge.intact(baseArgs, args);
-    const {
-      serverUrl="http://localhost:3939",
-      headers,
-      agent=_defaultAgent,
-      request=http.request
-    } = args;
-    args = omit(args, ["serverUrl", "headers", "agent", "request"]);
+    let finished = false;
+    const {args, rops, httpm} = _extractUrl(args_);
 
-    let info;
-    let finished;
+    if (!rops.headers)
+      rops.headers = {};
+    rops.headers["x-gourmet-args"] = _encodeArgs();
 
-    if (typeof serverUrl === "string")
-      info = nurl.parse(serverUrl);
-    else if (typeof serverUrl === "object")
-      info = Object.assign({}, serverUrl);
-    else
-      throw Error("serverUrl is invalid");
-
-    info = Object.assign(info, {
-      method: "GET",
-      headers: Object.assign({}, headers, {
-        "x-gourmet-args": _encodeArgs()
-      }),
-      agent
-    });
-
-    const clientReq = request(info, clientRes => {
+    const clientReq = httpm.request(rops, clientRes => {
       const result = {
         statusCode: clientRes.statusCode,
         headers: new ProxyHeaders(clientRes).getHeadersCase(),
@@ -107,11 +110,13 @@ function clientHttp(baseArgs) {
     };
   }
 
-  function staticServer({serverUrl}) {
+  function staticServer(args) {
+    const {rops} = _extractUrl(args);
     return (req, res, next) => {
-      webProxy(req, res, {
-
-      }, {
+      const url = req.originalUrl || req.url;
+      const idx = url.indexOf("?");
+      rops.pathname = idx === -1 ? url : url.substr(0, idx);
+      webProxy(req, res, rops, {
         handleError: next
       });
     };

@@ -30,16 +30,17 @@ class WebProxy {
       throw Error("Invalid target. Must be a string or object");
   }
 
-  initReqOpts() {
-    const reqOpts = this.reqOpts;
-    reqOpts.method = this.req.method;
-    reqOpts.headers = this.getProxyReqHeaders();
-    return reqOpts;
+  // initializes the request options
+  initRops() {
+    const rops = this.rops;
+    rops.method = this.req.method;
+    rops.headers = this.getProxyReqHeaders();
+    return rops;
   }
 
   createProxyReq() {
-    const reqOpts = this.reqOpts;
-    this.proxyReq = httpModule(reqOpts.protocol).request(reqOpts);
+    const rops = this.rops;
+    this.proxyReq = httpModule(rops.protocol).request(rops);
   }
 
   abort() {
@@ -49,7 +50,7 @@ class WebProxy {
   handleError(err) {
     handleRequestError(err, this.req, this.res, Object.assign({
       title: "Error occurred in WebProxy"
-    }, this.options.errOpts));
+    }, this.options.errOps));
   }
 
   handleReqError(err) {
@@ -80,10 +81,10 @@ class WebProxy {
       return m ? m[1] : (_isEncrypted(req) ? "443" : "80");
     }
 
-    const reqOpts = this.reqOpts;
+    const rops = this.rops;
     const xff = this.options.xff;
     const req = this.req;
-    const headers = new ProxyHeaders(req).set(reqOpts.headers);
+    const headers = new ProxyHeaders(req).set(rops.headers);
 
     if (xff === undefined || xff) {
       const value = headers.get("x-forwarded-for");
@@ -100,10 +101,10 @@ class WebProxy {
         headers.set("x-forwarded-host", headers.get("host") || "");
     }
 
-    if (requiresPort(reqOpts.port, reqOpts.protocol))
-      headers.set("host", reqOpts.hostname + ":" + reqOpts.port);
+    if (requiresPort(rops.port, rops.protocol))
+      headers.set("host", rops.hostname + ":" + rops.port);
     else
-      headers.set("host", reqOpts.hostname);
+      headers.set("host", rops.hostname);
 
     return headers;
   }
@@ -119,7 +120,10 @@ class WebProxy {
       req.resume();
       proxyReq.end();
     } else {
-      pump(req, proxyReq, err => this.handleError(err));
+      pump(req, proxyReq, err => {
+        if (err)
+          this.handleError(err);
+      });
     }
   }
 
@@ -133,7 +137,10 @@ class WebProxy {
     res.statusCode = proxyRes.statusCode;
     res.statusMessage = proxyRes.statusMessage;
 
-    pump(proxyRes, res, err => this.handleError(err));
+    pump(proxyRes, res, err => {
+      if (err)
+        this.handleError(err);
+    });
   }
 
   handleConnection() {
@@ -170,8 +177,8 @@ class WebProxy {
   handle(req, res, target) {
     this.req = req;
     this.res = res;
-    this.reqOpts = this.parseTarget(target);
-    this.initReqOpts();
+    this.rops = this.parseTarget(target);
+    this.initRops();
     this.createProxyReq();
     this.initReq();
     this.initProxyReq();

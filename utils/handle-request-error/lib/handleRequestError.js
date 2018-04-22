@@ -30,7 +30,7 @@ function renderHtmlError(err, req, res, obj, options) {
   const content = options.template({
     message: message,
     statusCode: obj.statusCode,
-    detail: options.debug ? null :  inspectError(obj)
+    detail: options.debug ? inspectError(obj) : null
   });
 
   return {
@@ -102,7 +102,7 @@ handleRequestError.defaultOptions = {
   template: resolveTemplate(errorTemplate),
   detect(req) {
     const accept = req.headers["accept"];
-    if (accept && accept.indexOf("/json") === -1)
+    if (accept && accept.indexOf("/json") !== -1)
       return "json";
     else
       return "html";

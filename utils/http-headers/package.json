@@ -1,6 +1,5 @@
 {
-  "name": "g--http-headers",
+  "name": "@gourmet/http-headers",
   "version": "0.1.0",
-  "private": true,
   "main": "lib/HttpHeaders.js"
 }
