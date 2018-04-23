@@ -1,6 +1,6 @@
 "use strict";
 
-const isPromise = require("is-promise");
+const isPromise = require("@gourmet/is-promise");
 
 module.exports = function promiseWrap(value) {
   if (isPromise(value))
