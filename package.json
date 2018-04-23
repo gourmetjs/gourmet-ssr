@@ -2,6 +2,8 @@
   "scripts": {
     "ladd": "lerna add",
     "lrun": "lerna run",
+    "updated": "lerna updated",
+    "lpub": "lerna publish",
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test",
     "lint": "eslint . --ext .js,.jsx"
