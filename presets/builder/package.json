@@ -2,6 +2,9 @@
   "name": "@gourmet/preset-builder",
   "version": "0.1.0",
   "main": "lib/GourmetPresetBuilder.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "keywords": [
     "gourmet-plugin"
   ],

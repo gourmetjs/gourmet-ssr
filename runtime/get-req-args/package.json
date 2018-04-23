@@ -1,5 +1,8 @@
 {
   "name": "@gourmet/get-req-args",
   "version": "0.1.0",
-  "main": "lib/getReqArgs.js"
+  "main": "lib/getReqArgs.js",
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

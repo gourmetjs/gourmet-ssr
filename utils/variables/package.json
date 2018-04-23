@@ -3,14 +3,17 @@
   "version": "0.1.0",
   "description": "Flexible variable resolution engine that can be extended by pluggable variable sources",
   "main": "lib/Variables.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "tape test/*_test.js",
     "debug": "node --inspect-brk test/vars_test.js"
   },
   "dependencies": {
+    "@gourmet/deep-clone": "^0.1.0",
     "@gourmet/error": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",
-    "@gourmet/deep-clone": "^0.1.0",
     "@gourmet/promise-deep-clone": "^0.1.0",
     "@gourmet/promise-deep-prop": "^0.1.0",
     "@gourmet/promise-each": "^0.1.0",

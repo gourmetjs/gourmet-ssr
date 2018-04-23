@@ -2,6 +2,9 @@
   "name": "@gourmet/resolve-template",
   "version": "0.1.0",
   "main": "lib/resolveTemplate.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "lodash.template": "^4.4.0"
   }

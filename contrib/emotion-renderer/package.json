@@ -2,6 +2,9 @@
   "name": "@gourmet/emotion-renderer",
   "version": "0.1.0",
   "main": "client.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "peerDependencies": {
     "@gourmet/react-renderer": "^0.1.0"
   },

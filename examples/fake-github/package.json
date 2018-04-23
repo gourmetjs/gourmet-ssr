@@ -20,8 +20,9 @@
     "bootstrap": "^4.1.0",
     "classnames": "^2.2.5",
     "ionicons": "^2.0.1",
+    "react-prepare": "asyncmax/react-prepare",
     "reactstrap": "^5.0.0",
-    "tinycolor2": "^1.4.1",
-    "react-prepare": "asyncmax/react-prepare"
-  }
+    "tinycolor2": "^1.4.1"
+  },
+  "version": "0.1.0"
 }

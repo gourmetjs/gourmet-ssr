@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Gets a deep property value while resolving promises",
   "main": "lib/promiseDeepProp.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/error": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",

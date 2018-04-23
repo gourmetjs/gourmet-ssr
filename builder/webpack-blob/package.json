@@ -2,6 +2,9 @@
   "name": "@gourmet/plugin-webpack-blob",
   "version": "0.1.0",
   "main": "lib/GourmetPluginWebpackBlob.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/webpack-file-loader": "^0.1.0"
   }

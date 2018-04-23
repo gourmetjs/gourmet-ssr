@@ -2,9 +2,12 @@
   "name": "@gourmet/react-context-provider",
   "version": "0.1.0",
   "main": "lib/ReactContextProvider.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "peerDependencies": {
+    "prop-types": "^15.6.1",
     "react": "15.x || 16.x",
-    "react-dom": "15.x || 16.x",
-    "prop-types": "^15.6.1"
+    "react-dom": "15.x || 16.x"
   }
 }

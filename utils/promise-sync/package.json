@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Synchronously runs a handler if the value is not a promise",
   "main": "lib/promiseSync.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/is-promise": "^0.1.0"
   }

@@ -2,6 +2,9 @@
   "name": "@gourmet/web-proxy",
   "version": "0.1.0",
   "main": "lib/index.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/error": "^0.1.0",
     "@gourmet/get-rops": "^0.1.0",

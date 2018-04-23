@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "File storage interface for AWS S3",
   "main": "lib/StorageS3.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "tape test/*_test.js"
   },

@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "File storage interface for 'fs' compatible filesystem",
   "main": "lib/StorageFs.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "tape test/*_test.js"
   },
@@ -12,7 +15,7 @@
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
-    "tape": "^4.9.0",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "tape": "^4.9.0"
   }
 }

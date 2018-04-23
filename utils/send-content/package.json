@@ -2,6 +2,9 @@
   "name": "@gourmet/send-content",
   "version": "0.1.0",
   "main": "lib/sendContent.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/console": "^0.1.0",
     "@gourmet/inspect-error": "^0.1.0",

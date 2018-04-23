@@ -1,5 +1,8 @@
 {
   "name": "@gourmet/get-exported",
   "version": "0.1.0",
-  "main": "lib/getExported.js"
+  "main": "lib/getExported.js",
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

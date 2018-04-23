@@ -2,6 +2,9 @@
   "name": "@gourmet/plugin-webpack-react-hot-loader",
   "version": "0.1.0",
   "main": "lib/GourmetPluginWebpackReactHotLoader.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "keywords": [
     "gourmet-plugin"
   ],

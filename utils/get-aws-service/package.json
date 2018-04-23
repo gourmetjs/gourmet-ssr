@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Provides a standard way of acquiring AWS SDK's service objects",
   "main": "lib/getAwsService.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "aws-sdk": "^2.224.1"
   }

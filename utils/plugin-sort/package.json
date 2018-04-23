@@ -3,6 +3,9 @@
   "description": "A general purpose library for human friendly plugin ordering",
   "version": "0.1.0",
   "main": "lib/index.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "tape test/*_test.js"
   },

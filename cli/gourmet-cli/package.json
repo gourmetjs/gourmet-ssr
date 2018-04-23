@@ -5,6 +5,9 @@
   "bin": {
     "gourmet": "bin/gourmet-cli.js"
   },
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/gourmet-cli-impl": "^0.1.0"
   }

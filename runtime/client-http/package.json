@@ -2,6 +2,9 @@
   "name": "@gourmet/client-http",
   "version": "0.1.0",
   "main": "lib/clientHttp.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/get-req-args": "^0.1.0",
     "@gourmet/get-rops": "^0.1.0",

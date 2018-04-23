@@ -11,5 +11,5 @@
     "examples/*"
   ],
   "hoist": true,
-  "version": "independent"
+  "version": "0.1.0"
 }

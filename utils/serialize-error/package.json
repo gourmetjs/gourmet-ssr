@@ -1,5 +1,8 @@
 {
   "name": "@gourmet/serialize-error",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "main": "lib/serializeError.js"
 }

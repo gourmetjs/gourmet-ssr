@@ -1,5 +1,8 @@
 {
   "name": "@gourmet/parse-args",
   "version": "0.1.0",
-  "main": "lib/parseArgs.js"
+  "main": "lib/parseArgs.js",
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

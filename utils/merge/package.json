@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Merges objects with special handling of arrays and non-plain objects",
   "main": "lib/merge.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "tape test/*_test.js"
   },

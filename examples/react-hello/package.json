@@ -20,5 +20,6 @@
     "@gourmet/gourmet-cli": "^0.1.0",
     "@gourmet/preset-builder": "^0.1.0",
     "@gourmet/preset-react": "^0.1.0"
-  }
+  },
+  "version": "0.1.0"
 }

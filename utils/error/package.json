@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Simple error object creator",
   "main": "lib/error.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "lodash.template": "^4.4.0"
   }

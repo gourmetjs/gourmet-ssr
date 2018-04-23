@@ -2,6 +2,9 @@
   "name": "@gourmet/renderer-sandbox",
   "version": "0.1.0",
   "main": "lib/RendererSandbox.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "node-fetch": "^2.1.2"
   }

@@ -2,6 +2,9 @@
   "name": "@gourmet/hash-names",
   "version": "0.1.0",
   "main": "lib/HashNames.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "tape test/*_test.js"
   },

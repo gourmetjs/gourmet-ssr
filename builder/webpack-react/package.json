@@ -6,6 +6,9 @@
     "gourmet-plugin"
   ],
   "main": "lib/GourmetPluginWebpackReact.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "devDependencies": {
     "babel-preset-react": "^6.24.1"
   },

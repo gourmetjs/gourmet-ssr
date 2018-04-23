@@ -1,5 +1,8 @@
 {
   "name": "@gourmet/http-headers",
   "version": "0.1.0",
-  "main": "lib/HttpHeaders.js"
+  "main": "lib/HttpHeaders.js",
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

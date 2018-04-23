@@ -2,5 +2,8 @@
   "name": "@gourmet/console-env",
   "version": "0.1.0",
   "description": "Detects console options from the environment",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "main": "lib/detect.js"
 }

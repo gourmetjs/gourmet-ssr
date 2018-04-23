@@ -2,6 +2,9 @@
   "name": "@gourmet/client-lib",
   "version": "0.1.0",
   "main": "lib/clientLib.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/get-exported": "^0.1.0",
     "@gourmet/get-req-args": "^0.1.0",

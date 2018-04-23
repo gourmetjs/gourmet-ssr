@@ -9,5 +9,6 @@
     "@gourmet/gourmet-cli": "^0.1.0",
     "@gourmet/plugin-webpack-babel": "^0.1.0",
     "@gourmet/plugin-webpack-builder": "^0.1.0"
-  }
+  },
+  "version": "0.1.0"
 }

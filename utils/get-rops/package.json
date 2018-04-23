@@ -2,6 +2,9 @@
   "name": "@gourmet/get-rops",
   "version": "0.1.0",
   "main": "lib/getRops.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/is-plain-object": "^0.1.0"
   }

@@ -5,6 +5,9 @@
     "gourmet-plugin"
   ],
   "main": "lib/GourmetPluginWebpackGlobalCss.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/plugin-sort": "^0.1.0",
     "@gourmet/webpack-file-loader": "^0.1.0",

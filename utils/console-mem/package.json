@@ -2,6 +2,9 @@
   "name": "@gourmet/console-mem",
   "version": "0.1.0",
   "main": "lib/install.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {
     "test": "tape test/*_test.js"
   },

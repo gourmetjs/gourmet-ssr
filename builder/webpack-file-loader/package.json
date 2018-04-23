@@ -1,5 +1,8 @@
 {
   "name": "@gourmet/webpack-file-loader",
   "version": "0.1.0",
-  "main": "lib/fileLoader.js"
+  "main": "lib/fileLoader.js",
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

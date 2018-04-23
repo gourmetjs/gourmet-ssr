@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Recursively clones a JavaScript value while resolving promises",
   "main": "lib/promiseDeepClone.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/is-plain-object": "^0.1.0",
     "@gourmet/promise-each": "^0.1.0",

@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Recursively clones a JavaScript value",
   "main": "lib/deepClone.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/is-plain-object": "^0.1.0"
   }

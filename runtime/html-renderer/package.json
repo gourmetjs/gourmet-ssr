@@ -2,6 +2,9 @@
   "name": "@gourmet/html-renderer",
   "version": "0.1.0",
   "main": "client.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/console": "^0.1.0",
     "@gourmet/is-stream": "^0.1.0",

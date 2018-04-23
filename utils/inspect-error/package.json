@@ -2,6 +2,9 @@
   "name": "@gourmet/inspect-error",
   "version": "0.1.0",
   "main": "lib/inspectError.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@gourmet/serialize-error": "^0.1.0"
   }

@@ -2,6 +2,9 @@
   "name": "@gourmet/preset-react-emotion",
   "version": "0.1.0",
   "main": "lib/GourmetPresetReactEmotion.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "keywords": [
     "gourmet-plugin"
   ],
