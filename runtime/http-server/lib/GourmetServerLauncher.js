@@ -80,11 +80,15 @@ class GourmetServerLauncher {
     return server;
   }
 
+  getCount() {
+    return parseArgs.number(this.argv.count, os.cpus().length);
+  }
+
   runMaster() {
     con.log("Master is running");
     con.debug("argv:", this.argv);
 
-    const count = parseArgs.number(this.argv.count, os.cpus().length);
+    const count = this.getCount();
 
     this.forkWorkers(count);
 
@@ -127,7 +131,7 @@ class GourmetServerLauncher {
   run() {
     if (this.argv.help || this.argv.h)
       this.showHelp();
-    else if (cluster.isMaster)
+    else if (cluster.isMaster && this.getCount() > 1)
       this.runMaster();
     else
       this.runWorker();

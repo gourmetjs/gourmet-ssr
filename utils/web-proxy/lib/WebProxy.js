@@ -1,10 +1,9 @@
 "use strict";
 
-const nurl = require("url");
 const pump = require("pump");
-const requiresPort = require("requires-port");
 const error = require("@gourmet/error");
 const httpModule = require("@gourmet/http-module");
+const getRops = require("@gourmet/get-rops");
 const ProxyHeaders = require("@gourmet/proxy-headers");
 const handleRequestError = require("@gourmet/handle-request-error");
 
@@ -19,15 +18,6 @@ class WebProxy {
 
     if (typeof options.handleError === "function")
       this.handleError = options.handleError;
-  }
-
-  parseTarget(target) {
-    if (typeof target === "string")
-      return nurl.parse(target, false, true);
-    else if (typeof target === "object")
-      return Object.assign({}, target);
-    else
-      throw Error("Invalid target. Must be a string or object");
   }
 
   // initializes the request options
@@ -101,11 +91,6 @@ class WebProxy {
         headers.set("x-forwarded-host", headers.get("host") || "");
     }
 
-    if (requiresPort(rops.port, rops.protocol))
-      headers.set("host", rops.hostname + ":" + rops.port);
-    else
-      headers.set("host", rops.hostname);
-
     return headers;
   }
 
@@ -177,7 +162,7 @@ class WebProxy {
   handle(req, res, target) {
     this.req = req;
     this.res = res;
-    this.rops = this.parseTarget(target);
+    this.rops = getRops(target);
     this.initRops();
     this.createProxyReq();
     this.initReq();

@@ -2,7 +2,7 @@
 
 const http = require("http");
 const https = require("https");
-const nurl = require("url");
+const getRops = require("@gourmet/get-rops");
 const httpModule = require("@gourmet/http-module");
 const merge = require("@gourmet/merge");
 const omit = require("@gourmet/omit");
@@ -34,20 +34,12 @@ function clientHttp(baseArgs) {
         protocol: "http:",
         hostname: "localhost",
         port: 3939,
-        pathname: "/"
+        path: "/"
       }
     } = args;
     args = omit(args, ["serverUrl"]);
 
-    let rops;
-
-    if (typeof serverUrl === "string")
-      rops = nurl.parse(serverUrl);
-    else if (typeof serverUrl === "object")
-      rops = Object.assign({}, serverUrl);
-    else
-      throw Error("serverUrl is invalid");
-
+    const rops = getRops(serverUrl);
     const httpm = httpModule(rops);
 
     if (!rops.agent)
@@ -113,9 +105,7 @@ function clientHttp(baseArgs) {
   function staticServer(args) {
     const {rops} = _extractUrl(args);
     return (req, res, next) => {
-      const url = req.originalUrl || req.url;
-      const idx = url.indexOf("?");
-      rops.pathname = idx === -1 ? url : url.substr(0, idx);
+      rops.path = req.originalUrl || req.url;
       webProxy(req, res, rops, {
         handleError: next
       });

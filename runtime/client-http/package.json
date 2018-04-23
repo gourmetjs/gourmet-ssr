@@ -4,6 +4,7 @@
   "main": "lib/clientHttp.js",
   "dependencies": {
     "@gourmet/get-req-args": "^0.1.0",
+    "@gourmet/get-rops": "^0.1.0",
     "@gourmet/http-module": "^0.1.0",
     "@gourmet/merge": "^0.1.0",
     "@gourmet/omit": "^0.1.0",
