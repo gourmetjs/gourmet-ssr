@@ -9,7 +9,7 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "devDependencies": {
+  "dependencies": {
     "babel-preset-react": "^6.24.1"
   },
   "peerDependencies": {
