@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/variables",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Flexible variable resolution engine that can be extended by pluggable variable sources",
   "main": "lib/Variables.js",
   "publishConfig": {
@@ -14,12 +14,12 @@
     "@gourmet/deep-clone": "^0.1.0",
     "@gourmet/error": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",
-    "@gourmet/promise-deep-clone": "^0.1.0",
+    "@gourmet/promise-deep-clone": "^0.1.1",
     "@gourmet/promise-deep-prop": "^0.1.0",
     "@gourmet/promise-each": "^0.1.0",
     "@gourmet/promise-map": "^0.1.0",
     "@gourmet/promise-repeat": "^0.1.0",
-    "@gourmet/promise-wrap": "^0.1.0"
+    "@gourmet/promise-wrap": "^0.1.1"
   },
   "devDependencies": {
     "tape": "^4.9.0"

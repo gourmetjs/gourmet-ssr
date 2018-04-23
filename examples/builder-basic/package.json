@@ -6,9 +6,9 @@
     "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^0.1.0",
+    "@gourmet/gourmet-cli": "^0.1.1",
     "@gourmet/plugin-webpack-babel": "^0.1.0",
-    "@gourmet/plugin-webpack-builder": "^0.1.0"
+    "@gourmet/plugin-webpack-builder": "^0.1.1"
   },
-  "version": "0.1.0"
+  "version": "0.1.1"
 }
