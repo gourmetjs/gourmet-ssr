@@ -18,6 +18,7 @@
     "@gourmet/promise-protect": "^0.1.0",
     "@gourmet/promise-repeat": "^0.1.0",
     "@gourmet/promise-sync": "^0.1.0",
+    "camelcase-keys": "^4.2.0",
     "minimist": "^1.2.0",
     "resolve": "^1.6.0",
     "test": "^0.6.0"
