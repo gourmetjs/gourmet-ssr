@@ -2,7 +2,7 @@
   "extends": "gourmet/gourmet_app",
   "root": true,
   "overrides": [{
-    "files": ["**/gourmet.js", "**/test/**/*.js", "**/lib/**/*.js"],
+    "files": ["**/gourmet_config.js", "**/gourmet_cfg.js", "**/test/**/*.js", "**/lib/**/*.js"],
     "parserOptions": {
       "sourceType": "script",
       "ecmaFeatures": {

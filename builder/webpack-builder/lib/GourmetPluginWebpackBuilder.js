@@ -435,7 +435,6 @@ GourmetPluginWebpackBuilder.meta = {
   commands: {
     build: {
       help: "Build the Gourmet project",
-      requireConfig: true,
       options: {
         stage: {
           help: "Specify the stage (e.g. '--stage prod')",

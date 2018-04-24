@@ -1,0 +1,9 @@
+{
+  "name": "@gourmet/promise-tape",
+  "version": "0.1.0",
+  "description": "A simple wrapper converting a promise returning function to test handler for 'tape'",
+  "main": "lib/promiseTape.js",
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

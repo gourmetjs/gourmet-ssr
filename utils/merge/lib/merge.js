@@ -21,32 +21,33 @@ function _getType(obj) {
 }
 
 function _merge(des, src) {
-  for (const prop in src) {
-    if (src.hasOwnProperty(prop)) {
-      const srcVal = src[prop];
-      const desVal = des[prop];
-      let newVal;
+  const props = Object.keys(src);
 
-      if (srcVal instanceof Customizer) {
-        newVal = srcVal.customizer.call(null, desVal);
-      } else {
-        const st = _getType(srcVal);
-        const dt = _getType(desVal);
+  for (let idx = 0; idx < props.length; idx++) {
+    const prop = props[idx];
+    const srcVal = src[prop];
+    const desVal = des[prop];
+    let newVal;
 
-        if (dt === ARRAY)
-          newVal = desVal.concat(srcVal);
-        else if (st === ARRAY && desVal != null)
-          newVal = [desVal].concat(srcVal);
-        else if (st === OBJECT && dt === OBJECT)
-          newVal = _merge(desVal, srcVal);
-        else if (st === OBJECT)
-          newVal = _merge({}, srcVal);  // make a copy
-        else
-          newVal = srcVal;
-      }
+    if (srcVal instanceof Customizer) {
+      newVal = srcVal.customizer.call(null, desVal);
+    } else {
+      const st = _getType(srcVal);
+      const dt = _getType(desVal);
 
-      des[prop] = newVal;
+      if (dt === ARRAY)
+        newVal = desVal.concat(srcVal);
+      else if (st === ARRAY && desVal != null)
+        newVal = [desVal].concat(srcVal);
+      else if (st === OBJECT && dt === OBJECT)
+        newVal = _merge(desVal, srcVal);
+      else if (st === OBJECT)
+        newVal = _merge({}, srcVal);  // make a copy
+      else
+        newVal = srcVal;
     }
+
+    des[prop] = newVal;
   }
 
   return des;

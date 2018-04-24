@@ -6,7 +6,7 @@ class GourmetPluginCliTest {
   }
 
   _onSay({argv}) {
-    const message = argv.decorate ? `** ${this.message} **` : this.message;
+    const message = (argv.decorate || argv.e) ? `** ${this.message} **` : this.message;
     console.log(message);
     return false; // pass through
   }

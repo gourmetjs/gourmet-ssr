@@ -124,11 +124,14 @@ class CliBase {
       if (meta && meta.commands && meta.commands[command])
         return meta.commands[command];
     }
-    throw error(UNKNOWN_COMMAND, {command});
   }
 
   verifyArgs() {
     const info = this.findCommandInfo(this.context.command);
+
+    if (!info)
+      throw error(UNKNOWN_COMMAND, {command: this.context.command});
+
     if (info.options) {
       Object.keys(info.options).forEach(name => {
         const def = info.options[name];
@@ -136,6 +139,7 @@ class CliBase {
           throw error(COMMAND_OPTION_REQUIRED, {name});
       });
     }
+
     return info;
   }
 }

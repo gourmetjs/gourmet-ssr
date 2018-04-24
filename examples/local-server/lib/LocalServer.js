@@ -2,13 +2,13 @@
 
 const http = require("http");
 const morgan = require("morgan");
-const connect = require("connect");
+const express = require("express");
 const serveStatic = require("serve-static");
 const con = require("@gourmet/console")("gourmet:net");
 const parseArgs = require("@gourmet/parse-args");
 const handleRequestError = require("@gourmet/handle-request-error");
 
-class GourmetHttpServer {
+class LocalServer {
   constructor(options={}) {
     this.options = options;
     this.argv = options.argv;
@@ -44,30 +44,6 @@ class GourmetHttpServer {
     }
   }
 
-  installArgsParser() {
-    this.app.use((req, res, next) => {
-      const args = req.headers["x-gourmet-args"];
-      if (args) {
-        try {
-          const buf = Buffer.from(args, "base64");
-          req.gourmet = JSON.parse(buf.toString());
-        } catch (err) {
-          req.gourmet = {};
-        }
-      } else {
-        req.gourmet = {};
-      }
-      next();
-    });
-  }
-
-  installRenderer() {
-    const mount = this.argv.mount || "/";
-    this.app.use(mount, (req, res, next) => {
-      this.gourmet.render(req, res, next, req.gourmet);
-    });
-  }
-
   installErrorHandler() {
     this.app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
       handleRequestError(err, req, res, {
@@ -89,7 +65,7 @@ class GourmetHttpServer {
   }
 
   createApp() {
-    this.app = connect();
+    this.app = express();
   }
 
   createHttpServer() {
@@ -102,8 +78,6 @@ class GourmetHttpServer {
   }
 
   installMiddleware() {
-    this.installArgsParser();
-    this.installRenderer();
   }
 
   installFinalMiddleware() {
@@ -111,9 +85,13 @@ class GourmetHttpServer {
   }
 
   listen() {
-    const port = this.argv.port;
-    const host = this.argv.host;
-    this.httpServer.listen(port === undefined ? 3939 : port, host === undefined ? "0.0.0.0" : host);
+    const argv = this.argv;
+    const port = argv.port;
+    const host = argv.host;
+    this.httpServer.listen(port === undefined ? 3000 : port, host === undefined ? "0.0.0.0" : host, () => {
+      if (argv.logFormat !== "off")
+        con.log(`Server is listening on port ${this.httpServer.address().port}`);
+    });
   }
 
   start() {
@@ -126,9 +104,18 @@ class GourmetHttpServer {
     this.listen();
   }
 
+  ready() {
+    return new Promise((resolve, reject) => {
+      this.httpServer.once("error", reject);
+      this.httpServer.once("listening", () => {
+        resolve(this.httpServer.address().port);
+      });
+    });
+  }
+
   close() {
     this.httpServer.close();
   }
 }
 
-module.exports = GourmetHttpServer;
+module.exports = LocalServer;

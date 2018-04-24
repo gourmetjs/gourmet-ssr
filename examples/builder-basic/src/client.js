@@ -1,3 +1,7 @@
 import print from "./print";
+import concat from "./concat";
 
-print("CLIENT: Hello, world!");
+print(concat(
+  "** CLIENT **",
+  "Hello, world!"
+));

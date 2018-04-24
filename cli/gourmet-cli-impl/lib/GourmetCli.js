@@ -9,8 +9,10 @@ const CliBase = require("@gourmet/cli-base");
 const Variables = require("@gourmet/variables");
 const ContextSource = require("./ContextSource");
 
+const CONFIG_FILE_NAME = "gourmet_config";
+
 const CONFIG_FILE_NOT_FOUND = {
-  message: "Project config file 'gourmet.js' or 'gourmet.json' not found in directory '${workDir}'",
+  message: "Project config file '${filenames}' not found in directory '${workDir}'",
   code: "CONFIG_FILE_NOT_FOUND"
 };
 
@@ -27,26 +29,48 @@ class GourmetCli extends CliBase {
   }
 
   verifyArgs() {
-    const info = super.verifyArgs();
-    if (info.requireConfig && !this.context.vars)
-      throw error(CONFIG_FILE_NOT_FOUND, {workDir: this.context.workDir});
+    const context = this.context;
+
+    if (!context.vars) {
+      const info = this.findCommandInfo(context.command);
+      if (!info || info.requiresConfig !== false) {
+        const filenames = this._getConfigFilenames();
+        const workDir = context.workDir;
+        throw error(CONFIG_FILE_NOT_FOUND, {filenames, workDir});
+      }
+    }
+
+    return super.verifyArgs();
+  }
+
+  _getConfigFilenames() {
+    const context = this.context;
+    const basename = context.argv.configName || CONFIG_FILE_NAME;
+    const ext = npath.extname(basename).toLowerCase();
+    if (ext === ".js" || ext === ".json")
+      return [basename];
+    return [
+      basename + ".js",
+      basename + ".json"
+    ];
   }
 
   _loadConfig() {
-    const exts = [".js", ".json"];
+    const context = this.context;
+    const filenames = this._getConfigFilenames();
 
-    this.context.package = this._loadModuleSafe(npath.join(this.context.workDir, "package.json"));
-    this.context.getter = Variables.getter;
+    context.package = this._loadModuleSafe(npath.join(context.workDir, "package.json"));
+    context.getter = Variables.getter;
 
-    for (let idx = 0; idx < exts.length; idx++) {
-      const ext = exts[idx];
-      const path = npath.join(this.context.workDir, "gourmet" + ext);
+    for (let idx = 0; idx < filenames.length; idx++) {
+      const filename = filenames[idx];
+      const path = npath.join(context.workDir, filename);
 
       if (fs.existsSync(path)) {
         return promiseProtect(() => {
           const config = require(path);
-          this.context.console.info("Project configuration:", path);
-          return typeof config === "function" ? config(this.context) : config;
+          context.console.info("Project configuration:", path);
+          return typeof config === "function" ? config(context) : config;
         }).then(config => {
           this._initVars(config);
         });
@@ -55,7 +79,8 @@ class GourmetCli extends CliBase {
   }
 
   _loadUserPlugins() {
-    return this.context.vars.getMulti(["autoLoadPlugins", "prepend"], ["plugins", []]).then(([auto, plugins]) => {
+    const context = this.context;
+    return context.vars.getMulti(["autoLoadPlugins", "prepend"], ["plugins", []]).then(([auto, plugins]) => {
       if (auto === true) {
         if (!plugins.length)
           plugins = this._scanPlugins(auto);
@@ -64,8 +89,8 @@ class GourmetCli extends CliBase {
       } else if (auto === "append") {
         plugins = plugins.concat(this._scanPlugins(auto));
       }
-      this.context.console.info(`Loading user plugins (autoLoadPlugins=${auto})...`);
-      this.context.plugins.load(plugins, this.context.workDir);
+      context.console.info(`Loading user plugins (autoLoadPlugins=${auto})...`);
+      context.plugins.load(plugins, context.workDir);
     });
   }
 

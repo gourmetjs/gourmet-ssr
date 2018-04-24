@@ -1,6 +1,5 @@
 .DS_Store
 .gourmet
+.test
 *.log
 node_modules
-_build
-_test

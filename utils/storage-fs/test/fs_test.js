@@ -7,7 +7,7 @@ const test = require("tape");
 const rimraf = require("rimraf");
 const StorageFs = require("..");
 
-const TEST_DIR = npath.join(__dirname, "../_test");
+const TEST_DIR = npath.join(__dirname, ".test");
 
 const storage = new StorageFs({basePath: TEST_DIR});
 

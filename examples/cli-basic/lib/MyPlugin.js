@@ -1,8 +1,8 @@
 "use strict";
 
 class MyPlugin {
-  _onSay({argv}) {
-    console.log("command:", argv.$command);
+  _onSay({argv, command}) {
+    console.log("command:", command);
     console.log("argv:", JSON.stringify(argv));
   }
 }
