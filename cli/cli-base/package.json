@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/cli-base",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Base class for the command line interface apps with flexible plugin architecture",
   "main": "lib/CliBase.js",
   "publishConfig": {

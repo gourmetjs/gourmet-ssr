@@ -6,8 +6,8 @@
     "debug": "node --inspect-brk ../../cli/gourmet-cli/bin/gourmet-cli.js build"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^0.1.1",
-    "@gourmet/preset-builder": "^0.1.1"
+    "@gourmet/gourmet-cli": "^0.1.2",
+    "@gourmet/preset-builder": "^0.1.2"
   },
-  "version": "0.1.1"
+  "version": "0.1.2"
 }

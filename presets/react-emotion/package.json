@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/preset-react-emotion",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/GourmetPresetReactEmotion.js",
   "publishConfig": {
     "access": "restricted"
@@ -11,7 +11,7 @@
   "dependencies": {
     "@gourmet/emotion-renderer": "^0.1.0",
     "@gourmet/plugin-react-emotion": "^0.1.0",
-    "@gourmet/preset-react": "^0.1.0",
+    "@gourmet/preset-react": "^0.1.1",
     "emotion": "^9.1.1",
     "react-emotion": "^9.1.1"
   }

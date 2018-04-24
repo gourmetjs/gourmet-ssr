@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Plugin for adding React support to 'gourmet build' command",
   "keywords": [
     "gourmet-plugin"

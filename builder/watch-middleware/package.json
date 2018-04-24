@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/watch-middleware",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "lib/index.js",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/gourmet-cli-impl": "^0.1.1",
+    "@gourmet/gourmet-cli-impl": "^0.1.2",
     "@gourmet/storage-fs": "^0.1.0",
     "memory-fs": "^0.4.1",
     "webpack-dev-middleware": "^3.1.2",
