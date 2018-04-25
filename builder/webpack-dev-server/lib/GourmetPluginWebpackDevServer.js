@@ -21,10 +21,6 @@ class GourmetPluginWebpackDevServer {
         clientDir
       });
       server.start();
-      server.httpServer.on("listening", function() {
-        const port = this.address().port;
-        con.log(con.colors.brightYellow(`GourmetDevServer is listening on ${port}`));
-      });
     });
   }
 }

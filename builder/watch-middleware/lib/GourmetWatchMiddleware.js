@@ -5,6 +5,7 @@ const hotClient = require("webpack-hot-client");
 const MemoryFs = require("memory-fs");
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const StorageFs = require("@gourmet/storage-fs");
+const inspectError = require("@gourmet/inspect-error");
 
 class GourmetWatchMiddleware {
   constructor({watch, argv}, gourmet) {
@@ -49,7 +50,7 @@ class GourmetWatchMiddleware {
       });
     }).catch(err => {
       const con = cli.context.console;
-      con.error(err);
+      con.error(`Error occurred while initializing GourmetWatchMiddleware\n${inspectError(err, 1)}`);
     });
   }
 

@@ -2,19 +2,25 @@
 
 const http = require("http");
 const morgan = require("morgan");
-const express = require("express");
 const getConsole = require("@gourmet/console");
 const detect = require("@gourmet/console-env");
+const serverArgs = require("@gourmet/server-args");
 const parseArgs = require("@gourmet/parse-args");
+const error = require("@gourmet/error");
+const NOT_IMPLEMENTED = require("@gourmet/error/NOT_IMPLEMENTED");
 const handleRequestError = require("@gourmet/handle-request-error");
 
 let con;
 
-class LocalServer {
-  constructor(args={}) {
-    this.args = args;
-    this.argv = args.argv;
-    this.initConsole();
+class ServerImplBase {
+  constructor(args, connect) {
+    if (!args)
+      this.args = serverArgs(process.argv.slice(2));
+    else
+      this.args = args;
+    this.argv = this.args.argv;
+    this.connect = connect;
+    con = this.initConsole();
   }
 
   initConsole() {
@@ -22,13 +28,13 @@ class LocalServer {
       useColors: parseArgs.bool(this.argv.colors, parseArgs.undef),
       minLevel: parseArgs.verbosity([this.argv.verbose, this.argv.v])
     }));
-    con = getConsole("gourmet:net");
+    return getConsole("gourmet:net");
   }
 
   start() {
     this.createApp();
     this.createHttpServer();
-    this.createClientLib();
+    this.createClient();
     this.installInitialMiddleware();
     this.installMiddleware();
     this.installFinalMiddleware();
@@ -36,29 +42,19 @@ class LocalServer {
   }
 
   createApp() {
-    this.app = express();
+    this.app = this.connect();
   }
 
   createHttpServer() {
     this.httpServer = http.createServer(this.app);
   }
 
-  createClientLib() {
-    const argv = this.argv;
-    this.gourmet = require("@gourmet/client-lib")({
-      serverDir: this.args.serverDir,
-      entrypoint: parseArgs.string(argv.entrypoint, "main"),
-      siloed: parseArgs.bool(argv.siloed),
-      params: argv.params || {}
-    });
+  createClient() {
+    throw error(NOT_IMPLEMENTED);
   }
 
   installInitialMiddleware() {
     this.installLogger();
-    if (this.args.watch)
-      this.installWatch();
-    else
-      this.installStaticServer();
   }
 
   installMiddleware() {
@@ -86,39 +82,24 @@ class LocalServer {
     }
   }
 
-  installWatch() {
-    const watch = require("@gourmet/watch-middleware")(this.args, this.gourmet);
-    this.app.use(watch);
-  }
-
-  installStaticServer() {
-    const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
-    this.app.use(staticPrefix, express.static(this.args.clientDir, {
-      fallthrough: false,
-      index: false,
-      redirect: false
-    }));
-  }
-
   installRenderer() {
     const mount = parseArgs.string(this.argv.mount, "/");
     this.app.use(mount, (req, res, next) => {
-      this.gourmet.render(req, res, next);
+      const args = this.getRenderArgs(req);
+      this.gourmet.render(req, res, next, args);
     });
   }
 
   installErrorHandler() {
+    const options = this.getErrorHandlerOptions();
     this.app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-      handleRequestError(err, req, res, {
-        console: con,
-        debug: parseArgs.bool(this.argv.debug, true)
-      });
+      handleRequestError(err, req, res, options);
     });
   }
 
   listen() {
-    const port = parseArgs.number(this.argv.port, 3000);
-    const host = parseArgs.string(this.argv.host, "0.0.0.0");
+    const port = parseArgs.number(this.argv.port, process.env.PORT || this.getDefaultPort());
+    const host = parseArgs.string(this.argv.host, process.env.HOST || this.getDefaultHost());
     this.httpServer.listen(port, host, () => {
       con.log(`Server is listening on port ${this.httpServer.address().port}`);
     });
@@ -136,6 +117,24 @@ class LocalServer {
   close() {
     this.httpServer.close();
   }
+
+  getRenderArgs(req) {  // eslint-disable-line no-unused-vars
+  }
+
+  getErrorHandlerOptions() {
+    return {
+      console: con,
+      debug: parseArgs.bool(this.argv.debug, process.env.NODE_ENV !== "production")
+    };
+  }
+
+  getDefaultPort() {
+    return 3000;
+  }
+
+  getDefaultHost() {
+    return "0.0.0.0";
+  }
 }
 
-module.exports = LocalServer;
+module.exports = ServerImplBase;

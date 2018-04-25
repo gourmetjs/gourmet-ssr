@@ -98,11 +98,7 @@ class GourmetServerLauncher {
   }
 
   runWorker() {
-    const server = this.startHttpServer();
-    server.httpServer.on("listening", function() {
-      const port = this.address().port;
-      con.log(`Worker is listening on ${port}`);
-    });
+    this.startHttpServer();
   }
 
   showHelp() {

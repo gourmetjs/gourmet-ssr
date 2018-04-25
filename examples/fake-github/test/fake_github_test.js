@@ -6,7 +6,7 @@ const puppeteer = require("puppeteer");
 const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
 const serverArgs = require("@gourmet/server-args");
-const LocalServer = require("@gourmet/example-local-server");
+const Server = require("@gourmet/server-impl-watch");
 
 const args = serverArgs([
   "--dir", npath.join(__dirname, ".."),
@@ -18,7 +18,7 @@ const args = serverArgs([
 let server, port;
 
 test("start gourmet server", pt(() => {
-  server = new LocalServer(args);
+  server = new Server(args);
   server.start();
   return server.ready().then(port_ => {
     port = port_;

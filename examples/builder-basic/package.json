@@ -8,8 +8,7 @@
     "test:prod": "gourmet build --config-name gourmet_cfg --verbose 0 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/server-args": "^0.1.0",
-    "@gourmet/example-local-server": "^0.1.0"
+    "@gourmet/server-impl-watch": "^0.1.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.2",

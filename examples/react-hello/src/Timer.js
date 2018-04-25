@@ -10,16 +10,17 @@ export default class Timer extends Component {
   }
 
   componentDidMount() {
-    function _get() {
+    const _update = () => {
       const now = new Date();
-      return now.toDateString() + " " + now.toTimeString();
-    }
-
-    this._timerId = setInterval(() => {
+      const value = now.toDateString() + " " + now.toTimeString();
       this.setState({
-        currentTime: _get()
+        currentTime: value
       });
-    }, 1000);
+    };
+
+    this._timerId = setInterval(_update, 1000);
+
+    _update();
   }
 
   componentWillUnmount() {
@@ -34,7 +35,7 @@ export default class Timer extends Component {
       <pre>
         <span>Current time:</span>
         &nbsp;
-        <span>{this.state.currentTime}</span>
+        <span className="time-value">{this.state.currentTime}</span>
       </pre>
     );
   }

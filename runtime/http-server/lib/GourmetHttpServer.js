@@ -1,38 +1,20 @@
 "use strict";
 
-const http = require("http");
-const morgan = require("morgan");
 const connect = require("connect");
-const serveStatic = require("serve-static");
-const con = require("@gourmet/console")("gourmet:net");
+const getConsole = require("@gourmet/console");
 const parseArgs = require("@gourmet/parse-args");
-const handleRequestError = require("@gourmet/handle-request-error");
+const ServerImplBase = require("@gourmet/server-impl-base");
 
-class GourmetHttpServer {
-  constructor(args={}) {
-    this.args = args;
-    this.argv = args.argv;
+class GourmetHttpServer extends ServerImplBase {
+  constructor(args) {
+    super(args, connect);
   }
 
-  start() {
-    this.createApp();
-    this.createHttpServer();
-    this.createClientLib();
-    this.installInitialMiddleware();
-    this.installMiddleware();
-    this.installFinalMiddleware();
-    this.listen();
+  initConsole() {
+    return getConsole("gourmet:net");
   }
 
-  createApp() {
-    this.app = connect();
-  }
-
-  createHttpServer() {
-    this.httpServer = http.createServer(this.app);
-  }
-
-  createClientLib() {
+  createClient() {
     const argv = this.argv;
     this.gourmet = require("@gourmet/client-lib")({
       serverDir: this.args.serverDir,
@@ -47,86 +29,37 @@ class GourmetHttpServer {
     this.installStaticServer();
   }
 
-  installMiddleware() {
-    this.installArgsParser();
-    this.installRenderer();
-  }
-
-  installFinalMiddleware() {
-    this.installErrorHandler();
-  }
-
-  installLogger() {
-    const format = parseArgs.string(this.argv.logFormat, "dev");
-    if (format !== "off") {
-      this.app.use(morgan(format, {
-        // Currently, morgan just use 'write' method of the output stream so
-        // we can easily redirect output to our own console.
-        stream: {
-          write(text) {
-            if (text.substr(-1) === "\n")
-              text = text.substr(0, text.length - 1);
-            con.log(text);
-          }
-        }
-      }));
-    }
-  }
-
   installStaticServer() {
     const enableStatic = parseArgs.bool(this.argv.static, true);
     if (enableStatic) {
       const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
-      this.app.use(staticPrefix, serveStatic(this.args.clientDir, {
-        fallthrough: false,
-        index: false,
-        redirect: false
-      }));
+      this.app.use(staticPrefix, this.gourmet.static(this.args));
     }
   }
 
-  installArgsParser() {
-    this.app.use((req, res, next) => {
-      const args = req.headers["x-gourmet-args"];
-      if (args) {
-        try {
-          const buf = Buffer.from(args, "base64");
-          req.gourmet = JSON.parse(buf.toString());
-        } catch (err) {
-          req.gourmet = {};
-        }
-      } else {
+  getRenderArgs(req) {
+    const args = req.headers["x-gourmet-args"];
+    if (args) {
+      try {
+        const buf = Buffer.from(args, "base64");
+        req.gourmet = JSON.parse(buf.toString());
+      } catch (err) {
         req.gourmet = {};
       }
-      next();
-    });
+    } else {
+      req.gourmet = {};
+    }
+    return req.gourmet;
   }
 
-  installRenderer() {
-    const mount = parseArgs.string(this.argv.mount, "/");
-    this.app.use(mount, (req, res, next) => {
-      this.gourmet.render(req, res, next, req.gourmet);
-    });
+  getErrorHandlerOptions() {
+    const options = super.getErrorHandlerOptions();
+    options.requestProps = ["url", "method", "headers", "gourmet"];
+    return options;
   }
 
-  installErrorHandler() {
-    this.app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-      handleRequestError(err, req, res, {
-        console: con,
-        debug: parseArgs.bool(this.argv.debug, true),
-        requestProps: ["url", "method", "headers", "gourmet"]
-      });
-    });
-  }
-
-  listen() {
-    const port = parseArgs.number(this.argv.port, 3939);
-    const host = parseArgs.string(this.argv.host, "0.0.0.0");
-    this.httpServer.listen(port, host);
-  }
-
-  close() {
-    this.httpServer.close();
+  getDefaultPort() {
+    return 3939;
   }
 }
 

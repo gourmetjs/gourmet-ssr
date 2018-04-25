@@ -6,7 +6,14 @@ const puppeteer = require("puppeteer");
 const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
 const serverArgs = require("@gourmet/server-args");
-const TestServer = require("../server/lib/TestServer");
+const ServerImplWatch = require("@gourmet/server-impl-Watch");
+
+class TestServer extends ServerImplWatch {
+  installMiddleware() {
+    this.app.use("/admin", this.gourmet.renderer({entrypoint: "admin", params: {abc: 456}}));
+    this.app.use("/", this.gourmet.renderer({entrypoint: "main", params: {xyz: 123}}));
+  }
+}
 
 const args = serverArgs([
   "--dir", npath.join(__dirname, ".."),

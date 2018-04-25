@@ -10,14 +10,12 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^0.1.0",
     "@gourmet/console": "^0.1.0",
     "@gourmet/console-env": "^0.1.0",
-    "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/parse-args": "^0.1.0",
     "@gourmet/server-args": "^0.1.0",
-    "connect": "^3.6.6",
-    "morgan": "^1.9.0",
-    "serve-static": "^1.13.2"
+    "@gourmet/server-impl-base": "^0.1.0",
+    "@gourmet/client-lib": "^0.1.0",
+    "connect": "^3.6.6"
   }
 }
