@@ -17,6 +17,7 @@
     "@gourmet/plugin-webpack-dev-server": "^0.2.0",
     "@gourmet/promise-tape": "^0.2.0",
     "@gourmet/puppeteer-args": "^0.2.0",
+    "@gourmet/server-args": "^0.1.0",
     "puppeteer": "^1.3.0",
     "tape": "^4.9.0"
   }

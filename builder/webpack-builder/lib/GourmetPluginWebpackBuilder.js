@@ -23,7 +23,7 @@ const INVALID_STAGE_TYPES = {
   code: "INVALID_STAGE_TYPES"
 };
 
-function _inDir(path, dir) {
+function _findDir(path, dir) {
   function _sep(ch) {
     return ch === "\\" || ch === "/";
   }
@@ -100,7 +100,7 @@ class GourmetPluginWebpackBuilder {
 
   getDirTester(dir) {
     const tester = function(path) {
-      return _inDir(path, dir) !== -1;
+      return _findDir(path, dir) !== -1;
     };
 
     tester[util.inspect.custom] = function() {
@@ -112,10 +112,14 @@ class GourmetPluginWebpackBuilder {
 
   getVendorDistTester() {
     const tester = function(path) {
-      const mod = _inDir(this.getDirTester("node_modules");
-      const src = this.getDirTester("src");
-
-      return mod(path) && !src(path);
+      const mod = _findDir(path, "node_modules");
+      if (mod !== -1) {
+        const src = _findDir(path, "src");
+        if (src !== -1 && src > mod)
+          return false;
+        return true;
+      }
+      return false;
     };
 
     tester[util.inspect.custom] = function() {
