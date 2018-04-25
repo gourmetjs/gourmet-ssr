@@ -3,10 +3,12 @@
 const http = require("http");
 const morgan = require("morgan");
 const express = require("express");
-const serveStatic = require("serve-static");
-const con = require("@gourmet/console")("gourmet:net");
+const getConsole = require("@gourmet/console");
+const detect = require("@gourmet/console-env");
 const parseArgs = require("@gourmet/parse-args");
 const handleRequestError = require("@gourmet/handle-request-error");
+
+let con;
 
 class LocalServer {
   constructor(options={}) {
@@ -14,10 +16,19 @@ class LocalServer {
     this.argv = options.argv;
     this.serverDir = options.serverDir;
     this.clientDir = options.clientDir;
+    this.initConsole();
+  }
+
+  initConsole() {
+    getConsole.install(detect({
+      useColors: parseArgs.bool(this.argv.colors, parseArgs.undef),
+      minLevel: parseArgs.verbosity([this.argv.verbose, this.argv.v])
+    }));
+    con = getConsole("gourmet:net");
   }
 
   installLogger() {
-    const format = this.argv.logFormat || "dev";
+    const format = parseArgs.string(this.argv.logFormat, "dev");
     if (format !== "off") {
       this.app.use(morgan(format, {
         // Currently, morgan just use 'write' method of the output stream so
@@ -34,9 +45,10 @@ class LocalServer {
   }
 
   installStaticServer() {
-    if (this.argv.static === undefined || this.argv.static) {
-      const staticPrefix = this.argv.staticPrefix || "/s/";
-      this.app.use(staticPrefix, serveStatic(this.clientDir, {
+    const enableStatic = parseArgs.bool(this.argv.static, true);
+    if (enableStatic) {
+      const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
+      this.app.use(staticPrefix, express.static(this.clientDir, {
         fallthrough: false,
         index: false,
         redirect: false
@@ -48,8 +60,7 @@ class LocalServer {
     this.app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
       handleRequestError(err, req, res, {
         console: con,
-        debug: this.argv.debug === undefined ? true : this.argv.debug,
-        requestProps: ["url", "method", "headers", "gourmet"]
+        debug: parseArgs.bool(this.argv.debug, true)
       });
     });
   }
@@ -58,7 +69,7 @@ class LocalServer {
     const argv = this.argv;
     this.gourmet = require("@gourmet/client-lib")({
       serverDir: this.serverDir,
-      entrypoint: argv.entrypoint || "main",
+      entrypoint: parseArgs.string(argv.entrypoint, "main"),
       siloed: parseArgs.bool(argv.siloed),
       params: argv.params || {}
     });
@@ -85,12 +96,10 @@ class LocalServer {
   }
 
   listen() {
-    const argv = this.argv;
-    const port = argv.port;
-    const host = argv.host;
-    this.httpServer.listen(port === undefined ? 3000 : port, host === undefined ? "0.0.0.0" : host, () => {
-      if (argv.logFormat !== "off")
-        con.log(`Server is listening on port ${this.httpServer.address().port}`);
+    const port = parseArgs.number(this.argv.port, 3000);
+    const host = parseArgs.string(this.argv.host, "0.0.0.0");
+    this.httpServer.listen(port, host, () => {
+      con.log(`Server is listening on port ${this.httpServer.address().port}`);
     });
   }
 

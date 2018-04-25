@@ -8,11 +8,12 @@ const pt = require("@gourmet/promise-tape");
 const serverArgs = require("@gourmet/server-args");
 const TestServer = require("..");
 
-const args = serverArgs.parse({
-  dir: npath.join(__dirname, ".."),
-  logFormat: "off",
-  port: 0
-});
+const args = serverArgs([
+  "--dir", npath.join(__dirname, ".."),
+  "--log-format", "off",
+  "--verbose", "off",
+  "--port", "0"
+].concat(process.argv.slice(2)));
 
 let server, port;
 
@@ -30,29 +31,48 @@ test("run puppeteer", pt(async t => {
 
   await page.goto(`http://localhost:${port}/foo/bar?a=1&b=2&c`);
 
-  const {server, client} = await page.evaluate(() => {
+  let info = await page.evaluate(() => {
     return {
       server: document.getElementById("server_output").innerText,
       client: document.getElementById("client_output").innerText,
     };
   });
 
-  t.equal(server, [
+  t.equal(info.server, [
     "** SERVER **",
     "entrypoint: main",
-    "stage: local",
+    `stage: ${args.stage}`,
     "staticPrefix: /s/",
     "path: /foo/bar",
     'query: {"a":"1","b":"2","c":""}',
     'params: {"xyz":123}'
   ].join("\n"), "server output");
 
-  t.equal(client, [
+  t.equal(info.client, [
     "** CLIENT **",
     "Hello, world!\n"
   ].join("\n"), "client output");
 
-  await page.goto(`http://localhost:${port}/?123`);
+  await page.goto(`http://localhost:${port}/admin/?123`);
+
+  info = await page.evaluate(() => {
+    return {
+      server: document.getElementById("server_output").innerText,
+      client: document.getElementById("client_output").innerText,
+    };
+  });
+
+  t.equal(info.server, [
+    "** SERVER **",
+    "entrypoint: admin",
+    `stage: ${args.stage}`,
+    "staticPrefix: /s/",
+    "path: /",
+    'query: {"123":""}',
+    'params: {"abc":456}'
+  ].join("\n"), "server output");
+
+  t.equal(info.client, "ADMIN: This is admin page...\n", "client output");
 
   await browser.close();
 }));

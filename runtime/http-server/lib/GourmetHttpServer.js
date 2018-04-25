@@ -17,7 +17,7 @@ class GourmetHttpServer {
   }
 
   installLogger() {
-    const format = this.argv.logFormat || "dev";
+    const format = parseArgs.string(this.argv.logFormat, "dev");
     if (format !== "off") {
       this.app.use(morgan(format, {
         // Currently, morgan just use 'write' method of the output stream so
@@ -34,8 +34,9 @@ class GourmetHttpServer {
   }
 
   installStaticServer() {
-    if (this.argv.static === undefined || this.argv.static) {
-      const staticPrefix = this.argv.staticPrefix || "/s/";
+    const enableStatic = parseArgs.bool(this.argv.static, true);
+    if (enableStatic) {
+      const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
       this.app.use(staticPrefix, serveStatic(this.clientDir, {
         fallthrough: false,
         index: false,
@@ -62,7 +63,7 @@ class GourmetHttpServer {
   }
 
   installRenderer() {
-    const mount = this.argv.mount || "/";
+    const mount = parseArgs.string(this.argv.mount, "/");
     this.app.use(mount, (req, res, next) => {
       this.gourmet.render(req, res, next, req.gourmet);
     });
@@ -72,7 +73,7 @@ class GourmetHttpServer {
     this.app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
       handleRequestError(err, req, res, {
         console: con,
-        debug: this.argv.debug === undefined ? true : this.argv.debug,
+        debug: parseArgs.bool(this.argv.debug, true),
         requestProps: ["url", "method", "headers", "gourmet"]
       });
     });
@@ -82,7 +83,7 @@ class GourmetHttpServer {
     const argv = this.argv;
     this.gourmet = require("@gourmet/client-lib")({
       serverDir: this.serverDir,
-      entrypoint: argv.entrypoint || "main",
+      entrypoint: parseArgs.string(argv.entrypoint, "main"),
       siloed: parseArgs.bool(argv.siloed),
       params: argv.params || {}
     });
@@ -111,9 +112,9 @@ class GourmetHttpServer {
   }
 
   listen() {
-    const port = this.argv.port;
-    const host = this.argv.host;
-    this.httpServer.listen(port === undefined ? 3939 : port, host === undefined ? "0.0.0.0" : host);
+    const port = parseArgs.number(this.argv.port, 3939);
+    const host = parseArgs.string(this.argv.host, "0.0.0.0");
+    this.httpServer.listen(port, host);
   }
 
   start() {

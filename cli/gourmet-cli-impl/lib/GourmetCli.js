@@ -12,7 +12,7 @@ const ContextSource = require("./ContextSource");
 const CONFIG_FILE_NAME = "gourmet_config";
 
 const CONFIG_FILE_NOT_FOUND = {
-  message: "Project config file '${filenames}' not found in directory '${workDir}'",
+  message: "Project config file '${filename}' not found in directory '${workDir}'",
   code: "CONFIG_FILE_NOT_FOUND"
 };
 
@@ -36,7 +36,7 @@ class GourmetCli extends CliBase {
       if (!info || info.requiresConfig !== false) {
         const filenames = this._getConfigFilenames();
         const workDir = context.workDir;
-        throw error(CONFIG_FILE_NOT_FOUND, {filenames, workDir});
+        throw error(CONFIG_FILE_NOT_FOUND, {filename: filenames[0], workDir});
       }
     }
 

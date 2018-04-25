@@ -60,7 +60,7 @@ class GourmetServerLauncher {
 
     getConsole.install(detect({
       useColors: parseArgs.bool(this.argv.colors, parseArgs.undef),
-      minLevel: parseArgs.verbosity(this.argv.verbose || this.argv.v),
+      minLevel: parseArgs.verbosity([this.argv.verbose, this.argv.v]),
       write(opts, text) {
         base.write(opts, `${_color("[" + process.pid + "]")} ${text}`);
       }

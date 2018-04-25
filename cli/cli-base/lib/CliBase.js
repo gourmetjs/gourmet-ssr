@@ -93,7 +93,7 @@ class CliBase {
   init(argv) {
     installMemConsole({
       useColors: parseArgs.bool(argv.colors, parseArgs.undef),
-      minLevel: parseArgs.verbosity(argv.verbose || argv.v)
+      minLevel: parseArgs.verbosity([argv.verbose, argv.v])
     });
 
     this.context = {

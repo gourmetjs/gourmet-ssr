@@ -11,9 +11,7 @@
     "@gourmet/console-env": "^0.1.0",
     "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/parse-args": "^0.1.0",
-    "@gourmet/server-args": "^0.1.0",
     "express": "^4.16.3",
-    "morgan": "^1.9.0",
-    "serve-static": "^1.13.2"
+    "morgan": "^1.9.0"
   }
 }

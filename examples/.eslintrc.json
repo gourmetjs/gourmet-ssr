@@ -4,6 +4,7 @@
   "overrides": [{
     "files": ["**/gourmet_config.js", "**/gourmet_cfg.js", "**/test/**/*.js", "**/lib/**/*.js"],
     "parserOptions": {
+      "ecmaVersion": 2017,
       "sourceType": "script",
       "ecmaFeatures": {
         "impliedStrict": false
