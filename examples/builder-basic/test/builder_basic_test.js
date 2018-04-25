@@ -6,7 +6,7 @@ const puppeteer = require("puppeteer");
 const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
 const serverArgs = require("@gourmet/server-args");
-const TestServer = require("..");
+const TestServer = require("../server/lib/TestServer");
 
 const args = serverArgs([
   "--dir", npath.join(__dirname, ".."),

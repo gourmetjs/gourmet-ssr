@@ -11,11 +11,9 @@ const handleRequestError = require("@gourmet/handle-request-error");
 let con;
 
 class LocalServer {
-  constructor(options={}) {
-    this.options = options;
-    this.argv = options.argv;
-    this.serverDir = options.serverDir;
-    this.clientDir = options.clientDir;
+  constructor(args={}) {
+    this.args = args;
+    this.argv = args.argv;
     this.initConsole();
   }
 
@@ -25,6 +23,50 @@ class LocalServer {
       minLevel: parseArgs.verbosity([this.argv.verbose, this.argv.v])
     }));
     con = getConsole("gourmet:net");
+  }
+
+  start() {
+    this.createApp();
+    this.createHttpServer();
+    this.createClientLib();
+    this.installInitialMiddleware();
+    this.installMiddleware();
+    this.installFinalMiddleware();
+    this.listen();
+  }
+
+  createApp() {
+    this.app = express();
+  }
+
+  createHttpServer() {
+    this.httpServer = http.createServer(this.app);
+  }
+
+  createClientLib() {
+    const argv = this.argv;
+    this.gourmet = require("@gourmet/client-lib")({
+      serverDir: this.args.serverDir,
+      entrypoint: parseArgs.string(argv.entrypoint, "main"),
+      siloed: parseArgs.bool(argv.siloed),
+      params: argv.params || {}
+    });
+  }
+
+  installInitialMiddleware() {
+    this.installLogger();
+    if (this.args.watch)
+      this.installWatch();
+    else
+      this.installStaticServer();
+  }
+
+  installMiddleware() {
+    this.installRenderer();
+  }
+
+  installFinalMiddleware() {
+    this.installErrorHandler();
   }
 
   installLogger() {
@@ -44,16 +86,25 @@ class LocalServer {
     }
   }
 
+  installWatch() {
+    const watch = require("@gourmet/watch-middleware")(this.args, this.gourmet);
+    this.app.use(watch);
+  }
+
   installStaticServer() {
-    const enableStatic = parseArgs.bool(this.argv.static, true);
-    if (enableStatic) {
-      const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
-      this.app.use(staticPrefix, express.static(this.clientDir, {
-        fallthrough: false,
-        index: false,
-        redirect: false
-      }));
-    }
+    const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
+    this.app.use(staticPrefix, express.static(this.args.clientDir, {
+      fallthrough: false,
+      index: false,
+      redirect: false
+    }));
+  }
+
+  installRenderer() {
+    const mount = parseArgs.string(this.argv.mount, "/");
+    this.app.use(mount, (req, res, next) => {
+      this.gourmet.render(req, res, next);
+    });
   }
 
   installErrorHandler() {
@@ -65,52 +116,12 @@ class LocalServer {
     });
   }
 
-  createClientLib() {
-    const argv = this.argv;
-    this.gourmet = require("@gourmet/client-lib")({
-      serverDir: this.serverDir,
-      entrypoint: parseArgs.string(argv.entrypoint, "main"),
-      siloed: parseArgs.bool(argv.siloed),
-      params: argv.params || {}
-    });
-  }
-
-  createApp() {
-    this.app = express();
-  }
-
-  createHttpServer() {
-    this.httpServer = http.createServer(this.app);
-  }
-
-  installInitialMiddleware() {
-    this.installLogger();
-    this.installStaticServer();
-  }
-
-  installMiddleware() {
-  }
-
-  installFinalMiddleware() {
-    this.installErrorHandler();
-  }
-
   listen() {
     const port = parseArgs.number(this.argv.port, 3000);
     const host = parseArgs.string(this.argv.host, "0.0.0.0");
     this.httpServer.listen(port, host, () => {
       con.log(`Server is listening on port ${this.httpServer.address().port}`);
     });
-  }
-
-  start() {
-    this.createApp();
-    this.createHttpServer();
-    this.createClientLib();
-    this.installInitialMiddleware();
-    this.installMiddleware();
-    this.installFinalMiddleware();
-    this.listen();
   }
 
   ready() {

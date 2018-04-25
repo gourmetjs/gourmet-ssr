@@ -1,17 +1,17 @@
 {
   "name": "@gourmet/example-fake-github",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "hot": "node server/lib/index.js --hot",
-    "watch": "node server/lib/index.js --watch"
+    "watch": "node server/lib/index.js --watch",
+    "test": "yarn test:local && yarn test:prod",
+    "test:local": "gourmet build --verbose 0 && tape test/*_test.js",
+    "test:prod": "gourmet build --verbose 0 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^0.1.0",
-    "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/server-args": "^0.1.0",
-    "@gourmet/watch-middleware": "^0.1.2",
-    "express": "^4.16.3",
-    "morgan": "^1.9.0"
+    "@gourmet/example-local-server": "^0.1.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.1.2",
@@ -22,7 +22,10 @@
     "ionicons": "^2.0.1",
     "react-prepare": "asyncmax/react-prepare",
     "reactstrap": "^5.0.0",
-    "tinycolor2": "^1.4.1"
-  },
-  "version": "0.1.2"
+    "tinycolor2": "^1.4.1",
+    "@gourmet/promise-tape": "^0.1.0",
+    "@gourmet/puppeteer-args": "^0.1.0",
+    "puppeteer": "^1.3.0",
+    "tape": "^4.9.0"
+  }
 }

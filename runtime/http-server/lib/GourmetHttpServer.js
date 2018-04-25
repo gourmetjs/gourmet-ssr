@@ -9,11 +9,51 @@ const parseArgs = require("@gourmet/parse-args");
 const handleRequestError = require("@gourmet/handle-request-error");
 
 class GourmetHttpServer {
-  constructor(options={}) {
-    this.options = options;
-    this.argv = options.argv;
-    this.serverDir = options.serverDir;
-    this.clientDir = options.clientDir;
+  constructor(args={}) {
+    this.args = args;
+    this.argv = args.argv;
+  }
+
+  start() {
+    this.createApp();
+    this.createHttpServer();
+    this.createClientLib();
+    this.installInitialMiddleware();
+    this.installMiddleware();
+    this.installFinalMiddleware();
+    this.listen();
+  }
+
+  createApp() {
+    this.app = connect();
+  }
+
+  createHttpServer() {
+    this.httpServer = http.createServer(this.app);
+  }
+
+  createClientLib() {
+    const argv = this.argv;
+    this.gourmet = require("@gourmet/client-lib")({
+      serverDir: this.args.serverDir,
+      entrypoint: parseArgs.string(argv.entrypoint, "main"),
+      siloed: parseArgs.bool(argv.siloed),
+      params: argv.params || {}
+    });
+  }
+
+  installInitialMiddleware() {
+    this.installLogger();
+    this.installStaticServer();
+  }
+
+  installMiddleware() {
+    this.installArgsParser();
+    this.installRenderer();
+  }
+
+  installFinalMiddleware() {
+    this.installErrorHandler();
   }
 
   installLogger() {
@@ -37,7 +77,7 @@ class GourmetHttpServer {
     const enableStatic = parseArgs.bool(this.argv.static, true);
     if (enableStatic) {
       const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
-      this.app.use(staticPrefix, serveStatic(this.clientDir, {
+      this.app.use(staticPrefix, serveStatic(this.args.clientDir, {
         fallthrough: false,
         index: false,
         redirect: false
@@ -79,52 +119,10 @@ class GourmetHttpServer {
     });
   }
 
-  createClientLib() {
-    const argv = this.argv;
-    this.gourmet = require("@gourmet/client-lib")({
-      serverDir: this.serverDir,
-      entrypoint: parseArgs.string(argv.entrypoint, "main"),
-      siloed: parseArgs.bool(argv.siloed),
-      params: argv.params || {}
-    });
-  }
-
-  createApp() {
-    this.app = connect();
-  }
-
-  createHttpServer() {
-    this.httpServer = http.createServer(this.app);
-  }
-
-  installInitialMiddleware() {
-    this.installLogger();
-    this.installStaticServer();
-  }
-
-  installMiddleware() {
-    this.installArgsParser();
-    this.installRenderer();
-  }
-
-  installFinalMiddleware() {
-    this.installErrorHandler();
-  }
-
   listen() {
     const port = parseArgs.number(this.argv.port, 3939);
     const host = parseArgs.string(this.argv.host, "0.0.0.0");
     this.httpServer.listen(port, host);
-  }
-
-  start() {
-    this.createApp();
-    this.createHttpServer();
-    this.createClientLib();
-    this.installInitialMiddleware();
-    this.installMiddleware();
-    this.installFinalMiddleware();
-    this.listen();
   }
 
   close() {
