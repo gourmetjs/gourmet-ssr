@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/plugin-sort",
   "description": "A general purpose library for human friendly plugin ordering",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/index.js",
   "publishConfig": {
     "access": "restricted"
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@gourmet/is-plain-object": "^0.1.0",
-    "@gourmet/merge": "^0.1.0"
+    "@gourmet/merge": "^0.2.0"
   },
   "devDependencies": {
     "tape": "^4.9.0"

@@ -1,18 +1,18 @@
 {
   "name": "@gourmet/server-impl-base",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Base class for a front server implementation using Gourmet Renderer as a content rendering engine",
   "main": "lib/ServerImplBase.js",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/error": "^0.1.0",
     "@gourmet/console": "^0.1.0",
     "@gourmet/console-env": "^0.1.0",
+    "@gourmet/error": "^0.1.0",
     "@gourmet/handle-request-error": "^0.1.0",
+    "@gourmet/parse-args": "^0.2.0",
     "@gourmet/server-args": "^0.1.0",
-    "@gourmet/parse-args": "^0.1.0",
     "morgan": "^1.9.0"
   }
 }

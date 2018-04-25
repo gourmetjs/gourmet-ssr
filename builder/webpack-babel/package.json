@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-babel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Script build plugin using Babel",
   "keywords": [
     "gourmet-plugin"
@@ -10,7 +10,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/plugin-sort": "^0.1.0",
+    "@gourmet/plugin-sort": "^0.2.0",
     "@gourmet/promise-map": "^0.1.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",

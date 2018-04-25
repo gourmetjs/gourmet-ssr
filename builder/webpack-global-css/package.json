@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-global-css",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "keywords": [
     "gourmet-plugin"
   ],
@@ -9,7 +9,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/plugin-sort": "^0.1.0",
+    "@gourmet/plugin-sort": "^0.2.0",
     "@gourmet/webpack-file-loader": "^0.1.0",
     "autoprefixer": "^8.2.0",
     "css-loader": "^0.28.11",

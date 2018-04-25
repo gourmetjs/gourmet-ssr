@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/cli-base",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Base class for the command line interface apps with flexible plugin architecture",
   "main": "lib/CliBase.js",
   "publishConfig": {
@@ -10,10 +10,10 @@
     "@gourmet/console": "^0.1.0",
     "@gourmet/console-mem": "^0.1.0",
     "@gourmet/error": "^0.1.0",
-    "@gourmet/merge": "^0.1.0",
+    "@gourmet/merge": "^0.2.0",
     "@gourmet/omit": "^0.1.0",
-    "@gourmet/parse-args": "^0.1.0",
-    "@gourmet/plugin-sort": "^0.1.0",
+    "@gourmet/parse-args": "^0.2.0",
+    "@gourmet/plugin-sort": "^0.2.0",
     "@gourmet/promise-main": "^0.1.0",
     "@gourmet/promise-protect": "^0.1.0",
     "@gourmet/promise-repeat": "^0.1.0",

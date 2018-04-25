@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/preset-builder",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "main": "lib/GourmetPresetBuilder.js",
   "publishConfig": {
     "access": "restricted"
@@ -9,10 +9,10 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/plugin-webpack-babel": "^0.1.0",
+    "@gourmet/plugin-webpack-babel": "^0.2.0",
     "@gourmet/plugin-webpack-blob": "^0.1.0",
-    "@gourmet/plugin-webpack-builder": "^0.1.1",
-    "@gourmet/plugin-webpack-dev-server": "^0.1.2",
-    "@gourmet/plugin-webpack-global-css": "^0.1.0"
+    "@gourmet/plugin-webpack-builder": "^0.2.0",
+    "@gourmet/plugin-webpack-dev-server": "^0.2.0",
+    "@gourmet/plugin-webpack-global-css": "^0.2.0"
   }
 }

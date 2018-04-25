@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-builder",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Main plugin for 'gourmet build' command",
   "keywords": [
     "gourmet-plugin"
@@ -14,10 +14,10 @@
     "@gourmet/error": "^0.1.0",
     "@gourmet/hash-names": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",
-    "@gourmet/merge": "^0.1.0",
+    "@gourmet/merge": "^0.2.0",
     "@gourmet/module-dir": "^0.1.1",
     "@gourmet/omit": "^0.1.0",
-    "@gourmet/plugin-sort": "^0.1.0",
+    "@gourmet/plugin-sort": "^0.2.0",
     "@gourmet/prefix-lines": "^0.1.0",
     "@gourmet/promise-each": "^0.1.0",
     "@gourmet/promise-map": "^0.1.0",
