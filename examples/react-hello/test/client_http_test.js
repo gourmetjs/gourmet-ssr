@@ -39,7 +39,7 @@ test("start back server", pt(() => {
 }));
 
 test("start front server", pt(() => {
-  front.server = new FrontServer(front.args, `http://localhost:${back.port}`);
+  front.server = new FrontServer(Object.assign(front.args, {serverUrl: `http://localhost:${back.port}`}));
   front.server.start();
   return front.server.ready().then(port => {
     front.port = port;

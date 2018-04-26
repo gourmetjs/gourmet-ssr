@@ -5,9 +5,9 @@ const ServerImplBase = require("@gourmet/server-impl-base");
 const express = require("express");
 
 class ServerImplHttp extends ServerImplBase {
-  constructor(args, serverUrl) {
+  constructor(args) {
     super(args, express);
-    this.serverUrl = parseArgs.string(this.argv.serverUrl, serverUrl || parseArgs.undef);
+    this.serverUrl = parseArgs.string([this.argv.serverUrl, this.args.serverUrl], parseArgs.undef);
   }
 
   createClient() {
