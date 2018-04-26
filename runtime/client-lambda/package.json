@@ -1,0 +1,11 @@
+{
+  "name": "@gourmet/client-lambda",
+  "version": "0.1.0",
+  "main": "lib/clientLambda.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "dependencies": {
+    "@gourmet/get-aws-service": "^0.1.0"
+  }
+}
