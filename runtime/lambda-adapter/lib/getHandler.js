@@ -1,7 +1,7 @@
 "use strict";
 
 const npath = require("path");
-const parseArgs = require("@gourmet/serverArgs");
+const parseArgs = require("@gourmet/parse-args");
 const clientLib = require("@gourmet/client-lib");
 
 module.exports = function getHandler(args={}) {
