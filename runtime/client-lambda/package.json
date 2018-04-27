@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/client-lambda",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "lib/clientLambda.js",
   "publishConfig": {
     "access": "restricted"
