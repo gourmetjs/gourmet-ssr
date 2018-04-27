@@ -1,0 +1,12 @@
+{
+  "name": "@gourmet/stream-to-string",
+  "version": "0.1.0",
+  "main": "lib/streamToString.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "dependencies": {
+    "destroy": "^1.0.4",
+    "end-of-stream": "^1.4.1"
+  }
+}
