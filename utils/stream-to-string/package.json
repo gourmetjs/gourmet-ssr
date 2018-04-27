@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/stream-to-string",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/streamToString.js",
   "publishConfig": {
     "access": "restricted"
