@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-react-hello",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "scripts": {
     "hot": "node server/lib/local.js --hot",
@@ -11,17 +11,17 @@
     "@gourmet/client-http": "^0.2.0",
     "@gourmet/client-lib": "^0.2.0",
     "@gourmet/handle-request-error": "^0.1.0",
-    "@gourmet/server-args": "^0.1.0",
-    "@gourmet/server-impl-http": "^0.2.0",
-    "@gourmet/server-impl-watch": "^0.2.0",
+    "@gourmet/server-args": "^0.1.1",
+    "@gourmet/server-impl-http": "^0.2.1",
+    "@gourmet/server-impl-watch": "^0.2.1",
     "@gourmet/watch-middleware": "^0.2.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.0",
-    "@gourmet/http-server": "^0.2.0",
-    "@gourmet/preset-builder": "^0.2.1",
+    "@gourmet/http-server": "^0.2.1",
+    "@gourmet/preset-builder": "^0.2.2",
     "@gourmet/preset-react": "^0.2.0",
     "@gourmet/promise-tape": "^0.2.0",
     "@gourmet/puppeteer-args": "^0.2.0",

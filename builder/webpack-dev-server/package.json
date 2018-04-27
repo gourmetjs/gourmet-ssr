@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-dev-server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Standalone HTTP dev server",
   "keywords": [
     "gourmet-plugin"
@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.2.0",
-    "@gourmet/http-server": "^0.2.0",
-    "@gourmet/server-args": "^0.1.0",
+    "@gourmet/http-server": "^0.2.1",
+    "@gourmet/server-args": "^0.1.1",
     "@gourmet/watch-middleware": "^0.2.0"
   }
 }

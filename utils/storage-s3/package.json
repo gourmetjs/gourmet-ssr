@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/storage-s3",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "File storage interface for AWS S3",
   "main": "lib/StorageS3.js",
   "publishConfig": {
@@ -10,7 +10,7 @@
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/get-aws-service": "^0.1.0",
+    "@gourmet/get-aws-service": "^0.1.1",
     "@gourmet/promise-queue": "^0.1.0",
     "@gourmet/promise-repeat": "^0.1.0"
   },
