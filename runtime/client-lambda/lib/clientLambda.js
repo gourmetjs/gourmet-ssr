@@ -2,43 +2,43 @@
 
 const merge = require("@gourmet/merge");
 const omit = require("@gourmet/omit");
+const error = require("@gourmet/error");
 const getReqArgs = require("@gourmet/get-req-args");
-const ProxyHeaders = require("@gourmet/proxy-headers");
+const getAwsService = require("@gourmet/get-aws-service");
 const sendContent = require("@gourmet/send-content");
 
+const LAMBDA_FUNCTION_ERROR = {
+  message: "${errorMessage}",
+  code: "LAMBDA_UNHANDLED_ERROR"
+};
+
+const _defaultLambda = getAwsService("Lambda");
+
 function clientLambda(baseArgs) {
-  function invoke(args_, callback) {
-    function _encodeArgs() {
-      const content = JSON.stringify(args);
-      return Buffer.from(content).toString("base64");
-    }
+  function invoke(args, callback) {
+    args = merge.intact(baseArgs, args);
+    const {lambda=_defaultLambda, functionName, qualifier} = args;
+    args = omit(args, ["lambda", "functionName", "qualifier"]);
 
-    function _done(err, result) {
-      if (!finished) {
-        finished = true;
-        callback(err, result);
-      }
-    }
+    if (!functionName)
+      throw Error("'functionName' is required");
 
-    let finished = false;
-    const {args, rops, httpm} = _extractUrl(args_);
+    lambda.invoke({
+      FunctionName: functionName,
+      Qualifier: qualifier,
+      InvocationType: "RequestResponse",
+      LogType: "None",
+      Payload: JSON.stringify(args)
+    }, (err, data) => {
+      if (err)
+        return callback(err);
+      else if (data.FunctionError === "Unhandled")
+        return callback(error(LAMBDA_FUNCTION_ERROR, {code: "LAMBDA_UNHANDLED_ERROR", functionName}, data.Payload));
+      else if (data.FunctionError === "Handled")
+        return callback(error(LAMBDA_FUNCTION_ERROR, {code: "LAMBDA_HANDLED_ERROR", functionName}, data.Payload));
 
-    if (!rops.headers)
-      rops.headers = {};
-    rops.headers["x-gourmet-args"] = _encodeArgs();
-
-    const clientReq = httpm.request(rops, clientRes => {
-      const result = {
-        statusCode: clientRes.statusCode,
-        headers: new ProxyHeaders(clientRes).getHeadersCase(),
-        content: clientRes
-      };
-      _done(null, result);
+      callback(null, data.Payload);
     });
-
-    clientReq.on("error", _done);
-
-    clientReq.end();
   }
 
   function render(req, res, next, args) {

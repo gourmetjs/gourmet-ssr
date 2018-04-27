@@ -6,16 +6,15 @@ const AWS = require("aws-sdk");
 //  => `AWS` for all services
 // getAwsService("SQS", {AWS: {"region": "us-west-2"}, SQS: {sslEnabled: false}})
 //  => `className` for service-specific options (`Object.assign`ed with `AWS`)
-// getAwsService("SQS", {instance: {SQS: new MockSQS()}})
-//  => `instance[className]` for using the provided service object
-function getAwsService(className, options={}) {
-  const aws = options.aws;
+// getAwsService("SQS", {awsServiceInstance: {SQS: new MockSQS()}})
+//  => `instance[className]` to use the provided service object instead
+function getAwsService(className, options) {
   let serviceOptions;
-  if (typeof aws === "object") {
-    const service = options.instance && options.instance[className];
+  if (typeof options === "object") {
+    const service = options.awsServiceInstance && options.awsServiceInstance[className];
     if (service)
       return service;
-    serviceOptions = Object.assign({}, aws.options, aws[name]);
+    serviceOptions = Object.assign({}, options.AWS, options[className]);
   }
   return new AWS[className](serviceOptions);
 }

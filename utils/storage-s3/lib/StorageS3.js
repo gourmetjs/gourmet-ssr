@@ -13,7 +13,7 @@ const getAwsService = require("@gourmet/get-aws-service");
 class StorageS3 {
   constructor(options={}) {
     const {basePath="", bucket} = options;
-    this.s3 = getAwsService("s3", "S3", options);
+    this.s3 = getAwsService("S3", options);
     this.bucket = bucket;
     this.basePath = basePath[0] === "/" ? basePath.substr(1) : basePath;
   }
