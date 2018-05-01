@@ -8,8 +8,11 @@ const getAwsService = require("@gourmet/get-aws-service");
 const sendContent = require("@gourmet/send-content");
 
 const LAMBDA_FUNCTION_ERROR = {
-  message: "${errorMessage}",
-  code: "LAMBDA_UNHANDLED_ERROR"
+  message: "${errorMessage}"
+};
+
+const LAMBDA_PAYLOAD_ERROR = {
+  message: "Lambda function returned unrecognizable result: ${payload}"
 };
 
 const _defaultLambda = getAwsService("Lambda");
@@ -32,12 +35,21 @@ function clientLambda(baseArgs) {
     }, (err, data) => {
       if (err)
         return callback(err);
-      else if (data.FunctionError === "Unhandled")
-        return callback(error(LAMBDA_FUNCTION_ERROR, {code: "LAMBDA_UNHANDLED_ERROR", functionName}, data.Payload));
-      else if (data.FunctionError === "Handled")
-        return callback(error(LAMBDA_FUNCTION_ERROR, {code: "LAMBDA_HANDLED_ERROR", functionName}, data.Payload));
 
-      callback(null, data.Payload);
+      let payload;
+
+      try {
+        payload = JSON.parse(data.Payload);
+      } catch (err) {
+        return callback(error(LAMBDA_PAYLOAD_ERROR, {payload: data.Payload}));
+      }
+
+      if (data.FunctionError === "Unhandled")
+        return callback(error(LAMBDA_FUNCTION_ERROR, {code: "LAMBDA_UNHANDLED_ERROR", functionName}, payload));
+      else if (data.FunctionError === "Handled")
+        return callback(error(LAMBDA_FUNCTION_ERROR, {code: "LAMBDA_HANDLED_ERROR", functionName}, payload));
+
+      callback(null, payload);
     });
   }
 
