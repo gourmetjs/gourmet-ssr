@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/server-impl-base",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Base class for a front server implementation using Gourmet Renderer as a content rendering engine",
   "main": "lib/ServerImplBase.js",
   "publishConfig": {
@@ -13,7 +13,7 @@
     "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/parse-args": "^0.2.0",
     "@gourmet/server-args": "^0.1.1",
-    "serve-static": "^1.13.2",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "serve-static": "^1.13.2"
   }
 }

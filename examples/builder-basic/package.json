@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-builder-basic",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "scripts": {
     "test": "yarn test:local && yarn test:prod",
@@ -8,13 +8,13 @@
     "test:prod": "gourmet build --config-name gourmet_cfg --verbose 0 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.2.1"
+    "@gourmet/server-impl-watch": "^0.2.2"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.0",
     "@gourmet/plugin-webpack-babel": "^0.2.0",
     "@gourmet/plugin-webpack-builder": "^0.2.1",
-    "@gourmet/plugin-webpack-dev-server": "^0.2.1",
+    "@gourmet/plugin-webpack-dev-server": "^0.2.2",
     "@gourmet/promise-tape": "^0.2.0",
     "@gourmet/puppeteer-args": "^0.2.0",
     "@gourmet/server-args": "^0.1.1",
