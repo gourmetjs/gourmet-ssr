@@ -1,7 +1,6 @@
 "use strict";
 
 const npath = require("path");
-const serveStatic = require("serve-static");
 const promiseProtect = require("@gourmet/promise-protect");
 const omit = require("@gourmet/omit");
 const merge = require("@gourmet/merge");
@@ -124,14 +123,6 @@ function clientLib(baseArgs) {
     _storage = storage;
   }
 
-  function staticServer({clientDir}) {
-    return serveStatic(clientDir, {
-      fallthrough: false,
-      index: false,
-      redirect: false
-    });
-  }
-
   function context(options) {
     return clientLib(options);
   }
@@ -144,7 +135,6 @@ function clientLib(baseArgs) {
   context.render = render;
   context.renderer = renderer;
   context.cleanCache = cleanCache;
-  context.static = staticServer;
 
   return context;
 }

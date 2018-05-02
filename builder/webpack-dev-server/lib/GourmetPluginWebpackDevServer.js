@@ -14,7 +14,7 @@ class GourmetPluginWebpackDevServer {
     const {serverDir, clientDir} = serverArgs.parse(context.argv);
 
     return new Promise(() => {
-      const server = new DevHttpServer({
+      const server = new DevHttpServer(null, {
         watch: context.command === "hot" ? "hot" : true,
         argv: context.argv,
         serverDir,

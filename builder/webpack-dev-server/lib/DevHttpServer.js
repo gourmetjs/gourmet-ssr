@@ -13,7 +13,7 @@ class DevHttpServer extends GourmetHttpServer {
 
   installInitialMiddleware() {
     this.installLogger();
-    this.installWatcher();
+    this.installWatcher();  // replace `installStaticServer()` with `installWatcher()`
   }
 }
 

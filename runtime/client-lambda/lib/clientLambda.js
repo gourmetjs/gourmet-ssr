@@ -73,8 +73,8 @@ function clientLambda(baseArgs) {
     };
   }
 
-  function context(options) {
-    return clientLambda(options);
+  function context(args) {
+    return clientLambda(args);
   }
 
   context.invoke = invoke;

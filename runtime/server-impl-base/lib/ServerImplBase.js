@@ -2,6 +2,7 @@
 
 const http = require("http");
 const morgan = require("morgan");
+const serveStatic = require("serve-static");
 const getConsole = require("@gourmet/console");
 const detect = require("@gourmet/console-env");
 const serverArgs = require("@gourmet/server-args");
@@ -13,14 +14,31 @@ const handleRequestError = require("@gourmet/handle-request-error");
 let con;
 
 class ServerImplBase {
-  constructor(args, connect) {
-    if (!args)
-      this.args = serverArgs(process.argv.slice(2));
-    else
-      this.args = args;
+  constructor(options, args) {
+    this.options = Object.assign({
+      connect: null,
+      defaultPort: 3000,
+      defaultHost: "0.0.0.0",
+      enableLogger: true,
+      enableStatic: true
+    }, options);
+
+    this.connect = this.options.connect;
+
+    if (!this.connect)
+      throw Error("'connect' option is required");
+
+    this.args = this.parseArgs(args);
     this.argv = this.args.argv;
-    this.connect = connect;
+
     con = this.initConsole();
+  }
+
+  parseArgs(args) {
+    if (!args)
+      return serverArgs(process.argv.slice(2));
+    else
+      return args;
   }
 
   initConsole() {
@@ -54,7 +72,10 @@ class ServerImplBase {
   }
 
   installInitialMiddleware() {
-    this.installLogger();
+    if (this.options.enableLogger)
+      this.installLogger();
+    if (this.options.enableStatic)
+      this.installStaticServer();
   }
 
   installMiddleware() {
@@ -82,6 +103,14 @@ class ServerImplBase {
     }
   }
 
+  installStaticServer() {
+    this.app.use(this.args.staticPrefix, serveStatic(this.args.clientDir, {
+      fallthrough: false,
+      index: false,
+      redirect: false
+    }));
+  }
+
   installRenderer() {
     const mount = parseArgs.string(this.argv.mount, "/");
     this.app.use(mount, (req, res, next) => {
@@ -98,8 +127,8 @@ class ServerImplBase {
   }
 
   listen() {
-    const port = parseArgs.number(this.argv.port, process.env.PORT || this.getDefaultPort());
-    const host = parseArgs.string(this.argv.host, process.env.HOST || this.getDefaultHost());
+    const port = parseArgs.number([this.argv.port, process.env.PORT], this.options.defaultPort);
+    const host = parseArgs.string([this.argv.host, process.env.HOST], this.options.defaultHost);
     this.httpServer.listen(port, host, () => {
       con.log(`Server is listening on port ${this.httpServer.address().port}`);
     });
@@ -126,14 +155,6 @@ class ServerImplBase {
       console: con,
       debug: parseArgs.bool(this.argv.debug, process.env.NODE_ENV !== "production")
     };
-  }
-
-  getDefaultPort() {
-    return 3000;
-  }
-
-  getDefaultHost() {
-    return "0.0.0.0";
   }
 }
 

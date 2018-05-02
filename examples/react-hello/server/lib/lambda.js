@@ -1,4 +1,10 @@
 "use strict";
 
+const serverArgs = require("@gourmet/server-args");
 const Server = require("@gourmet/server-impl-lambda");
-new Server().start();
+
+const args = serverArgs(process.argv.slice(2));
+
+new Server({
+  functionName: `react-hello-ui-${args.stage}-render`
+}, args).start();

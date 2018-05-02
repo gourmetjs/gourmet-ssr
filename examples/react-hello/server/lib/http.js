@@ -1,4 +1,7 @@
 "use strict";
 
 const Server = require("@gourmet/server-impl-http");
-new Server().start();
+
+new Server({
+  serverUrl: "http://localhost:3939"
+}).start();

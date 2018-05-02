@@ -3,32 +3,27 @@
 const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
-const gourmet = require("@gourmet/client-lib");
+const gourmet = require("@gourmet/client-lambda");
 const serverArgs = require("@gourmet/server-args");
 const handleRequestError = require("@gourmet/handle-request-error");
 
 const PORT = process.env.PORT || 3000;
 
-const args = serverArgs(process.argv.slice(2));
-const {serverDir, clientDir, staticPrefix} = args;
+const {argv, stage, staticPrefix, clientDir} = serverArgs(process.argv.slice(2));
+const functionName = argv.functionName || `react-hello-ui-${stage}-render`;
 
 const app = express();
 
 app.use(morgan("dev"));
 
-if (args.watch) {
-  const watch = require("@gourmet/watch-middleware")(args, gourmet);
-  app.use(watch);
-} else {
-  app.use(staticPrefix, express.static(clientDir, {
-    fallthrough: false,
-    index: false,
-    redirect: false
-  }));
-}
+app.use(staticPrefix, express.static(clientDir, {
+  fallthrough: false,
+  index: false,
+  redirect: false
+}));
 
 app.use(gourmet.renderer({
-  serverDir,
+  functionName,
   entrypoint: "main"
 }));
 

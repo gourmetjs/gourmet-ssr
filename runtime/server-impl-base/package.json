@@ -13,6 +13,7 @@
     "@gourmet/handle-request-error": "^0.1.0",
     "@gourmet/parse-args": "^0.2.0",
     "@gourmet/server-args": "^0.1.1",
+    "serve-static": "^1.13.2",
     "morgan": "^1.9.0"
   }
 }

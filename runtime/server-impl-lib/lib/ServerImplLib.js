@@ -5,8 +5,10 @@ const ServerImplBase = require("@gourmet/server-impl-base");
 const express = require("express");
 
 class ServerImplLib extends ServerImplBase {
-  constructor(args) {
-    super(args, express);
+  constructor(options, args) {
+    super(Object.assign({
+      connect: express
+    }, options), args);
   }
 
   createClient() {
@@ -17,16 +19,6 @@ class ServerImplLib extends ServerImplBase {
       siloed: parseArgs.bool(argv.siloed),
       params: argv.params || {}
     });
-  }
-
-  installInitialMiddleware() {
-    super.installInitialMiddleware();
-    this.installStaticServer();
-  }
-
-  installStaticServer() {
-    const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
-    this.app.use(staticPrefix, this.gourmet.static(this.args));
   }
 }
 

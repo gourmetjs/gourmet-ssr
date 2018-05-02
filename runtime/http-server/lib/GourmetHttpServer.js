@@ -6,8 +6,11 @@ const parseArgs = require("@gourmet/parse-args");
 const ServerImplBase = require("@gourmet/server-impl-base");
 
 class GourmetHttpServer extends ServerImplBase {
-  constructor(args) {
-    super(args, connect);
+  constructor(options, args) {
+    super(Object.assign({
+      connect,
+      defaultPort: 3939
+    }, options), args);
   }
 
   initConsole() {
@@ -24,17 +27,10 @@ class GourmetHttpServer extends ServerImplBase {
     });
   }
 
-  installInitialMiddleware() {
-    this.installLogger();
-    this.installStaticServer();
-  }
-
   installStaticServer() {
     const enableStatic = parseArgs.bool(this.argv.static, true);
-    if (enableStatic) {
-      const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
-      this.app.use(staticPrefix, this.gourmet.static(this.args));
-    }
+    if (enableStatic)
+      super.installStaticServer();
   }
 
   getRenderArgs(req) {
@@ -56,10 +52,6 @@ class GourmetHttpServer extends ServerImplBase {
     const options = super.getErrorHandlerOptions();
     options.requestProps = ["url", "method", "headers", "gourmet"];
     return options;
-  }
-
-  getDefaultPort() {
-    return 3939;
   }
 }
 

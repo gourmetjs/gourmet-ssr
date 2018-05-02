@@ -34,9 +34,7 @@ app.use((err, req, res, next) => {  // eslint-disable-line no-unused-vars
 const server = http.createServer(app);
 
 server.on("listening", function() {
-  const addr = server.address();
-  const bind = "port " + addr.port;
-  console.log("Server listening on " + bind);
+  console.log("Server listening on " + server.address().port);
 });
 
 server.listen(PORT);

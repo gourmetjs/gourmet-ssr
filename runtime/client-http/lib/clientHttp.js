@@ -112,8 +112,8 @@ function clientHttp(baseArgs) {
     };
   }
 
-  function context(options) {
-    return clientHttp(options);
+  function context(args) {
+    return clientHttp(args);
   }
 
   context.invoke = invoke;

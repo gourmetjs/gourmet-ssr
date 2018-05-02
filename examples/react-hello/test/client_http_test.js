@@ -31,7 +31,7 @@ const front = {
 };
 
 test("start back server", pt(() => {
-  back.server = new BackServer(back.args);
+  back.server = new BackServer(null, back.args);
   back.server.start();
   return back.server.ready().then(port => {
     back.port = port;
@@ -39,7 +39,7 @@ test("start back server", pt(() => {
 }));
 
 test("start front server", pt(() => {
-  front.server = new FrontServer(Object.assign(front.args, {serverUrl: `http://localhost:${back.port}`}));
+  front.server = new FrontServer({serverUrl: `http://localhost:${back.port}`}, front.args);
   front.server.start();
   return front.server.ready().then(port => {
     front.port = port;

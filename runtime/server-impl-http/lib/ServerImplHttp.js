@@ -5,29 +5,26 @@ const ServerImplBase = require("@gourmet/server-impl-base");
 const express = require("express");
 
 class ServerImplHttp extends ServerImplBase {
-  constructor(args) {
-    super(args, express);
-    this.serverUrl = parseArgs.string([this.argv.serverUrl, this.args.serverUrl], parseArgs.undef);
+  constructor(options, args) {
+    super(Object.assign({
+      connect: express,
+      serverUrl: "http://localhost:3939"
+    }, options), args);
   }
 
   createClient() {
     const argv = this.argv;
     this.gourmet = require("@gourmet/client-http")({
-      serverUrl: this.serverUrl,
+      serverUrl: parseArgs.string(this.argv.serverUrl, this.options.serverUrl),
       entrypoint: parseArgs.string(argv.entrypoint, "main"),
       siloed: parseArgs.bool(argv.siloed),
       params: argv.params || {}
     });
   }
 
-  installInitialMiddleware() {
-    super.installInitialMiddleware();
-    this.installStaticServer();
-  }
-
   installStaticServer() {
-    const staticPrefix = parseArgs.string(this.argv.staticPrefix, "/s/");
-    this.app.use(staticPrefix, this.gourmet.static({serverUrl: this.serverUrl}));
+    // The client is already configured with the `serverUrl`.
+    this.app.use(this.args.staticPrefix, this.gourmet.static());
   }
 }
 
