@@ -8,6 +8,7 @@ class ServerImplLambda extends ServerImplBase {
   constructor(options, args) {
     super(Object.assign({
       connect: express,
+      enableStatic: false,
       functionName: undefined,
       qualifier: undefined
     }, options), args);
