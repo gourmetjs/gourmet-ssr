@@ -1,9 +1,5 @@
 import React, {Component} from "react";
 import cx from "classnames";
-import {css} from "emotion";
-
-const cssMoreButton = css`
-`;
 
 export default class MoreButton extends Component {
   constructor(props) {
@@ -20,13 +16,19 @@ export default class MoreButton extends Component {
         type="button"
         className={cx(
           "btn btn-outline-secondary",
-          cssMoreButton,
           this.props.className
         )}
+        disabled={this.state.isLoading}
         onClick={() => this._onClick()}
         title={this.state.lastError ? this.state.lastError.message : ""}>
         Load more
-        {this.state.isLoading ? <i className="fas fa-sync fa-spin"/> : null}
+        {this.state.isLoading ? (
+          <span>
+            ...
+            &nbsp;
+            <i className="fas fa-sync fa-spin"/>
+          </span>
+        ) : null}
       </button>
     );
   }
