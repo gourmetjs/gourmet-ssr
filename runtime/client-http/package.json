@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/client-http",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "lib/clientHttp.js",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/get-req-args": "^0.1.0",
+    "@gourmet/get-req-args": "^0.1.1",
     "@gourmet/get-rops": "^0.1.0",
     "@gourmet/http-module": "^0.1.0",
     "@gourmet/merge": "^0.2.0",
