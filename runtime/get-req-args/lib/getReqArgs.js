@@ -12,7 +12,10 @@ module.exports = function getReqArgs(req) {
   let parsedUrl;
 
   return {
+    method: req.method,
+    headers: req.headers,
     path: typeof req.path === "string" ? req.path : _url().pathname,
-    query: typeof req.query === "object" ? req.query : _url().query
+    query: typeof req.query === "object" ? req.query : _url().query,
+    encrypted: req.socket.encrypted
   };
 };

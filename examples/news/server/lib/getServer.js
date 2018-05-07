@@ -11,7 +11,7 @@ module.exports = function getServer(BaseClass) {
       this.app.get("/api/news", (req, res, next) => {
         const language = req.query.language || "en";
         const page = req.query.page || 1;
-        const count = req.query.count || 20;
+        const pageSize = req.query.pageSize || 20;
         const sources = req.query.sources || "cnn,bbc-news,business-insider,the-new-york-times";
 
         got(API_URL, {
@@ -20,7 +20,7 @@ module.exports = function getServer(BaseClass) {
             language,
             sources,
             page,
-            pageSize: count,
+            pageSize,
             apiKey: API_KEY
           }
         }).then(response => {

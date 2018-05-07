@@ -27,7 +27,12 @@ module.exports = class HtmlClientRenderer {
   createContext() {
     const prop = this.options.dataPropertyName || "__gourmet_data__";
     const data = window[prop] || {};
-    return {data};
+    return {
+      data,
+      selfUrl(url) {
+        return url;
+      }
+    };
   }
 
   renderToDom(gmctx, content, elemId) { // eslint-disable-line no-unused-vars

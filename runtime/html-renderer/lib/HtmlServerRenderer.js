@@ -1,6 +1,6 @@
 "use strict";
 
-const npath = require("path");
+const ppath = require("path").posix;
 const stream = require("stream");
 const MultiStream = require("multistream");
 const isStream = require("@gourmet/is-stream");
@@ -8,6 +8,7 @@ const merge = require("@gourmet/merge");
 const promiseProtect = require("@gourmet/promise-protect");
 const resolveTemplate = require("@gourmet/resolve-template");
 const pageTemplate = require("./pageTemplate");
+const isAbsUrl = require("is-absolute-url");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
 
@@ -57,12 +58,9 @@ module.exports = class HtmlServerRenderer {
     };
   }
 
-  createContext({path, query, params}, {entrypoint, manifest}) {
+  createContext(args, {entrypoint, manifest}) {
     const config = manifest.config || {};
-    return {
-      path,
-      query,
-      params,
+    return Object.assign({
       html: merge({
         lang: "en",
         headTop: [],
@@ -83,8 +81,9 @@ module.exports = class HtmlServerRenderer {
         //  - entrypoint
         //  - path
         //  - staticPrefix: manifest.staticPrefix
-      }
-    };
+      },
+      selfUrl: this.selfUrl
+    }, args);
   }
 
   // bodyMain can be one of the following:
@@ -151,7 +150,7 @@ module.exports = class HtmlServerRenderer {
     const scripts = [];
 
     deps.forEach(filename => {
-      const ext = npath.posix.extname(filename).toLowerCase();
+      const ext = ppath.extname(filename).toLowerCase();
       if (ext === ".css")
         styles.push(`<link rel="stylesheet" type="text/css" href="${staticPrefix}${filename}">`);
       else
@@ -163,5 +162,72 @@ module.exports = class HtmlServerRenderer {
 
     if (scripts.length)
       gmctx.html.headMain.push(scripts.join("\n"));
+  }
+
+  // Note that `this` is bound to gmctx, not HtmlServerRenderer instance.
+  selfUrl(url) {
+    function _proto() {
+      let xfp = gmctx.headers["x-forwarded-proto"];
+
+      if (xfp) {
+        // 'x-forwarded-proto' must be a single value no matter how many proxies
+        // were involved before reaching this host. But some proxies send comma
+        // separated multiple values like 'x-forwarded-for'.
+        const idx = xfp.indexOf(",");
+
+        if (idx !== -1)
+          xfp = xfp.substr(0, idx);
+
+        xfp = xfp.trim().toLowerCase();
+
+        if (xfp === "http" || xfp === "https")
+          return xfp;
+      }
+
+      return gmctx.encrypted ? "https" : "http";
+    }
+
+    function _host() {
+      let xfh = gmctx.headers["x-forwarded-host"];
+
+      if (xfh) {
+        // 'x-forwarded-host' must be a single value no matter how many proxies
+        // were involved before reaching this host. But some proxies send comma
+        // separated multiple values like 'x-forwarded-for'.
+        const idx = xfh.indexOf(",");
+
+        if (idx !== -1)
+          xfh = xfh.substr(0, idx);
+
+        xfh = xfh.trim().toLowerCase();
+
+        if (xfh)
+          return xfh;
+      }
+
+      const host = gmctx.headers.host;
+
+      if (!host)
+        throw Error("There is no 'host' or 'x-forwarded-host' header.");
+
+      return host;
+    }
+
+    const gmctx = this;
+
+    if (isAbsUrl(url))
+      return url;   // already absolute
+
+    if (url.startsWith("//"))     // protocol relative ("//example.com")
+      return _proto() + ":" + url;
+
+    if (url[0] !== "/") {   // relative path based on the current path
+      if (url.endsWith("/"))
+        url = ppath.join(gmctx.path, url);
+      else
+        url = ppath.join(ppath.dirname(gmctx.path), url);
+    }
+
+    return _proto() + "://" + _host() + url;
   }
 };
