@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/http-server",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Gourmet rendering service implemented as a standalone HTTP server",
   "bin": {
     "gourmet-http-server": "bin/gourmet-http-server.js"
@@ -10,7 +10,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^0.2.2",
+    "@gourmet/client-lib": "^0.2.3",
     "@gourmet/console": "^0.1.0",
     "@gourmet/console-env": "^0.1.0",
     "@gourmet/parse-args": "^0.2.0",

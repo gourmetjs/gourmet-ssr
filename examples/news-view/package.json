@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/example-news-view",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "module": "src/NewsView.jsx",
   "peerDependencies": {
     "@gourmet/preset-react-emotion": "^0.2.1"
   },
   "dependencies": {
-    "timeago.js": "^3.0.2",
-    "@gourmet/promise-repeat": "^0.1.0"
+    "@gourmet/promise-repeat": "^0.1.0",
+    "timeago.js": "^3.0.2"
   }
 }

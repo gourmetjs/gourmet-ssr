@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/react-renderer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "client.js",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/html-renderer": "^0.2.1"
+    "@gourmet/html-renderer": "^0.2.2"
   },
   "peerDependencies": {
     "react": "15.x || 16.x",

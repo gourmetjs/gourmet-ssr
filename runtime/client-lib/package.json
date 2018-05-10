@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/client-lib",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "lib/clientLib.js",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
     "@gourmet/get-exported": "^0.1.0",
-    "@gourmet/get-req-args": "^0.1.1",
+    "@gourmet/get-req-args": "^0.1.2",
     "@gourmet/merge": "^0.2.0",
     "@gourmet/omit": "^0.1.0",
     "@gourmet/promise-protect": "^0.1.0",

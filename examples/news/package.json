@@ -1,18 +1,18 @@
 {
   "name": "@gourmet/example-news",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "hot": "node server/lib/devel.js --hot",
     "watch": "node server/lib/devel.js --watch"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.2.3"
+    "@gourmet/server-impl-watch": "^0.2.4"
   },
   "devDependencies": {
+    "@gourmet/example-news-view": "^0.1.1",
     "@gourmet/gourmet-cli": "^0.2.0",
-    "@gourmet/preset-builder": "^0.2.4",
-    "@gourmet/preset-react-emotion": "^0.2.1",
-    "@gourmet/example-news-view": "^0.1.0"
+    "@gourmet/preset-builder": "^0.2.5",
+    "@gourmet/preset-react-emotion": "^0.2.2"
   }
 }
