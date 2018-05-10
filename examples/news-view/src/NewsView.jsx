@@ -29,10 +29,6 @@ export default class NewsView extends Component {
     );
   }
 
-  _itemExists(items, find) {
-    return items.find(item => item.url === find.url);
-  }
-
   _updateArticles(data, handler) {
     const des = [].concat(this.state.data.articles);
     const src = data.articles;
