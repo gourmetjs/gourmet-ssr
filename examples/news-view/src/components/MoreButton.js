@@ -1,7 +1,12 @@
 import React, {Component} from "react";
 import cx from "classnames";
+import {css} from "emotion";
 
-export default class MoreButton extends Component {
+const cssButton = css`
+  min-width: 15em;
+`;
+
+export default class LoadButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,13 +20,23 @@ export default class MoreButton extends Component {
       <button
         type="button"
         className={cx(
-          "btn btn-outline-secondary",
+          "btn btn-sm",
+          {"btn-outline-primary": !this.state.lastError},
+          {"btn-outline-danger": !!this.state.lastError},
+          cssButton,
           this.props.className
         )}
         disabled={this.state.isLoading}
         onClick={() => this._onClick()}
-        title={this.state.lastError ? this.state.lastError.message : ""}>
-        Load more
+        title={this.state.lastError ? this.state.lastError.message : ""}
+      >
+        {this.state.lastError ? (
+          <span>
+            <i className="fas fa-exclamation-triangle"/>
+            &nbsp;
+          </span>
+        ) : null}
+        {this.props.label}
         {this.state.isLoading ? (
           <span>
             ...

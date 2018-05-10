@@ -1,10 +1,7 @@
-import React, {PureComponent} from "react";
+import React, {Component} from "react";
 import {css} from "emotion";
+import cx from "classnames";
 import timeago from "timeago.js";
-
-const cssArticle = css`
-  margin: 1.5em 2em;
-`;
 
 const cssImage = css`
   max-width: 256px;
@@ -16,12 +13,12 @@ const cssSource = css`
   font-size: 85%;
 `;
 
-export default class Article extends PureComponent {
+export default class Article extends Component {
   render() {
     const article = this.props.article;
     const ago = timeago();
     return (
-      <div className={`${cssArticle} media`}>
+      <div className={cx(this.props.className, "media")}>
         <a href={article.url}>
           <img className={`${cssImage} img-thumbnail mr-3`} src={article.urlToImage}/>
         </a>

@@ -13,6 +13,8 @@
     "@gourmet/plugin-webpack-react-hot-loader": "^0.1.0",
     "@gourmet/react-context-provider": "^0.1.0",
     "@gourmet/react-renderer": "^0.2.1",
+    "@gourmet/self-url": "^0.1.0",
+    "classnames": "^2.2.5",
     "prop-types": "^15.6.1",
     "react": "^16.3.0",
     "react-dom": "^16.3.0"

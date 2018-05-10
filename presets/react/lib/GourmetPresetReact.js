@@ -6,7 +6,9 @@ class GourmetPresetReact {
     return {
       "react": moduleDir("react"),
       "react-dom": moduleDir("react-dom"),
+      "classnames": moduleDir("classnames"),
       "prop-types": moduleDir("prop-types"),
+      "@gourmet/self-url": moduleDir("@gourmet/self-url"),
       "@gourmet/react-context-provider": moduleDir("@gourmet/react-context-provider"),
       "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer")
     };

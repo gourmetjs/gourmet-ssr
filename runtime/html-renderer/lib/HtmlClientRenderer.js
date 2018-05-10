@@ -28,10 +28,9 @@ module.exports = class HtmlClientRenderer {
     const prop = this.options.dataPropertyName || "__gourmet_data__";
     const data = window[prop] || {};
     return {
-      data,
-      selfUrl(url) {
-        return url;
-      }
+      isServer: false,
+      isClient: true,
+      data
     };
   }
 

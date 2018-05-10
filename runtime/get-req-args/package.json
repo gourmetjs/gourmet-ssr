@@ -4,5 +4,8 @@
   "main": "lib/getReqArgs.js",
   "publishConfig": {
     "access": "restricted"
+  },
+  "dependencies": {
+    "@gourmet/proxy-headers": "^0.1.0"
   }
 }

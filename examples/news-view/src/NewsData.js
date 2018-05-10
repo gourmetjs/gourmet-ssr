@@ -1,3 +1,5 @@
+import selfUrl from "@gourmet/self-url";
+
 export default class NewsData {
   constructor(gmctx, pageSize=20) {
     this.gmctx = gmctx;
@@ -11,14 +13,17 @@ export default class NewsData {
   getCached() {
   }
 
+  getFetchOptions() {
+  }
+
   fetch(page=1) {
     const search = [
       `page=${page}`,
       `pageSize=${this.pageSize}`
     ].join("&");
-    return fetch(this.gmctx.selfUrl(`/api/news?${search}`)).then(res => {
+    return fetch(selfUrl(this.gmctx, `/api/news?${search}`), this.getFetchOptions()).then(res => {
       if (res.status !== 200) {
-        const err = new Error(res.statusText);
+        const err = new Error("News fetching error: " + res.statusText);
         err.statusCode = res.status;
         throw err;
       }

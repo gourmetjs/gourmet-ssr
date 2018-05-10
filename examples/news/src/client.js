@@ -1,5 +1,5 @@
 import emotionRenderer from "@gourmet/emotion-renderer";
+import NewsDataClient from "@gourmet/example-news-view/src/NewsDataClient";
 import renderApp from "./renderApp";
-import NewsDataClient from "./NewsDataClient";
 
 emotionRenderer(renderApp.bind(null, NewsDataClient)).render();

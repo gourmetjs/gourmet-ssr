@@ -11,7 +11,6 @@
     "@gourmet/merge": "^0.2.0",
     "@gourmet/promise-protect": "^0.1.0",
     "@gourmet/resolve-template": "^0.1.0",
-    "is-absolute-url": "^2.1.0",
     "multistream": "^2.1.0"
   }
 }
