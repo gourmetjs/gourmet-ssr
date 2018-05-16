@@ -3,20 +3,16 @@
 const npath = require("path");
 const nfs = require("fs");
 const util = require("util");
+const crypto = require("crypto");
 const mkdirp = require("mkdirp");
 const getConsole = require("@gourmet/console");
 const prefixLines = require("@gourmet/prefix-lines");
 const promiseEach = require("@gourmet/promise-each");
-const promiseReadFile = require("@gourmet/promise-read-file");
-const promiseWriteFile = require("@gourmet/promise-write-file");
 const promiseProtect = require("@gourmet/promise-protect");
 const moduleDir = require("@gourmet/module-dir");
 const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
-const HashNames = require("@gourmet/hash-names");
-const omit = require("@gourmet/omit");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
-const recordsFile = require("./recordsFile");
 
 const INVALID_STAGE_TYPES = {
   message: "'builder.stageTypes' configuration must be an object or a function",
@@ -141,18 +137,11 @@ class GourmetPluginWebpackBuilder {
     return negator;
   }
 
-  getChunkFilenameGetter(context) {
-    return function({chunk}) {
-      if (context.target === "server" || !context.optimize)
-        return `${chunk.name || chunk.id}_bundle.js`;
-      else
-        return context.records.chunks.getName(chunk.hash) + ".js";
-    };
-  }
-
   getAssetFilenameGetter(context, {ext, isGlobal}={}) {
-    return function({content, path}) {
-      let name = context.records.files.getName(content);
+    return ({content, path}) => {
+      const hash = crypto.createHash(this._hashFunction);
+      hash.update(content);
+      let name = hash.digest("hex").substr(0, this._hashLength);
 
       const extname = npath.extname(path);
       const basename = npath.basename(path, extname);
@@ -269,7 +258,7 @@ class GourmetPluginWebpackBuilder {
     }).then(() => {
       return this._prepareContextVars(context);
     }).then(() => {
-      return this._prepareBuildRecords(context);
+      return this._prepareHashConfig(context);
     });
   }
 
@@ -292,11 +281,7 @@ class GourmetPluginWebpackBuilder {
 
   _onFinish(context) {
     if (context.builds.server.webpack.stats && context.builds.client.webpack.stats) {
-      return promiseProtect(() => {
-        return this._finishBuildRecords(context);
-      }).then(() => {
-        return this.writeManifest(context);
-      });
+      return this.writeManifest(context);
     }
   }
 
@@ -365,70 +350,18 @@ class GourmetPluginWebpackBuilder {
     });
   }
 
+  _prepareHashConfig(context) {
+    return context.vars.getMulti(
+      ["webpack.hashFunction", "sha1"],
+      ["webpack.hashLength", 24]
+    ).then(([func, len]) => {
+      this._hashFunction = func;
+      this._hashLength = len;
+    });
+  }
+
   _onWebpackConfig(context) {
     return context.builds[context.target].getWebpackConfig(context);
-  }
-
-  _prepareBuildRecords(context) {
-    return this._getUserBuildRecordsPath(context).then(userPath => {
-      return this._getBuildRecordsPath(context).then(recPath => {
-        return recordsFile.prepare(userPath, recPath, context.argv.records).then(() => {
-          return this._loadBuildRecords(recPath).then(records => {
-            context.records = records;
-          });
-        });
-      });
-    });
-  }
-
-  _finishBuildRecords(context) {
-    return this._getUserBuildRecordsPath(context).then(userPath => {
-      return this._getBuildRecordsPath(context).then(recPath => {
-        return this._saveBuildRecords(recPath, context.records).then(() => {
-          return recordsFile.finish(userPath, recPath, context.argv.records);
-        });
-      });
-    });
-  }
-
-  _loadBuildRecords(path) {
-    const records = {
-      chunks: new HashNames(),
-      files: new HashNames()
-    };
-    return promiseReadFile(path, "utf8").then(content => {
-      const obj = JSON.parse(content);
-      if (obj.chunks)
-        records.chunks.deserialize(obj.chunks);
-      if (obj.files)
-        records.files.deserialize(obj.files);
-      Object.assign(records, omit(obj, ["chunks", "files"]));
-      return records;
-    }).catch(err => {
-      if (err.code !== "ENOENT")
-        throw err;
-      return records;
-    });
-  }
-
-  _saveBuildRecords(path, records) {
-    const obj = Object.assign({
-      chunks: records.chunks.serialize(),
-      files: records.files.serialize()
-    }, omit(records, ["chunks", "files"]));
-    const content = JSON.stringify(obj, null, 2);
-    return promiseWriteFile(path, content, "utf8");
-  }
-
-  _getUserBuildRecordsPath(context) {
-    return context.vars.get("webpack.recordsDir", ".webpack").then(dir => {
-      dir = npath.resolve(context.workDir, dir);
-      return npath.join(dir, context.stage, "build.json");
-    });
-  }
-
-  _getBuildRecordsPath(context) {
-    return Promise.resolve(npath.join(this.outputDir, context.stage, "info", "build.json"));
   }
 
   _collectManifestConfig(context) {

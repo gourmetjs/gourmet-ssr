@@ -329,14 +329,15 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackOutput(context) {
-    const getter = context.builder.getChunkFilenameGetter(context);
+    const vars = this._varsCache.webpack;
+    const name = (context.target === "server" || !context.optimize) ? "[name].bundle.js" : "[chunkHash].js";
     const output = {
-      filename: getter,
-      chunkFilename: getter,
+      filename: name,
+      chunkFilename: name,
       path: npath.join(context.builder.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix,
-      hashFunction: "sha1",
-      hashDigestLength: 40
+      hashFunction: vars.hashFunction || "sha1",
+      hashDigestLength: vars.hashLength || 24
     };
     return context.plugins.runMergeSync("build:webpack:output", output, context);
   }

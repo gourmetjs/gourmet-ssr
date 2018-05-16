@@ -30,6 +30,8 @@ module.exports = context => ({
 
   webpack: {
     recordsDir: ".webpack",
+    hashFunction: "sha1",
+    hashLength: 24,
     alias: {},
     define: {},
     plugins: [],

@@ -6,7 +6,7 @@
     "lpub": "lerna publish",
     "deps:win": "lerna exec --bail=false --concurrency=1 -- \"echo %LERNA_PACKAGE_NAME% && dependency-check .\"",
     "bootstrap": "lerna bootstrap",
-    "test": "lerna run test",
+    "test": "lerna run test --concurrency=1",
     "lint": "eslint . --ext .js,.jsx"
   },
   "devDependencies": {

@@ -12,7 +12,6 @@
   "dependencies": {
     "@gourmet/console": "^0.1.0",
     "@gourmet/error": "^0.1.0",
-    "@gourmet/hash-names": "^0.1.0",
     "@gourmet/is-plain-object": "^0.1.0",
     "@gourmet/merge": "^0.2.0",
     "@gourmet/module-dir": "^0.1.1",
@@ -25,6 +24,6 @@
     "@gourmet/promise-read-file": "^0.1.0",
     "@gourmet/promise-write-file": "^0.1.0",
     "mkdirp": "^0.5.1",
-    "webpack": "4.3.0"
+    "webpack": "^4.8.3"
   }
 }
