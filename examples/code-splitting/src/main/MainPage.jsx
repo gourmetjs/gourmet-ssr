@@ -2,8 +2,11 @@ import React, {Component} from "react";
 import {hot} from "react-hot-loader";
 import PageBase from "../components/PageBase";
 
-import(/* webpackChunkName: "home" */ "../components/HomePanel").then(() => {
-  console.log("LOADED!!");
+import Loadable from "react-loadable";
+
+const HomeLoadable = Loadable({
+  loader: () => import("../components/HomePanel"),
+  loading: () => <div>Loading...</div>
 });
 
 class MainPage extends Component {
@@ -12,7 +15,7 @@ class MainPage extends Component {
       <PageBase>
         <div className="card">
           <div className="card-header">
-            <ul className="nav nav-tabs card-header-tabs">
+            <ul className="nav nav-ta bs card-header-tabs">
               <li className="nav-item">
                 <a className="nav-link active" href="#">Active</a>
               </li>
@@ -25,7 +28,7 @@ class MainPage extends Component {
             </ul>
           </div>
           <div className="card-body">
-            MainPage
+            <HomeLoadable/>
           </div>
         </div>
       </PageBase>

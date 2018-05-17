@@ -18,20 +18,24 @@ module.exports = context => ({
     sourceMap: false,
     staticPrefix: "/s/",
 
+    // `runtime` is located here as an independent section from Webpack or Babel
+    // because the format is kinda standardized based on browserlist and
+    // can be used for other purposes such as CSS compilation.
     runtime: {
       client: null,   // browserlist's default
       server: "6.1"   // node 6.10
     }
   },
 
-  babel: {
-    loose: true
-  },
-
   webpack: {
     recordsDir: ".webpack",
     hashFunction: "sha1",
     hashLength: 24,
+    module: {},
+    resolve: {},
+    pipelines: {},
+    loaders: {},
+    output: {},
     alias: {},
     define: {},
     plugins: [],

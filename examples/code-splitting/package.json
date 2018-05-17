@@ -7,7 +7,8 @@
     "watch": "node server/lib/devel.js --watch"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.2.4"
+    "@gourmet/server-impl-watch": "^0.2.4",
+    "react-loadable": "^5.4.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.0",

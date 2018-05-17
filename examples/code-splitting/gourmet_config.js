@@ -5,6 +5,18 @@ module.exports = {
     main: "./src/main/${context:target}.js",
     admin: "./src/admin/${context:target}.js"
   },
+  webpack: {
+    pipelines: {
+      js: [{
+        name: "#babel-loader",
+        options: {
+          plugins: [{
+            name: "react-loadable/babel"
+          }]
+        }
+      }]
+    }
+  },
   config: {
     html: {
       headTop: [
