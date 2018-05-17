@@ -11,6 +11,7 @@ module.exports =
   <body>
     {{bodyTop}}
     <div id="__gourmet_content__">{{[__bodyMain__]}}</div>
+    {{[__bodyTail__]}}
     {{bodyBottom}}
   </body>
 </html>`;

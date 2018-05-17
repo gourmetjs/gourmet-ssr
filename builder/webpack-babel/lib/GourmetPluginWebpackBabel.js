@@ -8,18 +8,10 @@ class GourmetPluginWebpackBabel {
     // Note that `babel-preset-env` below 7.x doesn't support
     // browserlist's config file or `package.json`.
     // https://github.com/babel/babel-preset-env/issues/26
-    function _targets() {
-      return context.vars.get("builder.runtime." + context.target).then(value => {
-        return context.target === "client" ? {browsers: value || null} : {node: value || "6.1"};
-      });
-    }
-
-    function _loose() {
-      return context.vars.get("babel.loose", true);
-    }
-
-    return promiseMap([_targets, _loose], f => f()).then(([targets, loose]) => {
-      this._varCache = {targets, loose};
+    return context.vars.get("builder.runtime." + context.target).then(value => {
+      return context.target === "client" ? {browsers: value || null} : {node: value || "6.1"};
+    }).then(targets => {
+      this._varCache = {targets};
     });
   }
 
@@ -39,7 +31,7 @@ class GourmetPluginWebpackBabel {
             options: {
               modules: false,
               targets: this._varCache.targets,
-              loose: this._varCache.loose
+              loose: true
             }
           }],
 

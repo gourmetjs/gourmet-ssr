@@ -10,6 +10,7 @@ const resolveTemplate = require("@gourmet/resolve-template");
 const pageTemplate = require("./pageTemplate");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
+const BODY_TAIL_PLACEHOLDER = "{{[__bodyTail__]}}";
 
 function _bufStream(buf) {
   return new stream.Readable({
@@ -93,15 +94,6 @@ module.exports = class HtmlServerRenderer {
   renderHtml(gmctx, bodyMain) {
     const {html, result} = gmctx;
 
-    // Because bundles are loaded with `defer` option, this data init code
-    // always gets executed before the main entry code.
-    const prop = this.options.dataPropertyName || "__gourmet_data__";
-    const data = JSON.stringify(gmctx.data);
-
-    html.headMain.push(
-      `<script>window.${prop}=${data};</script>`
-    );
-
     const frame = this._pageTemplate({
       gmctx,
       lang: html.lang,
@@ -111,25 +103,31 @@ module.exports = class HtmlServerRenderer {
       bodyTop: html.bodyTop.join("\n"),
       bodyBottom: html.bodyBottom.join("\n")
     });
-    const idx = frame.indexOf(BODY_MAIN_PLACEHOLDER);
 
-    if (idx === -1)
-      throw Error("Page template doesn't have a placeholder for the body main");
+    const spos = frame.indexOf(BODY_MAIN_PLACEHOLDER);
+    const epos = frame.indexOf(BODY_TAIL_PLACEHOLDER);
 
-    const header = Buffer.from(frame.substr(0, idx));
-    const footer = Buffer.from(frame.substr(idx + BODY_MAIN_PLACEHOLDER.length));
+    if (spos === -1 || epos === -1)
+      throw Error("Page template doesn't have placeholders for the body content");
+
+    const header = Buffer.from(frame.substr(0, spos));
+    const filler = Buffer.from(frame.substring(spos + BODY_MAIN_PLACEHOLDER.length, epos));
+    const footer = Buffer.from(frame.substr(epos + BODY_TAIL_PLACEHOLDER.length));
     let content;
 
     if (isStream(bodyMain)) {
       content = new MultiStream([
         _bufStream(header),
         bodyMain,
+        _bufStream(filler),
+        () => _bufStream(Buffer.from(this.getBodyTail(gmctx))), // lazy evaluation
         _bufStream(footer)
       ]);
     } else {
       content = Buffer.concat([
         header,
         Buffer.isBuffer(bodyMain) ? bodyMain : Buffer.from(bodyMain),
+        Buffer.from(this.getBodyTail(gmctx)),
         footer
       ]);
     }
@@ -162,5 +160,16 @@ module.exports = class HtmlServerRenderer {
 
     if (scripts.length)
       gmctx.html.headMain.push(scripts.join("\n"));
+  }
+
+  getBodyTail(gmctx) {
+    // Because bundles are loaded with `defer` option, any script in this
+    // body tail area gets executed before the main entry code.
+    const prop = this.options.dataPropertyName || "__gourmet_data__";
+    const data = JSON.stringify(gmctx.data);
+
+    return [
+      `<script>window.${prop}=${data};</script>`
+    ].join("\n");
   }
 };
