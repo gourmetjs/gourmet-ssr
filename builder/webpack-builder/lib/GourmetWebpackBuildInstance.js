@@ -350,7 +350,7 @@ class GourmetWebpackBuildInstance {
 
   getWebpackPlugins(context) {
     const define = this.getWebpackDefine(context);
-    const plugins = [];
+    let plugins = [];
 
     if (isPlainObject(define) && Object.keys(define).length > 1) {
       plugins.push({
@@ -360,7 +360,7 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    this._runMergeSync("build:webpack:plugins", plugins, "plugins", context);
+    plugins = this._runMergeSync("build:webpack:plugins", plugins, "plugins", context);
 
     return sortPlugins(plugins, {
       normalize(item) {
@@ -379,13 +379,26 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  printWebpackResult() {
+  printWebpackResult(context) {
+    const debug = this.console.enabled({level: "debug"});
+    const argv = context.argv;
     const options = {
       colors: this.console.useColors,
       warnings: true,
-      errors: true
+      errors: true,
+      errorDetails: debug || argv.errorDetails,
+      maxModules: (debug || argv.displayModules) ? Infinity : 15
     };
     this.console.log(this.webpack.stats.toString(options));
+
+    (() => {
+      const util = require("util");
+      const compilation = this.webpack.stats.compilation;
+      compilation.modules.forEach(module => {
+        if (module.id === "./src/dynamic.js" || module.id === "./src/print.js")
+          console.log(util.inspect(module.chunks, {depth: 1, colors: true}));
+      });
+    })();
   }
 
   _prepareWebpackRecords(context) {
