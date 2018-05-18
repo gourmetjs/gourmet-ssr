@@ -1,6 +1,11 @@
 import React from "react";
-import EmotionServerRenderer from "@gourmet/emotion-renderer/lib/EmotionServerRenderer";
+//import EmotionServerRenderer from "@gourmet/emotion-renderer/lib/EmotionServerRenderer";
+import emotionRenderer from "@gourmet/emotion-renderer/server";
 import MainPage from "./MainPage";
+
+__gourmet_module__.exports = emotionRenderer(gmctx => <MainPage gmctx={gmctx}/>);
+
+/*
 import Loadable from "react-loadable";
 
 class LoadableServerRenderer extends EmotionServerRenderer {
@@ -28,3 +33,4 @@ __gourmet_module__.exports = renderer(gmctx => {
     );
   });
 });
+*/

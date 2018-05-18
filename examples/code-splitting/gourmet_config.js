@@ -5,6 +5,7 @@ module.exports = {
     main: "./src/main/${context:target}.js",
     admin: "./src/admin/${context:target}.js"
   },
+  /*
   webpack: {
     pipelines: {
       js: [{
@@ -15,8 +16,16 @@ module.exports = {
           }]
         }
       }]
-    }
+    },
+    plugins: [{
+      name: "react-loadable/webpack",
+      plugin: require("react-loadable/webpack").ReactLoadablePlugin,
+      options: {
+        filename: "./_dist/react-loadable-${context:target}-manifest.json"
+      }
+    }]
   },
+  */
   config: {
     html: {
       headTop: [
