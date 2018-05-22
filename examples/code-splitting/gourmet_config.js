@@ -5,6 +5,19 @@ module.exports = {
     main: "./src/main/${context:target}.js",
     admin: "./src/admin/${context:target}.js"
   },
+  webpack: {
+    pipelines: {
+      js: [{
+        name: "#babel-loader",
+        options: {
+          plugins: [{
+            name: "@gourmet/babel-plugin-gourmet-loadable",
+            plugin: require.resolve("@gourmet/babel-plugin-gourmet-loadable")
+          }]
+        }
+      }]
+    }
+  },
   /*
   webpack: {
     pipelines: {

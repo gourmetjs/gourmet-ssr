@@ -2,14 +2,9 @@ import React, {Component} from "react";
 import {hot} from "react-hot-loader";
 import PageBase from "../components/PageBase";
 
-/*
-import Loadable from "react-loadable";
-
-const HomeLoadable = Loadable({
-  loader: () => import("../components/HomePanel"),
-  loading: () => <div>Loading...</div>
+import(/* webpackChunkName: "home" */ "../components/HomePanel").then(() => {
+  console.log("LOADED!!");
 });
-*/
 
 class MainPage extends Component {
   render() {

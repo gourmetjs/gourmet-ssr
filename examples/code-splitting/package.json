@@ -7,12 +7,12 @@
     "watch": "node server/lib/devel.js --watch"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.2.4",
-    "react-loadable": "^5.4.0"
+    "@gourmet/server-impl-watch": "^0.2.4"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.0",
     "@gourmet/preset-builder": "^0.2.5",
-    "@gourmet/preset-react-emotion": "^0.2.2"
+    "@gourmet/preset-react-emotion": "^0.2.2",
+    "@gourmet/babel-plugin-gourmet-loadable": "^0.1.0"
   }
 }
