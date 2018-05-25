@@ -190,16 +190,67 @@ class GourmetPluginWebpackBuilder {
         return res;
       }
 
+      function _analyze() {
+        const assets = compilation.assets;
+
+        Object.keys(assets).forEach(name => {
+          const asset = assets[name];
+          if (asset.emitted) {
+            const info = {size: asset.size()};
+            const ext = npath.extname(name).toLowerCase();
+            if (ext === ".js")
+              info.modules = [];
+            files[name] = info;
+          }
+        });
+
+        compilation.chunks.forEach(chunk => {
+          chunk.files.forEach(name => {
+            const info = files[name];
+            if (info && info.modules) {
+              for (const module of chunk.modulesIterable) {
+                if (!modules[module.id])
+                  modules[module.id] = module;
+                info.modules.push(module.id);
+              }
+            }
+          });
+        });
+      }
+
       function _files() {
-        return Object.keys(compilation.assets);
+        return Object.keys(files);
+      }
+
+      function _bundles() {
+        return Object.keys(files).reduce((obj, name) => {
+          const info = files[name];
+          if (info.modules)
+            obj[name] = info.modules.map(module => module.id);
+          return obj;
+        }, {});
+      }
+
+      function _modules() {
+        return Object.keys(modules).reduce((obj, id) => {
+          const module = modules[id];
+          obj[id] = module.resource;
+          return obj;
+        }, {});
       }
 
       const compilation = stats[target].compilation;
+      const files = {};
+      const modules = {};
+
+      _analyze();
 
       return {
         compilation: compilation.hash,
-        entrypoints: _eps(compilation),
-        files: _files(compilation)
+        entrypoints: _eps(),
+        files: _files(),
+        modules: _modules(),
+        bundles: _bundles()
       };
     }
 
