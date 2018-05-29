@@ -2,6 +2,7 @@
 
 const npath = require("path");
 const resolve = require("resolve");
+const relativePath = require("@gourmet/relative-path");
 
 // Options:
 //  - libraryName: library name to trigger the `modules` population. E.g. "@gourmet/react-loadable"
@@ -25,9 +26,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
       throw err;
     }
 
-    path = npath.relative(path, workDir);
-
-    return path.replace(/\\/g, "/");
+    return relativePath(path, workDir);
   }
 
   function _processBinding(bindingName, path, state) {

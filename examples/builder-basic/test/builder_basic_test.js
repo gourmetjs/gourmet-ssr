@@ -41,7 +41,7 @@ test("run puppeteer", pt(async t => {
   let info = await page.evaluate(() => {
     return {
       server: document.getElementById("server_output").innerText,
-      client: document.getElementById("client_output").innerText,
+      client: document.getElementById("client_output").innerText
     };
   });
 
@@ -65,7 +65,7 @@ test("run puppeteer", pt(async t => {
   info = await page.evaluate(() => {
     return {
       server: document.getElementById("server_output").innerText,
-      client: document.getElementById("client_output").innerText,
+      client: document.getElementById("client_output").innerText
     };
   });
 

@@ -10,6 +10,7 @@ const prefixLines = require("@gourmet/prefix-lines");
 const promiseEach = require("@gourmet/promise-each");
 const promiseProtect = require("@gourmet/promise-protect");
 const moduleDir = require("@gourmet/module-dir");
+const relativePath = require("@gourmet/relative-path");
 const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
@@ -207,41 +208,52 @@ class GourmetPluginWebpackBuilder {
         compilation.chunks.forEach(chunk => {
           chunk.files.forEach(name => {
             const info = files[name];
-            if (info && info.modules) {
-              for (const module of chunk.modulesIterable) {
-                if (!modules[module.id])
-                  modules[module.id] = module;
-                info.modules.push(module.id);
-              }
-            }
+            if (info && info.modules)
+              info.modules = Array.from(chunk.modulesIterable).map(m => m.id);
           });
         });
       }
 
       function _files() {
-        return Object.keys(files);
-      }
-
-      function _bundles() {
-        return Object.keys(files).reduce((obj, name) => {
-          const info = files[name];
-          if (info.modules)
-            obj[name] = info.modules.map(module => module.id);
-          return obj;
-        }, {});
+        return files;
       }
 
       function _modules() {
-        return Object.keys(modules).reduce((obj, id) => {
-          const module = modules[id];
-          obj[id] = module.resource;
+        return compilation.modules.reduce((obj, m) => {
+          obj[m.id] = _path(m);
           return obj;
         }, {});
+      }
+
+      function _resource(path) {
+        const idx = path.indexOf("?");
+        return idx === -1 ? path : path.substr(0, idx);
+      }
+
+      function _path(m) {
+        if (m.resource)
+          return relativePath(_resource(m.resource), context.workDir);
+
+        const moduleType = m.constructor.name;
+
+        if (moduleType === "ExternalModule")
+          return "@extern:" + _resource(m.request);
+
+        if (moduleType === "ConcatenatedModule")
+          return "@concat:" + _path(m.rootModule);
+
+        if (moduleType === "MultiModule")
+          return "@multi:" + m.dependencies.map(m => _path(m)).join(":");
+
+        if (moduleType === "SingleEntryDependency")
+          return _path(m.module);
+
+        context.console.warn("Unknown module type:", moduleType);
+        return null;
       }
 
       const compilation = stats[target].compilation;
       const files = {};
-      const modules = {};
 
       _analyze();
 
@@ -249,8 +261,7 @@ class GourmetPluginWebpackBuilder {
         compilation: compilation.hash,
         entrypoints: _eps(),
         files: _files(),
-        modules: _modules(),
-        bundles: _bundles()
+        modules: _modules()
       };
     }
 
@@ -274,7 +285,7 @@ class GourmetPluginWebpackBuilder {
       obj.config = config;
 
       const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
-      const content = JSON.stringify(obj, null, context.optimize ? 0 : 2);
+      const content = JSON.stringify(obj, null, context.optimize ? 2 : 2);
 
       this.emitFileSync(path, content);
 

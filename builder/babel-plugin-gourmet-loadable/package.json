@@ -8,5 +8,8 @@
   "main": "lib/BabelPluginGourmetLoadable.js",
   "publishConfig": {
     "access": "restricted"
+  },
+  "dependencies": {
+    "@gourmet/relative-path": "^0.1.0"
   }
 }

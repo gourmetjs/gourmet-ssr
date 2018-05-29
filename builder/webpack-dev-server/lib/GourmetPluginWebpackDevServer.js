@@ -28,7 +28,7 @@ class GourmetPluginWebpackDevServer {
 GourmetPluginWebpackDevServer.meta = {
   commands: {
     "hot": {
-      help: "Run a HTTP server in the Hot Module Replacement mode for development",
+      help: "Run a HTTP server in the Hot Module Replacement mode for development"
     },
     "watch": {
       help: "Run a HTTP server in the watch mode (automatically monitoring file changes) for development"

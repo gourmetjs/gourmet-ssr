@@ -157,7 +157,7 @@ test("non-existent property & default value", t => {
     e: "${a.x.y.z, 'good'}",
     f: "${a.x.y.z, d}",
     defaultStage: "beta",
-    stage: "${opt:stage, env:STAGE, self:defaultStage, 'dev'}",
+    stage: "${opt:stage, env:STAGE, self:defaultStage, 'dev'}"
   });
 
   return Promise.resolve().then(() => {
@@ -300,7 +300,7 @@ test("getter", t => {
       "builder.minify",
       "builder.runtime.server",
       "builder.runtime.client",
-      "builder.runtime.server",
+      "builder.runtime.server"
     ], "verify history");
   }).then(() => t.end(), t.end);
 });

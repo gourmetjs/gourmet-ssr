@@ -16,7 +16,7 @@ class GourmetPluginWebpackGlobalCss {
       }, {
         name: "extract-loader",
         loader: require.resolve("extract-loader"),
-        options: {publicPath: context.staticPrefix},
+        options: {publicPath: context.staticPrefix}
       }, {
         name: "css-loader",
         loader: require.resolve("css-loader"),
@@ -52,7 +52,7 @@ class GourmetPluginWebpackGlobalCss {
       }, {
         name: "extract-loader",
         loader: require.resolve("extract-loader"),
-        options: {publicPath: context.staticPrefix},
+        options: {publicPath: context.staticPrefix}
       }, {
         name: "css-loader",
         loader: require.resolve("css-loader")

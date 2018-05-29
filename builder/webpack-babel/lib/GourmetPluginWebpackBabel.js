@@ -1,7 +1,6 @@
 "use strict";
 
 const sortPlugins = require("@gourmet/plugin-sort");
-const promiseMap = require("@gourmet/promise-map");
 
 class GourmetPluginWebpackBabel {
   _onWebpackInit(context) {
