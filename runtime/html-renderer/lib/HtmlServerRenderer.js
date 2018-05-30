@@ -49,7 +49,7 @@ module.exports = class HtmlServerRenderer {
   getRenderer(opts) {
     return args => {
       const gmctx = this.createContext(args, opts);
-      this.addDependencies(gmctx);
+      this.renderStaticDeps(gmctx);
       return this.invokeUserRenderer(gmctx).then(content => {
         return this.renderToMedium(gmctx, content);
       }).then(bodyMain => {
@@ -139,11 +139,13 @@ module.exports = class HtmlServerRenderer {
     };
   }
 
-  addDependencies(gmctx) {
-    const entrypoint = gmctx.entrypoint;
-    const manifest = gmctx.manifest;
-    const staticPrefix = manifest.staticPrefix;
-    const deps = manifest.client.entrypoints[entrypoint];
+  getStaticDeps(gmctx) {
+    return gmctx.manifest.client.entrypoints[gmctx.entrypoint];
+  }
+
+  renderStaticDeps(gmctx) {
+    const deps = this.getStaticDesp(gmctx);
+    const staticPrefix = gmctx.manifest.staticPrefix;
     const styles = [];
     const scripts = [];
 
@@ -152,7 +154,7 @@ module.exports = class HtmlServerRenderer {
       if (ext === ".css")
         styles.push(`<link rel="stylesheet" type="text/css" href="${staticPrefix}${filename}">`);
       else
-        scripts.push(`<script defer src="${staticPrefix}${filename}"></script>`);
+        scripts.push(`<script async src="${staticPrefix}${filename}"></script>`);
     });
 
     if (styles.length)
@@ -171,5 +173,14 @@ module.exports = class HtmlServerRenderer {
     return [
       `<script>window.${prop}=${data};</script>`
     ].join("\n");
+  }
+
+  getBundles(gmctx, paths, exclude) {
+    const manifest = gmctx.manifest.client;
+    const bundles = [];
+
+    paths.forEach(path => {
+
+    });
   }
 };

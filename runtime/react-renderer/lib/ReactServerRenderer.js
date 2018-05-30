@@ -2,10 +2,20 @@
 
 const ReactDOMServer = require("react-dom/server");
 const HtmlServerRenderer = require("@gourmet/html-renderer/lib/HtmlServerRenderer");
+const registrar = require("@gourmet/loadable-registrar");
+const provideContext = require("./provideContext");
 
 // Options:
 //  - reactServerRender: "string", "static_markup", "stream", "static_stream"
 module.exports = class ReactServerRenderer extends HtmlServerRenderer {
+  invokeUserRenderer(gmctx) {
+    return registrar.loadAll().then(() => {
+      return super.invokeUserRenderer(gmctx).then(element => {
+        return provideContext(gmctx, element);
+      });
+    });
+  }
+
   renderToMedium(gmctx, element) {
     if (!element)
       return null;
@@ -32,5 +42,38 @@ module.exports = class ReactServerRenderer extends HtmlServerRenderer {
     }
 
     return bodyMain;
+  }
+
+  createContext(...args) {
+    const gmctx = super.createContext(...args);
+
+    const rendered = gmctx.data.renderedLoadables = [];
+
+    gmctx.addRenderedLoadable = id => {
+      if (rendered.indexOf(id) === -1)
+        rendered.push(id);
+    };
+
+    return gmctx;
+  }
+
+  getBodyTail(gmctx) {
+    let modules = [];
+
+    gmctx.data.renderedLoadables.forEach(id => {
+      const info = registrar.get(id);
+      if (info.modules)
+        modules = modules.concat(info.modules);
+    });
+
+    const deps = this.getStaticDeps(gmctx);
+    const staticPrefix = gmctx.manifest.staticPrefix;
+    const bundles = this.getBundles(gmctx, modules, deps);
+
+    return [
+      super.bodyTail(gmctx)
+    ].concat(bundles.map(filename => {
+      return `<script async src="${staticPrefix}${filename}"></script>`;
+    })).join("\n");
   }
 };

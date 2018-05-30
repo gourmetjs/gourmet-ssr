@@ -1,5 +1,7 @@
 "use strict";
 
+const promiseProtect = require("@gourmet/promise-protect");
+
 // Options
 //  - contentContainerId: string (default: "__gourmet_content__")
 //  - dataPropertyName: string (default: "__gourmet_data__")
@@ -11,7 +13,7 @@ module.exports = class HtmlClientRenderer {
   }
 
   invokeUserRenderer(gmctx) {
-    return Promise.resolve().then(() => {
+    return promiseProtect(() => {
       return this._userRenderer(gmctx);
     });
   }
@@ -35,7 +37,7 @@ module.exports = class HtmlClientRenderer {
   }
 
   renderToDom(gmctx, content, elemId) { // eslint-disable-line no-unused-vars
-    // Base class do nothing because `content` is an opaque object that only
+    // Base class does nothing because `content` is an opaque object that only
     // the derived class knows how to render. It should be rendered as children
     // of `#${elemId}` DOM element.
   }

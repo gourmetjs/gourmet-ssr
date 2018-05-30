@@ -39,6 +39,10 @@
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.6.3.tgz#65682e68a82701c70eefb38d7f941a2c0bfa90de"
 
+"@gourmet/react-context-provider@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@gourmet/react-context-provider/-/react-context-provider-0.1.0.tgz#b5c869f2472dbd2e8a04887df428c8381732f263"
+
 "@types/jquery@^2.0.40":
   version "2.0.49"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.49.tgz#95bd7064caebf65bde10429dff491a1aea05b67d"

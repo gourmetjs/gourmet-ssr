@@ -1,76 +1,53 @@
-// This source code is based on https://github.com/jamiebuilds/react-loadable
 "use strict";
 
 const React = require("react");
 const PropTypes = require("prop-types");
-
-const ALL_INITIALIZERS = [];
-const READY_INITIALIZERS = [];
-
-function isWebpackReady(moduleIds) {
-  /* global __webpack_modules__ */
-  if (typeof __webpack_modules__ !== "object")
-    return false;
-
-  return moduleIds.every(moduleId => {
-    return (
-      typeof moduleId !== "undefined" &&
-      typeof __webpack_modules__[moduleId] !== "undefined"
-    );
-  });
-}
-
-function load(loader) {
-  const promise = loader();
-
-  const state = {
-    loading: true,
-    loaded: null,
-    error: null
-  };
-
-  state.promise = promise.then(loaded => {
-    state.loading = false;
-    state.loaded = loaded;
-    return loaded;
-  }).catch(err => {
-    state.loading = false;
-    state.error = err;
-    throw err;
-  });
-
-  return state;
-}
-
-function resolve(obj) {
-  return obj && obj.__esModule ? obj.default : obj;
-}
+const registrar = require("@gourmet/loadable-registrar");
 
 function render(loaded, props) {
-  return React.createElement(resolve(loaded), props);
+  return React.createElement(loaded && loaded.__esModule ? loaded.default : loaded, props);
 }
 
-function loadable(loader, options) {
+function loadable(options) {
   const info = Object.assign({
+    loader: null,
     loading: null,
     delay: 200,
     timeout: null,
     render,
-    webpack: null,
-    modules: null,
-    preload: true,
-    caller: null
+    modules: null   // automatically populated by a Babel plugin
   }, options);
 
-  let res = null;
+  let res;
+
+  if (!info.loader)
+    throw Error("`loader` is required");
 
   info.init = function() {
-    if (!res)
-      res = load(loader);
+    if (!res) {
+      const promise = info.loader();
+
+      res = {
+        loading: true,
+        loaded: null,
+        error: null
+      };
+
+      res.promise = promise.then(loaded => {
+        res.loading = false;
+        res.loaded = loaded;
+        return loaded;
+      }).catch(err => {
+        res.loading = false;
+        res.error = err;
+        throw err;
+      });
+    }
+
     return res.promise;
   };
 
-  register(info);
+  registrar.add(info);
 
   /* eslint-disable react/no-deprecated */
   class LoadableComponent extends React.Component {
@@ -88,7 +65,7 @@ function loadable(loader, options) {
       };
     }
 
-    static load() {
+    static preload() {
       return info.init();
     }
 
@@ -100,18 +77,8 @@ function loadable(loader, options) {
     _loadModule() {
       const gmctx = this.context.gmctx;
 
-      if (gmctx && gmctx.isServer) {
-        if (gmctx.data.loadable.componentsId)
-          gmctx.data.loadable.componentsId.push(info.id);
-        else
-          gmctx.data.loadable.componentsId = [info.id];
-
-        if (info.preload && Array.isArray(info.modules)) {
-          info.modules.forEach(path => {
-            gmctx.preloadModule(path);
-          });
-        }
-      }
+      if (gmctx && gmctx.isServer && info.id)
+        gmctx.addRenderedLoadable(info.id);
 
       if (!res.loading)
         return;
@@ -159,8 +126,9 @@ function loadable(loader, options) {
     }
 
     retry() {
+      res = null;
+      info.init();
       this.setState({error: null, loading: true});
-      res = load(loader);
       this._loadModule();
     }
 
@@ -187,32 +155,5 @@ function loadable(loader, options) {
 
   return LoadableComponent;
 }
-
-function flushInitializers(initializers) {
-  const promises = [];
-
-  while (initializers.length) {
-    const init = initializers.pop();
-    promises.push(init());
-  }
-
-  return Promise.all(promises).then(() => {
-    if (initializers.length)
-      return flushInitializers(initializers);
-  });
-}
-
-loadable.preloadAll = () => {
-  return new Promise((resolve, reject) => {
-    flushInitializers(ALL_INITIALIZERS).then(resolve, reject);
-  });
-};
-
-loadable.preloadReady = () => {
-  return new Promise(resolve => {
-    // We always will resolve, errors should be handled within loading UIs.
-    flushInitializers(READY_INITIALIZERS).then(resolve, resolve);
-  });
-};
 
 module.exports = loadable;
