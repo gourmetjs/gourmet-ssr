@@ -165,22 +165,87 @@ module.exports = class HtmlServerRenderer {
   }
 
   getBodyTail(gmctx) {
-    // Because bundles are loaded with `defer` option, any script in this
-    // body tail area gets executed before the main entry code.
     const prop = this.options.dataPropertyName || "__gourmet_data__";
     const data = JSON.stringify(gmctx.data);
-
     return [
       `<script>window.${prop}=${data};</script>`
     ].join("\n");
   }
 
-  getBundles(gmctx, paths, exclude) {
+  getBundles(gmctx, modules, exclude=[]) {
+    function _find(moduleId) {
+      const names = Object.keys(files).filter(name => {
+        const info = files[name];
+        if (info.modules[moduleId]) {
+          info.ref++;
+          return true;
+        }
+      });
+      if (!names.length)
+        throw Error(`No bundle contains the module with ID: ${moduleId}`);
+      return names;
+    }
+
+    function _pickMax(names) {
+      let maxIdx = 0;
+      names.forEach((name, idx) => {
+        if (files[name].ref > files[names[maxIdx]].ref)
+          maxIdx = idx;
+      });
+      return names[maxIdx];
+    }
+
     const manifest = gmctx.manifest.client;
-    const bundles = [];
 
-    paths.forEach(path => {
+    // modules to exclude: {moduleId: true, ...}
+    const excludeMap = exclude.reduce((obj, name) => {
+      const info = manifest.files[name];
+      if (!info)
+        throw Error(`Asset '${name}' is not defined in manifest.json`);
+      if (info.modules)
+        info.modules.forEach(id => obj[id] = true);
+      return obj;
+    }, {});
 
+    // module IDs by path: {"path": id, ...}
+    const moduleMap = Object.keys(manifest.modules).reduce((obj, id) => {
+      const path = manifest.modules[id];
+      obj[path] = id;
+      return obj;
+    }, {});
+
+    // files {name: {ref: n, modules: {id: true, ...}}, ...}
+    const files = Object.keys(manifest.files).reduce((obj, name) => {
+      const info = manifest.files[name];
+      if (info.modules) {
+        obj[name] = {
+          ref: 0,
+          modules: info.modules.reduce((obj, id) => {
+            obj[id] = true;
+            return obj;
+          }, {})
+        };
+      }
+      return obj;
+    }, {});
+
+    const items = [];
+
+    modules.forEach(path => {
+      const id = moduleMap[path];
+      if (id === undefined)
+        throw Error(`Invalid module path: ${path}`);
+      if (excludeMap[id])
+        return;
+      items.push(_find(id));
     });
+
+    const bundles = items.reduce((obj, names) => {
+      const name = _pickMax(names);
+      obj[name] = true;
+      return obj;
+    }, {});
+
+    return Object.keys(bundles);
   }
 };

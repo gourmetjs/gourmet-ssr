@@ -67,8 +67,8 @@ module.exports = class ReactServerRenderer extends HtmlServerRenderer {
     });
 
     const deps = this.getStaticDeps(gmctx);
-    const staticPrefix = gmctx.manifest.staticPrefix;
     const bundles = this.getBundles(gmctx, modules, deps);
+    const staticPrefix = gmctx.manifest.staticPrefix;
 
     return [
       super.bodyTail(gmctx)

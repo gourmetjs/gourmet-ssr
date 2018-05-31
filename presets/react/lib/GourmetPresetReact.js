@@ -9,8 +9,8 @@ class GourmetPresetReact {
       "classnames": moduleDir("classnames"),
       "prop-types": moduleDir("prop-types"),
       "@gourmet/self-url": moduleDir("@gourmet/self-url"),
-      "@gourmet/react-context-provider": moduleDir("@gourmet/react-context-provider"),
-      "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer")
+      "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
+      "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable")
     };
   }
 }
@@ -18,7 +18,8 @@ class GourmetPresetReact {
 GourmetPresetReact.meta = {
   subplugins: [
     "@gourmet/plugin-webpack-react",
-    "@gourmet/plugin-webpack-react-hot-loader"
+    "@gourmet/plugin-webpack-react-hot-loader",
+    "@gourmet/react-loadable"
   ],
   hooks: {
     "build:webpack:alias": GourmetPresetReact.prototype._onWebpackAlias

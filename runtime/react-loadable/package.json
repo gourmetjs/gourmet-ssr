@@ -1,10 +1,14 @@
 {
   "name": "@gourmet/react-loadable",
   "version": "0.1.0",
-  "main": "lib/loadable.js",
+  "module": "lib/loadable.js",
+  "main": "lib/GourmetPluginReactLoadable.js",
   "publishConfig": {
     "access": "restricted"
   },
+  "keywords": [
+    "gourmet-plugin"
+  ],
   "peerDependencies": {
     "prop-types": "15.x",
     "react": "15.x || 16.x",
