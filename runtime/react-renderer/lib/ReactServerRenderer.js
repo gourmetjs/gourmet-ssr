@@ -71,7 +71,7 @@ module.exports = class ReactServerRenderer extends HtmlServerRenderer {
     const staticPrefix = gmctx.manifest.staticPrefix;
 
     return [
-      super.bodyTail(gmctx)
+      super.getBodyTail(gmctx)
     ].concat(bundles.map(filename => {
       return `<script async src="${staticPrefix}${filename}"></script>`;
     })).join("\n");

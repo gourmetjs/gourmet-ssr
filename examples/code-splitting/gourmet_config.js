@@ -5,6 +5,7 @@ module.exports = {
     main: "./src/main/${context:target}.js",
     admin: ["./src/admin/init.js", "./src/admin/${context:target}.js"]
   },
+  /*
   webpack: {
     pipelines: {
       js: [{
@@ -18,7 +19,6 @@ module.exports = {
       }]
     }
   },
-  /*
   webpack: {
     pipelines: {
       js: [{

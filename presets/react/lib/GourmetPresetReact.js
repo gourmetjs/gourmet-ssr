@@ -19,7 +19,7 @@ GourmetPresetReact.meta = {
   subplugins: [
     "@gourmet/plugin-webpack-react",
     "@gourmet/plugin-webpack-react-hot-loader",
-    "@gourmet/react-loadable"
+    "@gourmet/plugin-webpack-react-loadable"
   ],
   hooks: {
     "build:webpack:alias": GourmetPresetReact.prototype._onWebpackAlias

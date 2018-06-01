@@ -6,7 +6,7 @@ const PropTypes = require("prop-types");
 
 class GourmetContextProvider extends Component {
   getChildContext() {
-    return this.props.gmctx;
+    return {gmctx: this.props.gmctx};
   }
 
   render() {

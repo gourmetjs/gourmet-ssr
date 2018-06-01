@@ -3,10 +3,12 @@
 const npath = require("path");
 const resolve = require("resolve");
 const relativePath = require("@gourmet/relative-path");
+const MM3 = require("imurmurhash");
 
 // Options:
 //  - libraryName: library name to trigger the `modules` population. E.g. "@gourmet/react-loadable"
 //  - workDir: project working directory to make relative paths
+//  - modules: whether to populate 'modules' field (default: false)
 module.exports = function babelPluginGourmetLoadable({types: t}) {
   function _evalString(path, context) {
     const res = path.evaluate();
@@ -31,6 +33,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
 
   function _processBinding(bindingName, path, state) {
     const binding = path.scope.getBinding(bindingName);
+    const filePath = relativePath(state.file.opts.filename, state.opts.workDir);
 
     binding.referencePaths.forEach(refPath => {
       const callExpression = refPath.parentPath;
@@ -53,7 +56,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         propertiesMap[key.node.name] = property;
       });
 
-      if (!propertiesMap.loader || propertiesMap.modules)
+      if (!propertiesMap.loader)
         return;
 
       const loaderMethod = propertiesMap.loader.get("value");
@@ -69,15 +72,38 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         }
       });
 
-      if (!modules.length)
-        return;
+      if (!propertiesMap.id) {
+        const items = [filePath];
 
-      propertiesMap.loader.insertAfter(
-        t.objectProperty(
-          t.identifier("modules"),
-          t.arrayExpression(modules.map(path => t.stringLiteral(path)))
-        )
-      );
+        modules.forEach(path => {
+          items.push(":", path);
+        });
+
+        if (propertiesMap.signature) {
+          const sig = _evalString(propertiesMap.loader.get("value"), "signature");
+          items.push(":", sig);
+        }
+
+        const mm3 = MM3();
+        items.forEach(item => mm3.hash(item));
+        const id = mm3.result().toString(36);
+
+        propertiesMap.loader.insertAfter(
+          t.objectProperty(
+            t.identifier("id"),
+            t.stringLiteral(id)
+          )
+        );
+      }
+
+      if (state.opts.modules && !propertiesMap.modules && modules.length) {
+        propertiesMap.loader.insertAfter(
+          t.objectProperty(
+            t.identifier("modules"),
+            t.arrayExpression(modules.map(path => t.stringLiteral(path)))
+          )
+        );
+      }
     });
   }
 
@@ -100,7 +126,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         if (!parent.isVariableDeclarator())
           return;
 
-        _processBinding(path.node.id.name, path, state);
+        _processBinding(parent.node.id.name, path, state);
       },
 
       ImportDeclaration(path, state) {

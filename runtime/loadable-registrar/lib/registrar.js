@@ -20,9 +20,13 @@ function loadAll(loaded=[]) {
   const ids = Object.keys(loadables).filter(id => {
     return loaded.indexOf(id) === -1;
   });
-  return load(ids).then(() => {
-    return loadAll(loaded.concat(ids));
-  });
+  if (ids.length) {
+    return load(ids).then(() => {
+      return loadAll(loaded.concat(ids));
+    });
+  } else {
+    return Promise.resolve();
+  }
 }
 
 exports.add = add;
