@@ -6,19 +6,14 @@ const registrar = require("@gourmet/loadable-registrar");
 const provideContext = require("./provideContext");
 
 module.exports = class ReactClientRenderer extends HtmlClientRenderer {
-  invokeUserRenderer(gmctx) {
-    return registrar.load(gmctx.data.renderedLoadables || []).then(() => {
-      return super.invokeUserRenderer(gmctx).then(element => {
-        return provideContext(gmctx, element);
-      });
-    });
-  }
-
   renderToDom(gmctx, content, elemId) {
-    const parent = document.getElementById(elemId);
-    if (gmctx.data.reactClientRender === "hydrate")
-      ReactDOM.hydrate(content, parent);
-    else
-      ReactDOM.render(content, parent);
+    content = provideContext(gmctx, content);
+    return registrar.load(gmctx.data.renderedLoadables || []).then(() => {
+      const parent = document.getElementById(elemId);
+      if (gmctx.data.reactClientRender === "hydrate")
+        ReactDOM.hydrate(content, parent);
+      else
+        ReactDOM.render(content, parent);
+    });
   }
 };

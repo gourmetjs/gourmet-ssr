@@ -7,7 +7,18 @@ function add(info) {
     console.warn("'id' is null, you must use a Babel plugin to populate this field automatically.");
     return;
   }
+
+  if (loadables[info.id])
+    throw Error("ID conflict is detected in one of loadable components. Use 'signature' to resolve this issue.");
+
   loadables[info.id] = info;
+}
+
+function get(id) {
+  const info = loadables[id];
+  if (!info)
+    throw Error(`Invalid loadable component ID: ${id}`);
+  return info;
 }
 
 function load(ids) {
@@ -30,5 +41,6 @@ function loadAll(loaded=[]) {
 }
 
 exports.add = add;
+exports.get = get;
 exports.load = load;
 exports.loadAll = loadAll;

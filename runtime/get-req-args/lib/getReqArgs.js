@@ -15,6 +15,7 @@ module.exports = function getReqArgs(req) {
   return {
     method: req.method,
     headers: new ProxyHeaders(req).getHeaders(),
+    url: req.url,
     path: typeof req.path === "string" ? req.path : _url().pathname,
     query: typeof req.query === "object" ? req.query : _url().query,
     encrypted: req.socket.encrypted

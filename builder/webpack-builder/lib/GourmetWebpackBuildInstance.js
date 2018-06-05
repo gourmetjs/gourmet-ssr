@@ -221,7 +221,7 @@ class GourmetWebpackBuildInstance {
 
   getWebpackResolve(context) {
     const alias = this.getWebpackAlias(context);
-    const resolve = {extensions: [".js"], alias};
+    const resolve = {extensions: [".js", ".json"], alias};
     return this._runMergeSync("build:webpack:resolve", resolve, "resolve", context);
   }
 
@@ -390,15 +390,6 @@ class GourmetWebpackBuildInstance {
       maxModules: (debug || argv.displayModules) ? Infinity : 15
     };
     this.console.log(this.webpack.stats.toString(options));
-
-    (() => {
-      const util = require("util");
-      const compilation = this.webpack.stats.compilation;
-      compilation.modules.forEach(module => {
-        if (module.id === "./src/dynamic.js" || module.id === "./src/print.js")
-          console.log(util.inspect(module.chunks, {depth: 1, colors: true}));
-      });
-    })();
   }
 
   _prepareWebpackRecords(context) {

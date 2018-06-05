@@ -73,7 +73,7 @@ module.exports = class ReactServerRenderer extends HtmlServerRenderer {
     return [
       super.getBodyTail(gmctx)
     ].concat(bundles.map(filename => {
-      return `<script async src="${staticPrefix}${filename}"></script>`;
+      return `<script defer src="${staticPrefix}${filename}"></script>`;
     })).join("\n");
   }
 };

@@ -10,7 +10,6 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/relative-path": "^0.1.0",
     "imurmurhash": "^0.1.4"
   }
 }

@@ -1,14 +1,13 @@
 "use strict";
 
 const npath = require("path");
-const resolve = require("resolve");
-const relativePath = require("@gourmet/relative-path");
 const MM3 = require("imurmurhash");
 
 // Options:
 //  - libraryName: library name to trigger the `modules` population. E.g. "@gourmet/react-loadable"
-//  - workDir: project working directory to make relative paths
 //  - modules: whether to populate 'modules' field (default: false)
+//  - resolveModule(moduleName, refPath): resolve the module and returns a path of the module file
+//    relativized to the project working directory.
 module.exports = function babelPluginGourmetLoadable({types: t}) {
   function _evalString(path, context) {
     const res = path.evaluate();
@@ -17,23 +16,9 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
     throw Error(`'${context}' must have a string literal as only argument.`);
   }
 
-  function _relPath(moduleName, refPath, workDir) {
-    let path;
-
-    try {
-      path = resolve.sync(moduleName, {basedir: npath.dirname(refPath)});
-    } catch (err) {
-      if (err.code === "MODULE_NOT_FOUND")
-        return null;
-      throw err;
-    }
-
-    return relativePath(path, workDir);
-  }
-
   function _processBinding(bindingName, path, state) {
     const binding = path.scope.getBinding(bindingName);
-    const filePath = relativePath(state.file.opts.filename, state.opts.workDir);
+    const filePath = state.opts.resolveModule(state.file.opts.filename);
 
     binding.referencePaths.forEach(refPath => {
       const callExpression = refPath.parentPath;
@@ -66,7 +51,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         Import(path) {
           const callExpression = path.parentPath;
           const moduleName = _evalString(callExpression.get("arguments")[0], "import()");
-          const relPath = _relPath(moduleName, state.file.opts.filename, state.opts.workDir);
+          const relPath = state.opts.resolveModule(moduleName, state.file.opts.filename);
           if (relPath)
             modules.push(relPath);
         }

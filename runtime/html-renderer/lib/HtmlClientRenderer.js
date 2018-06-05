@@ -1,6 +1,18 @@
 "use strict";
 
+const domready = require("domready");
 const promiseProtect = require("@gourmet/promise-protect");
+
+// We don't need to wait for `DOMContentLoaded` because all `<script>` tags
+// are rendered with `defer` attribute which postpones the evaluation of
+// the scripts until DOM construction is complete.
+// However, we can easily support old browsers that don't support `defer` by
+// waiting for `DOMContentLoaded`.
+function _domready() {
+  return new Promise(resolve => {
+    domready(resolve);
+  });
+}
 
 // Options
 //  - contentContainerId: string (default: "__gourmet_content__")
@@ -22,7 +34,9 @@ module.exports = class HtmlClientRenderer {
     const gmctx = this.createContext();
     this.invokeUserRenderer(gmctx).then(content => {
       const elemId = this.options.contentContainerId || "__gourmet_content__";
-      return this.renderToDom(gmctx, content, elemId);
+      return _domready().then(() => {
+        return this.renderToDom(gmctx, content, elemId);
+      });
     }).catch(err => this.handleError(err));
   }
 

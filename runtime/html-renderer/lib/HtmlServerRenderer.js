@@ -144,7 +144,7 @@ module.exports = class HtmlServerRenderer {
   }
 
   renderStaticDeps(gmctx) {
-    const deps = this.getStaticDeps(gmctx);
+    const deps = [].concat(this.getStaticDeps(gmctx)).reverse();
     const staticPrefix = gmctx.manifest.staticPrefix;
     const styles = [];
     const scripts = [];
@@ -154,7 +154,7 @@ module.exports = class HtmlServerRenderer {
       if (ext === ".css")
         styles.push(`<link rel="stylesheet" type="text/css" href="${staticPrefix}${filename}">`);
       else
-        scripts.push(`<script async src="${staticPrefix}${filename}"></script>`);
+        scripts.push(`<script defer src="${staticPrefix}${filename}"></script>`);
     });
 
     if (styles.length)

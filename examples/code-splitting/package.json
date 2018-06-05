@@ -10,9 +10,11 @@
     "@gourmet/server-impl-watch": "^0.2.4"
   },
   "devDependencies": {
+    "@gourmet/babel-plugin-gourmet-loadable": "^0.1.0",
     "@gourmet/gourmet-cli": "^0.2.0",
     "@gourmet/preset-builder": "^0.2.5",
     "@gourmet/preset-react-emotion": "^0.2.2",
-    "@gourmet/babel-plugin-gourmet-loadable": "^0.1.0"
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2"
   }
 }

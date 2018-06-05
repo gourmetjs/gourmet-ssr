@@ -1,47 +1,45 @@
 import React, {Component} from "react";
-import cx from "classnames";
 import {hot} from "react-hot-loader";
 import PageBase from "../components/PageBase";
 import HomeLoadable from "../components/HomeLoadable";
 import MessagesLoadable from "../components/MessagesLoadable";
 import ProfileLoadable from "../components/ProfileLoadable";
+import {Route, NavLink, Switch} from "react-router-dom";
 
 class MainPage extends Component {
   render() {
-    const gmctx = this.props.gmctx;
-    const path = gmctx.isServer ? gmctx.path : window.location.pathname;
-
     return (
       <PageBase>
         <div className="card">
           <div className="card-header">
             <ul className="nav nav-tabs card-header-tabs">
-              <li className="nav-item">
-                <a className={cx("nav-link", {active: path === "/"})} href="/">Home</a>
+              <li className="nav-item" onMouseOver={() => HomeLoadable.preload()}>
+                <NavLink className="nav-link" to="/">Home</NavLink>
               </li>
-              <li className="nav-item">
-                <a className={cx("nav-link", {active: path === "/messages"})} href="/messages">Messages</a>
+              <li className="nav-item" onMouseOver={() => MessagesLoadable.preload()}>
+                <NavLink className="nav-link" to="/messages">Messages</NavLink>
               </li>
-              <li className="nav-item">
-                <a className={cx("nav-link", {active: path === "/profile"})} href="/profile">Profile</a>
+              <li className="nav-item" onMouseOver={() => ProfileLoadable.preload()}>
+                <NavLink className="nav-link" to="/profile">Profile</NavLink>
               </li>
             </ul>
           </div>
           <div className="card-body">
-            {this._renderPanel(path)}
+            {this._renderPanel()}
           </div>
         </div>
       </PageBase>
     );
   }
 
-  _renderPanel(path) {
-    if (path === "/")
-      return <HomeLoadable/>;
-    else if (path === "/messages")
-      return <MessagesLoadable/>;
-    else if (path === "/profile")
-      return <ProfileLoadable/>;
+  _renderPanel() {
+    return (
+      <Switch>
+        <Route exact path="/" component={HomeLoadable}/>
+        <Route exact path="/messages" component={MessagesLoadable}/>
+        <Route exact path="/profile" component={ProfileLoadable}/>
+      </Switch>
+    );
   }
 }
 
