@@ -144,7 +144,7 @@ module.exports = class HtmlServerRenderer {
   }
 
   renderStaticDeps(gmctx) {
-    const deps = [].concat(this.getStaticDeps(gmctx)).reverse();
+    const deps = this.getStaticDeps(gmctx);
     const staticPrefix = gmctx.manifest.staticPrefix;
     const styles = [];
     const scripts = [];

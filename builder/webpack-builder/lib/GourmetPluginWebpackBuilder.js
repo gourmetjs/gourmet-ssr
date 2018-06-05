@@ -195,8 +195,8 @@ class GourmetPluginWebpackBuilder {
         const assets = compilation.assets;
 
         Object.keys(assets).forEach(name => {
-          const asset = assets[name];
-          if (asset.emitted) {
+          if (!name.endsWith(".hot-update.js") && !name.endsWith(".hot-update.json")) {
+            const asset = assets[name];
             const info = {size: asset.size()};
             const ext = npath.extname(name).toLowerCase();
             if (ext === ".js")
@@ -286,6 +286,8 @@ class GourmetPluginWebpackBuilder {
 
       const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
       const content = JSON.stringify(obj, null, context.optimize ? 2 : 2);
+
+      console.log(content);
 
       this.emitFileSync(path, content);
 
