@@ -37,6 +37,10 @@ function _findDir(path, dir) {
   return -1;
 }
 
+function _isHotFile(name) {
+  return name.endsWith(".hot-update.js") || name.endsWith(".hot-update.json");
+}
+
 // ## Lifecycle events
 //  before:command:build
 //  command:build
@@ -185,7 +189,9 @@ class GourmetPluginWebpackBuilder {
         if (eps) {
           eps.forEach((ep, name) => {
             const assets = target === "client" ? globalAssets : [];
-            res[name] = assets.concat(ep.getFiles().filter(name => !name.endsWith(".map")));
+            res[name] = assets.concat(ep.getFiles().filter(name => {
+              return !name.endsWith(".map") && !_isHotFile(name);
+            }));
           });
         }
         return res;
@@ -195,7 +201,7 @@ class GourmetPluginWebpackBuilder {
         const assets = compilation.assets;
 
         Object.keys(assets).forEach(name => {
-          if (!name.endsWith(".hot-update.js") && !name.endsWith(".hot-update.json")) {
+          if (!_isHotFile(name)) {
             const asset = assets[name];
             const info = {size: asset.size()};
             const ext = npath.extname(name).toLowerCase();
@@ -286,8 +292,6 @@ class GourmetPluginWebpackBuilder {
 
       const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
       const content = JSON.stringify(obj, null, context.optimize ? 2 : 2);
-
-      console.log(content);
 
       this.emitFileSync(path, content);
 
