@@ -1,6 +1,5 @@
 "use strict";
 
-const npath = require("path");
 const MM3 = require("imurmurhash");
 
 // Options:

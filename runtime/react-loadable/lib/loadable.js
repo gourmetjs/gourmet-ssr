@@ -8,10 +8,22 @@ function render(loaded, props) {
   return React.createElement(loaded && loaded.__esModule ? loaded.default : loaded, props);
 }
 
+function Loading(props) {
+  if (props.error) {
+    return <div>{props.error.message || props.error}</div>;
+  } else if (props.timedOut) {
+    return <div>Couldn&apos;t load the component, timed out!</div>;
+  } else if (props.pastDelay) {
+    return <div>Loading...</div>;
+  } else {
+    return null;
+  }
+}
+
 function loadable(options) {
   const info = Object.assign({
     loader: null,
-    loading: null,
+    loading: Loading,
     delay: 200,
     timeout: null,
     render,

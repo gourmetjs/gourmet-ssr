@@ -1,9 +1,9 @@
 "use strict";
 
 const loadable = require("@gourmet/react-loadable");
-const Loading = require("./Loading");
+const CustomLoading = require("./CustomLoading").default;
 
 module.exports = loadable({
   loader: () => import(/* webpackChunkName: "profile" */ "./ProfilePanel"),
-  loading: Loading
+  loading: CustomLoading
 });
