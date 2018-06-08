@@ -22,9 +22,11 @@ function get(id) {
 }
 
 function load(ids) {
-  return Promise.all(ids.map(id => {
-    return loadables[id].init();
-  }));
+  let promise = Promise.resolve();
+  ids.forEach(id => {
+    promise = promise.then(() => loadables[id].init());
+  });
+  return promise;
 }
 
 function loadAll(loaded=[]) {
