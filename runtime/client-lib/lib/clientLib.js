@@ -85,7 +85,10 @@ function clientLib(baseArgs) {
           const q = item.queue;
           item.queue = item.loading = null;
           delete _cache[key];
-          q.forEach(cb => cb(err));
+          if (q)
+            q.forEach(cb => cb(err));
+          else
+            _done(err);
         }),
         queue: [_done]
       };

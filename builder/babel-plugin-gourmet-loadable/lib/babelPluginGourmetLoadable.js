@@ -64,7 +64,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         });
 
         if (propertiesMap.signature) {
-          const sig = _evalString(propertiesMap.loader.get("value"), "signature");
+          const sig = _evalString(propertiesMap.signature.get("value"), "signature");
           items.push(":", sig);
         }
 
