@@ -6,7 +6,7 @@ const MM3 = require("imurmurhash");
 //  - libraryName: library name to trigger the `modules` population. E.g. "@gourmet/react-loadable"
 //  - modules: whether to populate 'modules' field (default: false)
 //  - resolveModule(moduleName, refPath): resolve the module and returns a path of the module file
-//    relativized to the project working directory.
+//    that is relative to the project working directory.
 module.exports = function babelPluginGourmetLoadable({types: t}) {
   function _evalString(path, context) {
     const res = path.evaluate();
