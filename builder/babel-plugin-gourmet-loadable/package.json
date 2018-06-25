@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/babel-plugin-gourmet-loadable",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Babel plugin that automatically populates `id` & `modules` property",
   "keywords": [
     "babel-plugin"

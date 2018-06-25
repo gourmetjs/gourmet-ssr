@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/server-impl-http",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "lib/ServerImplHttp.js",
   "description": "Front server implementation using '@gourmet/client-http' as a client",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/client-http": "^0.2.3",
+    "@gourmet/client-http": "^0.2.4",
     "@gourmet/parse-args": "^0.2.0",
     "@gourmet/server-impl-base": "^0.2.2",
     "express": "^4.16.3"

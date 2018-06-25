@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/client-lambda",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "main": "lib/clientLambda.js",
   "publishConfig": {
     "access": "restricted"
@@ -8,7 +8,7 @@
   "dependencies": {
     "@gourmet/error": "^0.1.0",
     "@gourmet/get-aws-service": "^0.1.1",
-    "@gourmet/get-req-args": "^0.1.2",
+    "@gourmet/get-req-args": "^0.1.3",
     "@gourmet/merge": "^0.2.0",
     "@gourmet/omit": "^0.1.0",
     "@gourmet/send-content": "^0.1.0"

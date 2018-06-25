@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/preset-react",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "lib/GourmetPresetReact.js",
   "publishConfig": {
     "access": "restricted"
@@ -11,9 +11,9 @@
   "dependencies": {
     "@gourmet/plugin-webpack-react": "^0.1.1",
     "@gourmet/plugin-webpack-react-hot-loader": "^0.1.0",
-    "@gourmet/plugin-webpack-react-loadable": "^0.1.0",
-    "@gourmet/react-renderer": "^0.2.2",
-    "@gourmet/react-loadable": "^0.1.0",
+    "@gourmet/plugin-webpack-react-loadable": "^0.1.1",
+    "@gourmet/react-loadable": "^0.1.1",
+    "@gourmet/react-renderer": "^0.2.3",
     "@gourmet/self-url": "^0.1.1",
     "classnames": "^2.2.5",
     "prop-types": "^15.6.1",

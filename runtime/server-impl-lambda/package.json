@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/server-impl-lambda",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "main": "lib/ServerImplLambda.js",
   "description": "Front server implementation using '@gourmet/client-lambda' as a client",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/client-lambda": "^0.1.6",
+    "@gourmet/client-lambda": "^0.1.7",
     "@gourmet/parse-args": "^0.2.0",
     "@gourmet/server-impl-base": "^0.2.2",
     "express": "^4.16.3"
