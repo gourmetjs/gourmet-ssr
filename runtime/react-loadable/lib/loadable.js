@@ -10,11 +10,23 @@ function render(loaded, props) {
 
 function Loading(props) {
   if (props.error) {
-    return <div>{props.error.message || props.error}</div>;
+    return React.createElement(
+      "div",
+      null,
+      props.error.message || props.error
+    );
   } else if (props.timedOut) {
-    return <div>Couldn&apos;t load the component, timed out!</div>;
+    return React.createElement(
+      "div",
+      null,
+      "Couldn't load the component, timed out!"
+    );
   } else if (props.pastDelay) {
-    return <div>Loading...</div>;
+    return React.createElement(
+      "div",
+      null,
+      "Loading..."
+    );
   } else {
     return null;
   }
