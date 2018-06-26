@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/react-renderer",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "main": "client.js",
   "publishConfig": {
     "access": "restricted"
