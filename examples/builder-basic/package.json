@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-builder-basic",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "test": "yarn test:local && yarn test:prod",
@@ -12,8 +12,8 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
-    "@gourmet/plugin-webpack-babel": "^0.2.1",
-    "@gourmet/plugin-webpack-builder": "^0.2.2",
+    "@gourmet/plugin-webpack-babel": "^0.3.0",
+    "@gourmet/plugin-webpack-builder": "^0.3.0",
     "@gourmet/plugin-webpack-dev-server": "^0.2.5",
     "@gourmet/promise-tape": "^0.2.0",
     "@gourmet/puppeteer-args": "^0.2.0",

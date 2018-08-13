@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-react-hello",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "hot": "node server/lib/local.js --hot",
@@ -23,7 +23,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
     "@gourmet/http-server": "^0.2.5",
-    "@gourmet/preset-builder": "^0.2.6",
+    "@gourmet/preset-builder": "^0.3.0",
     "@gourmet/preset-react": "^0.2.5",
     "@gourmet/promise-tape": "^0.2.0",
     "@gourmet/puppeteer-args": "^0.2.0",
