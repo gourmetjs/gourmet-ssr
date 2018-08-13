@@ -24,7 +24,9 @@
     "@gourmet/promise-read-file": "^0.1.0",
     "@gourmet/promise-write-file": "^0.1.0",
     "@gourmet/relative-path": "^0.1.1",
-    "mkdirp": "^0.5.1",
-    "webpack": "^4.8.3"
+    "mkdirp": "^0.5.1"
+  },
+  "peerDependencies": {
+    "webpack": "4"
   }
 }

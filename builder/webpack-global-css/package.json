@@ -11,9 +11,9 @@
   "dependencies": {
     "@gourmet/plugin-sort": "^0.2.0",
     "@gourmet/webpack-file-loader": "^0.1.0",
-    "autoprefixer": "^8.2.0",
-    "css-loader": "^0.28.11",
+    "autoprefixer": "^9.1.1",
+    "css-loader": "^1.0.0",
     "extract-loader": "^2.0.1",
-    "postcss-loader": "^2.1.3"
+    "postcss-loader": "^3.0.0"
   }
 }

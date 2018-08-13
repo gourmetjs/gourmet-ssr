@@ -9,10 +9,12 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/plugin-webpack-babel": "^0.2.1",
-    "@gourmet/plugin-webpack-blob": "^0.1.0",
+    "webpack": "^4.16.5",
+    "babel-core": "^6.26.3",
     "@gourmet/plugin-webpack-builder": "^0.2.2",
-    "@gourmet/plugin-webpack-dev-server": "^0.2.5",
-    "@gourmet/plugin-webpack-global-css": "^0.2.1"
+    "@gourmet/plugin-webpack-babel": "^0.2.1",
+    "@gourmet/plugin-webpack-global-css": "^0.2.1",
+    "@gourmet/plugin-webpack-blob": "^0.1.0",
+    "@gourmet/plugin-webpack-dev-server": "^0.2.5"
   }
 }
