@@ -1,10 +1,12 @@
 import React, {Component} from "react";
-import {hot} from "react-hot-loader";
+import {hot, setConfig} from "react-hot-loader";
 import PageBase from "../components/PageBase";
 import HomeLoadable from "../components/HomeLoadable";
 import MessagesLoadable from "../components/MessagesLoadable";
 import ProfileLoadable from "../components/ProfileLoadable";
 import {Route, NavLink, Switch} from "react-router-dom";
+
+setConfig({logLevel: "debug"});
 
 class MainPage extends Component {
   render() {
