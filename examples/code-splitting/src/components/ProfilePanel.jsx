@@ -1,8 +1,7 @@
 import React from "react";
-import {hot} from "react-hot-loader";
 import PhotoLoadable from "./PhotoLoadable";
 
-function ProfilePanel() {
+export default function ProfilePanel() {
   return (
     <div>
       <h1>Panel: Profile</h1>
@@ -10,5 +9,3 @@ function ProfilePanel() {
     </div>
   );
 }
-
-export default hot(module)(ProfilePanel);

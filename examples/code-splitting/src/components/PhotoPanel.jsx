@@ -1,9 +1,8 @@
 import React from "react";
-import {hot} from "react-hot-loader";
 import {ComponentA, ComponentB} from "./MultiLoadables";
 import earth from "../images/earth.png";
 
-function PhotoPanel() {
+export default function PhotoPanel() {
 
   return (
     <div>
@@ -13,5 +12,3 @@ function PhotoPanel() {
     </div>
   );
 }
-
-export default hot(module)(PhotoPanel);
