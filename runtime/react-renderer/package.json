@@ -10,7 +10,7 @@
     "@gourmet/loadable-registrar": "^0.1.1"
   },
   "peerDependencies": {
-    "react": "15.x || 16.x",
-    "react-dom": "15.x || 16.x"
+    "react": "16",
+    "react-dom": "16"
   }
 }
