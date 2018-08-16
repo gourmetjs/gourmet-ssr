@@ -232,9 +232,12 @@ module.exports = class HtmlServerRenderer {
     const items = [];
 
     modules.forEach(path => {
-      const id = moduleMap[path];
-      if (id === undefined)
-        throw Error(`Invalid module path: ${path}`);
+      let id = moduleMap[path];
+      if (id === undefined) {
+        id = moduleMap["@concat:" + path];
+        if (id === undefined)
+          throw Error(`Invalid module path: ${path}`);
+      }
       if (excludeMap[id])
         return;
       items.push(_find(id));

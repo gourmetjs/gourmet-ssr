@@ -71,13 +71,13 @@ test("run puppeteer", pt(async t => {
       return alert.innerText;
     });
 
-    t.equal(a1, "[M] Component A");
+    t.equal(a1, "[M] Component A-- '[M]' should be added when this component is mounted in DOM");
 
     const a2 = await page.$eval("div.alert.alert-success", alert => {
       return alert.innerText;
     });
 
-    t.equal(a2, "[M] Component B");
+    t.equal(a2, "[M] Component B-- '[M]' should be added when this component is mounted in DOM");
   }
 
   const browser = await puppeteer.launch(testArgs);
