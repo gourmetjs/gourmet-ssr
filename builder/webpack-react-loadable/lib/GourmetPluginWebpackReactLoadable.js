@@ -4,8 +4,8 @@ const npath = require("path");
 const resolve = require("resolve");
 const relativePath = require("@gourmet/relative-path");
 
-class GourmetPluginWebpackReactLoadable {
-  _onWebpackPipelines(context) {
+class PluginReactLoadable {
+  onPipelines(context) {
     const target = context.target;
     return {
       js: [{
@@ -42,10 +42,10 @@ class GourmetPluginWebpackReactLoadable {
   }
 }
 
-GourmetPluginWebpackReactLoadable.meta = {
-  hooks: (proto => ({
-    "build:webpack:pipelines": proto._onWebpackPipelines
-  }))(GourmetPluginWebpackReactLoadable.prototype)
+PluginReactLoadable.meta = {
+  hooks: {
+    "build:webpack:pipelines": PluginReactLoadable.prototype.onPipelines
+  }
 };
 
-module.exports = GourmetPluginWebpackReactLoadable;
+module.exports = PluginReactLoadable;

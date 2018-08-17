@@ -2,6 +2,6 @@
 
 module.exports = {
   entry: {
-    main: "./src/init/${context:target}.js"
+    main: "./src/containers/renderRoot.jsx"
   }
 };

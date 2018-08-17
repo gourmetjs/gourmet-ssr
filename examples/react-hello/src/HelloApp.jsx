@@ -2,7 +2,7 @@ import React, {PureComponent} from "react";
 import {hot} from "react-hot-loader";
 import Timer from "./Timer";
 
-class Hello extends PureComponent {
+class HelloApp extends PureComponent {
   render() {
     return (
       <div className="container">
@@ -15,8 +15,4 @@ class Hello extends PureComponent {
   }
 }
 
-const HelloApp = hot(module)(Hello);
-
-export default function renderApp() {
-  return <HelloApp/>;
-}
+export default hot(module)(HelloApp);

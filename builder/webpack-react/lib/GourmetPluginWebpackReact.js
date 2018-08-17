@@ -1,7 +1,7 @@
 "use strict";
 
-class GourmetPluginWebpackReact {
-  _onWebpackPipelines() {
+class PluginReact {
+  onPipelines() {
     return {
       js: [{
         loader: "#babel-loader",
@@ -16,7 +16,7 @@ class GourmetPluginWebpackReact {
     };
   }
 
-  _onWebpackLoaders() {
+  onLoaders() {
     return {
       js: {
         extensions: [".jsx"]
@@ -24,21 +24,29 @@ class GourmetPluginWebpackReact {
     };
   }
 
-  _onWebpackResolve() {
+  onResolve() {
     // Appends `.jsx` to `resolve.extensions` so that `.jsx` can be omitted
     // in `require` or `import`.
     return {
       extensions: [".jsx"]
     };
   }
+
+  onEntryInit(info, {target}) {
+    const name = target[0].toUpperCase() + target.substr(1);
+    return Object.assign({}, info, {
+      classModule: "@gourmet/react-renderer/lib/React" + name + "Renderer"
+    });
+  }
 }
 
-GourmetPluginWebpackReact.meta = {
-  hooks: (proto => ({
-    "build:webpack:pipelines": proto._onWebpackPipelines,
-    "build:webpack:loaders": proto._onWebpackLoaders,
-    "build:webpack:resolve": proto._onWebpackResolve
-  }))(GourmetPluginWebpackReact.prototype)
+PluginReact.meta = {
+  hooks: {
+    "build:webpack:pipelines": PluginReact.prototype.onPipelines,
+    "build:webpack:loaders": PluginReact.prototype.onLoaders,
+    "build:webpack:resolve": PluginReact.prototype.onResolve,
+    "build:webpack:entry_init": PluginReact.prototype.onEntryInit
+  }
 };
 
-module.exports = GourmetPluginWebpackReact;
+module.exports = PluginReact;

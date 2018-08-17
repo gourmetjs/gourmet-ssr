@@ -5,6 +5,7 @@
   "scripts": {
     "hot": "node lib/server.js --hot",
     "watch": "node lib/server.js --watch",
+    "start": "node lib/server.js",
     "build": "gourmet build"
   },
   "dependencies": {
@@ -12,7 +13,6 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
-    "@gourmet/preset-builder": "^0.3.0",
     "@gourmet/preset-react-emotion": "^0.2.5"
   }
 }

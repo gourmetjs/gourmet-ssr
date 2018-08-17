@@ -1,17 +1,11 @@
 import React from "react";
-import emotionRenderer from "@gourmet/emotion-renderer";
+import {BrowserRouter} from "react-router-dom";
 import MainPage from "./MainPage";
 
-import {BrowserRouter} from "react-router-dom";
-
-function reactRouterClient(render) {
-  return function renderClient(gmctx) {
-    return (
-      <BrowserRouter>
-        {render(gmctx)}
-      </BrowserRouter>
-    );
-  };
+export default function render(gmctx) {
+  return (
+    <BrowserRouter>
+      <MainPage gmctx={gmctx}/>
+    </BrowserRouter>
+  );
 }
-
-emotionRenderer(reactRouterClient(gmctx => <MainPage gmctx={gmctx}/>)).render();

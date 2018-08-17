@@ -1,7 +1,6 @@
 {
   "name": "@gourmet/html-renderer",
   "version": "0.2.3",
-  "main": "client.js",
   "publishConfig": {
     "access": "restricted"
   },
@@ -14,6 +13,7 @@
     "@gourmet/merge": "^0.2.0",
     "@gourmet/promise-protect": "^0.1.0",
     "@gourmet/resolve-template": "^0.1.0",
+    "@gourmet/get-exported": "^0.1.0",
     "domready": "^1.0.8",
     "multistream": "^2.1.0"
   },

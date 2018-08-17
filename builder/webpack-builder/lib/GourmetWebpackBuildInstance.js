@@ -10,6 +10,8 @@ const sortPlugins = require("@gourmet/plugin-sort");
 const merge = require("@gourmet/merge");
 const promiseProtect = require("@gourmet/promise-protect");
 const omit = require("@gourmet/omit");
+const relativePath = require("@gourmet/relative-path");
+const resolve = require("resolve");
 const webpack = require("webpack");
 const recordsFile = require("./recordsFile");
 
@@ -52,6 +54,11 @@ const COMPILATION_ERROR = {
   ErrorClass: HandledError,
   message: "${count} compilation error(s)",
   code: "COMPILATION_ERROR"
+};
+
+const NO_RENDERER_CLASS = {
+  message: "Renderer class is required but not defined by any plugins. Check your dependencies and try again.",
+  code: "NO_RENDERER_CLASS"
 };
 
 class GourmetWebpackBuildInstance {
@@ -120,40 +127,46 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackConfig(context) {
-    const config = {
-      context: this.getWebpackContext(context),
-      target: this.getWebpackTarget(context),
-      mode: this.getWebpackMode(context),
-      devtool: this.getWebpackDevTool(context),
-      optimization: this.getWebpackOptimization(context),
-      entry: this.getWebpackEntry(context),
-      resolve: this.getWebpackResolve(context),
-      module: this.getWebpackModule(context),
-      output: this.getWebpackOutput(context),
-      plugins: this.getWebpackPlugins(context),
-      recordsPath: this._recordsPath
+    const _get = (section, method) => {
+      config[section] = method.call(this, context, config);
+      if (userConfig && userConfig[section])
+        merge(config[section], userConfig[section]);
     };
+
+    const config = {};
     const userConfig = this._varsCache.webpack.config;
-    if (userConfig)
-      merge(config, userConfig);
+
+    _get("context", this.getWebpackContext);
+    _get("target", this.getWebpackTarget);
+    _get("mode", this.getWebpackMode);
+    _get("devtool", this.getWebpackDevTool);
+    _get("optimization", this.getWebpackOptimization);
+    _get("output", this.getWebpackOutput);
+    _get("resolve", this.getWebpackResolve);
+    _get("module", this.getWebpackModule);
+    _get("entry", this.getWebpackEntry);
+    _get("plugins", this.getWebpackPlugins);
+
+    config.recordsPath = this._recordsPath;
+
     return config;
   }
 
-  getWebpackContext(context) {
-    return context.plugins.runWaterfallSync("build:webpack:context", context.workDir, context);
+  getWebpackContext(context, config) {
+    return context.plugins.runWaterfallSync("build:webpack:context", context.workDir, context, config);
   }
 
-  getWebpackTarget(context) {
+  getWebpackTarget(context, config) {
     const target = context.target === "client" ? "web" : "node";
-    return context.plugins.runWaterfallSync("build:webpack:target", target, context);
+    return context.plugins.runWaterfallSync("build:webpack:target", target, context, config);
   }
 
-  getWebpackMode(context) {
+  getWebpackMode(context, config) {
     const mode = context.optimize ? "production" : "development";
-    return context.plugins.runWaterfallSync("build:webpack:mode", mode, context);
+    return context.plugins.runWaterfallSync("build:webpack:mode", mode, context, config);
   }
 
-  getWebpackDevTool(context) {
+  getWebpackDevTool(context, config) {
     function _devtool() {
       if (context.target === "client") {
         if (context.watch === "hot")
@@ -164,10 +177,10 @@ class GourmetWebpackBuildInstance {
       return context.sourceMap ? "source-map" : false;
     }
 
-    return context.plugins.runWaterfallSync("build:webpack:devtool", _devtool(), context);
+    return context.plugins.runWaterfallSync("build:webpack:devtool", _devtool(), context, config);
   }
 
-  getWebpackOptimization(context) {
+  getWebpackOptimization(context, config) {
     const optimization = {
       minimize: context.optimize,
       runtimeChunk: context.target === "client",
@@ -183,10 +196,10 @@ class GourmetWebpackBuildInstance {
         };
       })()
     };
-    return context.plugins.runWaterfallSync("build:webpack:optimization", optimization, context);
+    return context.plugins.runWaterfallSync("build:webpack:optimization", optimization, context, config);
   }
 
-  getWebpackEntry(context) {
+  getWebpackEntry(context, config) {
     const entry = this._varsCache.entry;
 
     if (!isPlainObject(entry))
@@ -211,7 +224,10 @@ class GourmetWebpackBuildInstance {
       const def = entry[name];
       let entryValue = _value(isPlainObject(def) ? def[context.target] : def);
 
-      entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context);
+      entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context, config);
+
+      if (!isPlainObject(def))
+        entryValue = this._generateEntryInit(entryValue, name, context, config);
 
       res[name] = (context.watch || entryValue.length > 1) ? entryValue : entryValue[0];
     });
@@ -219,23 +235,23 @@ class GourmetWebpackBuildInstance {
     return res;
   }
 
-  getWebpackResolve(context) {
-    const alias = this.getWebpackAlias(context);
+  getWebpackResolve(context, config) {
+    const alias = this.getWebpackAlias(context, config);
     const resolve = {extensions: [".js", ".json"], alias};
-    return this._runMergeSync("build:webpack:resolve", resolve, "resolve", context);
+    return this._runMergeSync("build:webpack:resolve", resolve, "resolve", context, config);
   }
 
-  getWebpackAlias(context) {
-    return this._runMergeSync("build:webpack:alias", {}, "alias", context);
+  getWebpackAlias(context, config) {
+    return this._runMergeSync("build:webpack:alias", {}, "alias", context, config);
   }
 
-  getWebpackModule(context) {
-    const rules = this.getWebpackRules(context);
+  getWebpackModule(context, config) {
+    const rules = this.getWebpackRules(context, config);
     const module = {rules};
-    return this._runMergeSync("build:webpack:module", module, "module", context);
+    return this._runMergeSync("build:webpack:module", module, "module", context, config);
   }
 
-  getWebpackRules(context) {
+  getWebpackRules(context, config) {
     function _resolve(select) {
       function _sort() {
         return Object.keys(select).map((key, idx) => {
@@ -294,8 +310,8 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    const pipelines = this._runMergeSync("build:webpack:pipelines", {}, "pipelines", context);
-    const defs = this._runMergeSync("build:webpack:loaders", {}, "loaders", context);
+    const pipelines = this._runMergeSync("build:webpack:pipelines", {}, "pipelines", context, config);
+    const defs = this._runMergeSync("build:webpack:loaders", {}, "loaders", context, config);
 
     const keys = Object.keys(defs);
 
@@ -324,7 +340,7 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  getWebpackOutput(context) {
+  getWebpackOutput(context, config) {
     const vars = this._varsCache.webpack;
     const name = (context.target === "server" || !context.optimize) ? "[name].bundle.js" : "[chunkHash].js";
     const output = {
@@ -335,21 +351,21 @@ class GourmetWebpackBuildInstance {
       hashFunction: vars.hashFunction || "sha1",
       hashDigestLength: vars.hashLength || 24
     };
-    return this._runMergeSync("build:webpack:output", output, "output", context);
+    return this._runMergeSync("build:webpack:output", output, "output", context, config);
   }
 
-  getWebpackDefine(context) {
+  getWebpackDefine(context, config) {
     return this._runMergeSync("build:webpack:define", {
       "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
       DEBUG: JSON.stringify(context.debug),
       SERVER: JSON.stringify(context.target === "server"),
       CLIENT: JSON.stringify(context.target === "client"),
       STAGE: JSON.stringify(context.stage)
-    }, "define", context);
+    }, "define", context, config);
   }
 
-  getWebpackPlugins(context) {
-    const define = this.getWebpackDefine(context);
+  getWebpackPlugins(context, config) {
+    const define = this.getWebpackDefine(context, config);
     let plugins = [];
 
     if (isPlainObject(define) && Object.keys(define).length > 1) {
@@ -360,7 +376,7 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    plugins = this._runMergeSync("build:webpack:plugins", plugins, "plugins", context);
+    plugins = this._runMergeSync("build:webpack:plugins", plugins, "plugins", context, config);
 
     return sortPlugins(plugins, {
       normalize(item) {
@@ -410,15 +426,15 @@ class GourmetWebpackBuildInstance {
 
   _getUserWebpackRecordsPath(context) {
     const dir = npath.resolve(context.workDir, this._varsCache.webpack.recordsDir || ".webpack");
-    return npath.join(dir, context.stage, `webpack.${this.target}.json`);
+    return npath.join(dir, context.stage, `webpack-records.${this.target}.json`);
   }
 
   _getWebpackRecordsPath(context) {
     const dir = npath.join(context.builder.outputDir, context.stage, "info");
-    return npath.join(dir, `webpack.${this.target}.json`);
+    return npath.join(dir, `webpack-records.${this.target}.json`);
   }
 
-  _runMergeSync(eventName, obj, sectionName, context, ...args) {
+  _runMergeSync(eventName, obj, sectionName, context, config, ...args) {
     let wrapped = false;
 
     if (Array.isArray(obj)) {
@@ -428,7 +444,7 @@ class GourmetWebpackBuildInstance {
       };
     }
 
-    context.plugins.runMergeSync(eventName, obj, context, ...args);
+    context.plugins.runMergeSync(eventName, obj, context, config, ...args);
 
     const userObj = (sectionName && this._varsCache.webpack && this._varsCache.webpack[sectionName]);
 
@@ -448,6 +464,34 @@ class GourmetWebpackBuildInstance {
       return obj[sectionName];
     else
       return obj;
+  }
+
+  _generateEntryInit(entryValue, name, context, config) {
+    let info = {
+      classModule: null
+    };
+
+    info = context.plugins.runWaterfallSync("build:webpack:entry_init", info, context, config, entryValue, name);
+
+    if (!info.classModule)
+      throw error(NO_RENDERER_CLASS);
+
+    const infoDir = npath.join(context.builder.outputDir, context.stage, "info");
+    const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
+    const absPath = resolve.sync(entryValue[entryValue.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
+    const userModule = relativePath(absPath, infoDir);
+
+    const content = [
+      '"use strict"',
+      `const Renderer = require("${info.classModule}");`,
+      `const render = require("${userModule}");`,
+      "const r = Renderer.create(render);",
+      context.target === "server" ? "__gourmet_module__.exports = r.getRenderer.bind(r);" : "r.render();"
+    ].join("\n");
+
+    context.builder.emitFileSync(outputPath, content);
+
+    return entryValue.slice(0, entryValue.length - 1).concat(relativePath(outputPath, context.workDir));
   }
 }
 

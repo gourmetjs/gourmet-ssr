@@ -2,6 +2,7 @@
 
 const domready = require("domready");
 const promiseProtect = require("@gourmet/promise-protect");
+const getExported = require("@gourmet/get-exported");
 
 // We don't need to wait for `DOMContentLoaded` because all `<script>` tags
 // are rendered with `defer` attribute which postpones the evaluation of
@@ -21,7 +22,7 @@ function _domready() {
 module.exports = class HtmlClientRenderer {
   constructor(render, options={}) {
     this.options = options;
-    this._userRenderer = render;
+    this._userRenderer = getExported(render);
   }
 
   invokeUserRenderer(gmctx) {
@@ -81,5 +82,10 @@ module.exports = class HtmlClientRenderer {
       div.innerHTML = `<pre style="${style}">${errmsg}</pre>`;
       document.body.appendChild(div);
     }
+  }
+
+  static create(render, options) {
+    const Klass = this;
+    return new Klass(render, options);
   }
 };

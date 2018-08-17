@@ -1,29 +1,34 @@
 "use strict";
 
-class GourmetPresetReact {
-  _onWebpackAlias(context) {
+// This preset is designed to replace `@gourmet/preset-core`, instead of being
+// supplemental to avoid peer dependency warnings from React, Webpack & Babel
+// plugins.
+class PresetReact {
+  onAlias(context) {
     const moduleDir = context.builder.moduleDir(__dirname);
     return {
-      "react": moduleDir("react"),
-      "react-dom": moduleDir("react-dom"),
-      "classnames": moduleDir("classnames"),
-      "prop-types": moduleDir("prop-types"),
-      "@gourmet/self-url": moduleDir("@gourmet/self-url"),
+      "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
       "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
-      "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable")
+      "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable"),
+      "react-hot-loader": moduleDir("react-hot-loader")
     };
   }
 }
 
-GourmetPresetReact.meta = {
+PresetReact.meta = {
   subplugins: [
+    "@gourmet/plugin-webpack-builder",
+    "@gourmet/plugin-webpack-babel",
+    "@gourmet/plugin-webpack-global-css",
+    "@gourmet/plugin-webpack-blob",
+    "@gourmet/plugin-webpack-dev-server",
     "@gourmet/plugin-webpack-react",
     "@gourmet/plugin-webpack-react-hot-loader",
     "@gourmet/plugin-webpack-react-loadable"
   ],
   hooks: {
-    "build:webpack:alias": GourmetPresetReact.prototype._onWebpackAlias
+    "build:webpack:alias": PresetReact.prototype.onAlias
   }
 };
 
-module.exports = GourmetPresetReact;
+module.exports = PresetReact;

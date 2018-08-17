@@ -1,7 +1,7 @@
 "use strict";
 
-class GourmetPluginWebpackReactHotLoader {
-  _onWebpackPipelines(context) {
+class PluginReactHotLoader {
+  onPipelines(context) {
     return {
       js: [{
         loader: "#babel-loader",
@@ -14,21 +14,12 @@ class GourmetPluginWebpackReactHotLoader {
       }]
     };
   }
-
-  _onWebpackAlias(context) {
-    if (context.watch === "hot") {
-      return {
-        "react-hot-loader": context.builder.moduleDir(__dirname)("react-hot-loader")
-      };
-    }
-  }
 }
 
-GourmetPluginWebpackReactHotLoader.meta = {
-  hooks: (proto => ({
-    "build:webpack:pipelines": proto._onWebpackPipelines,
-    "build:webpack:alias": proto._onWebpackAlias
-  }))(GourmetPluginWebpackReactHotLoader.prototype)
+PluginReactHotLoader.meta = {
+  hooks: {
+    "build:webpack:pipelines": PluginReactHotLoader.prototype.onPipelines
+  }
 };
 
-module.exports = GourmetPluginWebpackReactHotLoader;
+module.exports = PluginReactHotLoader;

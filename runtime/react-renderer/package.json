@@ -1,7 +1,6 @@
 {
   "name": "@gourmet/react-renderer",
   "version": "0.2.4",
-  "main": "client.js",
   "publishConfig": {
     "access": "restricted"
   },
@@ -10,6 +9,7 @@
     "@gourmet/loadable-registrar": "^0.1.1"
   },
   "peerDependencies": {
+    "@gourmet/react-context-gmctx": "*",
     "react": "16",
     "react-dom": "16"
   }

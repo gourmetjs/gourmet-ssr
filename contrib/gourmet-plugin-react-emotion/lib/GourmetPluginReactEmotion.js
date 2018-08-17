@@ -1,7 +1,7 @@
 "use strict";
 
-class GourmetPluginReactEmotion {
-  _onWebpackPipelines(context) {
+class PluginReactEmotion {
+  onPipelines(context) {
     return {
       js: [{
         loader: "#babel-loader",
@@ -19,12 +19,20 @@ class GourmetPluginReactEmotion {
       }]
     };
   }
+
+  onEntryInit(info, {target}) {
+    const name = target[0].toUpperCase() + target.substr(1);
+    return Object.assign({}, info, {
+      classModule: "@gourmet/emotion-renderer/lib/Emotion" + name + "Renderer"
+    });
+  }
 }
 
-GourmetPluginReactEmotion.meta = {
-  hooks: (proto => ({
-    "build:webpack:pipelines": proto._onWebpackPipelines
-  }))(GourmetPluginReactEmotion.prototype)
+PluginReactEmotion.meta = {
+  hooks: {
+    "build:webpack:pipelines": PluginReactEmotion.prototype.onPipelines,
+    "build:webpack:entry_init": PluginReactEmotion.prototype.onEntryInit
+  }
 };
 
-module.exports = GourmetPluginReactEmotion;
+module.exports = PluginReactEmotion;

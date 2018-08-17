@@ -7,6 +7,7 @@ const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
 const promiseProtect = require("@gourmet/promise-protect");
 const resolveTemplate = require("@gourmet/resolve-template");
+const getExported = require("@gourmet/get-exported");
 const pageTemplate = require("./pageTemplate");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
@@ -29,7 +30,7 @@ function _bufStream(buf) {
 module.exports = class HtmlServerRenderer {
   constructor(render, options={}) {
     this.options = options;
-    this._userRenderer = render;
+    this._userRenderer = getExported(render);
     this._pageTemplate = resolveTemplate(options.pageTemplate, pageTemplate);
   }
 
@@ -250,5 +251,10 @@ module.exports = class HtmlServerRenderer {
     }, {});
 
     return Object.keys(bundles);
+  }
+
+  static create(render, options) {
+    const Klass = this;
+    return new Klass(render, options);
   }
 };

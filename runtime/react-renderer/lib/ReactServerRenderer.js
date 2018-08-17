@@ -3,7 +3,7 @@
 const ReactDOMServer = require("react-dom/server");
 const HtmlServerRenderer = require("@gourmet/html-renderer/lib/HtmlServerRenderer");
 const registrar = require("@gourmet/loadable-registrar");
-const provideContext = require("./provideContext");
+const wrapWithContext = require("./wrapWithContext");
 
 // Options:
 //  - reactServerRender: "string", "static_markup", "stream", "static_stream"
@@ -11,7 +11,7 @@ module.exports = class ReactServerRenderer extends HtmlServerRenderer {
   invokeUserRenderer(gmctx) {
     return registrar.loadAll().then(() => {
       return super.invokeUserRenderer(gmctx).then(element => {
-        return provideContext(gmctx, element);
+        return wrapWithContext(gmctx, element);
       });
     });
   }

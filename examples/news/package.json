@@ -3,17 +3,21 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "hot": "node server/lib/devel.js --hot",
-    "watch": "node server/lib/devel.js --watch"
+    "hot": "node lib/devel.js --hot",
+    "watch": "node lib/devel.js --watch",
+    "start": "node lib/devel.js",
+    "build": "gourmet build"
   },
   "dependencies": {
     "@gourmet/server-impl-watch": "^0.2.5",
     "got": "^8.3.1"
   },
   "devDependencies": {
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "classnames": "^2.2.6",
     "@gourmet/example-news-view": "^0.1.2",
     "@gourmet/gourmet-cli": "^0.2.1",
-    "@gourmet/preset-builder": "^0.3.0",
     "@gourmet/preset-react-emotion": "^0.2.5"
   }
 }

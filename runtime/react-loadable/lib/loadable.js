@@ -1,8 +1,8 @@
 "use strict";
 
 const React = require("react");
-const PropTypes = require("prop-types");
 const registrar = require("@gourmet/loadable-registrar");
+const ReactContext = require("@gourmet/react-context-gmctx");
 
 function render(loaded, props) {
   return React.createElement(loaded && loaded.__esModule ? loaded.default : loaded, props);
@@ -99,7 +99,7 @@ function loadable(options) {
     }
 
     _loadModule() {
-      const gmctx = this.context.gmctx;
+      const gmctx = this.props.gmctx;
 
       if (gmctx && gmctx.isServer && info.id)
         gmctx.addRenderedLoadable(info.id);
@@ -173,11 +173,27 @@ function loadable(options) {
     }
   }
 
-  LoadableComponent.contextTypes = {
-    gmctx: PropTypes.object
-  };
+  const suffix = info.id ? ("_" + info.id) : "";
 
-  return LoadableComponent;
+  LoadableComponent.displayName = "LoadableComponent" + suffix;
+
+  if (SERVER) {
+    // Wrappping a LoadableComponent with Context.Consumer breaks react-hot-loader
+    const hoc = props => React.createElement(
+      ReactContext.Consumer,
+      null,
+      gmctx => React.createElement(
+        LoadableComponent,
+        Object.assign({gmctx}, props)
+      )
+    );
+
+    hoc.displayName = "LoadableComponentHoc" + suffix;
+
+    return hoc;
+  } else {
+    return LoadableComponent;
+  }
 }
 
 module.exports = loadable;

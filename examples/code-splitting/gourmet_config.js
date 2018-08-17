@@ -3,7 +3,7 @@
 module.exports = {
   entry: {
     main: "./src/main/${context:target}.js",
-    admin: ["./src/admin/init.js", "./src/admin/${context:target}.js"]
+    admin: ["./src/admin/init.js", "./src/admin/render.js"]
   },
   config: {
     html: {

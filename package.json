@@ -1,12 +1,12 @@
 {
   "scripts": {
     "ladd": "lerna add",
-    "lrun": "lerna run",
+    "lrun": "lerna run --stream",
     "updated": "lerna updated",
     "lpub": "lerna publish",
     "deps:win": "lerna exec --bail=false --concurrency=1 -- \"echo %LERNA_PACKAGE_NAME% && dependency-check .\"",
     "clean": "lerna clean",
-    "bootstrap": "lerna bootstrap",
+    "bootstrap": "lerna bootstrap --stream",
     "test": "lerna run test --concurrency=1",
     "lint": "eslint . --ext .js,.jsx"
   },
