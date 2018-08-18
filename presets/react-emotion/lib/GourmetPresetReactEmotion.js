@@ -12,7 +12,8 @@ class PresetReactEmotion {
       "react-hot-loader": moduleDir("react-hot-loader"),
       "emotion": moduleDir("emotion"),
       "react-emotion": moduleDir("react-emotion"),
-      "@gourmet/emotion-renderer": moduleDir("@gourmet/emotion-renderer")
+      "@gourmet/emotion-renderer": moduleDir("@gourmet/emotion-renderer"),
+      "@gourmet/watch-middleware": moduleDir("@gourmet/watch-middleware")
     };
   }
 }

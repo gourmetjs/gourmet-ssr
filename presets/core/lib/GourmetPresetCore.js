@@ -4,7 +4,8 @@ class PresetCore {
   onAlias(context) {
     const moduleDir = context.builder.moduleDir(__dirname);
     return {
-      "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer")
+      "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer"),
+      "@gourmet/watch-middleware": moduleDir("@gourmet/watch-middleware")
     };
   }
 }

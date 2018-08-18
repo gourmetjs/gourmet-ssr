@@ -22,9 +22,10 @@
     "@gourmet/react-context-gmctx": "^0.2.0",
     "@gourmet/react-loadable": "^0.2.0",
     "@gourmet/react-renderer": "^0.3.0",
+    "@gourmet/watch-middleware": "^0.3.0",
     "babel-core": "^6.26.3",
-    "react-hot-loader": "^4.3.4",
-    "webpack": "^4.16.5"
+    "webpack": "^4.16.5",
+    "react-hot-loader": "^4.3.4"
   },
   "peerDependencies": {
     "react": "16",

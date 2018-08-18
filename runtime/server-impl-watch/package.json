@@ -7,7 +7,9 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/server-impl-lib": "^0.3.0",
-    "@gourmet/watch-middleware": "^0.3.0"
+    "@gourmet/server-impl-lib": "^0.3.0"
+  },
+  "peerDependencies": {
+    "@gourmet/watch-middleware": "*"
   }
 }

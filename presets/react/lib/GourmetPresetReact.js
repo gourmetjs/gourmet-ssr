@@ -10,6 +10,7 @@ class PresetReact {
       "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
       "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
       "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable"),
+      "@gourmet/watch-middleware": moduleDir("@gourmet/watch-middleware"),
       "react-hot-loader": moduleDir("react-hot-loader")
     };
   }
