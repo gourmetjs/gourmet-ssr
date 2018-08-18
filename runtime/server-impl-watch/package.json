@@ -8,8 +8,5 @@
   },
   "dependencies": {
     "@gourmet/server-impl-lib": "^0.3.0"
-  },
-  "peerDependencies": {
-    "@gourmet/watch-middleware": "*"
   }
 }
