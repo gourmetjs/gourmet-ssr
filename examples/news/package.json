@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-news",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "scripts": {
     "hot": "node lib/devel.js --hot",
@@ -9,7 +9,7 @@
     "build": "gourmet build"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.3.1",
+    "@gourmet/server-impl-watch": "^0.3.2",
     "got": "^8.3.1"
   },
   "devDependencies": {

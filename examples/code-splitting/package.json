@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-code-splitting",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "scripts": {
     "hot": "node lib/devel.js --hot",
@@ -12,7 +12,7 @@
     "test:prod": "gourmet build --verbose 0 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.3.1"
+    "@gourmet/server-impl-watch": "^0.3.2"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-hmr",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "scripts": {
     "hot": "node lib/server.js --hot",
@@ -9,7 +9,7 @@
     "build": "gourmet build"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.3.1"
+    "@gourmet/server-impl-watch": "^0.3.2"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
