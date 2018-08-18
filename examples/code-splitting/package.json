@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-code-splitting",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "scripts": {
     "hot": "node lib/devel.js --hot",
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
-    "@gourmet/preset-react-emotion": "^0.3.1",
+    "@gourmet/preset-react-emotion": "^0.3.2",
     "@gourmet/promise-tape": "^0.2.0",
     "@gourmet/puppeteer-args": "^0.2.0",
     "@gourmet/server-args": "^0.1.1",

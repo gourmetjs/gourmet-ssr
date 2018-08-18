@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-hmr",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "scripts": {
     "hot": "node lib/server.js --hot",
@@ -13,6 +13,6 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
-    "@gourmet/preset-react-emotion": "^0.3.1"
+    "@gourmet/preset-react-emotion": "^0.3.2"
   }
 }

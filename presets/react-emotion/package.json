@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/preset-react-emotion",
   "description": "Gourmet Preset containing all packages of `@gourmet/preset-react` plus additional packages for React Emotion project",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "lib/GourmetPresetReactEmotion.js",
   "publishConfig": {
     "access": "restricted"
@@ -25,8 +25,9 @@
     "@gourmet/react-loadable": "^0.2.0",
     "@gourmet/watch-middleware": "^0.3.0",
     "babel-core": "^6.26.3",
-    "emotion": "^9.1.1",
-    "react-emotion": "^9.1.1",
+    "emotion": "^9.2.6",
+    "prop-types": "^15.6.2",
+    "react-emotion": "^9.2.6",
     "react-hot-loader": "^4.3.4",
     "webpack": "^4.16.5"
   }
