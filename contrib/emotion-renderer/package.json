@@ -1,11 +1,11 @@
 {
   "name": "@gourmet/emotion-renderer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/react-renderer": "^0.2.4",
+    "@gourmet/react-renderer": "^0.3.0",
     "emotion-server": "^9.1.1"
   }
 }

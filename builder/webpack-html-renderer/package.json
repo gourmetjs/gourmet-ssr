@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/plugin-webpack-html-renderer",
   "description": "Gourmet Webpack Builder plugin for adding '@gourmet/html-renderer'",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/GourmetPluginWebpackHtmlRenderer.js",
   "publishConfig": {
     "access": "restricted"

@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/preset-react-emotion",
   "description": "Gourmet Preset containing all packages of `@gourmet/preset-react` plus additional packages for React Emotion project",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "main": "lib/GourmetPresetReactEmotion.js",
   "publishConfig": {
     "access": "restricted"
@@ -11,22 +11,22 @@
     "gourmet-preset"
   ],
   "dependencies": {
+    "@gourmet/emotion-renderer": "^0.2.0",
+    "@gourmet/plugin-react-emotion": "^0.2.0",
     "@gourmet/plugin-webpack-babel": "^0.3.0",
     "@gourmet/plugin-webpack-blob": "^0.1.0",
-    "@gourmet/plugin-webpack-builder": "^0.3.0",
-    "@gourmet/plugin-webpack-dev-server": "^0.2.5",
+    "@gourmet/plugin-webpack-builder": "^0.4.0",
+    "@gourmet/plugin-webpack-dev-server": "^0.3.0",
     "@gourmet/plugin-webpack-global-css": "^0.3.0",
+    "@gourmet/plugin-webpack-react": "^0.2.0",
+    "@gourmet/plugin-webpack-react-hot-loader": "^0.2.0",
+    "@gourmet/plugin-webpack-react-loadable": "^0.2.0",
+    "@gourmet/react-context-gmctx": "^0.2.0",
+    "@gourmet/react-loadable": "^0.2.0",
     "babel-core": "^6.26.3",
-    "webpack": "^4.16.5",
-    "@gourmet/plugin-webpack-react": "^0.1.1",
-    "@gourmet/plugin-webpack-react-loadable": "^0.1.1",
-    "@gourmet/plugin-webpack-react-hot-loader": "^0.1.0",
-    "@gourmet/react-context-gmctx": "^0.1.0",
-    "@gourmet/react-loadable": "^0.1.2",
-    "react-hot-loader": "^4.3.4",
-    "@gourmet/plugin-react-emotion": "^0.1.0",
-    "@gourmet/emotion-renderer": "^0.1.0",
     "emotion": "^9.1.1",
-    "react-emotion": "^9.1.1"
+    "react-emotion": "^9.1.1",
+    "react-hot-loader": "^4.3.4",
+    "webpack": "^4.16.5"
   }
 }

@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/server-impl-watch",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Front server implementation supporting '--hot' and '--watch' option in addition to `@gourmet/server-impl-lib'",
   "main": "lib/ServerImplWatch.js",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
-    "@gourmet/server-impl-lib": "^0.2.5",
-    "@gourmet/watch-middleware": "^0.2.1"
+    "@gourmet/server-impl-lib": "^0.3.0",
+    "@gourmet/watch-middleware": "^0.3.0"
   }
 }

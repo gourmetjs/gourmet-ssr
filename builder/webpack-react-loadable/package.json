@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-react-loadable",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "lib/GourmetPluginWebpackReactLoadable.js",
   "publishConfig": {
     "access": "restricted"
@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@gourmet/babel-plugin-gourmet-loadable": "^0.1.1",
-    "@gourmet/relative-path": "^0.1.1",
+    "@gourmet/relative-path": "^0.2.0",
     "resolve": "^1.6.0"
   }
 }

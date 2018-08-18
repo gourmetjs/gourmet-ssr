@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-react",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Gourmet Webpack Builder plugin for adding `babel-preset-react` to build JSX files",
   "keywords": [
     "gourmet-plugin"
