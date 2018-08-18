@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-builder-basic",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "scripts": {
     "test": "yarn test:local && yarn test:prod",
@@ -8,7 +8,7 @@
     "test:prod": "gourmet build --config-name gourmet_cfg --verbose 0 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.3.0"
+    "@gourmet/server-impl-watch": "^0.3.1"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
