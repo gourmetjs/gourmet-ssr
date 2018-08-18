@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/preset-react-emotion",
   "description": "Gourmet Preset containing all packages of `@gourmet/preset-react` plus additional packages for React Emotion project",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "main": "lib/GourmetPresetReactEmotion.js",
   "publishConfig": {
     "access": "restricted"
@@ -11,7 +11,7 @@
     "gourmet-preset"
   ],
   "dependencies": {
-    "@gourmet/emotion-renderer": "^0.2.0",
+    "@gourmet/emotion-renderer": "^0.2.1",
     "@gourmet/plugin-react-emotion": "^0.2.0",
     "@gourmet/plugin-webpack-babel": "^0.3.0",
     "@gourmet/plugin-webpack-blob": "^0.1.0",
