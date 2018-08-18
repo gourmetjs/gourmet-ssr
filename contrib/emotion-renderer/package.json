@@ -6,6 +6,6 @@
   },
   "dependencies": {
     "@gourmet/react-renderer": "^0.3.0",
-    "emotion-server": "^9.1.1"
+    "emotion-server": "^9.2.6"
   }
 }

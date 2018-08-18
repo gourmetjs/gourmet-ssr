@@ -3,6 +3,9 @@
 // This preset is designed to replace `@gourmet/preset-react`, instead of being
 // supplemental to avoid peer dependency warnings from React, Webpack & Babel
 // plugins.
+//
+// 8/17/2018 Added `prop-types` to prevent the following warning from yarn:
+//   "@gourmet/preset-react-emotion > react-emotion > create-emotion-styled@9.2.6" has unmet peer dependency "prop-types@15.x".
 class PresetReactEmotion {
   onAlias(context) {
     const moduleDir = context.builder.moduleDir(__dirname);
