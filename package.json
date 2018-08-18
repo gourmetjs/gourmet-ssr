@@ -7,7 +7,7 @@
     "deps:win": "lerna exec --bail=false --concurrency=1 -- \"echo %LERNA_PACKAGE_NAME% && dependency-check .\"",
     "clean": "lerna clean --stream",
     "bootstrap": "lerna bootstrap --stream",
-    "test": "lerna run test --concurrency=1",
+    "test": "lerna run test --concurrency=1 --stream",
     "lint": "eslint . --ext .js,.jsx"
   },
   "devDependencies": {

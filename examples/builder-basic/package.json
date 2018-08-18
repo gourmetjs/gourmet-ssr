@@ -15,6 +15,7 @@
     "@gourmet/plugin-webpack-babel": "^0.3.0",
     "@gourmet/plugin-webpack-builder": "^0.4.0",
     "@gourmet/plugin-webpack-dev-server": "^0.3.0",
+    "@gourmet/watch-middleware": "^0.3.0",
     "@gourmet/promise-tape": "^0.2.0",
     "@gourmet/puppeteer-args": "^0.2.0",
     "@gourmet/server-args": "^0.1.1",
