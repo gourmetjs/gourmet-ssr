@@ -23,9 +23,9 @@ PresetReact.meta = {
     "@gourmet/plugin-webpack-global-css",
     "@gourmet/plugin-webpack-blob",
     "@gourmet/plugin-webpack-dev-server",
-    "@gourmet/plugin-webpack-react",
-    "@gourmet/plugin-webpack-react-hot-loader",
-    "@gourmet/plugin-webpack-react-loadable"
+    "@gourmet/plugin-react",
+    "@gourmet/plugin-react-hot-loader",
+    "@gourmet/plugin-react-loadable"
   ],
   hooks: {
     "build:webpack:alias": PresetReact.prototype.onAlias

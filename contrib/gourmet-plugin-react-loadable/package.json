@@ -1,7 +1,7 @@
 {
-  "name": "@gourmet/plugin-webpack-react-loadable",
+  "name": "@gourmet/plugin-react-loadable",
   "version": "0.2.0",
-  "main": "lib/GourmetPluginWebpackReactLoadable.js",
+  "main": "lib/GourmetPluginReactLoadable.js",
   "publishConfig": {
     "access": "restricted"
   },
