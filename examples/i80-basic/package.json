@@ -1,0 +1,20 @@
+{
+  "name": "@gourmet/example-cs-i80",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "hot": "node lib/devel.js --hot",
+    "watch": "node lib/devel.js --watch",
+    "start": "node lib/devel.js",
+    "build": "gourmet build"
+  },
+  "dependencies": {
+    "@gourmet/server-impl-watch": "^0.3.2"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^0.2.1",
+    "@gourmet/preset-react-emotion": "^0.3.3",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
+  }
+}
