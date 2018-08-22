@@ -8,5 +8,8 @@
   },
   "keywords": [
     "gourmet-plugin"
-  ]
+  ],
+  "peerDependencies": {
+    "@gourmet/html-renderer": "*"
+  }
 }

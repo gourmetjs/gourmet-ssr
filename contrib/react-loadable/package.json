@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/react-loadable",
   "version": "0.2.0",
-  "main": "lib/loadable.js",
+  "main": "src/loadable.js",
   "publishConfig": {
     "access": "restricted"
   },

@@ -1,7 +1,7 @@
 "use strict";
 
 const {renderStylesToString, renderStylesToNodeStream} = require("emotion-server");
-const ReactServerRenderer = require("@gourmet/react-renderer/lib/ReactServerRenderer");
+const ReactServerRenderer = require("@gourmet/react-renderer/src/ReactServerRenderer");
 
 class EmotionServerRenderer extends ReactServerRenderer {
   renderToMedium(gmctx, element) {

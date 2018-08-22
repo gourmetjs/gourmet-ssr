@@ -8,8 +8,8 @@
     "start": "node lib/devel.js",
     "build": "gourmet build",
     "test": "yarn test:local && yarn test:prod",
-    "test:local": "gourmet build --verbose 0 && tape test/*_test.js",
-    "test:prod": "gourmet build --verbose 0 --stage prod && tape test/*_test.js --stage prod"
+    "test:local": "gourmet build --verbose 1 && tape test/*_test.js",
+    "test:prod": "gourmet build --verbose 1 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
     "@gourmet/server-impl-watch": "^0.3.2"

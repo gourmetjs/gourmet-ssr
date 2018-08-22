@@ -22,9 +22,9 @@ class PluginReactEmotion {
 
   onEntryInit(info, {target}) {
     const name = target[0].toUpperCase() + target.substr(1);
-    return Object.assign({}, info, {
-      classModule: "@gourmet/emotion-renderer/lib/Emotion" + name + "Renderer"
-    });
+    return {
+      classModule: "@gourmet/emotion-renderer/src/Emotion" + name + "Renderer"
+    };
   }
 }
 

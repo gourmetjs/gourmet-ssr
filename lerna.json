@@ -8,6 +8,7 @@
     "runtime/*",
     "contrib/*",
     "presets/*",
+    "integration/*",
     "examples/*"
   ],
   "hoist": true,

@@ -35,7 +35,7 @@ class PluginReact {
   onEntryInit(info, {target}) {
     const name = target[0].toUpperCase() + target.substr(1);
     return Object.assign({}, info, {
-      classModule: "@gourmet/react-renderer/lib/React" + name + "Renderer"
+      classModule: "@gourmet/react-renderer/src/React" + name + "Renderer"
     });
   }
 }

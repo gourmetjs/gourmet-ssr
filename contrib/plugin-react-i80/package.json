@@ -1,0 +1,14 @@
+{
+  "name": "@gourmet/plugin-react-i80",
+  "version": "0.1.0",
+  "main": "lib/GourmetPluginReactI80.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "peerDependencies": {
+    "@gourmet/react-i80": "*"
+  }
+}

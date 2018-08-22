@@ -1,7 +1,7 @@
 "use strict";
 
 const ReactDOM = require("react-dom");
-const HtmlClientRenderer = require("@gourmet/html-renderer/lib/HtmlClientRenderer");
+const HtmlClientRenderer = require("@gourmet/html-renderer/src/HtmlClientRenderer");
 const registrar = require("@gourmet/loadable-registrar");
 const wrapWithContext = require("./wrapWithContext");
 

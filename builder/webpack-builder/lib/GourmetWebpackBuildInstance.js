@@ -467,11 +467,45 @@ class GourmetWebpackBuildInstance {
   }
 
   _generateEntryInit(entryValue, name, context, config) {
+    function _resolve(list) {
+      if (Array.isArray(list) && list.length) {
+        return list.map(modulePath => {
+          return `require("${modulePath}")`;
+        });
+      }
+    }
+
+    function _options() {
+      function _add(items) {
+        items.forEach(item => {
+          output.push(`    '${item}'`);
+        });
+      }
+
+      const output = ["{"];
+
+      if (prerender) {
+        output.push("  prerender: [");
+        _add(prerender);
+        output.push(postrender ? "  ]," : "  ]");
+      }
+      if (postrender) {
+        output.push("  postrender: [");
+        _add(postrender);
+        output.push("  ]");
+      }
+      output.push("}");
+
+      return output.join("\n");
+    }
+
     let info = {
-      classModule: null
+      classModule: null,
+      prerender: [],
+      postrender: []
     };
 
-    info = context.plugins.runWaterfallSync("build:webpack:entry_init", info, context, config, entryValue, name);
+    info = context.plugins.runMergeSync("build:webpack:entry_init", {}, info, context, config, entryValue, name);
 
     if (!info.classModule)
       throw error(NO_RENDERER_CLASS);
@@ -480,12 +514,20 @@ class GourmetWebpackBuildInstance {
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
     const absPath = resolve.sync(entryValue[entryValue.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
     const userModule = relativePath(absPath, infoDir);
+    const prerender = _resolve(info.prerender);
+    const postrender = _resolve(info.postrender);
+    let options;
+
+    if (prerender || postrender)
+      options = ", " + _options();
+    else
+      options = "";
 
     const content = [
       '"use strict"',
       `const Renderer = require("${info.classModule}");`,
       `const render = require("${userModule}");`,
-      "const r = Renderer.create(render);",
+      `const r = Renderer.create(render${options});`,
       context.target === "server" ? "__gourmet_module__.exports = r.getRenderer.bind(r);" : "r.render();"
     ].join("\n");
 

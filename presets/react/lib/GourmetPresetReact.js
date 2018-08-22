@@ -10,8 +10,9 @@ class PresetReact {
       "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
       "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
       "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable"),
-      "@gourmet/watch-middleware": moduleDir("@gourmet/watch-middleware"),
-      "react-hot-loader": moduleDir("react-hot-loader")
+      "@gourmet/react-i80": moduleDir("@gourmet/react-i80"),
+      "react-hot-loader": moduleDir("react-hot-loader"),
+      "@gourmet/watch-middleware": moduleDir("@gourmet/watch-middleware")
     };
   }
 }
@@ -25,7 +26,8 @@ PresetReact.meta = {
     "@gourmet/plugin-webpack-dev-server",
     "@gourmet/plugin-react",
     "@gourmet/plugin-react-hot-loader",
-    "@gourmet/plugin-react-loadable"
+    "@gourmet/plugin-react-loadable",
+    "@gourmet/plugin-react-i80"
   ],
   hooks: {
     "build:webpack:alias": PresetReact.prototype.onAlias

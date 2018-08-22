@@ -9,6 +9,6 @@
     "gourmet-plugin"
   ],
   "peerDependencies": {
-    "react-hot-loader": "^4.0.0"
+    "react-hot-loader": "4"
   }
 }
