@@ -2,7 +2,7 @@
 
 module.exports = {
   entry: {
-    main: "./src/main/MainPage.js"
+    main: "./src/main/renderMain.js"
   },
   config: {
     html: {

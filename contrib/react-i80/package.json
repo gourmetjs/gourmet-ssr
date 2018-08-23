@@ -1,7 +1,11 @@
 {
   "name": "@gourmet/react-i80",
   "version": "0.1.0",
+  "main": "src/index.js",
   "publishConfig": {
     "access": "restricted"
+  },
+  "dependencies": {
+    "path-to-regexp": "^0.1.7"
   }
 }
