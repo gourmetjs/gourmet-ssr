@@ -1,7 +1,8 @@
 {
   "name": "@gourmet/react-i80",
   "version": "0.1.0",
-  "main": "src/index.js",
+  "browser": "src/client.js",
+  "main": "src/server.js",
   "publishConfig": {
     "access": "restricted"
   },

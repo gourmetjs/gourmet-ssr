@@ -5,7 +5,7 @@ const HomeView = loadable({
 });
 
 HomeView.getInitialProps = async function(props) {};    // props
-HomeView.routerName = "Home";
+HomeView.routeName = "Home";
 HomeView.autoPreload = false;   // Used by <Link/>
 
 export default HomeView;

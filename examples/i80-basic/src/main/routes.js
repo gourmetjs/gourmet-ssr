@@ -1,14 +1,16 @@
-import {defineRoutes} from "@gourmet/react-i80";
 import HomeView from "../components/HomeView";
 import MessagesView from "../components/MessagesView";
 import ProfileView from "../components/ProfileView";
+import adminRoutes from "./adminRoutes";
 
-defineRoutes({
-  "/": HomeView,
-  "/messages/:ncol": MessagesView,
-  "/profile/:id": ProfileView
-}, {
-  basePath: "/",
-  fallthrough: true,
-  plainLinks: true
-});
+const routes = [
+  ["/", HomeView],    // Route middlewares
+  ["/messages/:ncol", MessagesView],
+  ["/profile/:id", ProfileView],
+  ["/admin", adminRoutes]
+];
+
+routes.caseSensitive = false;   // default is true
+routes.strictSlash = true;      // default is false
+
+export default routes;
