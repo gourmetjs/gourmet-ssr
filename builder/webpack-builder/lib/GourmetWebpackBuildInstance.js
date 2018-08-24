@@ -484,12 +484,14 @@ class GourmetWebpackBuildInstance {
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
     const absPath = resolve.sync(entryValue[entryValue.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
     const userModule = relativePath(absPath, infoDir);
+    const iopts = this._varsCache.builder.initOptions;
+    const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";
 
     const content = [
       '"use strict"',
       `const Renderer = ${_renderer(info.renderer)};`,
       `const render = require("${userModule}");`,
-      "const r = Renderer.create(render);",
+      `const r = Renderer.create(render${options});`,
       context.target === "server" ? "__gourmet_module__.exports = r.getRenderer.bind(r);" : "r.render();"
     ].join("\n");
 

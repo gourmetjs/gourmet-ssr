@@ -28,7 +28,7 @@ function _bufStream(buf) {
 class HtmlServerRenderer extends BaseRenderer {
   constructor(render, options) {
     super(render, options);
-    this._pageTemplate = resolveTemplate(options.pageTemplate, pageTemplate);
+    this._pageTemplate = resolveTemplate(this.options.pageTemplate, pageTemplate);
   }
 
   renderToMedium(gmctx, content) {

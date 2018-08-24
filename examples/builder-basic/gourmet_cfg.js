@@ -24,7 +24,10 @@ module.exports = context => ({
     runtime: {
       client: null,   // browserlist's default
       server: "6.1"   // node 6.10
-    }
+    },
+
+    // Options to be given to the init function
+    initOptions: null
   },
 
   webpack: {

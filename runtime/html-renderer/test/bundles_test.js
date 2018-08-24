@@ -1,7 +1,7 @@
 "use strict";
 
 const test = require("tape");
-const HtmlServerRenderer = require("../src/HtmlServerRenderer");
+const HtmlServerRenderer = require("../src/getHtmlServerRenderer")();
 
 test("getBundles() basic", t => {
   const r = new HtmlServerRenderer();

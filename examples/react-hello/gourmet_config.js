@@ -1,6 +1,11 @@
 "use strict";
 
 module.exports = {
+  builder: {
+    initOptions: {
+      dataPropertyName: "__INIT_DATA__"
+    }
+  },
   entry: {
     main: "./src/main.js"
   },

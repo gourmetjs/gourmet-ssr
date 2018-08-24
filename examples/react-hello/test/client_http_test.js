@@ -58,6 +58,12 @@ test("run puppeteer", pt(async t => {
 
   t.notEqual(curTime, "-");
 
+  const initData = await page.evaluate(() => {
+    return window.__INIT_DATA__;
+  });
+
+  t.ok(typeof initData === "object");
+
   await browser.close();
 }));
 
