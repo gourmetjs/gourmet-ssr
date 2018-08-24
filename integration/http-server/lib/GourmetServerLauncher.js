@@ -32,7 +32,7 @@ class GourmetServerLauncher {
     if (ServerClass)
       this.ServerClass = ServerClass;
     else
-      this.ServerClass = require("../lib/GourmetHttpServer");
+      this.ServerClass = require("./GourmetHttpServer");
   }
 
   initConsole() {

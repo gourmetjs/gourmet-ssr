@@ -9,7 +9,7 @@ const parseArgs = require("@gourmet/parse-args");
 const promiseMain = require("@gourmet/promise-main");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
-const HandledError = require("@gourmet/error/lib/HandledError");
+const HandledError = require("@gourmet/error/HandledError");
 const PluginManager = require("./PluginManager");
 const PluginBuiltinHelp = require("./PluginBuiltinHelp");
 

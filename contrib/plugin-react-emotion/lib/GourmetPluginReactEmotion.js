@@ -20,15 +20,21 @@ class PluginReactEmotion {
     };
   }
 
-  onEntryInit(info, {target}) {
-    const name = target[0].toUpperCase() + target.substr(1);
-    return {
-      classModule: "@gourmet/emotion-renderer/src/Emotion" + name + "Renderer"
-    };
+  onEntryInit({target}) {
+    if (target === "server") {
+      return {
+        renderer: [
+          "@gourmet/emotion-renderer/server"
+        ]
+      };
+    }
   }
 }
 
 PluginReactEmotion.meta = {
+  schema: {
+    after: "@gourmet/plugin-react"
+  },
   hooks: {
     "build:webpack:pipelines": PluginReactEmotion.prototype.onPipelines,
     "build:webpack:entry_init": PluginReactEmotion.prototype.onEntryInit

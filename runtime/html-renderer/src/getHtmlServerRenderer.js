@@ -5,9 +5,8 @@ const stream = require("stream");
 const MultiStream = require("multistream");
 const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
-const promiseProtect = require("@gourmet/promise-protect");
 const resolveTemplate = require("@gourmet/resolve-template");
-const getExported = require("@gourmet/get-exported");
+const BaseRenderer = require("./BaseRenderer");
 const pageTemplate = require("./pageTemplate");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
@@ -22,31 +21,26 @@ function _bufStream(buf) {
   });
 }
 
-// Options
+// options: provided by init function (omitted by default unless you override the auto-generated init function)
 //  - html: object / base content of html sections
 //  - pageTemplate: string or compiled function
 //  - dataPropertyName: string (default: "__gourmet_data__")
-//
-module.exports = class HtmlServerRenderer {
-  constructor(render, options={}) {
-    this.options = options;
-    this._userRenderer = getExported(render);
+class HtmlServerRenderer extends BaseRenderer {
+  constructor(render, options) {
+    super(render, options);
     this._pageTemplate = resolveTemplate(options.pageTemplate, pageTemplate);
-  }
-
-  invokeUserRenderer(gmctx) {
-    return promiseProtect(() => {
-      return this._userRenderer(gmctx);
-    });
   }
 
   renderToMedium(gmctx, content) {
     return content;
   }
 
-  // Options
+  // opts: provided by `RendererSandbox`
   //  - entrypoint
   //  - manifest
+  // args: provided by clients when requesting the rendering
+  //  - method, headers, url, path, query, encrypted
+  //  - see `@gourmet/get-req-args` for the latest info
   getRenderer(opts) {
     return args => {
       const gmctx = this.createContext(args, opts);
@@ -64,6 +58,7 @@ module.exports = class HtmlServerRenderer {
     return Object.assign({
       isServer: true,
       isClient: false,
+      renderer: this,
       html: merge({
         lang: "en",
         headTop: [],
@@ -252,9 +247,10 @@ module.exports = class HtmlServerRenderer {
 
     return Object.keys(bundles);
   }
+}
 
-  static create(render, options) {
-    const Klass = this;
-    return new Klass(render, options);
-  }
+module.exports = function getHtmlClientRenderer(Base) {
+  if (Base)
+    throw Error("`@gourmet/html-renderer` must be the first one in the renderer chain. Check your configuration.");
+  return HtmlServerRenderer;
 };

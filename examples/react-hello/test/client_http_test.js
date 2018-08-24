@@ -6,7 +6,7 @@ const puppeteer = require("puppeteer");
 const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
 const serverArgs = require("@gourmet/server-args");
-const BackServer = require("@gourmet/http-server/lib/GourmetHttpServer");
+const BackServer = require("@gourmet/http-server");
 const FrontServer = require("@gourmet/server-impl-http");
 
 const back = {

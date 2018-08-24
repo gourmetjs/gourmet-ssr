@@ -32,15 +32,19 @@ class PluginReact {
     };
   }
 
-  onEntryInit(info, {target}) {
-    const name = target[0].toUpperCase() + target.substr(1);
-    return Object.assign({}, info, {
-      classModule: "@gourmet/react-renderer/src/React" + name + "Renderer"
-    });
+  onEntryInit({target}) {
+    return {
+      renderer: [
+        "@gourmet/react-renderer" + (target === "server" ? "/server" : "")
+      ]
+    };
   }
 }
 
 PluginReact.meta = {
+  schema: {
+    after: "@gourmet/plugin-webpack-html-renderer"
+  },
   hooks: {
     "build:webpack:pipelines": PluginReact.prototype.onPipelines,
     "build:webpack:loaders": PluginReact.prototype.onLoaders,

@@ -1,8 +1,7 @@
 "use strict";
 
 const domready = require("domready");
-const promiseProtect = require("@gourmet/promise-protect");
-const getExported = require("@gourmet/get-exported");
+const BaseRenderer = require("./BaseRenderer");
 
 // We don't need to wait for `DOMContentLoaded` because all `<script>` tags
 // are rendered with `defer` attribute which postpones the evaluation of
@@ -19,18 +18,7 @@ function _domready() {
 //  - contentContainerId: string (default: "__gourmet_content__")
 //  - dataPropertyName: string (default: "__gourmet_data__")
 //  - showErrorInDocument: shows the init error in the document (default: true)
-module.exports = class HtmlClientRenderer {
-  constructor(render, options={}) {
-    this.options = options;
-    this._userRenderer = getExported(render);
-  }
-
-  invokeUserRenderer(gmctx) {
-    return promiseProtect(() => {
-      return this._userRenderer(gmctx);
-    });
-  }
-
+class HtmlClientRenderer extends BaseRenderer {
   render() {
     const gmctx = this.createContext();
     this.invokeUserRenderer(gmctx).then(content => {
@@ -47,6 +35,7 @@ module.exports = class HtmlClientRenderer {
     return {
       isServer: false,
       isClient: true,
+      renderer: this,
       data
     };
   }
@@ -83,9 +72,10 @@ module.exports = class HtmlClientRenderer {
       document.body.appendChild(div);
     }
   }
+}
 
-  static create(render, options) {
-    const Klass = this;
-    return new Klass(render, options);
-  }
+module.exports = function getHtmlClientRenderer(Base) {
+  if (Base)
+    throw Error("`@gourmet/html-renderer` must be the first one in the renderer chain. Check your configuration.");
+  return HtmlClientRenderer;
 };

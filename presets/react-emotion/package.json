@@ -12,18 +12,21 @@
   ],
   "dependencies": {
     "@gourmet/emotion-renderer": "^0.2.1",
+    "@gourmet/html-renderer": "^0.3.0",
     "@gourmet/plugin-react-emotion": "^0.2.0",
     "@gourmet/plugin-webpack-babel": "^0.3.0",
     "@gourmet/plugin-webpack-blob": "^0.1.0",
     "@gourmet/plugin-webpack-builder": "^0.4.0",
     "@gourmet/plugin-webpack-dev-server": "^0.3.0",
     "@gourmet/plugin-webpack-global-css": "^0.3.0",
+    "@gourmet/plugin-webpack-html-renderer": "^0.2.0",
     "@gourmet/plugin-react": "^0.2.0",
     "@gourmet/plugin-react-hot-loader": "^0.2.0",
     "@gourmet/plugin-react-loadable": "^0.2.0",
     "@gourmet/plugin-react-i80": "^0.1.0",
     "@gourmet/react-context-gmctx": "^0.2.0",
     "@gourmet/react-loadable": "^0.2.0",
+    "@gourmet/react-renderer": "^0.3.0",
     "@gourmet/react-i80": "^0.1.0",
     "@gourmet/watch-middleware": "^0.3.0",
     "babel-core": "^6.26.3",
@@ -32,5 +35,9 @@
     "react-emotion": "^9.2.6",
     "react-hot-loader": "^4.3.4",
     "webpack": "^4.16.5"
+  },
+  "peerDependencies": {
+    "react": "16",
+    "react-dom": "16"
   }
 }

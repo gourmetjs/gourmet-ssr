@@ -1,7 +1,13 @@
 "use strict";
 
+module.exports = function(Base) {
+  if (!Base)
+    throw Error("`@gourmet/react-i80` cannot be the first one in the renderer chain. Check your configuration.");
 
+  return Base;
+};
 
+/*
 // - Route handler features
 //   - Can return a promise for async job
 //   - Can skip the current route and go to the next route
@@ -37,3 +43,4 @@ module.exports = function(gmctx) {
   gmctx._routerTest = "server";
   });
 };
+*/

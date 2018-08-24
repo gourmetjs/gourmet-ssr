@@ -11,11 +11,13 @@
     "gourmet-preset"
   ],
   "dependencies": {
+    "@gourmet/html-renderer": "^0.3.0",
     "@gourmet/plugin-webpack-babel": "^0.3.0",
     "@gourmet/plugin-webpack-blob": "^0.1.0",
     "@gourmet/plugin-webpack-builder": "^0.4.0",
     "@gourmet/plugin-webpack-dev-server": "^0.3.0",
     "@gourmet/plugin-webpack-global-css": "^0.3.0",
+    "@gourmet/plugin-webpack-html-renderer": "^0.2.0",
     "@gourmet/plugin-react": "^0.2.0",
     "@gourmet/plugin-react-hot-loader": "^0.2.0",
     "@gourmet/plugin-react-loadable": "^0.2.0",

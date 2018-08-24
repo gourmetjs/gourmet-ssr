@@ -4,7 +4,7 @@ const util = require("util");
 const npath = require("path");
 const getConsole = require("@gourmet/console");
 const error = require("@gourmet/error");
-const HandledError = require("@gourmet/error/lib/HandledError");
+const HandledError = require("@gourmet/error/HandledError");
 const isPlainObject = require("@gourmet/is-plain-object");
 const sortPlugins = require("@gourmet/plugin-sort");
 const merge = require("@gourmet/merge");
@@ -467,67 +467,29 @@ class GourmetWebpackBuildInstance {
   }
 
   _generateEntryInit(entryValue, name, context, config) {
-    function _resolve(list) {
-      if (Array.isArray(list) && list.length) {
-        return list.map(modulePath => {
-          return `require("${modulePath}")`;
-        });
-      }
+    function _renderer(list) {
+      return [
+        "[",
+        list.map(m => `  require("${m}")`).join(",\n"),
+        "].reduce((Base, f) => f(Base), null)"
+      ].join("\n");
     }
 
-    function _options() {
-      function _add(items) {
-        items.forEach(item => {
-          output.push(`    '${item}'`);
-        });
-      }
+    const info = context.plugins.runMergeSync("build:webpack:entry_init", {renderer: []}, context, config, entryValue, name);
 
-      const output = ["{"];
-
-      if (prerender) {
-        output.push("  prerender: [");
-        _add(prerender);
-        output.push(postrender ? "  ]," : "  ]");
-      }
-      if (postrender) {
-        output.push("  postrender: [");
-        _add(postrender);
-        output.push("  ]");
-      }
-      output.push("}");
-
-      return output.join("\n");
-    }
-
-    let info = {
-      classModule: null,
-      prerender: [],
-      postrender: []
-    };
-
-    info = context.plugins.runMergeSync("build:webpack:entry_init", {}, info, context, config, entryValue, name);
-
-    if (!info.classModule)
+    if (!info.renderer || !Array.isArray(info.renderer) || !info.renderer.length)
       throw error(NO_RENDERER_CLASS);
 
     const infoDir = npath.join(context.builder.outputDir, context.stage, "info");
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
     const absPath = resolve.sync(entryValue[entryValue.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
     const userModule = relativePath(absPath, infoDir);
-    const prerender = _resolve(info.prerender);
-    const postrender = _resolve(info.postrender);
-    let options;
-
-    if (prerender || postrender)
-      options = ", " + _options();
-    else
-      options = "";
 
     const content = [
       '"use strict"',
-      `const Renderer = require("${info.classModule}");`,
+      `const Renderer = ${_renderer(info.renderer)};`,
       `const render = require("${userModule}");`,
-      `const r = Renderer.create(render${options});`,
+      "const r = Renderer.create(render);",
       context.target === "server" ? "__gourmet_module__.exports = r.getRenderer.bind(r);" : "r.render();"
     ].join("\n");
 

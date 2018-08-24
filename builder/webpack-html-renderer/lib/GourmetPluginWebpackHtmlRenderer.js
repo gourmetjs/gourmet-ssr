@@ -1,11 +1,12 @@
 "use strict";
 
 class PluginHtmlRenderer {
-  onEntryInit(info, {target}) {
-    const name = target[0].toUpperCase() + target.substr(1);
-    return Object.assign({}, info, {
-      classModule: "@gourmet/html-renderer/src/Html" + name + "Renderer"
-    });
+  onEntryInit({target}) {
+    return {
+      renderer: [
+        "@gourmet/html-renderer" + (target === "server" ? "/server" : "")
+      ]
+    };
   }
 }
 
