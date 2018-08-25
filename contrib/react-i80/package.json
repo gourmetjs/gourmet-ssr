@@ -1,12 +1,16 @@
 {
   "name": "@gourmet/react-i80",
   "version": "0.1.0",
-  "browser": "src/client.js",
-  "main": "src/server.js",
+  "browser": "src/index.client.js",
+  "main": "src/index.server.js",
   "publishConfig": {
     "access": "restricted"
   },
   "dependencies": {
     "path-to-regexp": "^0.1.7"
+  },
+  "peerDependencies": {
+    "@gourmet/react-context-gmctx": "*",
+    "react": "16"
   }
 }
