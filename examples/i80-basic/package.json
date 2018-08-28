@@ -14,6 +14,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.2.1",
     "@gourmet/preset-react-emotion": "^0.3.3",
+    "classnames": "^2.2.6",
     "react": "^16.4.2",
     "react-dom": "^16.4.2"
   }

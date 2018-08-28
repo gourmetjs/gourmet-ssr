@@ -46,10 +46,9 @@ function goToUrl(href, pushState=true) {
   }
 
   const router = Router.get();
-  const gmctx = router.gmctx;
-  const component = router.component;
+  const renderer = router.renderer;
 
-  if (gmctx && component) {
+  if (renderer) {
     // https://stackoverflow.com/questions/736513/how-do-i-parse-a-url-into-hostname-and-path-in-javascript
     const a = document.createElement("a");
     a.href = href;
@@ -58,16 +57,23 @@ function goToUrl(href, pushState=true) {
     const loc = window.location;
 
     if (items.protocol === loc.protocol && items.host === loc.host) {
-      const url = {
+      const switchToUrl = {
         path: items.pathname,
         query: _qs(a.search),
         hash: a.hash
       };
-      router.setActiveRoute(gmctx, url).then(route => {
+
+      const gmctx = renderer.createContext({switchToUrl});
+
+      const route = router.findRoute(gmctx, switchToUrl)
+        // Only `redirect` makes sense for the client initial rendering.
+        if (route.command === "redirect")
+          router.goToUrl(route.location);
+
+      component.switchToUrl(url).then(route => {
         if (!route.command) {
           if (pushState)
             window.history.pushState({}, "", href);
-          component.forceUpdate();
         } else {
           if (route.command === "redirect")
             _load(route.location);
@@ -82,12 +88,14 @@ function goToUrl(href, pushState=true) {
       _load(href);
     }
   } else {
-    _error(`Wrapper component is not mounted, loading the URL instead: ${href}`);
+    _error(`Renderer is not initialized, loading the URL instead: ${href}`);
     _load(href);
   }
 }
 
 // - basePath: Default is `"/"`.
+// - caseSensitive: Default is `true`.
+// - strictSlash: Default is `false`.
 // - captureClick: Default is `true`.
 function i80(routes, options={}) {
   const router = Router.create(routes, options, {
@@ -99,10 +107,8 @@ function i80(routes, options={}) {
         hash: loc.hash
       };
     },
-    clientDidMount(gmctx, component) {
-      // We can safely save this information in the singleton on the client
-      router.gmctx = gmctx;
-      router.component = component;
+    setRenderer(renderer) {
+      router.renderer = renderer;
 
       window.addEventListener("popstate", () => {
         goToUrl(window.location.href, false);
@@ -136,11 +142,6 @@ function i80(routes, options={}) {
           evt.preventDefault();
         });
       }
-    },
-    clientWillUnmount(/*gmctx, component*/) {
-      _error("Wrapper component must not be unmounted!");
-      router.gmctx = null;
-      router.component = null;
     },
     getInitialProps(gmctx, route) {
       if (!router.gmctx) {

@@ -8,7 +8,7 @@ module.exports = class ActiveRoute extends React.Component {
   render() {
     return (
       <ReactContext.Consumer>
-        {gmctx => Router.get().renderActiveRoute(gmctx, this.props)};
+        {gmctx => Router.get().renderActiveRoute(gmctx, this.props)}
       </ReactContext.Consumer>
     );
   }

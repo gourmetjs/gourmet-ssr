@@ -1,3 +1,1 @@
-"use strict";
-
-module.exports = require("./src/getHtmlServerRenderer.js");
+module.exports = require("./src/getHtmlServerRenderer.js"); // eslint-disable-line strict

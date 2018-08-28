@@ -7,8 +7,9 @@
     "access": "restricted"
   },
   "dependencies": {
-    "path-to-regexp": "0.1.7",
-    "encodeurl": "^1.0.2"
+    "path-to-regexp": "^2.4.0",
+    "encodeurl": "^1.0.2",
+    "escape-html": "^1.0.3"
   },
   "peerDependencies": {
     "@gourmet/react-context-gmctx": "*",

@@ -43,13 +43,17 @@ function _prepare(routes, parentOptions) {
 
 // We don't use ES6 generator functions to reduce runtime footprint on client.
 module.exports = class Matcher {
-  constructor(routes) {
-    this._routes = _prepare(routes, {caseSensitve: true, strictSlash: false});
+  constructor(routes, options) {
+    this._routes = _prepare(routes, {
+      caseSensitve: options.caseSensitive === undefined ? true : options.caseSensitive,
+      strictSlash: options.strictSlash === undefined ? false : options.strictSlash
+    });
+    this.basePath = options.basePath || "/";
   }
 
   searchByPath(path, callback) {
     function _params(params, m, keys) {
-      if (keys.length) {
+      if (keys && keys.length) {
         params = Object.assign({}, params);
         keys.forEach((info, idx) => {
           const value = m[idx + 1];
@@ -68,7 +72,7 @@ module.exports = class Matcher {
           const p = _params(params, m, def.keys);
           let res;
           if (def.routes)
-            res = _find(def.routes, _unprefix(path, m), p);
+            res = _find(def.routes, Matcher.unprefixPath(path, m[0]), p);
           else
             res = callback(def.type, p);
           if (res)
@@ -77,6 +81,28 @@ module.exports = class Matcher {
       }
     }
 
-    return _find(this._routes, path, {});
+    return _find(this._routes, Matcher.unprefixPath(path, this.basePath), {});
+  }
+
+  // unprefixPath("/abc/def", "/abc") ==> "/def"
+  // unprefixPath("/abc/def", "/abc/") ==> "/def"
+  // unprefixPath("/abc", "/abc") ==> "/"
+  // unprefixPath("/abc", "/def") ==> null
+  static unprefixPath(path, prefix) {
+    const len = prefix.length;
+
+    if (len && prefix !== "/") {
+      if (path.indexOf(prefix) !== 0)
+        return null;
+      if (len >= path.length)
+        return "/";
+      if (path[len] === "/")
+        return path.substr(len);
+      if (path[len - 1] === "/")
+        return path.substr(len - 1);
+      return null;
+    }
+
+    return path;
   }
 };

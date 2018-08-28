@@ -1,13 +1,26 @@
 "use strict";
 
 module.exports = class BoundRoute {
-  constructor(def, m) {
-    this.params = _params(m);
-    this.type = def.type;
+  constructor(type, params) {
+    this.type = type;
+    this.params = params;
   }
 
   getComponent() {
     return this.type;
+  }
+
+  getParams() {
+    return this.params;
+  }
+
+  getDisplayName() {
+    const type = this.type;
+    return type.routeDisplayName || type.displayName || type.name || "Unnamed Route";
+  }
+
+  getHandlers() {
+    return this.type.routeHandlers;
   }
 
   getInitialProps(gmctx, route) {

@@ -7,8 +7,8 @@ module.exports = function(Base) {
     throw Error("`@gourmet/react-i80` cannot be the first one in the renderer chain. Check your configuration.");
 
   return class I80ServerRenderer extends Base {
-    createContext() {
-      const gmctx = super.createContext();
+    createContext(...args) {
+      const gmctx = super.createContext(...args);
       gmctx.routerData = {initialProps: {}};
       return gmctx;
     }
@@ -16,14 +16,16 @@ module.exports = function(Base) {
     invokeUserRenderer(gmctx) {
       const router = Router.get();
       const url = router.getRequestUrl(gmctx);
-      return router.setActiveRoute(gmctx, url).then(route => {
-        if (route.command) {
-          if (route.command === "redirect")
-            router.redirect(gmctx, route);
-          return null;
-        } else {
-          return super.invokeUserRenderer(gmctx);
-        }
+      const route = router.findRoute(gmctx, url);
+
+      if (!route)
+        return null;
+
+      if (route.command === "redirect")
+        return router.redirect(gmctx, route);
+
+      return router.setActiveRoute(gmctx, route, url).then(() => {
+        return super.invokeUserRenderer(gmctx);
       });
     }
   };

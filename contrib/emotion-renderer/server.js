@@ -1,3 +1,1 @@
-"use strict";
-
-module.exports = require("./src/getEmotionServerRenderer.js");
+module.exports = require("./src/getEmotionServerRenderer.js"); // eslint-disable-line strict

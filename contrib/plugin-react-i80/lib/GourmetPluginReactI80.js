@@ -3,7 +3,7 @@
 class PluginReactI80 {
   onEntryInit({target}) {
     return {
-      prerender: [`@gourmet/react-i80/renderer.${target}.js`]
+      renderer: [`@gourmet/react-i80/renderer.${target}.js`]
     };
   }
 }

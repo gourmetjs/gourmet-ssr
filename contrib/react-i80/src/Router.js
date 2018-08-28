@@ -1,6 +1,7 @@
 "use strict";
 
 const React = require("react");
+const Matcher = require("./Matcher");
 const BoundRoute = require("./BoundRoute");
 
 let router;
@@ -11,10 +12,11 @@ module.exports = class Router {
     Object.keys(members).forEach(name => {
       this[name] = members[name];
     });
+    this.matcher = new Matcher(routes, this.options);
   }
 
   setActiveRoute(gmctx, url) {
-    return Promise().resolve().then(() => {
+    return Promise.resolve().then(() => {
       const route = this.findRoute(gmctx, url);
       if (!route.command) {
         return this.getInitialProps(gmctx, route).then(props => {
@@ -29,46 +31,38 @@ module.exports = class Router {
   }
 
   findRoute(gmctx, url) {
-    function _exec(def) {
-      const m = def.re.exec(url.path);
-      if (m)
-        return new BoundRoute(def, m);
-    }
-
-    const routes = this._routes;
-    for (let idx = 0; idx < routes.length; idx++) {
-      let route = _exec(routes[idx]);
-      if (route) {
-        const handlers = route.getRouteHandlers();
-        if (handlers) {
-          for (let idx = 0; idx < handlers.length; idx++) {
-            const handler = handlers[idx];
-            const res = handler(gmctx, route);
-            if (res) {
-              if (res.command === "skip") {
-                route = null;
-                break;
-              }
-              return res;
-            }
+    const route = this.matcher.searchByPath(url.path, (type, params) => {
+      const route = new BoundRoute(type, params);
+      const handlers = route.getHandlers();
+      if (handlers) {
+        for (let idx = 0; idx < handlers.length; idx++) {
+          const handler = handlers[idx];
+          const res = handler(gmctx, route);
+          if (res) {
+            if (res.command === "skip")
+              return null;
+            return res;
           }
         }
-        return route;
       }
-    }
-
-    return {command: "skip"};
+      return route;
+    });
+    return route || {command: "skip"};
   }
 
   renderActiveRoute(gmctx, renderProps) {
-    const route = gmctx.routerData.activeRoute;
-    const props = Object.assign({gmctx, route}, gmctx.routerData.initialProps, renderProps);
+    if (gmctx.routerData) {
+      const route = gmctx.routerData.activeRoute;
+      const props = Object.assign({gmctx, route}, gmctx.routerData.initialProps, renderProps);
 
-    if (route) {
-      const Component = route.getComponent();
-      return <Component {...props}/>;
+      if (route) {
+        const Component = route.getComponent();
+        return <Component {...props}/>;
+      } else {
+        return props.notFoundContent || (<div>Cannot find a matching route.</div>);
+      }
     } else {
-      return props.notFoundContent || (<div>Cannot find a matching route.</div>);
+      throw Error("Router is not initialized properly. Forgot to add '@gourmet/plugin-react-80'?");
     }
   }
 
