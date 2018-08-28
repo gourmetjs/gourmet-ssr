@@ -11,18 +11,22 @@ module.exports = function getReactClientRenderer(Base) {
   return class ReactClientRenderer extends Base {
     invokeUserRenderer(gmctx) {
       return super.invokeUserRenderer(gmctx).then(element => {
-        return wrapWithContext(gmctx, element);
+        if (element)
+          return wrapWithContext(gmctx, element);
+        return element;
       });
     }
 
     renderToDom(gmctx, content, elemId) {
-      return registrar.load(gmctx.data.renderedLoadables || []).then(() => {
-        const parent = document.getElementById(elemId);
-        if (gmctx.data.reactClientRender === "hydrate")
-          ReactDOM.hydrate(content, parent);
-        else
-          ReactDOM.render(content, parent);
-      });
+      if (content) {
+        return registrar.load(gmctx.data.renderedLoadables || []).then(() => {
+          const parent = document.getElementById(elemId);
+          if (gmctx.data.reactClientRender === "hydrate")
+            ReactDOM.hydrate(content, parent);
+          else
+            ReactDOM.render(content, parent);
+        });
+      }
     }
   };
 };

@@ -1,5 +1,7 @@
 "use strict";
 
+const encodeUrl = require("encodeurl");
+const escapeHtml = require("escape-html");
 const Router = require("./Router");
 
 module.exports = function(Base) {
@@ -10,22 +12,25 @@ module.exports = function(Base) {
     createContext(...args) {
       const gmctx = super.createContext(...args);
       gmctx.routerData = {initialProps: {}};
+      gmctx.redirect = function(location, statusCode=302, content) {
+        location = encodeUrl(location);
+        content = content || `<p>[${statusCode}] Redirecting to ${escapeHtml(location)}...</p>`;
+        gmctx.result = {
+          statusCode,
+          headers: {location},
+          content
+        };
+        return true;
+      };
       return gmctx;
     }
 
     invokeUserRenderer(gmctx) {
       const router = Router.get();
-      const url = router.getRequestUrl(gmctx);
-      const route = router.findRoute(gmctx, url);
-
-      if (!route)
-        return null;
-
-      if (route.command === "redirect")
-        return router.redirect(gmctx, route);
-
-      return router.setActiveRoute(gmctx, route, url).then(() => {
-        return super.invokeUserRenderer(gmctx);
+      const url = router.getTargetUrl(gmctx);
+      return router.setActiveRoute(gmctx, url).then(cont => {
+        if (cont)
+          return super.invokeUserRenderer(gmctx);
       });
     }
   };

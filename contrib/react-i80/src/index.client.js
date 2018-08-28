@@ -57,32 +57,19 @@ function goToUrl(href, pushState=true) {
     const loc = window.location;
 
     if (items.protocol === loc.protocol && items.host === loc.host) {
-      const switchToUrl = {
-        path: items.pathname,
-        query: _qs(a.search),
-        hash: a.hash
-      };
-
-      const gmctx = renderer.createContext({switchToUrl});
-
-      const route = router.findRoute(gmctx, switchToUrl)
-        // Only `redirect` makes sense for the client initial rendering.
-        if (route.command === "redirect")
-          router.goToUrl(route.location);
-
-      component.switchToUrl(url).then(route => {
-        if (!route.command) {
+      renderer.render({
+        switchToUrl: {
+          path: items.pathname,
+          query: _qs(a.search),
+          hash: a.hash
+        },
+        didSwitchToUrl() {
           if (pushState)
             window.history.pushState({}, "", href);
-        } else {
-          if (route.command === "redirect")
-            _load(route.location);
-          else
-            _load(href);
+        },
+        routeNotFound() {
+          _load(href);
         }
-      }).catch(err => {
-        _error(`Error occurred in switching to the URL: ${href}`);
-        _error(err);
       });
     } else {
       _load(href);
@@ -99,14 +86,6 @@ function goToUrl(href, pushState=true) {
 // - captureClick: Default is `true`.
 function i80(routes, options={}) {
   const router = Router.create(routes, options, {
-    getBrowserUrl(/*gmctx*/) {
-      const loc = window.location;
-      return {
-        path: loc.pathname,
-        query: _qs(loc.search),
-        hash: loc.hash
-      };
-    },
     setRenderer(renderer) {
       router.renderer = renderer;
 
@@ -143,6 +122,20 @@ function i80(routes, options={}) {
         });
       }
     },
+
+    getTargetUrl(gmctx) {
+      if (gmctx.routerData.switchToUrl)
+        return gmctx.routerData.switchToUrl;
+
+      const loc = window.location;
+
+      return {
+        path: loc.pathname,
+        query: _qs(loc.search),
+        hash: loc.hash
+      };
+    },
+
     getInitialProps(gmctx, route) {
       if (!router.gmctx) {
         // By design, we do not invoke `getInitialProps()` for the initial
@@ -151,7 +144,9 @@ function i80(routes, options={}) {
       } else {
         return route.getInitialProps(gmctx);
       }
-    }
+    },
+
+    goToUrl
   });
 }
 

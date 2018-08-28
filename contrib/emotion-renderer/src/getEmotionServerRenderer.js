@@ -10,7 +10,7 @@ module.exports = function getEmotionServerRenderer(Base) {
     renderToMedium(gmctx, element) {
       element = super.renderToMedium(gmctx, element);
 
-      if (element && !gmctx.isOverridden) {
+      if (element) {
         if (typeof element === "string")
           return renderStylesToString(element);
         else

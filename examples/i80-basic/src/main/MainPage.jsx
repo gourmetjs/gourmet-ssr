@@ -28,7 +28,7 @@ class MainPage extends Component {
             </ul>
           </div>
           <div className="card-body">
-            {<ActiveRoute greeting="hello"/>}
+            {<ActiveRoute label="View:"/>}
           </div>
         </div>
       </PageBase>

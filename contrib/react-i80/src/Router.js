@@ -18,36 +18,44 @@ module.exports = class Router {
   setActiveRoute(gmctx, url) {
     return Promise.resolve().then(() => {
       const route = this.findRoute(gmctx, url);
-      if (!route.command) {
-        return this.getInitialProps(gmctx, route).then(props => {
-          if (props)
-            Object.assign(gmctx.routerData.initialProps, props);
-          return gmctx.routerData.activeRoute = route;
-        });
-      } else {
-        return route;
+
+      if (!route) {
+        if (gmctx.routerData.routeNotFound)
+          gmctx.routerData.routeNotFound();
+        return false;
       }
+
+      if (route === true)
+        return false;   // processed by a route handler
+
+      if (gmctx.routerData.didSwitchToUrl)
+        gmctx.routerData.didSwitchToUrl();
+
+      return this.getInitialProps(gmctx, route).then(props => {
+        if (props)
+          Object.assign(gmctx.routerData.initialProps, props);
+        gmctx.routerData.activeRoute = route;
+        return true;
+      });
     });
   }
 
   findRoute(gmctx, url) {
-    const route = this.matcher.searchByPath(url.path, (type, params) => {
+    return this.matcher.searchByPath(url.path, (type, params) => {
       const route = new BoundRoute(type, params);
       const handlers = route.getHandlers();
       if (handlers) {
         for (let idx = 0; idx < handlers.length; idx++) {
           const handler = handlers[idx];
           const res = handler(gmctx, route);
-          if (res) {
-            if (res.command === "skip")
-              return null;
-            return res;
-          }
+          if (res)
+            return true;  // Handler processed the request, don't render (e.g. `redirect`)
+          if (res === false)
+            return false; // Skip current route handlers and go to the next route
         }
       }
       return route;
     });
-    return route || {command: "skip"};
   }
 
   renderActiveRoute(gmctx, renderProps) {

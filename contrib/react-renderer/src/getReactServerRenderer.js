@@ -14,7 +14,7 @@ module.exports = function getReactServerRenderer(Base) {
     invokeUserRenderer(gmctx) {
       return registrar.loadAll().then(() => {
         return super.invokeUserRenderer(gmctx).then(element => {
-          if (element && !gmctx.isOverridden)
+          if (element)
             return wrapWithContext(gmctx, element);
           return element;
         });
@@ -24,7 +24,7 @@ module.exports = function getReactServerRenderer(Base) {
     renderToMedium(gmctx, element) {
       element = super.renderToMedium(gmctx, element);
 
-      if (element && !gmctx.isOverridden) {
+      if (element) {
         let bodyMain;
 
         switch (this.options.reactServerRender || "stream") {

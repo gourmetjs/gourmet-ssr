@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function MessagesView() {
-  return <h1>Panel: Messages</h1>;
+export default function MessagesView(props) {
+  return <h1>{props.label} Messages</h1>;
 }

@@ -32,8 +32,6 @@ class HtmlServerRenderer extends BaseRenderer {
   }
 
   renderToMedium(gmctx, content) {
-    if (content && !gmctx.isOverridden)
-      this.renderStaticDeps(gmctx);
     return content;
   }
 
@@ -68,10 +66,6 @@ class HtmlServerRenderer extends BaseRenderer {
         bodyTop: [],
         bodyBottom: []
       }, config.html),
-      override(result) {
-        gmctx.isOverridden = true;
-        gmctx.result = result;
-      },
       result: {
         statusCode: 200,
         headers: {}
@@ -94,11 +88,13 @@ class HtmlServerRenderer extends BaseRenderer {
   //  - buffer
   //  - stream
   renderHtml(gmctx, bodyMain) {
-    if (gmctx.isOverridden)
+    if (gmctx.result.content)
       return gmctx.result;  // skip and return the overridden content as-is
 
     if (!bodyMain)
       return null;  // route not found
+
+    this.renderStaticDeps(gmctx);
 
     const {html, result} = gmctx;
 
