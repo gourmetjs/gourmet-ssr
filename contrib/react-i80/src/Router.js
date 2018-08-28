@@ -1,6 +1,7 @@
 "use strict";
 
 const React = require("react");
+const BoundRoute = require("./BoundRoute");
 
 let router;
 
@@ -12,52 +13,62 @@ module.exports = class Router {
     });
   }
 
-  // `component` is given only when the route changes after the initial
-  // rendering on the client.
-  setActiveRoute(gmctx, url, component) {
+  setActiveRoute(gmctx, url) {
     return Promise().resolve().then(() => {
-      const routes = this._routes;
-      for (let idx = 0; idx < routes.length; idx++) {
-        let route = _exec(routes[idx]);
-        if (route) {
-          const handlers = this.getRouteHandlers(route.Component);
-          if (handlers) {
-            for (let idx = 0; idx < handlers.length; idx++) {
-              const handler = handlers[idx];
-              const res = handler(gmctx, route);
-              if (res === false) {
+      const route = this.findRoute(gmctx, url);
+      if (!route.command) {
+        return this.getInitialProps(gmctx, route).then(props => {
+          if (props)
+            Object.assign(gmctx.routerData.initialProps, props);
+          return gmctx.routerData.activeRoute = route;
+        });
+      } else {
+        return route;
+      }
+    });
+  }
+
+  findRoute(gmctx, url) {
+    function _exec(def) {
+      const m = def.re.exec(url.path);
+      if (m)
+        return new BoundRoute(def, m);
+    }
+
+    const routes = this._routes;
+    for (let idx = 0; idx < routes.length; idx++) {
+      let route = _exec(routes[idx]);
+      if (route) {
+        const handlers = route.getRouteHandlers();
+        if (handlers) {
+          for (let idx = 0; idx < handlers.length; idx++) {
+            const handler = handlers[idx];
+            const res = handler(gmctx, route);
+            if (res) {
+              if (res.command === "skip") {
                 route = null;
                 break;
               }
-              if (res && res.redirect)
-                return res;
+              return res;
             }
           }
-          return route;
         }
+        return route;
       }
-      return null;
-    }).then(route => {
-      if (route && route.redirect) {
-        if (route.Component.getInitialProps)
-          return route.getInitalProps(gmctx, route);
-        }).then(props => {
-          if (props)
-            Object.assign(gmctx.routerData.initialProps, props);
-    });
+    }
+
+    return {command: "skip"};
   }
 
   renderActiveRoute(gmctx, renderProps) {
     const route = gmctx.routerData.activeRoute;
-    const props = Object.assign({
-      gmctx,
-      route
-    }, gmctx.routerData.initialProps, renderProps);
+    const props = Object.assign({gmctx, route}, gmctx.routerData.initialProps, renderProps);
 
     if (route) {
-      return <route.Component {...props}/>;
+      const Component = route.getComponent();
+      return <Component {...props}/>;
     } else {
-      return props.notFoundContent || (<div>Cannot find a matching route!</div>);
+      return props.notFoundContent || (<div>Cannot find a matching route.</div>);
     }
   }
 
@@ -74,42 +85,3 @@ module.exports = class Router {
     return router;
   }
 };
-
-
-/*
-// - Route handler features
-//   - Can return a promise for async job
-//   - Can skip the current route and go to the next route
-//   - Can redirect to URL (302 on server, `go` on browser)
-
-const Router = require("./Router");
-
-module.exports = function(gmctx) {
-  const router = Router.get();
-  const info = router.getCurrentUrl(gmctx);
-  return router.findRoute(gmctx, info).then(route => {
-    if (!route)
-      return null;
-    if (typeof route.component.getInitialProps === "function") {
-      return 
-    }
-  });
-
-
-
-
-  return router.runRouteHandlers(gmctx, route).then(res => {
-    if (res === null)
-      return null;
-
-    if (res.redirect)
-      router.redirect(res.redirect);
-
-
-  });
-
-  gmctx.route = route;
-  gmctx._routerTest = "server";
-  });
-};
-*/

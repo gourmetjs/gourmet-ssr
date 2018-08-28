@@ -5,6 +5,8 @@ import routes from "./routes";
 
 i80(routes, {
   basePath: "/",
+  caseSensitive: false,  // default is true
+  strictSlash: true,     // default is false
   captureClick: true,  // default is true
   fallthrough: true    // default is true
 });   // install the main routes

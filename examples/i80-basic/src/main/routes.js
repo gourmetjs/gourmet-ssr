@@ -10,7 +10,4 @@ const routes = [
   ["/admin", adminRoutes]
 ];
 
-routes.caseSensitive = false;   // default is true
-routes.strictSlash = true;      // default is false
-
 export default routes;

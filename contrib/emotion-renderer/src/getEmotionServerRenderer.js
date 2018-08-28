@@ -8,16 +8,16 @@ module.exports = function getEmotionServerRenderer(Base) {
 
   return class EmotionServerRenderer extends Base {
     renderToMedium(gmctx, element) {
-      const bodyMain = super.renderToMedium(gmctx, element);
+      element = super.renderToMedium(gmctx, element);
 
-      if (bodyMain) {
-        if (typeof bodyMain === "string")
-          return renderStylesToString(bodyMain);
+      if (element && !gmctx.isOverridden) {
+        if (typeof element === "string")
+          return renderStylesToString(element);
         else
-          return bodyMain.pipe(renderStylesToNodeStream());
+          return element.pipe(renderStylesToNodeStream());
       }
 
-      return bodyMain;
+      return element;
     }
   };
 };

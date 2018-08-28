@@ -2,7 +2,6 @@
 
 const React = require("react");
 const Router = require("./Router");
-const qs = require("./querystring");
 
 class I80ClientWrapper extends React.Component {
   componentDidMount() {
@@ -31,13 +30,11 @@ module.exports = function(Base) {
 
     invokeUserRenderer(gmctx) {
       const router = Router.get();
-      const loc = window.location;
-      const url = {
-        path: loc.pathname,
-        query: qs(loc.search),
-        hash: loc.hash
-      };
-      return router.setActiveRoute(gmctx, url).then(() => {
+      const url = router.getBrowserUrl();
+      return router.setActiveRoute(gmctx, url).then(route => {
+        // Only `redirect` makes sense for the client initial rendering.
+        if (route.command === "redirect")
+          router.goToUrl(route.location);
         return super.invokeUserRenderer(gmctx).then(element => {
           return (
             <I80ClientWrapper gmctx={gmctx} router={router}>

@@ -1,9 +1,26 @@
 "use strict";
 
 const Router = require("./Router");
-const CurrentRoute = require("./CurrentRoute");
+const ActiveRoute = require("./ActiveRoute");
 const Link = require("./Link");
-const qs = require("qs");
+
+// Simple and slow query string parser focusing on small code size
+function _qs(search) {
+  if (search[0] === "?")
+    search = search.substr(1);
+  return search.split("&").reduce((query, item) => {
+    const [key, value] = item.split("=");
+    query[decodeURIComponent(key)] = decodeURIComponent(value || "");
+    return query;
+  }, {});
+}
+
+function _error(mesg) {
+  if (typeof mesg === "string")
+    console.error("[@gourmet/react-i80]", mesg);
+  else
+    console.error(mesg);
+}
 
 function goToUrl(href, pushState=true) {
   function _load(href) {
@@ -38,31 +55,34 @@ function goToUrl(href, pushState=true) {
     a.href = href;
 
     const items = _normalize(a);
-    const loc = _normalize(window.location);
+    const loc = window.location;
 
     if (items.protocol === loc.protocol && items.host === loc.host) {
       const url = {
         path: items.pathname,
-        query: qs(a.search),
+        query: _qs(a.search),
         hash: a.hash
       };
-      router.setActiveRoute(gmctx, url, component).then(route => {
-        if (route) {
+      router.setActiveRoute(gmctx, url).then(route => {
+        if (!route.command) {
           if (pushState)
             window.history.pushState({}, "", href);
           component.forceUpdate();
         } else {
-          _load(href);
+          if (route.command === "redirect")
+            _load(route.location);
+          else
+            _load(href);
         }
       }).catch(err => {
-        console.error("[@gourmet/react-i80] Error occurred in switching to the URL:", href);
-        console.error(err);
+        _error(`Error occurred in switching to the URL: ${href}`);
+        _error(err);
       });
     } else {
       _load(href);
     }
   } else {
-    console.error("[@gourmet/react-i80] Wrapper component is not mounted, loading the URL instead:", href);
+    _error(`Wrapper component is not mounted, loading the URL instead: ${href}`);
     _load(href);
   }
 }
@@ -71,14 +91,11 @@ function goToUrl(href, pushState=true) {
 // - captureClick: Default is `true`.
 function i80(routes, options={}) {
   const router = Router.create(routes, options, {
-    redirect(gmctx, href) {
-      goToUrl(href, false);
-    },
-    getCurrentUrl(/*gmctx*/) {
+    getBrowserUrl(/*gmctx*/) {
       const loc = window.location;
       return {
         path: loc.pathname,
-        query: loc.search,
+        query: _qs(loc.search),
         hash: loc.hash
       };
     },
@@ -121,14 +138,23 @@ function i80(routes, options={}) {
       }
     },
     clientWillUnmount(/*gmctx, component*/) {
-      console.error("@gourmet/react-i80's wrapper component shouldn't be unmounted!");
+      _error("Wrapper component must not be unmounted!");
       router.gmctx = null;
       router.component = null;
+    },
+    getInitialProps(gmctx, route) {
+      if (!router.gmctx) {
+        // By design, we do not invoke `getInitialProps()` for the initial
+        // rendering on the client side and use serialized data from server instead.
+        return Promise.resolve(gmctx.data.routerInitialProps);
+      } else {
+        return route.getInitialProps(gmctx);
+      }
     }
   });
 }
 
-i80.CurrentRoute = CurrentRoute;
+i80.ActiveRoute = ActiveRoute;
 i80.Link = Link;
 i80.goToUrl = goToUrl;
 

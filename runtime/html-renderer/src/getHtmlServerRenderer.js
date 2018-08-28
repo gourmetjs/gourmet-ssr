@@ -32,6 +32,8 @@ class HtmlServerRenderer extends BaseRenderer {
   }
 
   renderToMedium(gmctx, content) {
+    if (content && !gmctx.isOverridden)
+      this.renderStaticDeps(gmctx);
     return content;
   }
 
@@ -44,7 +46,6 @@ class HtmlServerRenderer extends BaseRenderer {
   getRenderer(opts) {
     return args => {
       const gmctx = this.createContext(args, opts);
-      this.renderStaticDeps(gmctx);
       return this.invokeUserRenderer(gmctx).then(content => {
         return this.renderToMedium(gmctx, content);
       }).then(bodyMain => {
@@ -55,7 +56,7 @@ class HtmlServerRenderer extends BaseRenderer {
 
   createContext(args, {entrypoint, manifest}) {
     const config = manifest.config || {};
-    return Object.assign({
+    const gmctx = Object.assign({
       isServer: true,
       isClient: false,
       renderer: this,
@@ -67,6 +68,10 @@ class HtmlServerRenderer extends BaseRenderer {
         bodyTop: [],
         bodyBottom: []
       }, config.html),
+      override(result) {
+        gmctx.isOverridden = true;
+        gmctx.result = result;
+      },
       result: {
         statusCode: 200,
         headers: {}
@@ -81,6 +86,7 @@ class HtmlServerRenderer extends BaseRenderer {
         //  - staticPrefix: manifest.staticPrefix
       }
     }, args);
+    return gmctx;
   }
 
   // bodyMain can be one of the following:
@@ -88,6 +94,12 @@ class HtmlServerRenderer extends BaseRenderer {
   //  - buffer
   //  - stream
   renderHtml(gmctx, bodyMain) {
+    if (gmctx.isOverridden)
+      return gmctx.result;  // skip and return the overridden content as-is
+
+    if (!bodyMain)
+      return null;  // route not found
+
     const {html, result} = gmctx;
 
     const frame = this._pageTemplate({

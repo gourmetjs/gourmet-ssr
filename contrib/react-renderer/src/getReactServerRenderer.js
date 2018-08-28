@@ -14,37 +14,42 @@ module.exports = function getReactServerRenderer(Base) {
     invokeUserRenderer(gmctx) {
       return registrar.loadAll().then(() => {
         return super.invokeUserRenderer(gmctx).then(element => {
-          return wrapWithContext(gmctx, element);
+          if (element && !gmctx.isOverridden)
+            return wrapWithContext(gmctx, element);
+          return element;
         });
       });
     }
 
     renderToMedium(gmctx, element) {
-      if (!element)
-        return null;
+      element = super.renderToMedium(gmctx, element);
 
-      let bodyMain;
+      if (element && !gmctx.isOverridden) {
+        let bodyMain;
 
-      switch (this.options.reactServerRender || "stream") {
-        case "string":
-          bodyMain = ReactDOMServer.renderToString(element);
-          gmctx.data.reactClientRender = "hydrate";
-          break;
-        case "static_markup":
-          bodyMain = ReactDOMServer.renderToStaticMarkup(element);
-          break;
-        case "stream":
-          bodyMain = ReactDOMServer.renderToNodeStream(element);
-          gmctx.data.reactClientRender = "hydrate";
-          break;
-        case "static_stream":
-          bodyMain = ReactDOMServer.renderToStaticNodeStream(element);
-          break;
-        default:
-          throw Error("Unknown reactServerRender: " + this.options.reactServerRender);
+        switch (this.options.reactServerRender || "stream") {
+          case "string":
+            bodyMain = ReactDOMServer.renderToString(element);
+            gmctx.data.reactClientRender = "hydrate";
+            break;
+          case "static_markup":
+            bodyMain = ReactDOMServer.renderToStaticMarkup(element);
+            break;
+          case "stream":
+            bodyMain = ReactDOMServer.renderToNodeStream(element);
+            gmctx.data.reactClientRender = "hydrate";
+            break;
+          case "static_stream":
+            bodyMain = ReactDOMServer.renderToStaticNodeStream(element);
+            break;
+          default:
+            throw Error("Unknown reactServerRender: " + this.options.reactServerRender);
+        }
+
+        return bodyMain;
       }
 
-      return bodyMain;
+      return element;
     }
 
     createContext(...args) {

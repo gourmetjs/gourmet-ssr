@@ -14,13 +14,16 @@ module.exports = function(Base) {
     }
 
     invokeUserRenderer(gmctx) {
-      const url = {
-        path: gmctx.path,
-        query: gmctx.query
-      };
-      return Router.get().setActiveRoute(gmctx, url).then(route => {
-        if (route)
+      const router = Router.get();
+      const url = router.getRequestUrl(gmctx);
+      return router.setActiveRoute(gmctx, url).then(route => {
+        if (route.command) {
+          if (route.command === "redirect")
+            router.redirect(gmctx, route);
+          return null;
+        } else {
           return super.invokeUserRenderer(gmctx);
+        }
       });
     }
   };
