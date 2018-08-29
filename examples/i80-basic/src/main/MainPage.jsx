@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {hot} from "react-hot-loader";
 import {ActiveRoute/*, Link*/} from "@gourmet/react-i80";
 import PageBase from "../components/PageBase";
-//import HomeView from "../components/HomeView";
+import HomeView from "../components/HomeView";
 //import MessagesView from "../components/MessagesView";
 //import ProfileView from "../components/ProfileView";
 
@@ -14,8 +14,7 @@ class MainPage extends Component {
           <div className="card-header">
             <ul className="nav nav-tabs card-header-tabs">
               <li className="nav-item">
-                <a className="nav-link active" href="/">Home</a>
-                {/*<Link className="nav-link" to={HomeView}/>*/}
+                <Link className="nav-link" to={HomeView}/>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="/messages">Messages</a>

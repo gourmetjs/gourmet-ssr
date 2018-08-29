@@ -21,7 +21,7 @@ module.exports = class Router {
 
       if (!route) {
         if (gmctx.routerData.routeNotFound)
-          gmctx.routerData.routeNotFound();
+          gmctx.routerData.routeNotFound(gmctx, url);
         return false;
       }
 
@@ -29,12 +29,13 @@ module.exports = class Router {
         return false;   // processed by a route handler
 
       if (gmctx.routerData.didSwitchToUrl)
-        gmctx.routerData.didSwitchToUrl();
+        gmctx.routerData.didSwitchToUrl(gmctx, url);
 
       return this.getInitialProps(gmctx, route).then(props => {
         if (props)
           Object.assign(gmctx.routerData.initialProps, props);
         gmctx.routerData.activeRoute = route;
+        gmctx.routerData.activeUrl = url;
         return true;
       });
     });
@@ -61,7 +62,17 @@ module.exports = class Router {
   renderActiveRoute(gmctx, renderProps) {
     if (gmctx.routerData) {
       const route = gmctx.routerData.activeRoute;
-      const props = Object.assign({gmctx, route}, gmctx.routerData.initialProps, renderProps);
+      const url = gmctx.routerData.activeUrl;
+      const props = Object.assign({
+        gmctx,
+        route,
+        params: route.getParams(),
+        path: url.path,
+        query: url.query,
+        hash: url.hash
+      },
+      gmctx.routerData.initialProps,
+      renderProps);
 
       if (route) {
         const Component = route.getComponent();
