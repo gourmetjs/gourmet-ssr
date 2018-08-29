@@ -87,6 +87,8 @@ function clientHttp(baseArgs) {
     invoke(args, (err, result) => {
       if (err) {
         next(err);
+      } else if (!result) {
+        next();
       } else {
         sendContent(res, result, err => {
           if (err)

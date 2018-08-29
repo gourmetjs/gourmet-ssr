@@ -97,12 +97,13 @@ function clientLib(baseArgs) {
   }
 
   // HTTP renderer extracting `args` from `req` and sending the result to `res`.
-  // `next` is used only as an error handler.
   function render(req, res, next, args) {
     args = Object.assign(getReqArgs(req), args);
     invoke(args, (err, result) => {
       if (err) {
         next(err);
+      } else if (!result) {
+        next();
       } else {
         sendContent(res, result, err => {
           if (err)

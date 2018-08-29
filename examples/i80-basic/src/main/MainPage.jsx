@@ -14,7 +14,7 @@ class MainPage extends Component {
           <div className="card-header">
             <ul className="nav nav-tabs card-header-tabs">
               <li className="nav-item">
-                <a className="nav-link" href="/">Home</a>
+                <a className="nav-link active" href="/">Home</a>
                 {/*<Link className="nav-link" to={HomeView}/>*/}
               </li>
               <li className="nav-item">
