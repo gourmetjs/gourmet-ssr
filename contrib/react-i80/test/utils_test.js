@@ -1,7 +1,7 @@
 "use strict";
 
 const test = require("tape");
-const {unprefixPath, parseUrl} = require("../src/utils");
+const {unprefixPath, parseHref} = require("../src/utils");
 
 test("unprefixPath", t => {
   t.equal(unprefixPath("/abc/def", "/abc"), "/def");
@@ -11,42 +11,48 @@ test("unprefixPath", t => {
   t.end();
 });
 
-test("parseUrl", t => {
-  t.deepEqual(parseUrl("http://user:pw@www.example.com:8080/foo/bar?a=1&b#here"), {
+test("parseHref", t => {
+  t.deepEqual(parseHref("http://user:pw@www.example.com:8080/foo/bar?a=1&b#here"), {
     origin: "http://user:pw@www.example.com:8080",
     path: "/foo/bar",
     search: "?a=1&b",
-    hash: "#here"
+    hash: "#here",
+    href: "http://user:pw@www.example.com:8080/foo/bar?a=1&b#here"
   });
-  t.deepEqual(parseUrl("//example.com"), {
+  t.deepEqual(parseHref("//example.com"), {
     origin: "//example.com",
     path: "/",
     search: "",
-    hash: ""
+    hash: "",
+    href: "//example.com"
   });
-  t.deepEqual(parseUrl("/path/to/something/?query=123"), {
+  t.deepEqual(parseHref("/path/to/something/?query=123"), {
     origin: "",
     path: "/path/to/something/",
     search: "?query=123",
-    hash: ""
+    hash: "",
+    href: "/path/to/something/?query=123"
   });
-  t.deepEqual(parseUrl("example.com"), {
+  t.deepEqual(parseHref("example.com"), {
     origin: "",
     path: "example.com",
     search: "",
-    hash: ""
+    hash: "",
+    href: "example.com"
   });
-  t.deepEqual(parseUrl("../foo/bar"), {
+  t.deepEqual(parseHref("../foo/bar"), {
     origin: "",
     path: "../foo/bar",
     search: "",
-    hash: ""
+    hash: "",
+    href: "../foo/bar"
   });
-  t.deepEqual(parseUrl("foo/bar"), {
+  t.deepEqual(parseHref("foo/bar"), {
     origin: "",
     path: "foo/bar",
     search: "",
-    hash: ""
+    hash: "",
+    href: "foo/bar"
   });
   t.end();
 });
