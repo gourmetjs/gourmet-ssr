@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-fake-github",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "scripts": {
     "hot": "node server/lib/index.js --hot",
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.3.0",
-    "@gourmet/preset-react-emotion": "^0.4.0",
+    "@gourmet/preset-react-emotion": "^0.4.1",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.3.0",
     "@gourmet/server-args": "^0.2.0",
