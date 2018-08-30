@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-i80-basic",
-  "version": "0.2.2",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "hot": "node lib/devel.js --hot",
@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.3.0",
-    "@gourmet/preset-react-emotion": "^0.4.2",
+    "@gourmet/preset-react-emotion": "^0.4.1",
     "classnames": "^2.2.6",
     "react": "^16.4.2",
     "react-dom": "^16.4.2"
