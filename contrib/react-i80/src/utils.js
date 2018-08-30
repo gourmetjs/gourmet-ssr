@@ -27,7 +27,7 @@ exports.unprefixPath = function(path, prefix) {
 // - path: path string ("/hello", "../foo/bar", "test", "/") - no relative path resolution, `decodeURI()`ed
 // - search: encoded query string ("?a=1&b", "")
 // - hash: fragment  ("#bookmark", "")
-exports.parseUrl = function(href) {
+exports.parseHref = function(href) {
   const parts = [];
   let spos = 0;
 
@@ -75,27 +75,23 @@ exports.joinPath = function(items) {
     if (!prev || prev[prev.length - 1] !== "/") {
       if (item[0] !== "/")
         item = "/" + item;
+    } else {
+      if (item[0] === "/")
+        item = item.substr(1);
     }
     return item;
   }).join("");
 };
 
-// Simple and slow query string parser focusing on small code size
-function _qs(search) {
-  if (search[0] === "?")
-    search = search.substr(1);
-  return search.split("&").reduce((query, item) => {
-    const [key, value] = item.split("=");
-    query[decodeURIComponent(key)] = decodeURIComponent(value || "");
-    return query;
-  }, {});
-}
-
-
 exports.encodeQuery = function(query) {
   if (!query)
     return "";
-  Object.keys(query).map(name => {
-    value = query[name];
-  });
+  const search = Object.keys(query).map(name => {
+    const value = query[name];
+    if (value)
+      return encodeURIComponent(name) + "=" + encodeURIComponent(value);
+    else
+      return encodeURIComponent(name);
+  }).join("&");
+  return search ? "?" + search : "";
 };

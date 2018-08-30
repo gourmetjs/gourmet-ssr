@@ -1,5 +1,9 @@
 import React from "react";
 
-export default function HomeView(props) {
-  return <h1>{props.label} Home</h1>;
+function HomeView(props) {
+  return <h1>{props.label} {props.route.getDisplayName()}</h1>;
 }
+
+HomeView.routeDisplayName = "Home";
+
+export default HomeView;

@@ -141,7 +141,7 @@ module.exports = class Router {
           if (def.routes) {
             res = _find(def.routes, unprefixPath(path, m[0]), p);
           } else {
-            const route = new BoundRoute(gmctx, def, p);
+            const route = new BoundRoute(gmctx, def.type, p);
             route.url = url;
             if (callback)
               res = callback(route);
@@ -170,7 +170,7 @@ module.exports = class Router {
         } else if (def.type === type) {
           route = new BoundRoute(gmctx, type, params);
           route.reverse = () => {
-            return joinPath(reverses.map(r => {
+            return joinPath(reverses.concat(def.reverse).map(r => {
               if (!r)
                 throw Error("RegExp route pattern requires a reverse function to generate a URL");
               return r(route.params);

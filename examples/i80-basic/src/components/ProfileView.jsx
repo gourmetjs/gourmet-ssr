@@ -1,5 +1,9 @@
 import React from "react";
 
-export default function ProfileView(props) {
-  return <h1>{props.label} Profile</h1>;
+function ProfileView(props) {
+  return <h1>{props.label} {props.route.getDisplayName()}</h1>;
 }
+
+ProfileView.routeDisplayName = "Profile";
+
+export default ProfileView;

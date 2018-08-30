@@ -3,8 +3,8 @@ import {hot} from "react-hot-loader";
 import {ActiveRoute, Link} from "@gourmet/react-i80";
 import PageBase from "../components/PageBase";
 import HomeView from "../components/HomeView";
-//import MessagesView from "../components/MessagesView";
-//import ProfileView from "../components/ProfileView";
+import MessagesView from "../components/MessagesView";
+import ProfileView from "../components/ProfileView";
 
 class MainPage extends Component {
   render() {
@@ -17,12 +17,10 @@ class MainPage extends Component {
                 <Link className="nav-link" to={HomeView}/>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/messages">Messages</a>
-                {/*<Link className="nav-link" to={MessagesView}/>*/}
+                <Link className="nav-link" to={MessagesView}/>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/profile">Profile</a>
-                {/*<Link className="nav-link" to={ProfileView}/>*/}
+                <Link className="nav-link" to={ProfileView}/>
               </li>
             </ul>
           </div>

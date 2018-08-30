@@ -33,7 +33,7 @@ module.exports = class Link extends React.Component {
       href = props.to;
       isActive = (url.path === (activeRoute && activeRoute.url.path));
     } else if (typeof props.to === "function") {
-      route = router.searchByComponent(props.to, props.params, props.query, props.hash);
+      route = router.searchByComponent(gmctx, props.to, props.params, props.query, props.hash);
       href = route ? route.makeHref() : "/";
       isActive = activeRoute && activeRoute.getComponent() === props.to;
     }
