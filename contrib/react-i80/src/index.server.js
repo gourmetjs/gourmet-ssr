@@ -9,17 +9,14 @@ const Link = require("./Link");
 // - strictSlash: Default is `false`.
 function i80(routes, options={}) {
   const router = Router.create(routes, options, {   // eslint-disable-line no-unused-vars
-    getTargetUrl(gmctx) {
-      return {
-        path: gmctx.path,
-        query: gmctx.query
-      };
+    getTargetHref(gmctx) {
+      return gmctx.url;
     },
 
-    getInitialProps(gmctx, route) {
-      return route.getInitialProps(gmctx).then(props => {
+    getInitialProps(route) {
+      return route.getInitialProps().then(props => {
         if (props)
-          gmctx.data.routerInitialProps = Object.assign({}, props);   // serialize data for client
+          route.gmctx.data.routerInitialProps = Object.assign({}, props);   // serialize data for client
         return props;
       });
     }

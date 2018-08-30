@@ -27,8 +27,8 @@ module.exports = function(Base) {
 
     invokeUserRenderer(gmctx) {
       const router = Router.get();
-      const url = router.getTargetUrl(gmctx);
-      return router.setActiveRoute(gmctx, url).then(cont => {
+      const href = router.getTargetHref(gmctx);
+      return router.setActiveRoute(gmctx, href).then(cont => {
         if (cont)
           return super.invokeUserRenderer(gmctx);
       });

@@ -1,19 +1,9 @@
 "use strict";
 
 const Router = require("./Router");
+const {parseHref} = require("./utils");
 const ActiveRoute = require("./ActiveRoute");
 const Link = require("./Link");
-
-// Simple and slow query string parser focusing on small code size
-function _qs(search) {
-  if (search[0] === "?")
-    search = search.substr(1);
-  return search.split("&").reduce((query, item) => {
-    const [key, value] = item.split("=");
-    query[decodeURIComponent(key)] = decodeURIComponent(value || "");
-    return query;
-  }, {});
-}
 
 function _error(mesg) {
   if (typeof mesg === "string")
@@ -22,48 +12,27 @@ function _error(mesg) {
     console.error(mesg);
 }
 
+// Relative path is not supported
 function goToUrl(href, pushState=true) {
   function _load(href) {
     window.location = href; // initiate a new page request
-  }
-
-  function _normalize(items) {
-    const protocol = items.protocol || window.location.protocol;
-    const hostname = items.hostname || window.location.hostname;
-    let port = items.port;
-    const pathname = items.pathname;
-
-    if (protocol === "http:" && port === "80")
-      port = "";
-    else if (protocol === "https:" && port === "443")
-      port = "";
-
-    return {
-      protocol: protocol,
-      host: hostname + (port ? ":" + port : ""),
-      pathname: pathname[0] === "/" ? pathname : "/" + pathname
-    };
   }
 
   const router = Router.get();
   const renderer = router.renderer;
 
   if (renderer) {
-    // https://stackoverflow.com/questions/736513/how-do-i-parse-a-url-into-hostname-and-path-in-javascript
-    const a = document.createElement("a");
-    a.href = href;
-
-    const items = _normalize(a);
     const loc = window.location;
+    const url = parseHref(href);
+    let origin = url.origin;
 
-    if (items.protocol === loc.protocol && items.host === loc.host) {
+    if (origin && origin.startsWith("//"))
+      origin = loc.protocol + origin;
+
+    if (!origin || origin === loc.origin) {
       renderer.render({
-        switchToUrl: {
-          path: items.pathname,
-          query: _qs(a.search),
-          hash: a.hash
-        },
-        didSwitchToUrl() {
+        switchToHref: href,
+        didSwitchToHref() {
           if (pushState)
             window.history.pushState({}, "", href);
         },
@@ -123,26 +92,19 @@ function i80(routes, options={}) {
       }
     },
 
-    getTargetUrl(gmctx) {
-      if (gmctx.routerData.switchToUrl)
-        return gmctx.routerData.switchToUrl;
-
-      const loc = window.location;
-
-      return {
-        path: loc.pathname,
-        query: _qs(loc.search),
-        hash: loc.hash
-      };
+    getTargetHref(gmctx) {
+      if (gmctx.routerData.switchToHref)
+        return gmctx.routerData.switchToHref;
+      return window.location.href;
     },
 
-    getInitialProps(gmctx, route) {
+    getInitialProps(route) {
       if (!router.gmctx) {
         // By design, we do not invoke `getInitialProps()` for the initial
         // rendering on the client side and use serialized data from server instead.
-        return Promise.resolve(gmctx.data.routerInitialProps);
+        return Promise.resolve(route.gmctx.data.routerInitialProps);
       } else {
-        return route.getInitialProps(gmctx);
+        return route.getInitialProps();
       }
     },
 

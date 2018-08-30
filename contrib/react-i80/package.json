@@ -6,10 +6,18 @@
   "publishConfig": {
     "access": "restricted"
   },
+  "scripts": {
+    "test": "tape test/*_test.js"
+  },
   "dependencies": {
+    "@gourmet/omit": "^0.1.0",
     "path-to-regexp": "^2.4.0",
     "encodeurl": "^1.0.2",
-    "escape-html": "^1.0.3"
+    "escape-html": "^1.0.3",
+    "classnames": "^2.2.6"
+  },
+  "devDependencies": {
+    "tape": "^4.9.0"
   },
   "peerDependencies": {
     "@gourmet/react-context-gmctx": "*",

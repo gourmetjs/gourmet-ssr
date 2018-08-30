@@ -15,8 +15,8 @@ module.exports = function(Base) {
     createContext(args) {
       const gmctx = super.createContext(args);
       gmctx.routerData = {
-        switchToUrl: args && args.switchToUrl,
-        didSwitchToUrl: args && args.didSwitchToUrl,
+        switchToHref: args && args.switchToHref,
+        didSwitchToHref: args && args.didSwitchToHref,
         routeNotFound: args && args.routeNotFound,
         initialProps: {}
       };
@@ -29,7 +29,7 @@ module.exports = function(Base) {
 
     invokeUserRenderer(gmctx) {
       const router = Router.get();
-      const url = router.getTargetUrl(gmctx);
+      const url = router.getTargetHref(gmctx);
       return router.setActiveRoute(gmctx, url).then(cont => {
         if (cont)
           return super.invokeUserRenderer(gmctx);

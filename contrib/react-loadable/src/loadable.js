@@ -2,7 +2,7 @@
 
 const React = require("react");
 const registrar = require("@gourmet/loadable-registrar");
-const ReactContext = require("@gourmet/react-context-gmctx");
+const GourmetContext = require("@gourmet/react-context-gmctx");
 
 function render(loaded, props) {
   return React.createElement(loaded && loaded.__esModule ? loaded.default : loaded, props);
@@ -180,7 +180,7 @@ function loadable(options) {
   if (SERVER) {
     // Wrappping a LoadableComponent with Context.Consumer breaks react-hot-loader
     const hoc = props => React.createElement(
-      ReactContext.Consumer,
+      GourmetContext.Consumer,
       null,
       gmctx => React.createElement(
         LoadableComponent,
