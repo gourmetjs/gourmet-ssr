@@ -1,4 +1,4 @@
-"use strict";
+"use strict";   // eslint-disable-line strict
 
 const loadable = require("@gourmet/react-loadable");
 const CustomLoading = require("./CustomLoading").default;

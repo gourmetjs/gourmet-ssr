@@ -10,7 +10,11 @@ class PluginReact {
             name: "babel-preset-react",
             preset: require.resolve("babel-preset-react"),
             after: "babel-preset-env"
-          }]
+          }],
+          plugins: [
+            "babel-plugin-transform-class-properties",
+            "babel-plugin-transform-object-rest-spread"
+          ]
         }
       }]
     };
