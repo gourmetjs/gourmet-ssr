@@ -1,15 +1,12 @@
 {
   "name": "@gourmet/promise-deep-prop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Gets a deep property value while resolving promises",
   "main": "lib/promiseDeepProp.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/error": "^0.1.0",
-    "@gourmet/is-plain-object": "^0.1.0",
-    "@gourmet/promise-each": "^0.1.0",
-    "@gourmet/promise-sync": "^0.1.0"
+    "@gourmet/error": "^0.2.0",
+    "@gourmet/is-plain-object": "^0.2.0",
+    "@gourmet/promise-each": "^0.2.0",
+    "@gourmet/promise-sync": "^0.2.0"
   }
 }

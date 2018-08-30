@@ -1,12 +1,9 @@
 {
   "name": "@gourmet/react-renderer",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "src/getReactClientRenderer.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/loadable-registrar": "^0.2.0"
+    "@gourmet/loadable-registrar": "^0.3.0"
   },
   "peerDependencies": {
     "@gourmet/react-context-gmctx": "*",

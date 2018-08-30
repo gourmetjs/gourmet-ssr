@@ -1,8 +1,5 @@
 {
   "name": "@gourmet/is-plain-object",
-  "version": "0.1.0",
-  "main": "lib/isPlainObject.js",
-  "publishConfig": {
-    "access": "restricted"
-  }
+  "version": "0.2.0",
+  "main": "lib/isPlainObject.js"
 }

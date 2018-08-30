@@ -1,12 +1,9 @@
 {
   "name": "@gourmet/promise-wrap",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Conditionally wraps a value with a promise only if it is not a promise",
   "main": "lib/promiseWrap.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/is-promise": "^0.1.0"
+    "@gourmet/is-promise": "^0.2.0"
   }
 }

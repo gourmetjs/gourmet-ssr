@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-fake-github",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "hot": "node server/lib/index.js --hot",
@@ -12,14 +12,14 @@
     "test:prod": "gourmet build --verbose 0 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.3.2"
+    "@gourmet/server-impl-watch": "^0.4.0"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^0.2.1",
-    "@gourmet/preset-react-emotion": "^0.3.3",
-    "@gourmet/promise-tape": "^0.2.0",
-    "@gourmet/puppeteer-args": "^0.2.0",
-    "@gourmet/server-args": "^0.1.1",
+    "@gourmet/gourmet-cli": "^0.3.0",
+    "@gourmet/preset-react-emotion": "^0.4.0",
+    "@gourmet/promise-tape": "^0.3.0",
+    "@gourmet/puppeteer-args": "^0.3.0",
+    "@gourmet/server-args": "^0.2.0",
     "bootstrap": "^4.1.0",
     "classnames": "^2.2.6",
     "ionicons": "^2.0.1",

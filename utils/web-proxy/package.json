@@ -1,16 +1,13 @@
 {
   "name": "@gourmet/web-proxy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/index.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/error": "^0.1.0",
-    "@gourmet/get-rops": "^0.1.0",
-    "@gourmet/handle-request-error": "^0.1.0",
-    "@gourmet/http-module": "^0.1.0",
-    "@gourmet/proxy-headers": "^0.1.0",
+    "@gourmet/error": "^0.2.0",
+    "@gourmet/get-rops": "^0.2.0",
+    "@gourmet/handle-request-error": "^0.2.0",
+    "@gourmet/http-module": "^0.2.0",
+    "@gourmet/proxy-headers": "^0.2.0",
     "pump": "^3.0.0"
   }
 }

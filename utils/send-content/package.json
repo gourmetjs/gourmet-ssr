@@ -1,15 +1,12 @@
 {
   "name": "@gourmet/send-content",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/sendContent.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/console": "^0.1.0",
-    "@gourmet/inspect-error": "^0.1.0",
-    "@gourmet/is-plain-object": "^0.1.0",
-    "@gourmet/is-stream": "^0.1.0",
+    "@gourmet/console": "^0.2.0",
+    "@gourmet/inspect-error": "^0.2.0",
+    "@gourmet/is-plain-object": "^0.2.0",
+    "@gourmet/is-stream": "^0.2.0",
     "end-of-stream": "^1.4.1",
     "pump": "^3.0.0"
   }

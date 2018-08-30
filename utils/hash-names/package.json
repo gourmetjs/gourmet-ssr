@@ -1,15 +1,12 @@
 {
   "name": "@gourmet/hash-names",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/HashNames.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "scripts": {
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/error": "^0.1.0",
+    "@gourmet/error": "^0.2.0",
     "base-x": "^3.0.4"
   },
   "devDependencies": {

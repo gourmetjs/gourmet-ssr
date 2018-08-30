@@ -1,15 +1,14 @@
 {
   "name": "@gourmet/plugin-react",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Gourmet Webpack Builder plugin for adding `babel-preset-react` to build JSX files",
   "keywords": [
     "gourmet-plugin"
   ],
   "main": "lib/GourmetPluginReact.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1"
   },
   "peerDependencies": {

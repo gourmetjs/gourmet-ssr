@@ -1,14 +1,11 @@
 {
   "name": "@gourmet/babel-plugin-gourmet-loadable",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Babel plugin that automatically populates `id` & `modules` property",
   "keywords": [
     "babel-plugin"
   ],
   "main": "lib/babelPluginGourmetLoadable.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
     "imurmurhash": "^0.1.4"
   }

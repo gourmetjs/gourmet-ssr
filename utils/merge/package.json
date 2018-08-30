@@ -1,11 +1,8 @@
 {
   "name": "@gourmet/merge",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Merges objects with special handling of arrays and non-plain objects",
   "main": "lib/merge.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "scripts": {
     "test": "tape test/*_test.js"
   },
@@ -13,6 +10,6 @@
     "tape": "^4.9.0"
   },
   "dependencies": {
-    "@gourmet/is-plain-object": "^0.1.0"
+    "@gourmet/is-plain-object": "^0.2.0"
   }
 }

@@ -1,20 +1,17 @@
 {
   "name": "@gourmet/react-i80",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "browser": "src/index.client.js",
   "main": "src/index.server.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "scripts": {
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/omit": "^0.1.0",
-    "path-to-regexp": "^2.4.0",
+    "@gourmet/omit": "^0.2.0",
+    "classnames": "^2.2.6",
     "encodeurl": "^1.0.2",
     "escape-html": "^1.0.3",
-    "classnames": "^2.2.6"
+    "path-to-regexp": "^2.4.0"
   },
   "devDependencies": {
     "tape": "^4.9.0"

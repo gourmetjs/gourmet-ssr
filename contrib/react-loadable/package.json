@@ -1,13 +1,10 @@
 {
   "name": "@gourmet/react-loadable",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "src/loadable.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/loadable-registrar": "^0.2.0",
-    "@gourmet/react-context-gmctx": "^0.2.0"
+    "@gourmet/loadable-registrar": "^0.3.0",
+    "@gourmet/react-context-gmctx": "^0.3.0"
   },
   "peerDependencies": {
     "react": "16"

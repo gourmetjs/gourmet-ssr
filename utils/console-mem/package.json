@@ -1,19 +1,16 @@
 {
   "name": "@gourmet/console-mem",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/install.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "scripts": {
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/console-env": "^0.1.0",
+    "@gourmet/console-env": "^0.2.0",
     "strip-ansi": "^4.0.0"
   },
   "devDependencies": {
-    "@gourmet/console": "^0.1.0",
+    "@gourmet/console": "^0.2.0",
     "tape": "^4.9.0"
   },
   "peerDependencies": {

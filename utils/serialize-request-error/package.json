@@ -1,11 +1,8 @@
 {
   "name": "@gourmet/serialize-request-error",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/serializeRequestError.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/serialize-error": "^0.1.0"
+    "@gourmet/serialize-error": "^0.2.0"
   }
 }

@@ -1,17 +1,14 @@
 {
   "name": "@gourmet/storage-fs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "File storage interface for 'fs' compatible filesystem",
   "main": "lib/StorageFs.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "scripts": {
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/is-stream": "^0.1.0",
-    "@gourmet/promise-queue": "^0.1.0",
+    "@gourmet/is-stream": "^0.2.0",
+    "@gourmet/promise-queue": "^0.2.0",
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {

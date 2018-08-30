@@ -1,11 +1,8 @@
 {
   "name": "@gourmet/get-req-args",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "main": "lib/getReqArgs.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/proxy-headers": "^0.1.0"
+    "@gourmet/proxy-headers": "^0.2.0"
   }
 }

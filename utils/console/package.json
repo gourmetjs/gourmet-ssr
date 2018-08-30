@@ -1,13 +1,10 @@
 {
   "name": "@gourmet/console",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A lightweight console abstraction for generating text output and debug logs",
   "main": "lib/getConsole.js",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
-    "@gourmet/colors": "^0.1.0",
-    "@gourmet/prefix-lines": "^0.1.0"
+    "@gourmet/colors": "^0.2.0",
+    "@gourmet/prefix-lines": "^0.2.0"
   }
 }
