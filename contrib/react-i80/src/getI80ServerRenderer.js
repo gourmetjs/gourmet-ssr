@@ -11,34 +11,27 @@ module.exports = function(Base) {
   return class I80ServerRenderer extends Base {
     createContext(...args) {
       const gmctx = super.createContext(...args);
-      const router = Router.get(true);
-      if (router) {
-        gmctx.routerData = {initialProps: {}};
-        gmctx.redirect = function(location, statusCode=302, content) {
-          location = encodeUrl(location);
-          content = content || `<p>[${statusCode}] Redirecting to ${escapeHtml(location)}...</p>`;
-          gmctx.result = {
-            statusCode,
-            headers: {location},
-            content
-          };
-          return true;
+      gmctx.routerData = {initialProps: {}};
+      gmctx.redirect = function(location, statusCode=302, content) {
+        location = encodeUrl(location);
+        content = content || `<p>[${statusCode}] Redirecting to ${escapeHtml(location)}...</p>`;
+        gmctx.result = {
+          statusCode,
+          headers: {location},
+          content
         };
-      }
+        return true;
+      };
       return gmctx;
     }
 
     invokeUserRenderer(gmctx) {
-      const router = Router.get(true);
-      if (router) {
-        const href = router.getTargetHref(gmctx);
-        return router.setActiveRoute(gmctx, href).then(cont => {
-          if (cont)
-            return super.invokeUserRenderer(gmctx);
-        });
-      } else {
-        return super.invokeUserRenderer(gmctx);
-      }
+      const router = Router.get();
+      const href = router.getTargetHref(gmctx);
+      return router.setActiveRoute(gmctx, href).then(cont => {
+        if (cont)
+          return super.invokeUserRenderer(gmctx);
+      });
     }
   };
 };

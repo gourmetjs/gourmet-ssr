@@ -193,8 +193,8 @@ module.exports = class Router {
     return router;
   }
 
-  static get(safeMode) {
-    if (!safeMode && !router)
+  static get() {
+    if (!router)
       throw Error("Router is not ready. Forgot to call the function 'i80()'?");
     return router;
   }

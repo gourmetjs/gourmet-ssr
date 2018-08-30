@@ -9,40 +9,31 @@ module.exports = function(Base) {
   return class I80ClientRenderer extends Base {
     constructor(...args) {
       super(...args);
-      const router = Router.get(true);
-      if (router)
-        router.setRenderer(this);
+      Router.get().setRenderer(this);
     }
 
     createContext(args) {
       const gmctx = super.createContext(args);
-      const router = Router.get(true);
-      if (router) {
-        gmctx.routerData = {
-          switchToHref: args && args.switchToHref,
-          didSwitchToHref: args && args.didSwitchToHref,
-          routeNotFound: args && args.routeNotFound,
-          initialProps: {}
-        };
-        gmctx.redirect = function(location) {
-          Router.get().goToUrl(location);
-          return true;
-        };
-      }
+      gmctx.routerData = {
+        switchToHref: args && args.switchToHref,
+        didSwitchToHref: args && args.didSwitchToHref,
+        routeNotFound: args && args.routeNotFound,
+        initialProps: {}
+      };
+      gmctx.redirect = function(location) {
+        Router.get().goToUrl(location);
+        return true;
+      };
       return gmctx;
     }
 
     invokeUserRenderer(gmctx) {
-      const router = Router.get(true);
-      if (router) {
-        const href = router.getTargetHref(gmctx);
-        return router.setActiveRoute(gmctx, href).then(cont => {
-          if (cont)
-            return super.invokeUserRenderer(gmctx);
-        });
-      } else {
-        return super.invokeUserRenderer(gmctx);
-      }
+      const router = Router.get();
+      const url = router.getTargetHref(gmctx);
+      return router.setActiveRoute(gmctx, url).then(cont => {
+        if (cont)
+          return super.invokeUserRenderer(gmctx);
+      });
     }
   };
 };
