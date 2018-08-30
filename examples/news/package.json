@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/example-news",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "private": true,
   "scripts": {
     "hot": "node lib/devel.js --hot",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "@gourmet/example-news-view": "^0.3.0",
     "@gourmet/gourmet-cli": "^0.3.0",
-    "@gourmet/preset-react-emotion": "^0.4.2",
+    "@gourmet/preset-react-emotion": "^0.4.3",
     "classnames": "^2.2.6",
     "react": "^16.4.2",
     "react-dom": "^16.4.2"
