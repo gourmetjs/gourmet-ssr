@@ -3,12 +3,13 @@
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const registrar = require("@gourmet/loadable-registrar");
+const promiseProtect = require("@gourmet/promise-protect");
 const wrapWithContext = require("./wrapWithContext");
 
 // ** Server control flow **
 // 1. HTTP server (your code) calls `gourmet.render("page", {...initialProps}, {other_gmctx_props})`
 //    `gourmet.render()` provides the following top-level properties for creating `gmctx`.
-//    Note that `gourmet.render()` is a helper for Connect/Express + React.
+//    Note that `gourmet.render()` is a helper for Connect(Express) + React.
 //    - initialProps
 //    - reqArgs (url, method, headers, encrypted)
 //    - {...other_gmctx_props}
@@ -34,36 +35,47 @@ module.exports = function getReactServerRenderer(Base) {
   return class ReactServerRenderer extends Base {
     invokeUserRenderer(gmctx) {
       return Promise.all([
-        this._makeProps(gmctx),
-        registrar.loadAll()
-      ]).then(([props]) => {
-        return this._renderPage(props).then(element => {
-          if (element)
-            return wrapWithContext(gmctx, element);
-          return element;
-        });
+        registrar.loadAll(),
+        this.getPageProps(gmctx, this.userObject)
+      ]).then(([, props]) => {
+        return this.renderPage(props);
+      }).then(element => {
+        if (element)
+          return wrapWithContext(gmctx, element);
+        return element;
       });
     }
 
-    makeProps(gmctx) {
-      const component = this._userRenderer;
-      if (component.makeProps)
-        return component.makeProps(gmctx);
-      return this.makeProps(gmctx, component);
+    getPageProps(gmctx, component) {
+      return promiseProtect(() => {
+        if (component.getInitialProps)
+          return component.getInitialProps(gmctx);
+      }).then(initialProps => {
+        if (initialProps)
+          Object.assign(gmctx.initialProps, initialProps);
+
+        if (Object.keys(gmctx.initialProps).length)
+          gmctx.data.initialProps = gmctx.initialProps;
+
+        if (component.makeProps)
+          return component.makeProps(gmctx);
+        else
+          return this.makeProps(gmctx);
+      });
     }
 
+    // This is a synchronous
+    makeProps(gmctx) {
+      return Object.assign({gmctx}, gmctx.initialProps);
+    }
+
+    // This can return a promise
     renderPage(props) {
-      const component = this._userRenderer;
+      const component = this.userObject;
+
       if (component.renderPage)
         return component.renderPage(props);
-      return this.renderPage(props, component);
-    }
 
-    makeProps(gmctx, component) {
-
-    }
-
-    renderPage(props, component) {
       return React.createElement(component, props);
     }
 
@@ -107,6 +119,9 @@ module.exports = function getReactServerRenderer(Base) {
         if (rendered.indexOf(id) === -1)
           rendered.push(id);
       };
+
+      if (!gmctx.initialProps)
+        gmctx.initialProps = {};
 
       return gmctx;
     }

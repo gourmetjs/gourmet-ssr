@@ -12,7 +12,7 @@ module.exports = function getHandler(args={}) {
   args.outputDir = npath.resolve(args.workDir, args.outputDir || ".gourmet");
   args.serverDir = args.serverDir ? npath.resolve(args.workDir, args.serverDir) : npath.join(args.outputDir, args.stage, "server");
   args.clientDir = args.clientDir ? npath.resolve(args.workDir, args.clientDir) : npath.join(args.outputDir, args.stage, "client");
-  args.entrypoint = process.env.GOURMET_ENTRYPOINT || args.entrypoint || "main";
+  args.page = process.env.GOURMET_PAGE || args.page || "main";
   args.siloed = parseArgs.bool([process.env.GOURMET_SILOED, args.siloed]);
 
   const gourmet = clientLib(args);

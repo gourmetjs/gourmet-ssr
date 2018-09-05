@@ -36,11 +36,11 @@ class HtmlServerRenderer extends BaseRenderer {
   }
 
   // opts: provided by `RendererSandbox`
-  //  - entrypoint
+  //  - page
   //  - manifest
   // context: provided by clients when requesting the rendering
-  //  - reqArgs: {url, method, headers, encrypted} - see `@gourmet/get-req-args`
-  //    for the latest info.
+  //  - reqArgs: {url, method, headers, encrypted}
+  //    * see `@gourmet/get-req-args` for the latest info.
   //  - other custom context values
   getRenderer(opts) {
     return context => {
@@ -53,7 +53,7 @@ class HtmlServerRenderer extends BaseRenderer {
     };
   }
 
-  createContext(context, {entrypoint, manifest}) {
+  createContext(context, {page, manifest}) {
     const config = manifest.config || {};
     const gmctx = Object.assign({
       isServer: true,
@@ -71,7 +71,7 @@ class HtmlServerRenderer extends BaseRenderer {
         statusCode: 200,
         headers: {}
       },
-      entrypoint,
+      page,
       manifest,
       data: {}
     }, context);
@@ -139,7 +139,7 @@ class HtmlServerRenderer extends BaseRenderer {
   }
 
   getStaticDeps(gmctx) {
-    return gmctx.manifest.client.entrypoints[gmctx.entrypoint];
+    return gmctx.manifest.client.pages[gmctx.page];
   }
 
   renderStaticDeps(gmctx) {

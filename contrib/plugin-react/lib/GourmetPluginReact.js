@@ -53,7 +53,7 @@ PluginReact.meta = {
     "build:webpack:pipelines": PluginReact.prototype.onPipelines,
     "build:webpack:loaders": PluginReact.prototype.onLoaders,
     "build:webpack:resolve": PluginReact.prototype.onResolve,
-    "build:page:renderer": PluginReact.prototype.onRenderer
+    "build:page_renderer": PluginReact.prototype.onRenderer
   }
 };
 

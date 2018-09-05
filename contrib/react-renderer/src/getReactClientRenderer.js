@@ -1,7 +1,9 @@
 "use strict";
 
+const React = require("react");
 const ReactDOM = require("react-dom");
 const registrar = require("@gourmet/loadable-registrar");
+const promiseProtect = require("@gourmet/promise-protect");
 const wrapWithContext = require("./wrapWithContext");
 
 // ** Client control flow **
@@ -17,11 +19,35 @@ module.exports = function getReactClientRenderer(Base) {
 
   return class ReactClientRenderer extends Base {
     invokeUserRenderer(gmctx) {
-      return super.invokeUserRenderer(gmctx).then(element => {
+      return this.getPageProps(gmctx, this.userObject).then(props => {
+        return this.renderPage(props);
+      }).then(element => {
         if (element)
           return wrapWithContext(gmctx, element);
         return element;
       });
+    }
+
+    getPageProps(gmctx, component) {
+      return promiseProtect(() => {
+        if (component.makeProps)
+          return component.makeProps(gmctx);
+        else
+          return this.makeProps(gmctx);
+      });
+    }
+
+    makeProps(gmctx) {
+      return Object.assign({gmctx}, gmctx.data.initialProps);
+    }
+
+    renderPage(props) {
+      const component = this.userObject;
+
+      if (component.renderPage)
+        return component.renderPage(props);
+
+      return React.createElement(component, props);
     }
 
     renderToDom(gmctx, content, elemId) {

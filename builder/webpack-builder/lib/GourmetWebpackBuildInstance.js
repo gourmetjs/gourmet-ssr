@@ -25,14 +25,14 @@ const CIRCULAR_PIPELINE = {
   code: "CIRCULAR_PIPELINE"
 };
 
-const INVALID_ENTRY = {
-  message: "'entry' must be an object containing at least one entry-point",
-  code: "INVALID_ENTRY"
+const INVALID_PAGES = {
+  message: "'pages' must be an object containing at least one page",
+  code: "INVALID_PAGES"
 };
 
-const INVALID_ENTRY_VALUE = {
-  message: "Entry '${name}' has invalid value",
-  code: "INVALID_ENTRY_VALUE"
+const INVALID_PAGE_VALUE = {
+  message: "Page '${name}' has invalid value",
+  code: "INVALID_PAGE_VALUE"
 };
 
 const INVALID_USER_OBJECT = {
@@ -72,11 +72,11 @@ class GourmetWebpackBuildInstance {
   }
 
   init(context) {
-    return context.vars.getMulti("builder", "webpack", "entry").then(([builder, webpack, entry]) => {
+    return context.vars.getMulti("builder", "webpack", "pages").then(([builder, webpack, pages]) => {
       this._varsCache = {
         builder: builder || {},
         webpack: webpack || {},
-        entry: entry || {}
+        pages: pages || {}
       };
     }).then(() => {
       return this._prepareWebpackRecords(context);
@@ -200,15 +200,15 @@ class GourmetWebpackBuildInstance {
   }
 
   getWebpackEntry(context, config) {
-    const entry = this._varsCache.entry;
+    const pages = this._varsCache.pages;
 
-    if (!isPlainObject(entry))
-      throw error(INVALID_ENTRY);
+    if (!isPlainObject(pages))
+      throw error(INVALID_PAGES);
 
-    const names = Object.keys(entry);
+    const names = Object.keys(pages);
 
     if (!names.length)
-      throw error(INVALID_ENTRY);
+      throw error(INVALID_PAGES);
 
     const res = {};
 
@@ -218,18 +218,18 @@ class GourmetWebpackBuildInstance {
           return [val];
         else if (Array.isArray(val))
           return [].concat(val);
-        throw error(INVALID_ENTRY_VALUE, {name});
+        throw error(INVALID_PAGE_VALUE, {name});
       }
 
-      const def = entry[name];
-      let entryValue = _value(isPlainObject(def) ? def[context.target] : def);
+      const def = pages[name];
+      let pageValue = _value(isPlainObject(def) ? def[context.target] : def);
 
-      entryValue = context.plugins.runWaterfallSync("build:webpack:entry", entryValue, name, def, context, config);
+      pageValue = context.plugins.runWaterfallSync("build:webpack:entry", pageValue, name, def, context, config);
 
       if (!isPlainObject(def))
-        entryValue = this._generateEntryInit(entryValue, name, context, config);
+        pageValue = this._generatePageInit(pageValue, name, context, config);
 
-      res[name] = (context.watch || entryValue.length > 1) ? entryValue : entryValue[0];
+      res[name] = (context.watch || pageValue.length > 1) ? pageValue : pageValue[0];
     });
 
     return res;
@@ -466,7 +466,7 @@ class GourmetWebpackBuildInstance {
       return obj;
   }
 
-  _generateEntryInit(entryValue, name, context, config) {
+  _generatePageInit(pageValue, name, context, config) {
     function _renderer(list) {
       return [
         "[",
@@ -475,14 +475,14 @@ class GourmetWebpackBuildInstance {
       ].join("\n");
     }
 
-    const info = context.plugins.runMergeSync("build:page:renderer", {renderer: []}, context, config, entryValue, name);
+    const info = context.plugins.runMergeSync("build:page_renderer", {renderer: []}, context, config, pageValue, name);
 
     if (!info.renderer || !Array.isArray(info.renderer) || !info.renderer.length)
       throw error(NO_RENDERER_CLASS);
 
     const infoDir = npath.join(context.builder.outputDir, context.stage, "info");
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
-    const absPath = resolve.sync(entryValue[entryValue.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
+    const absPath = resolve.sync(pageValue[pageValue.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
     const userModule = relativePath(absPath, infoDir);
     const iopts = this._varsCache.builder.initOptions;
     const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";
@@ -490,14 +490,14 @@ class GourmetWebpackBuildInstance {
     const content = [
       '"use strict"',
       `const Renderer = ${_renderer(info.renderer)};`,
-      `const render = require("${userModule}");`,
-      `const r = Renderer.create(render${options});`,
+      `const userObject = require("${userModule}");`,
+      `const r = Renderer.create(userObject${options});`,
       context.target === "server" ? "__gourmet_module__.exports = r.getRenderer.bind(r);" : "r.render();"
     ].join("\n");
 
     context.builder.emitFileSync(outputPath, content);
 
-    return entryValue.slice(0, entryValue.length - 1).concat(relativePath(outputPath, context.workDir));
+    return pageValue.slice(0, pageValue.length - 1).concat(relativePath(outputPath, context.workDir));
   }
 }
 

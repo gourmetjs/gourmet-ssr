@@ -4,12 +4,11 @@
   "main": "lib/clientLib.js",
   "dependencies": {
     "@gourmet/get-exported": "^0.3.0",
-    "@gourmet/get-req-args": "^0.2.0",
     "@gourmet/merge": "^0.3.0",
+    "@gourmet/middleware": "^0.1.0",
     "@gourmet/omit": "^0.2.0",
     "@gourmet/promise-protect": "^0.2.0",
     "@gourmet/renderer-sandbox": "^0.2.0",
-    "@gourmet/send-content": "^0.2.0",
     "@gourmet/storage-fs": "^0.3.0"
   }
 }

@@ -114,7 +114,7 @@ class GourmetServerLauncher {
       "  --no-static          Do not serve static assets (default: '--static')",
       "  --static-prefix <s>  Set the path prefix of static assets (default: '/s/')",
       "  --mount <s>          Set the mounting path (default: '/')",
-      "  --entrypoint <s>     Set the default entrypoint (default: 'main')",
+      "  --page <s>           Set the default page (default: 'main')",
       "  --siloed             Set the default 'siloed' option (default: '--no-siloed')",
       "  --params.x.y         Set the arbitrary 'params' object (result: '{x: {y: true}}')",
       "  --colors             Use ANSI colors in console output (default: auto detect)",

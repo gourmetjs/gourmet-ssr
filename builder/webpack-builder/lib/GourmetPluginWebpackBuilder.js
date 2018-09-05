@@ -183,7 +183,7 @@ class GourmetPluginWebpackBuilder {
 
   writeManifest(context, stats) {
     function _section(target) {
-      function _eps() {
+      function _pages() {
         const eps = compilation.entrypoints;
         const res = {};
         if (eps) {
@@ -265,7 +265,7 @@ class GourmetPluginWebpackBuilder {
 
       return {
         compilation: compilation.hash,
-        entrypoints: _eps(),
+        pages: _pages(),
         files: _files(),
         modules: _modules()
       };

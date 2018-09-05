@@ -6,7 +6,11 @@ export default class DashboardPage extends React.Component {
   // `props` is the result of `makeProps()` static function.
   // You can return a promise.
   static renderPage(props) {
-    return <DashboardPage renderPage={true} {...props}/>;
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(<DashboardPage renderPage={true} {...props}/>);
+      }, 10);
+    });
   }
 
   // This gets called to construct `props` for `renderPage()`.

@@ -21,7 +21,7 @@ class GourmetHttpServer extends ServerImplBase {
     const argv = this.argv;
     this.gourmet = require("@gourmet/client-lib")({
       serverDir: this.args.serverDir,
-      entrypoint: parseArgs.string(argv.entrypoint, "main"),
+      page: parseArgs.string(argv.page, "main"),
       siloed: parseArgs.bool(argv.siloed),
       params: argv.params || {}
     });

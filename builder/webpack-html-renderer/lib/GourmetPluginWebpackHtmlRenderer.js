@@ -1,7 +1,7 @@
 "use strict";
 
 class PluginHtmlRenderer {
-  onEntryInit({target}) {
+  onRenderer({target}) {
     return {
       renderer: [
         "@gourmet/html-renderer" + (target === "server" ? "/server" : "")
@@ -12,7 +12,7 @@ class PluginHtmlRenderer {
 
 PluginHtmlRenderer.meta = {
   hooks: {
-    "build:webpack:entry_init": PluginHtmlRenderer.prototype.onEntryInit
+    "build:page_renderer": PluginHtmlRenderer.prototype.onRenderer
   }
 };
 

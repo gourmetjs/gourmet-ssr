@@ -5,27 +5,26 @@ const promiseProtect = require("@gourmet/promise-protect");
 const omit = require("@gourmet/omit");
 const merge = require("@gourmet/merge");
 const StorageFs = require("@gourmet/storage-fs");
-const getReqArgs = require("@gourmet/get-req-args");
 const RendererSandbox = require("@gourmet/renderer-sandbox");
 const getExported = require("@gourmet/get-exported");
-const sendContent = require("@gourmet/send-content");
+const middlewareFactory = require("@gourmet/middleware");
 
 const _defaultStorage = new StorageFs();
 
 function clientLib(baseArgs) {
   function invoke(args, callback) {
     function _getCacheKey() {
-      return `${serverDir}:${entrypoint}`;
+      return `${serverDir}:${page}`;
     }
 
     function _loadBundle() {
       return storage.readFile(npath.join(serverDir, "manifest.json")).then(manifest => {
         manifest = JSON.parse(manifest.toString());
-        const bundles = manifest.server.entrypoints[entrypoint];
+        const bundles = manifest.server.pages[page];
         if (!bundles)
-          throw Error(`There is no '${entrypoint}' entrypoint in 'manifest.json'`);
+          throw Error(`There is no '${page}' page in 'manifest.json'`);
         if (bundles.length !== 1)
-          throw Error(`'${entrypoint}' should have only one bundle file`);
+          throw Error(`'${page}' should have only one bundle file`);
         const path = npath.join(serverDir, bundles[0]);
         return storage.readFile(path).then(bundle => {
           const sandbox = new RendererSandbox({
@@ -41,7 +40,7 @@ function clientLib(baseArgs) {
 
     function _getRenderer({sandbox, manifest}) {
       const getter = getExported(sandbox.run());
-      return getter({entrypoint, manifest});
+      return getter({page, manifest});
     }
 
     function _done(err) {
@@ -59,7 +58,7 @@ function clientLib(baseArgs) {
     }
 
     args = merge.intact(baseArgs, args);
-    const {storage=_storage, serverDir, entrypoint="main", siloed} = args;
+    const {storage=_storage, serverDir, page="main", siloed} = args;
     args = omit(args, ["storage", "serverDir"]);
 
     if (!serverDir)
@@ -96,29 +95,6 @@ function clientLib(baseArgs) {
     }
   }
 
-  // HTTP renderer extracting `args` from `req` and sending the result to `res`.
-  function render(req, res, next, args) {
-    args = Object.assign(getReqArgs(req), args);
-    invoke(args, (err, result) => {
-      if (err) {
-        next(err);
-      } else if (!result) {
-        next();
-      } else {
-        sendContent(res, result, err => {
-          if (err)
-            next(err);
-        });
-      }
-    });
-  }
-
-  function renderer(args) {
-    return function(req, res, next) {
-      render(req, res, next, args);
-    };
-  }
-
   function cleanCache() {
     _cache = {};
   }
@@ -136,9 +112,8 @@ function clientLib(baseArgs) {
 
   context.setStorage = setStorage;
   context.invoke = invoke;
-  context.render = render;
-  context.renderer = renderer;
   context.cleanCache = cleanCache;
+  context.middleware = middlewareFactory(context, {serveStatic: true});
 
   return context;
 }

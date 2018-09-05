@@ -6,7 +6,7 @@ const HtmlServerRenderer = require("../src/getHtmlServerRenderer")();
 test("getBundles() basic", t => {
   const r = new HtmlServerRenderer();
   const gmctx = r.createContext(null, {
-    entrypoint: "main",
+    page: "main",
     manifest: {
       client: {
         files: {
