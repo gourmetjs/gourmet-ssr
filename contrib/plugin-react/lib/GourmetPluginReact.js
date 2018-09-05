@@ -36,7 +36,7 @@ class PluginReact {
     };
   }
 
-  onEntryInit({target}) {
+  onRenderer({target}) {
     return {
       renderer: [
         "@gourmet/react-renderer" + (target === "server" ? "/server" : "")
@@ -53,7 +53,7 @@ PluginReact.meta = {
     "build:webpack:pipelines": PluginReact.prototype.onPipelines,
     "build:webpack:loaders": PluginReact.prototype.onLoaders,
     "build:webpack:resolve": PluginReact.prototype.onResolve,
-    "build:webpack:entry_init": PluginReact.prototype.onEntryInit
+    "build:page:renderer": PluginReact.prototype.onRenderer
   }
 };
 

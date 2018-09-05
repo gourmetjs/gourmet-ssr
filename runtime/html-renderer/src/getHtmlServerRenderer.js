@@ -38,12 +38,13 @@ class HtmlServerRenderer extends BaseRenderer {
   // opts: provided by `RendererSandbox`
   //  - entrypoint
   //  - manifest
-  // args: provided by clients when requesting the rendering
-  //  - method, headers, url, path, query, encrypted
-  //  - see `@gourmet/get-req-args` for the latest info
+  // context: provided by clients when requesting the rendering
+  //  - reqArgs: {url, method, headers, encrypted} - see `@gourmet/get-req-args`
+  //    for the latest info.
+  //  - other custom context values
   getRenderer(opts) {
-    return args => {
-      const gmctx = this.createContext(args, opts);
+    return context => {
+      const gmctx = this.createContext(context, opts);
       return this.invokeUserRenderer(gmctx).then(content => {
         return this.renderToMedium(gmctx, content);
       }).then(bodyMain => {
@@ -52,7 +53,7 @@ class HtmlServerRenderer extends BaseRenderer {
     };
   }
 
-  createContext(args, {entrypoint, manifest}) {
+  createContext(context, {entrypoint, manifest}) {
     const config = manifest.config || {};
     const gmctx = Object.assign({
       isServer: true,
@@ -72,14 +73,8 @@ class HtmlServerRenderer extends BaseRenderer {
       },
       entrypoint,
       manifest,
-      data: {
-        // There are no fields automatically transfered to the client
-        // because overriding this behavior is very easy in user code.
-        //  - entrypoint
-        //  - path
-        //  - staticPrefix: manifest.staticPrefix
-      }
-    }, args);
+      data: {}
+    }, context);
     return gmctx;
   }
 

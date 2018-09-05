@@ -475,7 +475,7 @@ class GourmetWebpackBuildInstance {
       ].join("\n");
     }
 
-    const info = context.plugins.runMergeSync("build:webpack:entry_init", {renderer: []}, context, config, entryValue, name);
+    const info = context.plugins.runMergeSync("build:page:renderer", {renderer: []}, context, config, entryValue, name);
 
     if (!info.renderer || !Array.isArray(info.renderer) || !info.renderer.length)
       throw error(NO_RENDERER_CLASS);
