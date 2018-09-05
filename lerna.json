@@ -8,8 +8,7 @@
     "runtime/*",
     "contrib/*",
     "presets/*",
-    "integration/*",
-    "examples/*"
+    "tests/*"
   ],
   "hoist": true,
   "version": "independent"

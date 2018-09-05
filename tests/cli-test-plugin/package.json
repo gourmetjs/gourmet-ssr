@@ -1,0 +1,9 @@
+{
+  "name": "@gourmet/test-cli-test-plugin",
+  "version": "0.2.0",
+  "private": true,
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "main": "lib/GourmetPluginCliTest.js"
+}
