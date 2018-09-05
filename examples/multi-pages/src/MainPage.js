@@ -1,4 +1,5 @@
 import React from "react";
+import renderProps from "./renderProps";
 
 export default class MainPage extends React.Component {
   static getInitialProps() {
@@ -7,7 +8,13 @@ export default class MainPage extends React.Component {
 
   render() {
     return (
-      <div>{this.props.greeting}</div>
+      <div>
+        <h1>Index</h1>
+        <p>{this.props.greeting}</p>
+        <pre>
+          {renderProps(this.props)}
+        </pre>
+      </div>
     );
   }
 }

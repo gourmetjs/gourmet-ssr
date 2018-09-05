@@ -1,4 +1,5 @@
 import React from "react";
+import renderProps from "./renderProps";
 
 export default class DashboardPage extends React.Component {
   // This gets called when the renderer needs to render a root React component
@@ -34,20 +35,9 @@ export default class DashboardPage extends React.Component {
       <div>
         <h1>Dashboard</h1>
         <pre>
-          {this._renderProps(this.props)}
+          {renderProps(this.props)}
         </pre>
       </div>
     );
-  }
-
-  _renderProps(props) {
-    return Object.keys(props).sort().map(name => {
-      let value = props[name];
-      if (name === "gmctx")
-        value = "{...}";
-      else
-        value = JSON.stringify(value);
-      return `  ${name}: ${value}\n`;
-    });
   }
 }
