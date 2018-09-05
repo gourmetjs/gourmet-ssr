@@ -20,7 +20,7 @@ class PluginReactEmotion {
     };
   }
 
-  onEntryInit({target}) {
+  onPageRenderer({target}) {
     if (target === "server") {
       return {
         renderer: [
@@ -36,8 +36,8 @@ PluginReactEmotion.meta = {
     after: "@gourmet/plugin-react"
   },
   hooks: {
-    "build:webpack:pipelines": PluginReactEmotion.prototype.onPipelines,
-    "build:webpack:entry_init": PluginReactEmotion.prototype.onEntryInit
+    "build:pipelines": PluginReactEmotion.prototype.onPipelines,
+    "build:page_renderer": PluginReactEmotion.prototype.onPageRenderer
   }
 };
 

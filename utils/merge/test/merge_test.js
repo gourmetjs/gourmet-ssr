@@ -113,3 +113,19 @@ test("Merging plain objects", t => {
   t.ok(d.c === C, "non-plain object should be intact");
   t.end();
 });
+
+test("Value of undefined", t => {
+  const a = {
+    a: 1,
+    b: undefined
+  };
+  const b = {
+    b: 2,
+    c: undefined
+  };
+  t.deepEqual(merge(a, b), {
+    a: 1,
+    b: 2
+  });
+  t.end();
+});

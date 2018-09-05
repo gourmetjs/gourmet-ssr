@@ -47,8 +47,8 @@ function _isHotFile(name) {
 //    build:go
 //      build:prepare
 //      build:client
-//        build:webpack:config
-//          build:webpack:*
+//        build:config
+//          build:...
 //      build:server
 //        * same as build:client *
 //      build:finish
@@ -300,12 +300,12 @@ class GourmetPluginWebpackBuilder {
   }
 
   // Main handler for `gourmet build` command.
-  _onCommand(context) {
+  onCommand(context) {
     context.console.info("GourmetBuilder: executing 'build' command...");
     return context.plugins.runAsync("build:go", context);
   }
 
-  _onGo(context) {
+  onGo(context) {
     return promiseProtect(() => {
       return context.plugins.runAsync("build:prepare", context);
     }).then(() => {
@@ -318,7 +318,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   // Handler for `build:prepare` event
-  _onPrepare(context) {
+  onPrepare(context) {
     return promiseProtect(() => {
       return this._init(context);
     }).then(() => {
@@ -331,7 +331,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   // Handler for `build:(client|server)` event
-  _onBuild(target, context) {
+  onBuild(target, context) {
     let build;
     return promiseProtect(() => {
       context.vars.cleanCache();
@@ -347,7 +347,11 @@ class GourmetPluginWebpackBuilder {
     });
   }
 
-  _onFinish(context) {
+  onConfig(context) {
+    return context.builds[context.target].getConfig(context);
+  }
+
+  onFinish(context) {
     if (context.builds.server.webpack.stats && context.builds.client.webpack.stats) {
       return this.writeManifest(context);
     }
@@ -428,10 +432,6 @@ class GourmetPluginWebpackBuilder {
     });
   }
 
-  _onWebpackConfig(context) {
-    return context.builds[context.target].getWebpackConfig(context);
-  }
-
   _collectManifestConfig(context) {
     if (this._manifestConfig)
       return Promise.resolve(this._manifestConfig);
@@ -482,15 +482,15 @@ GourmetPluginWebpackBuilder.meta = {
     }
   },
 
-  hooks: (proto => ({
-    "command:build": proto._onCommand,
-    "build:go": proto._onGo,
-    "build:prepare": proto._onPrepare,
-    "build:client": proto._onBuild,
-    "build:server": proto._onBuild,
-    "build:webpack:config": proto._onWebpackConfig,
-    "build:finish": proto._onFinish
-  }))(GourmetPluginWebpackBuilder.prototype)
+  hooks: {
+    "command:build": GourmetPluginWebpackBuilder.prototype.onCommand,
+    "build:go": GourmetPluginWebpackBuilder.prototype.onGo,
+    "build:prepare": GourmetPluginWebpackBuilder.prototype.onPrepare,
+    "build:client": GourmetPluginWebpackBuilder.prototype.onBuild,
+    "build:server": GourmetPluginWebpackBuilder.prototype.onBuild,
+    "build:config": GourmetPluginWebpackBuilder.prototype.onConfig,
+    "build:finish": GourmetPluginWebpackBuilder.prototype.onFinish
+  }
 };
 
 module.exports = GourmetPluginWebpackBuilder;

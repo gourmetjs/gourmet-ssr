@@ -1,7 +1,7 @@
 "use strict";
 
 class PluginReactI80 {
-  onEntryInit({target}) {
+  onPageRenderer({target}) {
     return {
       renderer: [`@gourmet/react-i80/renderer.${target}.js`]
     };
@@ -13,7 +13,7 @@ PluginReactI80.meta = {
     after: ["@gourmet/plugin-react", "@gourmet/plugin-react-emotion"]
   },
   hooks: {
-    "build:webpack:entry_init": PluginReactI80.prototype.onEntryInit
+    "build:page_renderer": PluginReactI80.prototype.onPageRenderer
   }
 };
 

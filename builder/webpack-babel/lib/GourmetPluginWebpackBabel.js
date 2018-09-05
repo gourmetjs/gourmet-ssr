@@ -3,7 +3,7 @@
 const sortPlugins = require("@gourmet/plugin-sort");
 
 class GourmetPluginWebpackBabel {
-  _onWebpackInit(context) {
+  onInit(context) {
     // Note that `babel-preset-env` below 7.x doesn't support
     // browserlist's config file or `package.json`.
     // https://github.com/babel/babel-preset-env/issues/26
@@ -14,7 +14,7 @@ class GourmetPluginWebpackBabel {
     });
   }
 
-  _onWebpackPipelines(context) {
+  onPipelines(context) {
     // Note that the object returned from this hook is merged with other
     // plugins's result. Arrays are appended by default, so `presets` and
     // `plugins` are appended too.
@@ -62,7 +62,7 @@ class GourmetPluginWebpackBabel {
     };
   }
 
-  _onWebpackLoaders(context) {
+  onLoaders(context) {
     return {
       js: {
         extensions: [".js"],
@@ -81,7 +81,7 @@ class GourmetPluginWebpackBabel {
     };
   }
 
-  _onLoaderOptions(options) {
+  onLoaderOptions(options) {
     function _sort(items) {
       return items && sortPlugins(items, {
         normalize(item) {
@@ -111,12 +111,12 @@ class GourmetPluginWebpackBabel {
 }
 
 GourmetPluginWebpackBabel.meta = {
-  hooks: (proto => ({
-    "build:webpack:init": proto._onWebpackInit,
-    "build:webpack:pipelines": proto._onWebpackPipelines,
-    "build:webpack:loaders": proto._onWebpackLoaders,
-    "build:webpack:loader_options:babel-loader": proto._onLoaderOptions
-  }))(GourmetPluginWebpackBabel.prototype)
+  hooks: {
+    "build:init": GourmetPluginWebpackBabel.prototype.onInit,
+    "build:pipelines": GourmetPluginWebpackBabel.prototype.onPipelines,
+    "build:loaders": GourmetPluginWebpackBabel.prototype.onLoaders,
+    "build:loader_options:babel-loader": GourmetPluginWebpackBabel.prototype.onLoaderOptions
+  }
 };
 
 module.exports = GourmetPluginWebpackBabel;

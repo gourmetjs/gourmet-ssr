@@ -20,7 +20,7 @@ PresetCore.meta = {
     "@gourmet/plugin-webpack-html-renderer"
   ],
   hooks: {
-    "build:webpack:alias": PresetCore.prototype.onAlias
+    "build:alias": PresetCore.prototype.onAlias
   }
 };
 

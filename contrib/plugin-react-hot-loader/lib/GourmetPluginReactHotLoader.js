@@ -20,7 +20,7 @@ class PluginReactHotLoader {
 
 PluginReactHotLoader.meta = {
   hooks: {
-    "build:webpack:pipelines": PluginReactHotLoader.prototype.onPipelines
+    "build:pipelines": PluginReactHotLoader.prototype.onPipelines
   }
 };
 

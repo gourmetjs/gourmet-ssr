@@ -240,7 +240,7 @@ class GourmetWatchMiddleware {
     if (this._lastCompilationHash[target] !== hash) {
       this._lastCompilationHash[target] = hash;
       build.webpack.stats = stats;
-      build.printWebpackResult(context);
+      build.printResult(context);
       return true;
     } else {
       con.log("Compilation hash didn't change, ignoring...");

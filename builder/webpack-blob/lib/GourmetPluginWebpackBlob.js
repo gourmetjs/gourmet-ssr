@@ -1,7 +1,7 @@
 "use strict";
 
 class GourmetPluginWebpackBlob {
-  _onWebpackPipelines(context) {
+  onPipelines(context) {
     return {
       blob: [{
         name: "@gourmet/webpack-file-loader",
@@ -14,7 +14,7 @@ class GourmetPluginWebpackBlob {
     };
   }
 
-  _onWebpackLoaders() {
+  onLoaders() {
     return {
       blob: {
         extensions: "*",  // this will match all non-registered extensions
@@ -30,10 +30,10 @@ class GourmetPluginWebpackBlob {
 }
 
 GourmetPluginWebpackBlob.meta = {
-  hooks: (proto => ({
-    "build:webpack:pipelines": proto._onWebpackPipelines,
-    "build:webpack:loaders": proto._onWebpackLoaders
-  }))(GourmetPluginWebpackBlob.prototype)
+  hooks: {
+    "build:pipelines": GourmetPluginWebpackBlob.prototype.onPipelines,
+    "build:loaders": GourmetPluginWebpackBlob.prototype.onLoaders
+  }
 };
 
 module.exports = GourmetPluginWebpackBlob;

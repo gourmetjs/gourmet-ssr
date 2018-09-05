@@ -44,7 +44,7 @@ class PluginReactLoadable {
 
 PluginReactLoadable.meta = {
   hooks: {
-    "build:webpack:pipelines": PluginReactLoadable.prototype.onPipelines
+    "build:pipelines": PluginReactLoadable.prototype.onPipelines
   }
 };
 

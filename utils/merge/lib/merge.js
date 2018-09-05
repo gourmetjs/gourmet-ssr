@@ -27,27 +27,28 @@ function _merge(des, src) {
     const prop = props[idx];
     const srcVal = src[prop];
     const desVal = des[prop];
-    let newVal;
 
     if (srcVal instanceof Customizer) {
-      newVal = srcVal.customizer.call(null, desVal);
+      des[prop] = srcVal.customizer.call(null, desVal);
     } else {
       const st = _getType(srcVal);
       const dt = _getType(desVal);
+      let nv;
 
       if (dt === ARRAY)
-        newVal = desVal.concat(srcVal);
+        nv = desVal.concat(srcVal);
       else if (st === ARRAY && desVal != null)
-        newVal = [desVal].concat(srcVal);
+        nv = [desVal].concat(srcVal);
       else if (st === OBJECT && dt === OBJECT)
-        newVal = _merge(desVal, srcVal);
+        nv = _merge(desVal, srcVal);
       else if (st === OBJECT)
-        newVal = _merge({}, srcVal);  // make a copy
+        nv = _merge({}, srcVal);  // make a copy
       else
-        newVal = srcVal;
-    }
+        nv = srcVal;
 
-    des[prop] = newVal;
+      if (nv !== undefined)
+        des[prop] = nv;
+    }
   }
 
   return des;

@@ -32,7 +32,7 @@ PresetReact.meta = {
     "@gourmet/plugin-react-i80"
   ],
   hooks: {
-    "build:webpack:alias": PresetReact.prototype.onAlias
+    "build:alias": PresetReact.prototype.onAlias
   }
 };
 

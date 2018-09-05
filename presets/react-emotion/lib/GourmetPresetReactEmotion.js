@@ -39,7 +39,7 @@ PresetReactEmotion.meta = {
     "@gourmet/plugin-react-emotion"
   ],
   hooks: {
-    "build:webpack:alias": PresetReactEmotion.prototype.onAlias
+    "build:alias": PresetReactEmotion.prototype.onAlias
   }
 };
 

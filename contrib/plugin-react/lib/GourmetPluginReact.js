@@ -50,9 +50,9 @@ PluginReact.meta = {
     after: "@gourmet/plugin-webpack-html-renderer"
   },
   hooks: {
-    "build:webpack:pipelines": PluginReact.prototype.onPipelines,
-    "build:webpack:loaders": PluginReact.prototype.onLoaders,
-    "build:webpack:resolve": PluginReact.prototype.onResolve,
+    "build:pipelines": PluginReact.prototype.onPipelines,
+    "build:loaders": PluginReact.prototype.onLoaders,
+    "build:resolve": PluginReact.prototype.onResolve,
     "build:page_renderer": PluginReact.prototype.onRenderer
   }
 };

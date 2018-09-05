@@ -3,7 +3,7 @@
 const sortPlugins = require("@gourmet/plugin-sort");
 
 class GourmetPluginWebpackGlobalCss {
-  _onWebpackPipelines(context) {
+  onPipelines(context) {
     return {
       // "css": performs a full transformation of CSS file
       css: [{
@@ -70,7 +70,7 @@ class GourmetPluginWebpackGlobalCss {
     };
   }
 
-  _onWebpackLoaders(context) {
+  onLoaders(context) {
     return {
       css: {
         extensions: [".css"],
@@ -94,7 +94,7 @@ class GourmetPluginWebpackGlobalCss {
     };
   }
 
-  _onPostCssLoaderOptions(options) {
+  onPostCssOptions(options) {
     if (options) {
       const plugins = Array.isArray(options.plugins) && options.plugins.length && options.plugins;
       if (plugins) {
@@ -121,11 +121,11 @@ class GourmetPluginWebpackGlobalCss {
 }
 
 GourmetPluginWebpackGlobalCss.meta = {
-  hooks: (proto => ({
-    "build:webpack:pipelines": proto._onWebpackPipelines,
-    "build:webpack:loaders": proto._onWebpackLoaders,
-    "build:webpack:loader_options:postcss-loader": proto._onPostCssLoaderOptions
-  }))(GourmetPluginWebpackGlobalCss.prototype)
+  hooks: {
+    "build:pipelines": GourmetPluginWebpackGlobalCss.prototype.onPipelines,
+    "build:loaders": GourmetPluginWebpackGlobalCss.prototype.onLoaders,
+    "build:loader_options:postcss-loader": GourmetPluginWebpackGlobalCss.prototype.onPostCssOptions
+  }
 };
 
 module.exports = GourmetPluginWebpackGlobalCss;
