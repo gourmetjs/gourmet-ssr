@@ -407,7 +407,7 @@ class GourmetPluginWebpackBuilder {
               value = context.stageIs("production");
               break;
             case "sourceMap":
-              value = false;
+              value = true;
               break;
             case "staticPrefix":
               value = "/s/";

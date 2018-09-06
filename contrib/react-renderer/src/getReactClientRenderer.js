@@ -35,6 +35,7 @@ module.exports = function getReactClientRenderer(Base) {
       });
     }
 
+    // This must be synchronous.
     makePageProps(gmctx) {
       return Object.assign({gmctx}, gmctx.data.clientProps, gmctx.data.pageProps);
     }

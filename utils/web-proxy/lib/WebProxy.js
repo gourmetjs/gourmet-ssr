@@ -40,7 +40,7 @@ class WebProxy {
   handleError(err) {
     handleRequestError(err, this.req, this.res, Object.assign({
       title: "Error occurred in WebProxy"
-    }, this.options.errOps));
+    }, this.options.errOpts));
   }
 
   handleReqError(err) {

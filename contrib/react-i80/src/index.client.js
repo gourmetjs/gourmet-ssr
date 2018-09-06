@@ -1,5 +1,6 @@
 "use strict";
 
+const promiseProtect = require("@gourmet/promise-protect");
 const Router = require("./Router");
 const {parseHref} = require("./utils");
 const ActiveRoute = require("./ActiveRoute");
@@ -51,78 +52,78 @@ function goToUrl(href, pushState=true) {
   }
 }
 
+class ClientRouter extends Router {
+  setRenderer(renderer) {
+    this.renderer = renderer;
+
+    window.addEventListener("popstate", () => {
+      goToUrl(window.location.href, false);
+    });
+
+    const options = this.options;
+
+    if (options.captureClick === undefined || options.captureClick) {
+      document.addEventListener("click", function(evt) {
+        if (evt.defaultPrevented ||
+            evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey ||
+            evt.button !== 0)
+          return;
+
+        let elem = evt.target;
+
+        // Since a click could originate from a descendant of the `<a>` tag,
+        // search through the tree upward to find the closest `<a>` tag.
+        while (elem && elem.nodeName !== "A") {
+          elem = elem.parentNode;
+        }
+
+        if (!elem ||
+            (elem.target && elem.target !== "_self") ||
+            elem.download)
+          return;
+
+        const href = elem.getAttribute("href");
+
+        if (href)
+          goToUrl(href);
+
+        evt.preventDefault();
+      });
+    }
+  }
+
+  getTargetHref(gmctx) {
+    if (gmctx.i80.switchToHref)
+      return gmctx.i80.switchToHref;
+    return window.location.href;
+  }
+
+  fetchRouteProps(route) {
+    const gmctx = route.gmctx;
+    return promiseProtect(() => {
+      // `getInitialProps()` of a route component gets called only when
+      // switching routes on the client.
+      // Initial route's props are re-hydrated from server provided object.
+      if (gmctx.i80.switchToHref) {
+        const func = route.getComponent().getInitialProps;
+        if (typeof func === "function")
+          return func(gmctx);
+      } else {
+        return gmctx.data.routeProps;
+      }
+    }).then(props => {
+      if (props)
+        gmctx.routeProps = props;
+    });
+  }
+}
+
 // - basePath: Default is `"/"`.
 // - caseSensitive: Default is `true`.
 // - strictSlash: Default is `false`.
 // - captureClick: Default is `true`.
-function i80(routes, options={}) {
-  const router = Router.create(routes, options, {
-    setRenderer(renderer) {
-      router.renderer = renderer;
-
-      window.addEventListener("popstate", () => {
-        goToUrl(window.location.href, false);
-      });
-
-      if (options.captureClick === undefined || options.captureClick) {
-        document.addEventListener("click", function(evt) {
-          if (evt.defaultPrevented ||
-              evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey ||
-              evt.button !== 0)
-            return;
-
-          let elem = evt.target;
-
-          // Since a click could originate from a descendant of the `<a>` tag,
-          // search through the tree upward to find the closest `<a>` tag.
-          while (elem && elem.nodeName !== "A") {
-            elem = elem.parentNode;
-          }
-
-          if (!elem ||
-              (elem.target && elem.target !== "_self") ||
-              elem.download)
-            return;
-
-          const href = elem.getAttribute("href");
-
-          if (href)
-            goToUrl(href);
-
-          evt.preventDefault();
-        });
-      }
-    },
-
-    getTargetHref(gmctx) {
-      if (gmctx.i80.switchToHref)
-        return gmctx.i80.switchToHref;
-      return window.location.href;
-    },
-
-    fetchRouteProps(route) {
-      return promiseProtect(() => {
-        const gmctx = route.gmctx;
-        if (gmctx.i80.)
-        const func = this.getComponent().getInitialProps;
-        if (typeof func === "function")
-          return func(this.gmctx);
-      }).then(routeProps => {
-
-      });
-    }
-
-      if (!router.gmctx) {
-        // By design, we do not invoke `getInitialProps()` for the initial
-        // rendering on the client side and use serialized data from server instead.
-        return Promise.resolve(route.gmctx.data.routerInitialProps);
-      } else {
-        return route.getInitialProps();
-      }
-    },
-
-    goToUrl
-  });
+function i80(routes, options) {
+  return ClientRouter.create(routes, options);
 }
 
 i80.ActiveRoute = ActiveRoute;

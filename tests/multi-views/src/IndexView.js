@@ -8,13 +8,9 @@ export default class IndexView extends React.Component {
 
   render() {
     return (
-      <div>
-        <h1>Index</h1>
-        <p>{this.props.greeting}</p>
-        <pre>
-          {renderProps(this.props)}
-        </pre>
-      </div>
+      <pre>
+        {renderProps("Route props", this.props)}
+      </pre>
     );
   }
 }

@@ -33,6 +33,9 @@ module.exports = function getReactServerRenderer(Base) {
     invokeUserRenderer(gmctx) {
       const page = this.userObject;
 
+      if (gmctx.clientProps)
+        gmctx.data.clientProps = gmctx.clientProps;
+
       return Promise.all([
         registrar.loadAll(),
         promiseProtect(() => {
@@ -41,7 +44,7 @@ module.exports = function getReactServerRenderer(Base) {
         })
       ]).then(([, pageProps]) => {
         if (pageProps)
-          gmctx.pageProps = pageProps;
+          gmctx.pageProps = gmctx.data.pageProps = pageProps;
 
         const props = page.makePageProps ? page.makePageProps(gmctx) : this.makePageProps(gmctx);
 
@@ -50,20 +53,13 @@ module.exports = function getReactServerRenderer(Base) {
         else
           return React.createElement(page, props);
       }).then(element => {
-        if (element) {
-          if (gmctx.clientProps)
-            gmctx.data.clientProps = gmctx.clientProps;
-
-          if (gmctx.pageProps)
-            gmctx.data.pageProps = gmctx.pageProps;
-
+        if (element)
           return wrapWithContext(gmctx, element);
-        }
         return element;
       });
     }
 
-    // This is a synchronous
+    // This must be synchronous.
     makePageProps(gmctx) {
       return Object.assign({gmctx}, gmctx.clientProps, gmctx.pageProps);
     }

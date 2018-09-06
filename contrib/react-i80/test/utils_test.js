@@ -54,5 +54,26 @@ test("parseHref", t => {
     hash: "",
     href: "foo/bar"
   });
+  t.deepEqual(parseHref("//example.com?a=1"), {
+    origin: "//example.com",
+    path: "/",
+    search: "?a=1",
+    hash: "",
+    href: "//example.com?a=1"
+  });
+  t.deepEqual(parseHref("/foo/bar#here"), {
+    origin: "",
+    path: "/foo/bar",
+    search: "",
+    hash: "#here",
+    href: "/foo/bar#here"
+  });
+  t.deepEqual(parseHref("http://localhost:3000/#top"), {
+    origin: "http://localhost:3000",
+    path: "/",
+    search: "",
+    hash: "#top",
+    href: "http://localhost:3000/#top"
+  });
   t.end();
 });

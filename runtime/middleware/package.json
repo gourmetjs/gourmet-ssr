@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/middleware",
   "version": "0.1.0",
-  "main": "src/middleware.js",
+  "main": "src/gourmetMiddleware.js",
   "dependencies": {
     "@gourmet/get-req-args": "^0.2.0",
     "@gourmet/send-content": "^0.2.0"

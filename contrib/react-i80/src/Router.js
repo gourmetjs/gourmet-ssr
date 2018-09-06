@@ -50,11 +50,8 @@ function _prepare(routes, parentOptions) {
 }
 
 module.exports = class Router {
-  constructor(routes, options={}, members) {
+  constructor(routes, options={}) {
     this.options = options;
-    Object.keys(members).forEach(name => {
-      this[name] = members[name];
-    });
     this._routes = _prepare(routes, {
       caseSensitve: options.caseSensitive === undefined ? true : options.caseSensitive,
       strictSlash: options.strictSlash === undefined ? false : options.strictSlash
@@ -190,10 +187,10 @@ module.exports = class Router {
     return _find(this._routes, [() => this.options.basePath || "/"]);
   }
 
-  static create(routes, options, members) {
+  static create(routes, options) {
     if (router)
       throw Error("Router has been initialized already. Called the function 'i80()' from multiple places?");
-    router = new Router(routes, options, members);
+    router = new this(routes, options);
     return router;
   }
 

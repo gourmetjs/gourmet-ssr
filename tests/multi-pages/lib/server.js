@@ -4,7 +4,7 @@ const express = require("express");
 const morgan = require("morgan");
 const gourmet = require("@gourmet/client-lib");
 const serverArgs = require("@gourmet/server-args");
-//const errorHandler = require("@gourmet/error-middleware");
+const errorMiddleware = require("@gourmet/error-middleware");
 
 const args = serverArgs(process.argv.slice(2));
 
@@ -22,7 +22,7 @@ app.get("/dashboard", (req, res) => {
   res.serve("dashboard", {username: "admin"});
 });
 
-//app.use(errorHandler({debug: args.debug}));
+app.use(errorMiddleware({debug: args.debug}));
 
 args.port = 3000;
 

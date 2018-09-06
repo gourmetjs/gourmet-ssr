@@ -31,7 +31,7 @@ exports.parseHref = function(href) {
   const parts = [];
   let spos = 0;
 
-  const remaining = ["/", "?", "#"].every(ch => {
+  ["/", "?", "#"].forEach(ch => {
     let idx, offset = 0;
 
     if (ch === "/") {
@@ -41,24 +41,25 @@ exports.parseHref = function(href) {
         offset = idx + 3;
       } else {
         parts.push("");
-        return true;
+        return;
       }
     }
 
     idx = href.indexOf(ch, spos + offset);
 
-    if (idx === -1) {
-      parts.push(href.substr(spos));
-      return false;   // exit loop
-    } else {
+    if (idx !== -1) {
       parts.push(href.substring(spos, idx));
       spos = idx;
-      return true;
     }
   });
 
-  if (remaining)
-    parts.push(href.substr(spos));
+  const remaining = href.substr(spos);
+
+  if (remaining) {
+    const ch = remaining[0];
+    const idx = (ch === "?" ? 2 : (ch === "#" ? 3 : parts.length));
+    parts[idx] = remaining;
+  }
 
   return {
     origin: parts[0] || "",
