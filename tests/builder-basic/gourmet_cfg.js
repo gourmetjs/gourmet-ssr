@@ -45,7 +45,7 @@ module.exports = context => ({
     config: {}
   },
 
-  entry: {
+  pages: {
     main: {
       client: "./src/client.js",
       server: "./src/server.js"

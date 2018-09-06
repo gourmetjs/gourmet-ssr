@@ -1,8 +1,8 @@
 import concat from "./concat";
 
-export default function renderer({entrypoint, manifest}) {
+export default function renderer({page, manifest}) {
   const staticPrefix = manifest.staticPrefix;
-  const scripts = manifest.client.entrypoints[entrypoint].map(filename => {
+  const scripts = manifest.client.pages[page].map(filename => {
     return `<script defer src="${staticPrefix}${filename}"></script>`;
   }).join("\n");
 

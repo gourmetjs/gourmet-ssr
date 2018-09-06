@@ -23,7 +23,6 @@ PresetReact.meta = {
     "@gourmet/plugin-webpack-babel",
     "@gourmet/plugin-webpack-global-css",
     "@gourmet/plugin-webpack-blob",
-    "@gourmet/plugin-webpack-dev-server",
     "@gourmet/plugin-webpack-html-renderer",
     "@gourmet/plugin-react",
     "@gourmet/plugin-react-hot-loader",

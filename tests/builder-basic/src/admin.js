@@ -2,17 +2,16 @@ import print from "./print";
 import renderer from "./renderer";
 
 if (SERVER) {
-  __gourmet_module__.exports = ({entrypoint, manifest}) => {
-    const render = renderer({entrypoint, manifest});
-    return ({path, query, params}) => {
+  __gourmet_module__.exports = ({page, manifest}) => {
+    const render = renderer({page, manifest});
+    return ({reqArgs, clientProps}) => {
       return render(
         "** SERVER **",
-        `entrypoint: ${entrypoint}`,
+        `page: ${page}`,
         `stage: ${manifest.stage}`,
         `staticPrefix: ${manifest.staticPrefix}`,
-        `path: ${path}`,
-        `query: ${JSON.stringify(query)}`,
-        `params: ${JSON.stringify(params)}`
+        `reqArgs.url: ${reqArgs.url}`,
+        `clientProps: ${JSON.stringify(clientProps)}`
       );
     };
   };

@@ -3,18 +3,23 @@
   "version": "0.5.0",
   "private": true,
   "scripts": {
+    "build": "gourmet build --config-name gourmet_cfg",
+    "start": "node lib/server.js",
     "test": "yarn test:local && yarn test:prod",
-    "test:local": "gourmet build --config-name gourmet_cfg --verbose 0 && tape test/*_test.js",
-    "test:prod": "gourmet build --config-name gourmet_cfg --verbose 0 --stage prod && tape test/*_test.js --stage prod"
+    "test:local": "gourmet build --config-name gourmet_cfg --verbose 1 && tape test/*_test.js",
+    "test:prod": "gourmet build --config-name gourmet_cfg --verbose 1 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.4.0"
+    "@gourmet/client-lib": "^0.4.0",
+    "@gourmet/error-middleware": "^0.1.0",
+    "@gourmet/server-args": "^0.2.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.3.0",
     "@gourmet/plugin-webpack-babel": "^0.4.0",
     "@gourmet/plugin-webpack-builder": "^0.5.0",
-    "@gourmet/plugin-webpack-dev-server": "^0.4.0",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.3.0",
     "@gourmet/server-args": "^0.2.0",
