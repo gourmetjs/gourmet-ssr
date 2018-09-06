@@ -1,7 +1,5 @@
 "use strict";
 
-const promiseProtect = require("@gourmet/promise-protect");
-
 // `BoundRoute` can be created as one of two types:
 // - A path based `BoundRoute` is created by `searchByPath()` and has
 //   the following members.
@@ -34,17 +32,6 @@ module.exports = class BoundRoute {
 
   getHandlers() {
     return this.getComponent().routeHandlers;
-  }
-
-  getInitialProps() {
-    return promiseProtect(() => {
-      const func = this.getComponent().getInitialProps;
-      if (typeof func === "function") {
-        return func(this.gmctx, this);
-      } else {
-        return Promise.resolve(null);
-      }
-    });
   }
 
   makeHref() {

@@ -78,9 +78,7 @@ module.exports = class Router {
       if (gmctx.i80.didSwitchToHref)
         gmctx.i80.didSwitchToHref(gmctx, url);
 
-      return this.getInitialProps(route).then(props => {
-        if (props)
-          Object.assign(gmctx.i80.initialProps, props);
+      return this.fetchRouteProps(route).then(() => {
         gmctx.i80.activeRoute = route;
         return true;
       });

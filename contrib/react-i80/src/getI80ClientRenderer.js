@@ -40,5 +40,17 @@ module.exports = function(Base) {
         return super.invokeUserRenderer(gmctx);
       }
     }
+
+    makeRouteProps(gmctx, directProps) {
+      const route = gmctx.i80.activeRoute;
+      const url = route.url;
+      return Object.assign(
+        {gmctx, activeRoute: route, path: url.path, search: url.search, hash: url.hash},
+        gmctx.data.clientProps,
+        gmctx.data.pageProps,
+        gmctx.routeProps,
+        directProps
+      );
+    }
   };
 };

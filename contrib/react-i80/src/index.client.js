@@ -100,7 +100,18 @@ function i80(routes, options={}) {
       return window.location.href;
     },
 
-    getInitialProps(route) {
+    fetchRouteProps(route) {
+      return promiseProtect(() => {
+        const gmctx = route.gmctx;
+        if (gmctx.i80.)
+        const func = this.getComponent().getInitialProps;
+        if (typeof func === "function")
+          return func(this.gmctx);
+      }).then(routeProps => {
+
+      });
+    }
+
       if (!router.gmctx) {
         // By design, we do not invoke `getInitialProps()` for the initial
         // rendering on the client side and use serialized data from server instead.
