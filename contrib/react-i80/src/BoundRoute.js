@@ -1,7 +1,21 @@
 "use strict";
 
-const {encodeQuery} = require("./utils");
+const promiseProtect = require("@gourmet/promise-protect");
 
+// `BoundRoute` can be created as one of two types:
+// - A path based `BoundRoute` is created by `searchByPath()` and has
+//   the following members.
+//   - gmctx, _type
+//   - params: extracted from the matching path
+//   - url: result of `parseHref()` as following shape:
+//     - {origin, path, search, hash, href}
+// - A component based `BoundRoute` is created by `searchByComponent` and has
+//   the following members.
+//   - gmctx, _type
+//   - params: input parameters given to `searchByComponent`
+//   - search: input parameters given to `searchByComponent`
+//   - hash: input parameters given to `searchByComponent`
+//   - reverse(): reverse URL function that returns a path string
 module.exports = class BoundRoute {
   constructor(gmctx, type, params) {
     this.gmctx = gmctx;
@@ -23,12 +37,14 @@ module.exports = class BoundRoute {
   }
 
   getInitialProps() {
-    const func = this.getComponent().getInitialProps;
-    if (typeof func === "function") {
-      return Promise.resolve().then(() => func(this.gmctx, this));
-    } else {
-      return Promise.resolve(null);
-    }
+    return promiseProtect(() => {
+      const func = this.getComponent().getInitialProps;
+      if (typeof func === "function") {
+        return func(this.gmctx, this);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
   }
 
   makeHref() {
@@ -37,7 +53,7 @@ module.exports = class BoundRoute {
 
     if (this.reverse) {
       const path = this.reverse();
-      return encodeURI(path) + encodeQuery(this.query) + (this.hash || "");
+      return encodeURI(path) + (this.search || "") + (this.hash || "");
     }
 
     throw Error("This BoundRoute was unable to generate a URL.");

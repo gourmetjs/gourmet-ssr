@@ -19,8 +19,15 @@ module.exports = function getReactClientRenderer(Base) {
 
   return class ReactClientRenderer extends Base {
     invokeUserRenderer(gmctx) {
-      return this.getPageProps(gmctx, this.userObject).then(props => {
-        return this.renderPage(props);
+      const page = this.userObject;
+
+      return promiseProtect(() => {
+        const props = page.makePageProps ? page.makePageProps(gmctx) : this.makePageProps(gmctx);
+
+        if (page.renderPage)
+          return page.renderPage(props);
+        else
+          return React.createElement(page, props);
       }).then(element => {
         if (element)
           return wrapWithContext(gmctx, element);
@@ -28,26 +35,8 @@ module.exports = function getReactClientRenderer(Base) {
       });
     }
 
-    getPageProps(gmctx, component) {
-      return promiseProtect(() => {
-        if (component.makeProps)
-          return component.makeProps(gmctx);
-        else
-          return this.makeProps(gmctx);
-      });
-    }
-
-    makeProps(gmctx) {
-      return Object.assign({gmctx}, gmctx.data.initialProps);
-    }
-
-    renderPage(props) {
-      const component = this.userObject;
-
-      if (component.renderPage)
-        return component.renderPage(props);
-
-      return React.createElement(component, props);
+    makePageProps(gmctx) {
+      return Object.assign({gmctx}, gmctx.data.clientProps, gmctx.data.pageProps);
     }
 
     renderToDom(gmctx, content, elemId) {

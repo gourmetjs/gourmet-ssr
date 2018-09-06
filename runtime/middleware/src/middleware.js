@@ -13,11 +13,11 @@ module.exports = function factory(gourmet, options={}) {
     }
 
     return (req, res, next) => {
-      res.serve = function(page, initialProps, context) {
+      res.serve = function(page, clientProps, context) {
         const args = Object.assign({
           serverDir,
           page,
-          initialProps,
+          clientProps,
           reqArgs: getReqArgs(req)
         }, context);
 

@@ -31,13 +31,15 @@ function goToUrl(href, pushState=true) {
 
     if (!origin || origin === loc.origin) {
       renderer.render({
-        switchToHref: href,
-        didSwitchToHref() {
-          if (pushState)
-            window.history.pushState({}, "", href);
-        },
-        routeNotFound() {
-          _load(href);
+        i80: {
+          switchToHref: href,
+          didSwitchToHref() {
+            if (pushState)
+              window.history.pushState({}, "", href);
+          },
+          routeNotFound() {
+            _load(href);
+          }
         }
       });
     } else {
@@ -93,8 +95,8 @@ function i80(routes, options={}) {
     },
 
     getTargetHref(gmctx) {
-      if (gmctx.routerData.switchToHref)
-        return gmctx.routerData.switchToHref;
+      if (gmctx.i80.switchToHref)
+        return gmctx.i80.switchToHref;
       return window.location.href;
     },
 

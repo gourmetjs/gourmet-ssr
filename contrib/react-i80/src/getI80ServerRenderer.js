@@ -13,7 +13,7 @@ module.exports = function(Base) {
       const gmctx = super.createContext(...args);
       const router = Router.get(true);
       if (router) {
-        gmctx.routerData = {initialProps: {}};
+        gmctx.i80 = {};
         gmctx.redirect = function(location, statusCode=302, content) {
           location = encodeUrl(location);
           content = content || `<p>[${statusCode}] Redirecting to ${escapeHtml(location)}...</p>`;
@@ -39,6 +39,18 @@ module.exports = function(Base) {
       } else {
         return super.invokeUserRenderer(gmctx);
       }
+    }
+
+    makeRouteProps(gmctx, directProps) {
+      const route = gmctx.i80.activeRoute;
+      const url = route.url;
+      return Object.assign(
+        {gmctx, activeRoute: route, path: url.path, search: url.search, hash: url.hash},
+        gmctx.clientProps,
+        gmctx.pageProps,
+        gmctx.routeProps,
+        directProps
+      );
     }
   };
 };

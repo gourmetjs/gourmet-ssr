@@ -21,6 +21,7 @@ function i80(routes, options={}) {
       });
     }
   });
+  return router;
 }
 
 i80.ActiveRoute = ActiveRoute;

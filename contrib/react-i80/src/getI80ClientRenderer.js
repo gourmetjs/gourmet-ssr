@@ -14,16 +14,12 @@ module.exports = function(Base) {
         router.setRenderer(this);
     }
 
-    createContext(args) {
-      const gmctx = super.createContext(args);
+    createContext(...args) {
+      const gmctx = super.createContext(...args);
       const router = Router.get(true);
       if (router) {
-        gmctx.routerData = {
-          switchToHref: args && args.switchToHref,
-          didSwitchToHref: args && args.didSwitchToHref,
-          routeNotFound: args && args.routeNotFound,
-          initialProps: {}
-        };
+        if (!gmctx.i80) // `i80` exists when switching a route on client
+          gmctx.i80 = {};
         gmctx.redirect = function(location) {
           Router.get().goToUrl(location);
           return true;

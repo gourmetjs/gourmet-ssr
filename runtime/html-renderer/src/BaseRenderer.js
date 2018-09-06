@@ -16,8 +16,8 @@ module.exports = class BaseRenderer {
     });
   }
 
-  static create(render, options) {
+  static create(userObject, options) {
     const Renderer = this;
-    return new Renderer(render, options);
+    return new Renderer(userObject, options);
   }
 };

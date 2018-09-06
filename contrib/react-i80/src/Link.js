@@ -9,7 +9,7 @@ const Router = require("./Router");
 
 // to: string or Component
 // params: object
-// query: object
+// search: string ("?a=1&b=2")
 // hash: string ("#hash")
 // activeClassName: string
 module.exports = class Link extends React.Component {
@@ -33,14 +33,14 @@ module.exports = class Link extends React.Component {
       href = props.to;
       isActive = (url.path === (activeRoute && activeRoute.url.path));
     } else if (typeof props.to === "function") {
-      route = router.searchByComponent(gmctx, props.to, props.params, props.query, props.hash);
+      route = router.searchByComponent(gmctx, props.to, props.params, props.search, props.hash);
       href = route ? route.makeHref() : "/";
       isActive = activeRoute && activeRoute.getComponent() === props.to;
     }
 
     const className = this._getClassName(props.className, isActive);
 
-    props = omit(props, ["to", "params", "query", "hash", "className"]);
+    props = omit(props, ["to", "params", "search", "hash", "className"]);
 
     if (className)
       props.className = className;

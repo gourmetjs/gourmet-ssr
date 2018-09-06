@@ -2,6 +2,7 @@
 
 const React = require("react");
 const p2r = require("path-to-regexp");
+const promiseProtect = require("@gourmet/promise-protect");
 const {unprefixPath, joinPath, parseHref} = require("./utils");
 const BoundRoute = require("./BoundRoute");
 
@@ -61,26 +62,26 @@ module.exports = class Router {
   }
 
   setActiveRoute(gmctx, href) {
-    return Promise.resolve().then(() => {
+    return promiseProtect(() => {
       const url = parseHref(href);
       const route = this.findRoute(gmctx, url);
 
       if (!route) {
-        if (gmctx.routerData.routeNotFound)
-          gmctx.routerData.routeNotFound(gmctx, url);
+        if (gmctx.i80.routeNotFound)
+          gmctx.i80.routeNotFound(gmctx, url);
         return false;
       }
 
       if (route === true)
         return false;   // processed by a route handler
 
-      if (gmctx.routerData.didSwitchToHref)
-        gmctx.routerData.didSwitchToHref(gmctx, url);
+      if (gmctx.i80.didSwitchToHref)
+        gmctx.i80.didSwitchToHref(gmctx, url);
 
       return this.getInitialProps(route).then(props => {
         if (props)
-          Object.assign(gmctx.routerData.initialProps, props);
-        gmctx.routerData.activeRoute = route;
+          Object.assign(gmctx.i80.initialProps, props);
+        gmctx.i80.activeRoute = route;
         return true;
       });
     });
@@ -102,16 +103,21 @@ module.exports = class Router {
     });
   }
 
-  renderActiveRoute(gmctx, renderProps) {
-    if (gmctx.routerData) {
-      const route = gmctx.routerData.activeRoute;
-      const props = Object.assign({gmctx, route}, gmctx.routerData.initialProps, renderProps);
+  renderActiveRoute(gmctx, directProps) {
+    if (gmctx.i80) {
+      const route = gmctx.i80.activeRoute;
 
       if (route) {
         const Component = route.getComponent();
+        let props;
+
+        if (Component.makeRouteProps)
+          props = Component.makeRouteProps(gmctx, directProps);
+        else
+          props = gmctx.renderer.makeRouteProps(gmctx, directProps);
         return <Component {...props}/>;
       } else {
-        return props.notFoundContent || (<div>Cannot find a matching route.</div>);
+        return directProps.notFoundContent || (<div>Cannot find a matching route.</div>);
       }
     } else {
       throw Error("Router is not initialized properly. Forgot to add '@gourmet/plugin-react-80'?");
@@ -157,7 +163,7 @@ module.exports = class Router {
     return _find(this._routes, unprefixPath(url.path, this.options.basePath || "/"), {});
   }
 
-  searchByComponent(gmctx, type, params, query, hash) {
+  searchByComponent(gmctx, type, params, search, hash) {
     function _find(routes, reverses) {
       for (let idx = 0; idx < routes.length; idx++) {
         const def = routes[idx];
@@ -176,7 +182,7 @@ module.exports = class Router {
               return r(route.params);
             }));
           };
-          route.query = query;
+          route.search = search;
           route.hash = hash;
           return route;
         }

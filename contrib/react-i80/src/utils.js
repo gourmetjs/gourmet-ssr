@@ -82,16 +82,3 @@ exports.joinPath = function(items) {
     return item;
   }).join("");
 };
-
-exports.encodeQuery = function(query) {
-  if (!query)
-    return "";
-  const search = Object.keys(query).map(name => {
-    const value = query[name];
-    if (value)
-      return encodeURIComponent(name) + "=" + encodeURIComponent(value);
-    else
-      return encodeURIComponent(name);
-  }).join("&");
-  return search ? "?" + search : "";
-};

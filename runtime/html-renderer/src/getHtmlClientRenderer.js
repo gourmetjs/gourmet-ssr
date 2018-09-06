@@ -19,9 +19,8 @@ function _domready() {
 //  - dataPropertyName: string (default: "__gourmet_data__")
 //  - showErrorInDocument: shows the init error in the document (default: true)
 class HtmlClientRenderer extends BaseRenderer {
-  render(args, gmctx) {
-    if (!gmctx)
-      gmctx = this.createContext(args);
+  render(context, opts) {
+    const gmctx = this.createContext(context, opts);
     this.invokeUserRenderer(gmctx).then(content => {
       const elemId = this.options.contentContainerId || "__gourmet_content__";
       return _domready().then(() => {
@@ -30,15 +29,16 @@ class HtmlClientRenderer extends BaseRenderer {
     }).catch(err => this.handleError(err));
   }
 
-  createContext(/*...args*/) {
+  createContext(context, opts) {  // eslint-disable-line no-unused-vars
     const prop = this.options.dataPropertyName || "__gourmet_data__";
     const data = window[prop] || {};
-    return {
+    const gmctx = Object.assign({
       isServer: false,
       isClient: true,
       renderer: this,
       data
-    };
+    }, context);
+    return gmctx;
   }
 
   renderToDom(gmctx, content, elemId) { // eslint-disable-line no-unused-vars
