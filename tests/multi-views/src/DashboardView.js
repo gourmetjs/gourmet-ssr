@@ -16,7 +16,7 @@ export default class DashboardView extends React.Component {
 
   render() {
     return (
-      <pre>
+      <pre id="route_props">
         {renderProps("Route props", this.props)}
       </pre>
     );

@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "main": "lib/serverArgs.js",
   "dependencies": {
-    "camelcase-keys": "^4.2.0",
-    "minimist": "^1.2.0"
+    "@gourmet/cli-args": "^0.1.0",
+    "@gourmet/merge": "^0.3.0"
   }
 }

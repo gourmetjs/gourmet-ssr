@@ -1,35 +1,34 @@
 "use strict";
 
 const npath = require("path");
-const minimist = require("minimist");
-const camelcaseKeys = require("camelcase-keys");
+const merge = require("@gourmet/merge");
+const cliArgs = require("@gourmet/cli-args");
 
-function serverArgs(args) {
-  const argv = camelcaseKeys(minimist(args));
-  return parse(argv);
-}
+module.exports = function serverArgs(def, argv, options) {
+  def = Object.assign({
+    watch: false,
+    stage: "local",
+    workDir: "",
+    outputDir: ".gourmet",
+    serverDir: null,
+    clientDir: null,
+    staticPrefix: "/s/",
+    port: 3000
+  }, def);
 
-function parse(argv) {
-  const watch = argv.hot ? "hot" : (argv.watch ? true : false);
-  const stage = argv.stage || argv.s || "local";
-  const workDir = npath.resolve(process.cwd(), argv.dir || argv.d || "");
-  const outputDir = npath.resolve(workDir, argv.outputDir || ".gourmet");
-  const serverDir = argv.serverDir ? npath.resolve(workDir, argv.serverDir) : npath.join(outputDir, stage, "server");
-  const clientDir = argv.clientDir ? npath.resolve(workDir, argv.clientDir) : npath.join(outputDir, stage, "client");
-  const staticPrefix = argv.staticPrefix || "/s/";
+  options = merge.intact({
+    alias: {
+      workDir: ["dir", "d"],
+      stage: ["s"]
+    }
+  }, options);
 
-  return {
-    argv,
-    watch,
-    stage,
-    workDir,
-    outputDir,
-    clientDir,
-    serverDir,
-    staticPrefix
-  };
-}
+  const args = cliArgs(def, argv, options);
 
-serverArgs.parse = parse;
+  args.workDir = npath.resolve(process.cwd(), args.workDir);
+  args.outputDir = npath.resolve(args.workDir, args.outputDir);
+  args.serverDir = npath.resolve(args.workDir, args.serverDir || `${args.outputDir}/${args.stage}/server`);
+  args.clientDir = npath.resolve(args.workDir, args.clientDir || `${args.outputDir}/${args.stage}/client`);
 
-module.exports = serverArgs;
+  return args;
+};

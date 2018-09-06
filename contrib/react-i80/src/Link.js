@@ -23,7 +23,7 @@ module.exports = class Link extends React.Component {
 
   _renderLink(gmctx) {
     const router = Router.get();
-    const activeRoute = gmctx.routerData && gmctx.routerData.activeRoute;
+    const activeRoute = gmctx.i80 && gmctx.i80.activeRoute;
     let props = this.props;
     let href, isActive, route;
 
@@ -36,6 +36,8 @@ module.exports = class Link extends React.Component {
       route = router.searchByComponent(gmctx, props.to, props.params, props.search, props.hash);
       href = route ? route.makeHref() : "/";
       isActive = activeRoute && activeRoute.getComponent() === props.to;
+    } else {
+      throw Error("'to' must be a string or a route component");
     }
 
     const className = this._getClassName(props.className, isActive);
