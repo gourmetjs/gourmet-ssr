@@ -1,6 +1,5 @@
 "use strict";
 
-const npath = require("path");
 const test = require("tape");
 const puppeteer = require("puppeteer");
 const testArgs = require("@gourmet/puppeteer-args");

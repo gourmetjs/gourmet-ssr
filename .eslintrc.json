@@ -1,4 +1,9 @@
 {
-  "extends": "gourmet/gourmet_lib",
-  "root": true
+  "extends": "gourmet/gourmet_app",
+  "root": true,
+  "settings": {
+    "react": {
+      "version": "16"
+    }
+  }
 }
