@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/preset-react-i80",
   "description": "Gourmet Preset containing react-i80 related packages",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/GourmetPresetReactI80.js",
   "keywords": [
     "gourmet-plugin",
     "gourmet-preset"
   ],
   "dependencies": {
-    "@gourmet/plugin-react-i80": "^0.2.0",
-    "@gourmet/react-i80": "^0.2.3"
+    "@gourmet/plugin-react-i80": "^0.3.0",
+    "@gourmet/react-i80": "^0.3.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-news",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "hot": "node lib/devel.js --hot",
@@ -9,13 +9,13 @@
     "build": "gourmet build"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.4.0",
+    "@gourmet/server-impl-watch": "^0.5.0",
     "got": "^8.3.1"
   },
   "devDependencies": {
-    "@gourmet/test-news-view": "^0.3.0",
-    "@gourmet/gourmet-cli": "^0.3.0",
-    "@gourmet/preset-react-emotion": "^0.4.3",
+    "@gourmet/gourmet-cli": "^0.4.0",
+    "@gourmet/preset-react-emotion": "^0.5.0",
+    "@gourmet/test-news-view": "^0.4.0",
     "classnames": "^2.2.6",
     "react": "^16.4.2",
     "react-dom": "^16.4.2"

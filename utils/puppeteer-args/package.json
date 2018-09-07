@@ -1,8 +1,8 @@
 {
   "name": "@gourmet/puppeteer-args",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "lib/puppeteerArgs.js",
   "dependencies": {
-    "@gourmet/parse-args": "^0.3.0"
+    "@gourmet/parse-args": "^0.4.0"
   }
 }

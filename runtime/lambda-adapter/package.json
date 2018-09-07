@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/lambda-adapter",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "lib/getHandler.js",
   "description": "Creates a tiny adapter that converts Lambda invocations to Gourmet Renderer calls",
   "dependencies": {
-    "@gourmet/client-lib": "^0.4.0",
+    "@gourmet/client-lib": "^0.5.0",
     "@gourmet/is-stream": "^0.2.0",
-    "@gourmet/parse-args": "^0.3.0",
+    "@gourmet/parse-args": "^0.4.0",
     "@gourmet/stream-to-string": "^0.2.0"
   }
 }

@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/client-lambda",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "lib/clientLambda.js",
   "dependencies": {
     "@gourmet/error": "^0.2.0",
     "@gourmet/get-aws-service": "^0.2.0",
-    "@gourmet/get-req-args": "^0.2.0",
-    "@gourmet/merge": "^0.3.0",
+    "@gourmet/get-req-args": "^0.3.0",
+    "@gourmet/merge": "^0.4.0",
     "@gourmet/omit": "^0.2.0",
     "@gourmet/send-content": "^0.2.0"
   }

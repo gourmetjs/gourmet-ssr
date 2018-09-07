@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-react-loadable",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "lib/GourmetPluginReactLoadable.js",
   "keywords": [
     "gourmet-plugin"

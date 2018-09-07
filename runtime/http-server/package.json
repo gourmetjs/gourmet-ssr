@@ -1,18 +1,18 @@
 {
   "name": "@gourmet/http-server",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Gourmet rendering service implemented as a standalone HTTP server",
   "bin": {
     "gourmet-http-server": "bin/gourmet-http-server.js"
   },
   "main": "lib/GourmetHttpServer.js",
   "dependencies": {
-    "@gourmet/client-lib": "^0.4.0",
+    "@gourmet/client-lib": "^0.5.0",
     "@gourmet/console": "^0.2.0",
     "@gourmet/console-env": "^0.2.0",
-    "@gourmet/parse-args": "^0.3.0",
-    "@gourmet/server-args": "^0.2.0",
-    "@gourmet/server-impl-base": "^0.3.0",
+    "@gourmet/parse-args": "^0.4.0",
+    "@gourmet/server-args": "^0.3.0",
+    "@gourmet/server-impl-base": "^0.4.0",
     "connect": "^3.6.6"
   }
 }
