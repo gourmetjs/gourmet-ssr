@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  entry: {
-    main: "./src/containers/renderRoot.jsx"
+  pages: {
+    main: "./src/containers/HelloApp.jsx"
   }
 };

@@ -18,6 +18,14 @@ module.exports = function getReactClientRenderer(Base) {
     throw Error("`@gourmet/react-renderer` cannot be the first one in the renderer chain. Check your configuration.");
 
   return class ReactClientRenderer extends Base {
+    createContext(...args) {
+      const gmctx = super.createContext(...args);
+
+      gmctx.setHead = this.setHead.bind(this, gmctx);
+
+      return gmctx;
+    }
+
     invokeUserRenderer(gmctx) {
       const page = this.userObject;
 
@@ -50,6 +58,21 @@ module.exports = function getReactClientRenderer(Base) {
             ReactDOM.render(content, parent);
         });
       }
+    }
+
+    setHead(gmctx, ...elements) {
+      elements.forEach(element => {
+        if (React.isValidElement(element)) {
+          if (element.type === "title") {
+            const title = element.props.children;
+            if (title && typeof title !== "string")
+              throw Error("Children of '<title>' must be a string");
+            document.title = title;
+          }
+        } else if (typeof element !== "string") {
+          throw Error("gmctx.setHead() only accepts React elements or strings");
+        }
+      });
     }
   };
 };

@@ -3,33 +3,21 @@
   "version": "0.5.3",
   "private": true,
   "scripts": {
-    "hot": "node server/lib/local.js --hot",
-    "watch": "node server/lib/local.js --watch",
-    "start": "node server/lib/local.js",
     "build": "gourmet build",
-    "test": "gourmet build --verbose 0 && tape test/*_test.js"
+    "start": "node lib/local.js",
+    "test": "gourmet build --verbose 1 && tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/client-http": "^0.3.0",
-    "@gourmet/client-lambda": "^0.2.0",
     "@gourmet/client-lib": "^0.4.0",
-    "@gourmet/handle-request-error": "^0.2.0",
+    "@gourmet/error-middleware": "^0.1.0",
     "@gourmet/server-args": "^0.2.0",
-    "@gourmet/server-impl-http": "^0.3.0",
-    "@gourmet/server-impl-lambda": "^0.3.0",
-    "@gourmet/server-impl-watch": "^0.4.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.3.0",
-    "@gourmet/http-server": "^0.4.0",
     "@gourmet/preset-react": "^0.4.3",
-    "@gourmet/promise-tape": "^0.3.0",
-    "@gourmet/puppeteer-args": "^0.3.0",
-    "puppeteer": "^1.3.0",
     "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "tape": "^4.9.0"
+    "react-dom": "^16.4.2"
   }
 }

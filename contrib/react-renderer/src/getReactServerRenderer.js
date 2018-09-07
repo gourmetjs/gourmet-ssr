@@ -30,6 +30,21 @@ module.exports = function getReactServerRenderer(Base) {
   // Options:
   //  - reactServerRender: "string", "static_markup", "stream", "static_stream"
   return class ReactServerRenderer extends Base {
+    createContext(...args) {
+      const gmctx = super.createContext(...args);
+
+      const rendered = gmctx.data.renderedLoadables = [];
+
+      gmctx.addRenderedLoadable = id => {
+        if (rendered.indexOf(id) === -1)
+          rendered.push(id);
+      };
+
+      gmctx.setHead = this.setHead.bind(this, gmctx);
+
+      return gmctx;
+    }
+
     invokeUserRenderer(gmctx) {
       const page = this.userObject;
 
@@ -95,19 +110,6 @@ module.exports = function getReactServerRenderer(Base) {
       return element;
     }
 
-    createContext(...args) {
-      const gmctx = super.createContext(...args);
-
-      const rendered = gmctx.data.renderedLoadables = [];
-
-      gmctx.addRenderedLoadable = id => {
-        if (rendered.indexOf(id) === -1)
-          rendered.push(id);
-      };
-
-      return gmctx;
-    }
-
     getBodyTail(gmctx) {
       let modules = [];
 
@@ -126,6 +128,19 @@ module.exports = function getReactServerRenderer(Base) {
       ].concat(bundles.map(filename => {
         return `<script defer src="${staticPrefix}${filename}"></script>`;
       })).join("\n");
+    }
+
+    setHead(gmctx, ...elements) {
+      elements.forEach(element => {
+        if (React.isValidElement(element)) {
+          element = ReactDOMServer.renderToStaticMarkup(element);
+        } else if (typeof element !== "string") {
+          throw Error("gmctx.setHead() only accepts React elements or strings");
+        }
+
+        if (gmctx.html.headTop.indexOf(element) === -1)
+          gmctx.html.headTop.push(element);
+      });
     }
   };
 };

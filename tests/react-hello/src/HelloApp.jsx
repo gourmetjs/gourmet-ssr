@@ -1,8 +1,19 @@
 import React, {PureComponent} from "react";
-import {hot} from "react-hot-loader";
 import Timer from "./Timer";
 
-class HelloApp extends PureComponent {
+export default class HelloApp extends PureComponent {
+  static getInitialProps(gmctx) {
+    gmctx.setHead(
+      <link
+        href="//stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossOrigin="anonymous"
+      />,
+      <title>React Hello</title>
+    );
+  }
+
   render() {
     return (
       <div className="container">
@@ -14,5 +25,3 @@ class HelloApp extends PureComponent {
     );
   }
 }
-
-export default hot(module)(HelloApp);

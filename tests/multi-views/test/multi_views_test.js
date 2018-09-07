@@ -37,6 +37,12 @@ test("run puppeteer", pt(async t => {
 
   await page.goto(`http://localhost:${port}/`);
 
+  let title = await page.evaluate(() => {
+    return document.title;
+  });
+
+  t.equal(title, "IndexView");
+
   const pageProps = await page.$eval("#page_props", pre => {
     return pre.innerText;
   });
@@ -54,6 +60,12 @@ test("run puppeteer", pt(async t => {
   await page.click('a[href="/dashboard"]');
 
   await page.waitFor(100);
+
+  title = await page.evaluate(() => {
+    return document.title;
+  });
+
+  t.equal(title, "DashboardView");
 
   t.equal(requestCount, app.requestCount, "server request must not be made");
 

@@ -2,7 +2,8 @@ import React from "react";
 import renderProps from "./renderProps";
 
 export default class IndexView extends React.Component {
-  static getInitialProps() {
+  static getInitialProps(gmctx) {
+    gmctx.setHead(<title>IndexView</title>);
     return {IndexView_getInitialProps: true};
   }
 

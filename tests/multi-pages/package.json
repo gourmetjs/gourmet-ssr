@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node lib/server.js",
     "build": "gourmet build",
+    "start": "node lib/server.js",
     "test": "gourmet build --verbose 1 && tape test/*_test.js"
   },
   "dependencies": {

@@ -1,29 +1,24 @@
 "use strict";
 
-const npath = require("path");
 const test = require("tape");
 const puppeteer = require("puppeteer");
 const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
-const serverArgs = require("@gourmet/server-args");
-const Server = require("@gourmet/server-impl-watch");
+const run = require("../lib/app");
 
-const args = serverArgs([
-  "--dir", npath.join(__dirname, ".."),
-  "--log-format", "off",
-  "--verbose", "off",
-  "--port", "0"
-].concat(process.argv.slice(2)));
+let app, port;
 
-let server, port;
-
-test("start gourmet server", pt(() => {
-  server = new Server(args);
-  server.start();
-  return server.ready().then(port_ => {
-    port = port_;
+test("start server", t => {
+  app = run({
+    workDir: __dirname + "/..",
+    port: 0,
+    debug: false
   });
-}));
+  app.server.on("listening", () => {
+    port = app.server.address().port;
+    t.end();
+  });
+});
 
 test("run puppeteer", pt(async t => {
   const browser = await puppeteer.launch(testArgs);
@@ -56,7 +51,7 @@ test("run puppeteer", pt(async t => {
   await browser.close();
 }));
 
-test("shutdown gourmet server", t => {
-  server.close();
+test("close server", t => {
+  app.server.close();
   t.end();
 });

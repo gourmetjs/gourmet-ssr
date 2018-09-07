@@ -13,7 +13,7 @@ module.exports = function serverArgs(def, argv, options) {
     serverDir: null,
     clientDir: null,
     staticPrefix: "/s/",
-    port: 3000
+    port: process.env.PORT || 3000
   }, def);
 
   options = merge.intact({

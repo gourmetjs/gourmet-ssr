@@ -1,3 +1,5 @@
+import "bootstrap/dist/css/bootstrap.min.css";
+import "ionicons/css/ionicons.min.css";
 import React, {PureComponent} from "react";
 import {injectGlobal, css} from "emotion";
 import Container from "../components/Container";
@@ -56,6 +58,27 @@ const cssPanel = css`
 `;
 
 export default class HelloApp extends PureComponent {
+  static getInitialProps() {
+    console.log("simulating data fetch...");
+    return (new Promise(resolve => {
+      setTimeout(() => {
+        resolve({
+          user: {
+            displayName: "John Doe",
+            emails: [
+              "john@example.com",
+              "john.doe@gmail.com"
+            ],
+            url: "http://gourmetjs.com",
+            company: "Gourmet Tech Inc.",
+            location: "San Jose, California",
+            photoUrl: null
+          }
+        });
+      }, 500);
+    }));
+  }
+
   render() {
     const user = this.props.user;
     return (

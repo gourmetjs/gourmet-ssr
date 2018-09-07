@@ -3,6 +3,7 @@ import renderProps from "./renderProps";
 
 export default class DashboardView extends React.Component {
   static getInitialProps(gmctx) {   // eslint-disable-line no-unused-vars
+    gmctx.setHead(<title>DashboardView</title>);
     return new Promise(resolve => {
       setTimeout(() => {
         resolve({DashboardView_getInitialProps: true});
