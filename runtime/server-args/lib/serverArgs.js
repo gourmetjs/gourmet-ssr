@@ -9,16 +9,15 @@ module.exports = function serverArgs(def, argv, options) {
     watch: false,
     stage: "local",
     workDir: "",
-    outputDir: ".gourmet",
     serverDir: null,
     clientDir: null,
-    staticPrefix: "/s/",
-    port: process.env.PORT || 3000
+    port: process.env.PORT || 3000,
+    host: process.env.HOST || "0.0.0.0"
   }, def);
 
   options = merge.intact({
     alias: {
-      workDir: ["dir", "d"],
+      workDir: ["dir"],
       stage: ["s"]
     }
   }, options);
@@ -26,9 +25,8 @@ module.exports = function serverArgs(def, argv, options) {
   const args = cliArgs(def, argv, options);
 
   args.workDir = npath.resolve(process.cwd(), args.workDir);
-  args.outputDir = npath.resolve(args.workDir, args.outputDir);
-  args.serverDir = npath.resolve(args.workDir, args.serverDir || `${args.outputDir}/${args.stage}/server`);
-  args.clientDir = npath.resolve(args.workDir, args.clientDir || `${args.outputDir}/${args.stage}/client`);
+  args.serverDir = npath.resolve(args.workDir, args.serverDir || `.gourmet/${args.stage}/server`);
+  args.clientDir = npath.resolve(args.workDir, args.clientDir || `.gourmet/${args.stage}/client`);
 
   return args;
 };

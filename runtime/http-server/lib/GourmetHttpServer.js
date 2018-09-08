@@ -1,57 +1,140 @@
 "use strict";
 
-const connect = require("connect");
-const getConsole = require("@gourmet/console");
-const parseArgs = require("@gourmet/parse-args");
-const ServerImplBase = require("@gourmet/server-impl-base");
+let con;
 
-class GourmetHttpServer extends ServerImplBase {
-  constructor(options, args) {
-    super(Object.assign({
-      connect,
-      defaultPort: 3939
-    }, options), args);
+class GourmetHttpServer {
+  constructor(options) {
+    this.options = Object.assign({
+      page: "main",
+      logFormat: "dev",
+      port: 3939,
+      host: "0.0.0.0",
+      static: true
+    }, options);
+
+    con = this.initConsole();
   }
 
   initConsole() {
+    const getConsole = require("@gourmet/console");
     return getConsole("gourmet:net");
   }
 
+  start() {
+    this.createConnect();
+    this.createApp();
+    this.createHttpServer();
+    this.createClient();
+    this.installInitialMiddleware();
+    this.installMiddleware();
+    this.installFinalMiddleware();
+    this.listen();
+  }
+
+  createConnect() {
+    this.connect = require("connect");
+  }
+
+  createApp() {
+    this.app = this.connect();
+  }
+
+  createHttpServer() {
+    const http = require("http");
+    this.httpServer = http.createServer(this.app);
+  }
+
   createClient() {
-    const argv = this.argv;
-    this.gourmet = require("@gourmet/client-lib")({
-      serverDir: this.args.serverDir,
-      page: parseArgs.string(argv.page, "main"),
-      siloed: parseArgs.bool(argv.siloed),
-      params: argv.params || {}
+    this.gourmet = require("@gourmet/client-lib");
+  }
+
+  installInitialMiddleware() {
+    this.installLogger();
+    this.installGourmetMiddleware();
+  }
+
+  installMiddleware() {
+    this.installRenderer();
+  }
+
+  installFinalMiddleware() {
+    this.installErrorHandler();
+  }
+
+  installLogger() {
+    const format = this.options.lotFormat;
+    if (format !== "off") {
+      const morgan = require("morgan");
+      this.app.use(morgan(format, {
+        // Currently, morgan just use 'write' method of the output stream so
+        // we can easily redirect output to our own console.
+        stream: {
+          write(text) {
+            if (text.substr(-1) === "\n")
+              text = text.substr(0, text.length - 1);
+            con.log(text);
+          }
+        }
+      }));
+    }
+  }
+
+  installGourmetMiddleware() {
+    this.app.use(this.gourmet.middleware(this.options));
+  }
+
+  installRenderer() {
+    this.app.use((req, res) => {
+      const context = this.getRenderContext(req);
+      const page = context.page || this.options.page;
+      res.serve(page, null, context);
     });
   }
 
-  installStaticServer() {
-    const enableStatic = parseArgs.bool(this.argv.static, true);
-    if (enableStatic)
-      super.installStaticServer();
+  getRenderContext(req) {
+    const context = req.headers["x-gourmet-context"];
+    if (context) {
+      try {
+        const buf = Buffer.from(context, "base64");
+        return JSON.parse(buf.toString());
+      } catch (err) {
+        // silently ignore parsing error
+      }
+    }
+    return {};
   }
 
-  getRenderArgs(req) {
-    const args = req.headers["x-gourmet-args"];
-    if (args) {
-      try {
-        const buf = Buffer.from(args, "base64");
-        req.gourmet = JSON.parse(buf.toString());
-      } catch (err) {
-        req.gourmet = {};
-      }
-    } else {
-      req.gourmet = {};
-    }
-    return req.gourmet;
+  installErrorHandler() {
+    const errorMiddleware = require("@gourmet/error-middleware");
+    const options = this.getErrorHandlerOptions();
+    this.app.use(errorMiddleware(options));
+  }
+
+  listen() {
+    this.httpServer.listen(this.options.port, this.options.host, () => {
+      con.log(`Server is listening on port ${this.httpServer.address().port}`);
+    });
+  }
+
+  ready() {
+    return new Promise((resolve, reject) => {
+      this.httpServer.once("error", reject);
+      this.httpServer.once("listening", () => {
+        resolve(this.httpServer.address().port);
+      });
+    });
+  }
+
+  close() {
+    this.httpServer.close();
   }
 
   getErrorHandlerOptions() {
-    const options = super.getErrorHandlerOptions();
-    options.requestProps = ["url", "method", "headers", "gourmet"];
-    return options;
+    return {
+      console: con,
+      debug: this.options.debug,
+      requestProps: ["url", "method", "headers", "gourmet"]
+    };
   }
 }
 

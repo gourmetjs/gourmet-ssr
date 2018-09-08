@@ -2,7 +2,6 @@
 
 const npath = require("path");
 const promiseProtect = require("@gourmet/promise-protect");
-const omit = require("@gourmet/omit");
 const merge = require("@gourmet/merge");
 const StorageFs = require("@gourmet/storage-fs");
 const RendererSandbox = require("@gourmet/renderer-sandbox");
@@ -11,8 +10,8 @@ const middlewareFactory = require("@gourmet/middleware");
 
 const _defaultStorage = new StorageFs();
 
-function clientLib(baseArgs) {
-  function invoke(args, callback) {
+function clientLib(baseOptions) {
+  function invoke(options, callback) {
     function _getCacheKey() {
       return `${serverDir}:${page}`;
     }
@@ -51,18 +50,20 @@ function clientLib(baseArgs) {
         item.render = _getRenderer(item);
 
       promiseProtect(() => {
-        return item.render(args);
+        return item.render(context);
       }).then(result => {
         callback(null, result);
       }).catch(callback);
     }
 
-    args = merge.intact(baseArgs, args);
-    const {storage=_storage, serverDir, page="main", siloed} = args;
-    args = omit(args, ["storage", "serverDir"]);
+    options = merge.intact(gourmet.baseOptions, options);
+
+    const {storage, serverDir, page, siloed} = options;
 
     if (!serverDir)
       throw Error("'serverDir' is required");
+
+    const context = Object.assign({page, siloed}, options.context);
 
     const key = _getCacheKey();
     let item = _cache[key];
@@ -100,22 +101,28 @@ function clientLib(baseArgs) {
   }
 
   function setStorage(storage) {
-    _storage = storage;
+    gourmet.baseOptions.storage = storage;
   }
 
-  function context(options) {
+  function gourmet(options) {
     return clientLib(options);
   }
 
-  let _storage = _defaultStorage;
   let _cache = {};
 
-  context.setStorage = setStorage;
-  context.invoke = invoke;
-  context.cleanCache = cleanCache;
-  context.middleware = middlewareFactory(context, {serveStatic: true});
+  gourmet.baseOptions = merge.intact({
+    storage: _defaultStorage,
+    serverDir: null,
+    page: "main",
+    siloed: false
+  }, baseOptions);
 
-  return context;
+  gourmet.setStorage = setStorage;
+  gourmet.invoke = invoke;
+  gourmet.cleanCache = cleanCache;
+  gourmet.middleware = middlewareFactory(gourmet);
+
+  return gourmet;
 }
 
 module.exports = clientLib();
