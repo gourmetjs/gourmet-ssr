@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/get-req-opts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Gets an `options` object that you can give to `http.request` from a string or a plain object.",
   "main": "lib/getReqOpts.js",
   "dependencies": {
