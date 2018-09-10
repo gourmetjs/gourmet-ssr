@@ -4,13 +4,18 @@ let con;
 
 class GourmetHttpServer {
   constructor(options) {
-    this.options = options || {};
+    this.options = Object.assign({
+      page: "main",
+      logFormat: "dev",
+      port: 3939,
+      static: true
+    }, options);
     con = this.initConsole();
   }
 
   initConsole() {
     const getConsole = require("@gourmet/console");
-    return getConsole("gourmet:net");
+    return this.options.console || getConsole("gourmet:net");
   }
 
   start() {

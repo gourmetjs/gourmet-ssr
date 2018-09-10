@@ -28,11 +28,7 @@ const helpMessage = [
 ].join("\n");
 
 const launcher = new GourmetServerLauncher(serverArgs({
-  page: "main",
-  logFormat: "dev",
-  port: 3939,
-  host: "0.0.0.0",
-  static: true,
+  port: 3939,   // We need to change the default port number of `serverArgs()`
   helpMessage
 }));
 
