@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-react-hello",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.4.0",
-    "@gourmet/http-server": "^0.5.1",
+    "@gourmet/http-server": "^0.5.2",
     "@gourmet/preset-react": "^0.5.0",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",

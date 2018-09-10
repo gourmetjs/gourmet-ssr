@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/http-server",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Gourmet rendering service implemented as a standalone HTTP server",
   "bin": {
     "gourmet-http-server": "bin/gourmet-http-server.js"
