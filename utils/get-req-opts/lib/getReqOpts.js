@@ -16,7 +16,7 @@ function _toPojo(src) {
   return obj;
 }
 
-module.exports = function getRops(url) {
+module.exports = function getRequestOptions(url) {
   if (typeof url === "string")
     return _toPojo(nurl.parse(url, false, true));
   else if (isPlainObject(url))
@@ -24,5 +24,5 @@ module.exports = function getRops(url) {
   else if (typeof url === "object")
     return _toPojo(url);  // assume this is Node's 'Url' compatible
   else
-    throw Error("Invalid url. Must be a string or object");
+    throw Error("Invalid URL. Must be a string or object.");
 };

@@ -5,6 +5,7 @@
   "dependencies": {
     "@gourmet/get-req-args": "^0.3.0",
     "@gourmet/merge": "^0.4.0",
-    "@gourmet/send-content": "^0.2.0"
+    "@gourmet/send-content": "^0.2.0",
+    "@gourmet/web-proxy": "^0.3.0"
   }
 }

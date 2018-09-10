@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.5.0",
+    "@gourmet/client-http": "^0.4.0",
     "@gourmet/error-middleware": "^0.2.0",
     "@gourmet/server-args": "^0.3.0",
     "express": "^4.16.3",
@@ -17,6 +18,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.4.0",
     "@gourmet/preset-react": "^0.5.0",
+    "@gourmet/http-server": "^0.5.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2"
   }

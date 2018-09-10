@@ -4,14 +4,7 @@ let con;
 
 class GourmetHttpServer {
   constructor(options) {
-    this.options = Object.assign({
-      page: "main",
-      logFormat: "dev",
-      port: 3939,
-      host: "0.0.0.0",
-      static: true
-    }, options);
-
+    this.options = options || {};
     con = this.initConsole();
   }
 
@@ -62,7 +55,7 @@ class GourmetHttpServer {
   }
 
   installLogger() {
-    const format = this.options.lotFormat;
+    const format = this.options.logFormat;
     if (format !== "off") {
       const morgan = require("morgan");
       this.app.use(morgan(format, {
@@ -80,7 +73,9 @@ class GourmetHttpServer {
   }
 
   installGourmetMiddleware() {
-    this.app.use(this.gourmet.middleware(this.options));
+    this.app.use(this.gourmet.middleware(Object.assign({
+      staticMiddleware: this.options.static ? "local" : false
+    }, this.options)));
   }
 
   installRenderer() {

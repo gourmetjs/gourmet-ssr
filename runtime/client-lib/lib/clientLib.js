@@ -114,7 +114,8 @@ function clientLib(baseOptions) {
     storage: _defaultStorage,
     serverDir: null,
     page: "main",
-    siloed: false
+    siloed: false,
+    staticMiddleware: "local"
   }, baseOptions);
 
   gourmet.setStorage = setStorage;

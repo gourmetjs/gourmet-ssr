@@ -1,8 +1,0 @@
-{
-  "name": "@gourmet/get-rops",
-  "version": "0.2.0",
-  "main": "lib/getRops.js",
-  "dependencies": {
-    "@gourmet/is-plain-object": "^0.2.0"
-  }
-}

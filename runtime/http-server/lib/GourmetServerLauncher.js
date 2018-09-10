@@ -23,11 +23,12 @@ const COLORS = [
 ];
 
 class GourmetServerLauncher {
-  constructor(args, ServerClass) {
-    this.args = args;
-    this.argv = args.argv;
+  constructor(options, ServerClass) {
+    this.options = options;
 
     this.initConsole();
+
+    con.debug("options:", this.options);
 
     if (ServerClass)
       this.ServerClass = ServerClass;
@@ -59,8 +60,8 @@ class GourmetServerLauncher {
     const base = getConsole();
 
     getConsole.install(detect({
-      useColors: parseArgs.bool(this.argv.colors, parseArgs.undef),
-      minLevel: parseArgs.verbosity([this.argv.verbose, this.argv.v]),
+      useColors: parseArgs.bool(this.options.colors, parseArgs.undef),
+      minLevel: parseArgs.verbosity([this.options.verbose, this.options.v]),
       write(opts, text) {
         base.write(opts, `${_color("[" + process.pid + "]")} ${text}`);
       }
@@ -75,18 +76,17 @@ class GourmetServerLauncher {
   }
 
   startHttpServer() {
-    const server = new this.ServerClass(this.args);
+    const server = new this.ServerClass(this.options);
     server.start();
     return server;
   }
 
   getCount() {
-    return parseArgs.number(this.argv.count, os.cpus().length);
+    return parseArgs.number(this.options.count, os.cpus().length);
   }
 
   runMaster() {
     con.log("Master is running");
-    con.debug("argv:", this.argv);
 
     const count = this.getCount();
 
@@ -102,30 +102,11 @@ class GourmetServerLauncher {
   }
 
   showHelp() {
-    con.log([
-      "gourmet-http-server [options]",
-      "",
-      "  --help, -h            Show this help screen",
-      "  --stage, -s <s>       Set the stage (default: 'local')",
-      "  --work-dir, --dir <d> Set the working directory (default: current directory)",
-      "  --server-dir <d>      Set the server directory (default: `{work-dir}/.gourmet/{stage}/server)`",
-      "  --client-dir <d>      Set the client directory (default: `{work-dir}/.gourmet/{stage}/client)`",
-      "  --port <n>            Set the listening port (default: '3939')",
-      "  --host <h>            Set the listening host (default: '0.0.0.0')",
-      "  --no-static           Do not serve static assets (defaut: --static)",
-      "  --static-prefix <s>   Override the path prefix of static assets (default: '/s/')",
-      "  --page <s>            Set the default page (default: 'main')",
-      "  --siloed              Set the default 'siloed' option (default: '--no-siloed')",
-      "  --context.x.y         Set the arbitrary rendering context value (result: '{x: {y: true}}')",
-      "  --colors              Use ANSI colors in console output (default: auto detect)",
-      "  --verbose, -v <n>     Set the verbosity level (debug|info|log*|warn|error|0-5)",
-      "  --log-format <s>      Set the Morgan log format (dev*|combined|common|short|tiny|off)",
-      "  --no-debug            Do not show details in error response (default: '--debug')"
-    ].join("\n"));
+    con.log(this.options.helpMessage || "No help");
   }
 
   run() {
-    if (this.argv.help || this.argv.h)
+    if (this.options.help || this.options.h)
       this.showHelp();
     else if (cluster.isMaster && this.getCount() > 1)
       this.runMaster();

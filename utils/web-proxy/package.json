@@ -4,7 +4,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@gourmet/error": "^0.2.0",
-    "@gourmet/get-rops": "^0.2.0",
+    "@gourmet/get-req-opts": "^0.1.0",
     "@gourmet/handle-request-error": "^0.2.0",
     "@gourmet/http-module": "^0.2.0",
     "@gourmet/proxy-headers": "^0.2.0",

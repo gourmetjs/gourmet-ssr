@@ -2,14 +2,11 @@
 
 const http = require("http");
 const https = require("https");
-const getRops = require("@gourmet/get-rops");
+const getReqOpts = require("@gourmet/get-req-opts");
 const httpModule = require("@gourmet/http-module");
 const merge = require("@gourmet/merge");
-const omit = require("@gourmet/omit");
-const getReqArgs = require("@gourmet/get-req-args");
 const ProxyHeaders = require("@gourmet/proxy-headers");
-const sendContent = require("@gourmet/send-content");
-const webProxy = require("@gourmet/web-proxy");
+const middlewareFactory = require("@gourmet/middleware");
 
 const _defaultAgent = {
   http: new http.Agent({
@@ -18,7 +15,7 @@ const _defaultAgent = {
     maxSockets: 256,
     maxFreeSockets: 128
   }),
-  https: new http.Agent({
+  https: new https.Agent({
     keepAlive: true,
     keepAliveMsecs: 30 * 1000,
     maxSockets: 256,
@@ -26,31 +23,21 @@ const _defaultAgent = {
   })
 };
 
-function clientHttp(baseArgs) {
-  function _extractUrl(args) {
-    args = merge.intact(baseArgs, args);
-    const {
-      serverUrl={
-        protocol: "http:",
-        hostname: "localhost",
-        port: 3939,
-        path: "/"
-      }
-    } = args;
-    args = omit(args, ["serverUrl"]);
+function clientHttp(baseOptions) {
+  function _getReqOpts(options) {
+    const reqOpts = getReqOpts(options.serverUrl);
+    const httpm = httpModule(reqOpts.protocol);
 
-    const rops = getRops(serverUrl);
-    const httpm = httpModule(rops);
+    if (!reqOpts.agent)
+      reqOpts.agent = httpm === https ? _defaultAgent.https : _defaultAgent.http;
 
-    if (!rops.agent)
-      rops.agent = httpm === https ? _defaultAgent.https : _defaultAgent.http;
-
-    return {args, rops, httpm};
+    return {reqOpts, httpm};
   }
 
-  function invoke(args_, callback) {
-    function _encodeArgs() {
-      const content = JSON.stringify(args);
+  function invoke(options, callback) {
+    function _encodeContext() {
+      const context = Object.assign({page: options.page, siloed: options.siloed}, options.context);
+      const content = JSON.stringify(context);
       return Buffer.from(content).toString("base64");
     }
 
@@ -61,14 +48,17 @@ function clientHttp(baseArgs) {
       }
     }
 
+    options = merge.intact(gourmet.baseOptions, options);
+
     let finished = false;
-    const {args, rops, httpm} = _extractUrl(args_);
+    const {reqOpts, httpm} = _getReqOpts(options);
 
-    if (!rops.headers)
-      rops.headers = {};
-    rops.headers["x-gourmet-args"] = _encodeArgs();
+    if (!reqOpts.headers)
+      reqOpts.headers = {};
 
-    const clientReq = httpm.request(rops, clientRes => {
+    reqOpts.headers["x-gourmet-context"] = _encodeContext();
+
+    const clientReq = httpm.request(reqOpts, clientRes => {
       const result = {
         statusCode: clientRes.statusCode,
         headers: new ProxyHeaders(clientRes).getHeadersCase(),
@@ -82,48 +72,22 @@ function clientHttp(baseArgs) {
     clientReq.end();
   }
 
-  function render(req, res, next, args) {
-    args = Object.assign(getReqArgs(req), args);
-    invoke(args, (err, result) => {
-      if (err) {
-        next(err);
-      } else if (!result) {
-        next();
-      } else {
-        sendContent(res, result, err => {
-          if (err)
-            next(err);
-        });
-      }
-    });
+  function gourmet(options) {
+    return clientHttp(options);
   }
 
-  function renderer(args) {
-    return function(req, res, next) {
-      render(req, res, next, args);
-    };
-  }
+  gourmet.baseOptions = merge.intact({
+    serverUrl: "http://localhost:3939/",
+    page: "main",
+    siloed: false,
+    staticMiddleware: "proxy"
+  }, baseOptions);
 
-  function staticServer(args) {
-    const {rops} = _extractUrl(args);
-    return (req, res, next) => {
-      rops.path = req.originalUrl || req.url;
-      webProxy(req, res, rops, {
-        handleError: next
-      });
-    };
-  }
+  gourmet.invoke = invoke;
+  gourmet.middleware = middlewareFactory(gourmet);
+  gourmet.getReqOpts = options => _getReqOpts(options).reqOpts;
 
-  function context(args) {
-    return clientHttp(args);
-  }
-
-  context.invoke = invoke;
-  context.render = render;
-  context.renderer = renderer;
-  context.static = staticServer;
-
-  return context;
+  return gourmet;
 }
 
 module.exports = clientHttp();

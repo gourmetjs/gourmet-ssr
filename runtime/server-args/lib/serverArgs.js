@@ -8,23 +8,23 @@ module.exports = function serverArgs(def, argv, options) {
   def = Object.assign({
     watch: false,
     stage: "local",
-    workDir: "",
-    serverDir: null,
-    clientDir: null,
+    workDir: undefined,
+    serverDir: undefined,
+    clientDir: undefined,
     port: process.env.PORT || 3000,
     host: process.env.HOST || "0.0.0.0"
   }, def);
 
   options = merge.intact({
     alias: {
-      workDir: ["dir"],
+      workDir: ["dir", "d"],
       stage: ["s"]
     }
   }, options);
 
   const args = cliArgs(def, argv, options);
 
-  args.workDir = npath.resolve(process.cwd(), args.workDir);
+  args.workDir = npath.resolve(process.cwd(), args.workDir || "");
   args.serverDir = npath.resolve(args.workDir, args.serverDir || `.gourmet/${args.stage}/server`);
   args.clientDir = npath.resolve(args.workDir, args.clientDir || `.gourmet/${args.stage}/client`);
 

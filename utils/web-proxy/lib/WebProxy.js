@@ -3,7 +3,7 @@
 const pump = require("pump");
 const error = require("@gourmet/error");
 const httpModule = require("@gourmet/http-module");
-const getRops = require("@gourmet/get-rops");
+const getReqOpts = require("@gourmet/get-req-opts");
 const ProxyHeaders = require("@gourmet/proxy-headers");
 const handleRequestError = require("@gourmet/handle-request-error");
 
@@ -21,16 +21,16 @@ class WebProxy {
   }
 
   // initializes the request options
-  initRops() {
-    const rops = this.rops;
-    rops.method = this.req.method;
-    rops.headers = this.getProxyReqHeaders();
-    return rops;
+  initReqOpts() {
+    const reqOpts = this.reqOpts;
+    reqOpts.method = this.req.method;
+    reqOpts.headers = this.getProxyReqHeaders();
+    return reqOpts;
   }
 
   createProxyReq() {
-    const rops = this.rops;
-    this.proxyReq = httpModule(rops.protocol).request(rops);
+    const reqOpts = this.reqOpts;
+    this.proxyReq = httpModule(reqOpts.protocol).request(reqOpts);
   }
 
   abort() {
@@ -71,10 +71,10 @@ class WebProxy {
       return m ? m[1] : (_isEncrypted(req) ? "443" : "80");
     }
 
-    const rops = this.rops;
+    const reqOpts = this.reqOpts;
     const xff = this.options.xff;
     const req = this.req;
-    const headers = new ProxyHeaders(req).set(rops.headers);
+    const headers = new ProxyHeaders(req).set(reqOpts.headers);
 
     if (xff === undefined || xff) {
       const value = headers.get("x-forwarded-for");
@@ -162,8 +162,8 @@ class WebProxy {
   handle(req, res, target) {
     this.req = req;
     this.res = res;
-    this.rops = getRops(target);
-    this.initRops();
+    this.reqOpts = getReqOpts(target);
+    this.initReqOpts();
     this.createProxyReq();
     this.initReq();
     this.initProxyReq();

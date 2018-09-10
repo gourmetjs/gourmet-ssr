@@ -1,40 +1,46 @@
 "use strict";
 
-const fs = require("fs");
-const npath = require("path");
 const getReqArgs = require("@gourmet/get-req-args");
 const sendContent = require("@gourmet/send-content");
 const merge = require("@gourmet/merge");
+const webProxy = require("@gourmet/web-proxy");
 
 module.exports = function factory(gourmet, baseOptions) {
   return function createMiddleware(options) {
     gourmet.baseOptions = options = merge.intact({
-      serveStatic: "local",   // "local", "proxy", "off" or falsy
-      clientDir: null,        // when `serveStatic` is "local"
-      serverDir: null,        // (when `serveStatic` is "local" or "proxy") and (when `staticPrefix` is empty)
-      staticPrefix: null      // when `serveStatic` is "local" or "proxy"
+      staticMiddleware: false,  // "local", "proxy", "off" or falsy
+      clientDir: null,          // when `staticMiddleware` is "local"
+      staticPrefix: "/s/",      // when `staticMiddleware` is "local" or "proxy"
+      serverUrl: null           // when `staticMiddleware` is "proxy"
     }, gourmet.baseOptions, baseOptions, options);
 
-    let {serveStatic, staticPrefix, serverDir, clientDir} = options;
+    const {staticMiddleware, clientDir, staticPrefix} = options;
     let ss;
 
-    if (serveStatic === "local" || serveStatic === "proxy") {
-      if (!staticPrefix) {
-        if (!serverDir)
-          throw Error("`serverDir` is required to load manifest file when `staticPrefix` is not specified");
-        const path = npath.join(serverDir, "manifest.json");
-        const manifest = JSON.parse(fs.readFileSync(path, "utf8"));
-        staticPrefix = manifest.staticPrefix;
-        if (!staticPrefix)
-          throw Error("Invalid manifest file, no `staticPrefix` inside: " + path);
-      }
-    }
-
-    if (serveStatic === "local") {
+    if (staticMiddleware === "local") {
       if (!clientDir)
-        throw Error("`clientDir` is required when `serveStatic` is \"local\"");
-      const serveStatic = require("serve-static");
-      ss = serveStatic(clientDir, {index: false, redirect: false});
+        throw Error("`clientDir` is required when `staticMiddleware` is \"local\"");
+      const serve = require("serve-static")(clientDir, {fallthrough: false, index: false, redirect: false});
+      ss = (req, res, next) => {
+        const orgUrl = req.url;
+        req.url = req.url.substr(staticPrefix.length - 1);  // include leading "/"
+        serve(req, res, err => {
+          if (err && err.code === "ENOENT") {
+            err = Error("Not found: " + req.url);
+            err.statusCode = 404;
+          }
+          req.url = orgUrl;
+          next(err);
+        });
+      };
+    } else if (staticMiddleware === "proxy") {
+      ss = (req, res, next) => {
+        const reqOpts = gourmet.getReqOpts(options);
+        reqOpts.path = req.originalUrl || req.url;
+        webProxy(req, res, reqOpts, {
+          handleError: next
+        });
+      };
     }
 
     return (req, res, next) => {
@@ -56,12 +62,7 @@ module.exports = function factory(gourmet, baseOptions) {
       };
 
       if (ss && req.url.indexOf(staticPrefix) === 0) {
-        const orgUrl = req.url;
-        req.url = req.url.substr(staticPrefix.length - 1);  // include leading "/"
-        ss(req, res, err => {
-          req.url = orgUrl;
-          next(err);
-        });
+        ss(req, res, next);
       } else {
         next();
       }
