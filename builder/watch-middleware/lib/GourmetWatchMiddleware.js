@@ -7,8 +7,10 @@ const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const StorageFs = require("@gourmet/storage-fs");
 const inspectError = require("@gourmet/inspect-error");
 
+// --watch-fs: don't use memory-fs and save files in fs
+// --watch-port: set the websocket port for watch mode (default: 3938)
 class GourmetWatchMiddleware {
-  constructor({watch, argv}, gourmet) {
+  constructor(gourmet) {
     if (!gourmet)
       throw Error("Instance of Gourmet Client is required");
     this.gourmet = gourmet;
@@ -19,7 +21,7 @@ class GourmetWatchMiddleware {
       compQueue: []
     };
     this._lastCompilationHash = {};
-    this._start({watch, argv});
+    this._start();
   }
 
   handle(req, res, next) {
@@ -32,8 +34,11 @@ class GourmetWatchMiddleware {
     }
   }
 
-  _start({watch, argv}) {
+  _start() {
     const cli = new GourmetCli();
+
+    const argv = Object.assign({}, this.gourmet.baseOptions);
+    const watch = argv.watch || true;
 
     argv._ = ["build"];
 

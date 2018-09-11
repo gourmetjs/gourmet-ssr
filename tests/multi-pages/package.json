@@ -5,6 +5,8 @@
   "scripts": {
     "build": "gourmet build",
     "start": "node lib/server.js",
+    "hot": "node lib/server.js --hot",
+    "watch": "node lib/server.js --watch",
     "test": "gourmet build --verbose 1 && tape test/*_test.js"
   },
   "dependencies": {
@@ -24,5 +26,8 @@
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "tape": "^4.9.0"
+  },
+  "optionalDependencies": {
+    "@gourmet/watch-middleware": "^0.5.0"
   }
 }

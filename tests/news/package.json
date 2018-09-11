@@ -9,7 +9,6 @@
     "build": "gourmet build"
   },
   "dependencies": {
-    "@gourmet/server-impl-watch": "^0.5.0",
     "got": "^8.3.1"
   },
   "devDependencies": {

@@ -3,7 +3,6 @@
 const getReqArgs = require("@gourmet/get-req-args");
 const sendContent = require("@gourmet/send-content");
 const merge = require("@gourmet/merge");
-const webProxy = require("@gourmet/web-proxy");
 
 module.exports = function factory(gourmet, baseOptions) {
   return function createMiddleware(options) {
@@ -20,20 +19,32 @@ module.exports = function factory(gourmet, baseOptions) {
     if (staticMiddleware === "local") {
       if (!clientDir)
         throw Error("`clientDir` is required when `staticMiddleware` is \"local\"");
-      const serve = require("serve-static")(clientDir, {fallthrough: false, index: false, redirect: false});
-      ss = (req, res, next) => {
-        const orgUrl = req.url;
-        req.url = req.url.substr(staticPrefix.length - 1);  // include leading "/"
-        serve(req, res, err => {
-          if (err && err.code === "ENOENT") {
-            err = Error("Not found: " + req.url);
-            err.statusCode = 404;
-          }
-          req.url = orgUrl;
-          next(err);
+      if (options.watch) {
+        // In local Lerna environment, `@gourmet/watch-middleware` is not accessible
+        // from here. This is a quick solution to solve this issue without adding
+        // `@gourmet/watch-middleware` as a dependency.
+        const resolve = require("resolve");
+        const gwm = resolve.sync("@gourmet/watch-middleware", {
+          basedir: options.clientDir    // `workDir` is not guaranteed to be given
         });
-      };
+        ss = require(gwm)(gourmet);
+      } else {
+        const serve = require("serve-static")(clientDir, {fallthrough: false, index: false, redirect: false});
+        ss = (req, res, next) => {
+          const orgUrl = req.url;
+          req.url = req.url.substr(staticPrefix.length - 1);  // include leading "/"
+          serve(req, res, err => {
+            if (err && err.code === "ENOENT") {
+              err = Error("Not found: " + req.url);
+              err.statusCode = 404;
+            }
+            req.url = orgUrl;
+            next(err);
+          });
+        };
+      }
     } else if (staticMiddleware === "proxy") {
+      const webProxy = require("@gourmet/web-proxy");
       ss = (req, res, next) => {
         const reqOpts = gourmet.getReqOpts(options);
         reqOpts.path = req.originalUrl || req.url;

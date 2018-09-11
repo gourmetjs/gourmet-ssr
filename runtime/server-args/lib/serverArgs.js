@@ -6,7 +6,7 @@ const cliArgs = require("@gourmet/cli-args");
 
 module.exports = function serverArgs(def, argv, options) {
   def = Object.assign({
-    watch: false,
+    watch: undefined,
     stage: "local",
     workDir: undefined,
     serverDir: undefined,
@@ -23,6 +23,9 @@ module.exports = function serverArgs(def, argv, options) {
   }, options);
 
   const args = cliArgs(def, argv, options);
+
+  if (args.hot)
+    args.watch = "hot";
 
   args.workDir = npath.resolve(process.cwd(), args.workDir || "");
   args.serverDir = npath.resolve(args.workDir, args.serverDir || `.gourmet/${args.stage}/server`);

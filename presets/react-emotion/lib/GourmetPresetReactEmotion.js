@@ -11,7 +11,6 @@ class PresetReactEmotion {
     const moduleDir = context.builder.moduleDir(__dirname);
     return {
       "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer"),
-      "@gourmet/watch-middleware": moduleDir("@gourmet/watch-middleware"),
       "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
       "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
       "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable"),

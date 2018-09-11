@@ -87,7 +87,7 @@ class CliBase {
   }
 
   getWorkDir(argv) {
-    return npath.resolve(process.cwd(), argv.dir || argv.d || "");
+    return npath.resolve(process.cwd(), argv.workDir || argv.dir || argv.d || "");
   }
 
   init(argv) {

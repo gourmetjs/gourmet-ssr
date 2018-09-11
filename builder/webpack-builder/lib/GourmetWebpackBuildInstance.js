@@ -170,9 +170,9 @@ class GourmetWebpackBuildInstance {
     function _devtool() {
       if (context.target === "client") {
         if (context.watch === "hot")
-          return context.sourceMap ? "cheap-eval-source-map" : "eval";
+          return context.sourceMap ? "cheap-eval-source-map" : false;
         else if (context.watch)
-          return context.sourceMap ? "eval-source-map" : false;
+          return context.sourceMap ? "cheap-module-source-map" : false;
       }
       return context.sourceMap ? "source-map" : false;
     }
@@ -222,14 +222,14 @@ class GourmetWebpackBuildInstance {
       }
 
       const def = pages[name];
-      let pageValue = _value(isPlainObject(def) ? def[context.target] : def);
-
-      pageValue = context.plugins.runWaterfallSync("build:entry", pageValue, name, def, context, config);
+      let value = _value(isPlainObject(def) ? def[context.target] : def);
 
       if (!isPlainObject(def))
-        pageValue = this._generatePageInit(pageValue, name, context, config);
+        value = this._generatePageInit(value, name, context, config);
 
-      res[name] = (context.watch || pageValue.length > 1) ? pageValue : pageValue[0];
+      value = context.plugins.runWaterfallSync("build:entry", value, name, def, context, config);
+
+      res[name] = (context.watch || value.length > 1) ? value : value[0];
     });
 
     return res;
@@ -466,7 +466,7 @@ class GourmetWebpackBuildInstance {
       return obj;
   }
 
-  _generatePageInit(pageValue, name, context, config) {
+  _generatePageInit(value, name, context, config) {
     function _renderer(list) {
       return [
         "[",
@@ -475,14 +475,14 @@ class GourmetWebpackBuildInstance {
       ].join("\n");
     }
 
-    const info = context.plugins.runMergeSync("build:page_renderer", {renderer: []}, context, config, pageValue, name);
+    const info = context.plugins.runMergeSync("build:page_renderer", {renderer: []}, context, config, value, name);
 
     if (!info.renderer || !Array.isArray(info.renderer) || !info.renderer.length)
       throw error(NO_RENDERER_CLASS);
 
     const infoDir = npath.join(context.builder.outputDir, context.stage, "info");
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
-    const absPath = resolve.sync(pageValue[pageValue.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
+    const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
     const userModule = relativePath(absPath, infoDir);
     const iopts = this._varsCache.builder.initOptions;
     const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";
@@ -497,7 +497,7 @@ class GourmetWebpackBuildInstance {
 
     context.builder.emitFileSync(outputPath, content);
 
-    return pageValue.slice(0, pageValue.length - 1).concat(relativePath(outputPath, context.workDir));
+    return value.slice(0, value.length - 1).concat(relativePath(outputPath, context.workDir));
   }
 }
 

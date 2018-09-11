@@ -2,7 +2,7 @@
 
 const GourmetWatchMiddleware = require("./GourmetWatchMiddleware");
 
-module.exports = function(options, gourmet) {
-  const m = new GourmetWatchMiddleware(options, gourmet);
+module.exports = function(gourmet) {
+  const m = new GourmetWatchMiddleware(gourmet);
   return GourmetWatchMiddleware.prototype.handle.bind(m);
 };
