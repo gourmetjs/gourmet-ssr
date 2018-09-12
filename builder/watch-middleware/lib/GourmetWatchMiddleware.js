@@ -70,7 +70,8 @@ class GourmetWatchMiddleware {
     const clientComp = context.builds.client.webpack.compiler;
     const watchOptions = this._getWatchOptions(context.argv);
 
-    serverComp.outputFileSystem = context.builder.serverOutputFileSystem = this._outputFileSystem;
+    if (this._outputFileSystem)
+      serverComp.outputFileSystem = context.builder.serverOutputFileSystem = this._outputFileSystem;
 
     this._runWatch(serverComp, watchOptions, (err, stats) => {
       const changed = this._printResult("server", err, stats, context);
@@ -190,10 +191,10 @@ class GourmetWatchMiddleware {
 
     let compiling = false;
 
-    compiler.hooks.invalid.tap("GourmetDevServer", _invalid);
-    compiler.hooks.run.tap("GourmetDevServer", _invalid);
-    compiler.hooks.done.tap("GourmetDevServer", _done);
-    compiler.hooks.watchRun.tap("GourmetDevServer", (comp, callback) => {
+    compiler.hooks.invalid.tap("GourmetWatchMiddleware", _invalid);
+    compiler.hooks.run.tap("GourmetWatchMiddleware", _invalid);
+    compiler.hooks.done.tap("GourmetWatchMiddleware", _done);
+    compiler.hooks.watchRun.tap("GourmetWatchMiddleware", (comp, callback) => {
       _invalid(callback);
     });
 
