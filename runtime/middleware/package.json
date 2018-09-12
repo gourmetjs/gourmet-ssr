@@ -7,6 +7,6 @@
     "@gourmet/merge": "^0.4.0",
     "@gourmet/send-content": "^0.2.0",
     "@gourmet/web-proxy": "^0.3.1",
-    "resolve": "^1.6.0"
+    "@gourmet/watch-middleware": "^0.5.0"
   }
 }
