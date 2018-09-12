@@ -20,8 +20,7 @@ module.exports = function factory(gourmet, baseOptions) {
         throw Error("`clientDir` is required when `staticMiddleware` is \"local\"");
       if (options.watch)
         handlers.push(require("./watch")(gourmet, options));
-      else
-        handlers.push(require("./static")(gourmet, options));
+      handlers.push(require("./static")(gourmet, options));
     } else if (staticMiddleware === "proxy") {
       handlers.push(require("./proxy")(gourmet, options));
     }

@@ -10,8 +10,7 @@ class PresetReact {
       "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer"),
       "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
       "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
-      "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable"),
-      "react-hot-loader": moduleDir("react-hot-loader")
+      "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable")
     };
   }
 }
@@ -24,7 +23,6 @@ PresetReact.meta = {
     "@gourmet/plugin-webpack-blob",
     "@gourmet/plugin-webpack-html-renderer",
     "@gourmet/plugin-react",
-    "@gourmet/plugin-react-hot-loader",
     "@gourmet/plugin-react-loadable"
   ],
   hooks: {

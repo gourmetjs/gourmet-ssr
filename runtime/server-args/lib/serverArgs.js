@@ -24,9 +24,6 @@ module.exports = function serverArgs(def, argv, options) {
 
   const args = cliArgs(def, argv, options);
 
-  if (args.hot)
-    args.watch = "hot";
-
   args.workDir = npath.resolve(process.cwd(), args.workDir || "");
   args.serverDir = npath.resolve(args.workDir, args.serverDir || `.gourmet/${args.stage}/server`);
   args.clientDir = npath.resolve(args.workDir, args.clientDir || `.gourmet/${args.stage}/client`);

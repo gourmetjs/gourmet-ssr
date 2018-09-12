@@ -1,8 +1,7 @@
 import React from "react";
-import {hot} from "react-hot-loader";
 import renderProps from "./renderProps";
 
-class DashboardPage extends React.Component {
+export default class DashboardPage extends React.Component {
   static getInitialProps(gmctx) {   // eslint-disable-line no-unused-vars
     return new Promise(resolve => {
       setTimeout(() => {
@@ -34,5 +33,3 @@ class DashboardPage extends React.Component {
     );
   }
 }
-
-export default hot(module)(DashboardPage);

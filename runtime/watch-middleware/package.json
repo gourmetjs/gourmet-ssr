@@ -4,10 +4,6 @@
   "main": "lib/index.js",
   "dependencies": {
     "@gourmet/gourmet-cli-impl": "^0.4.0",
-    "@gourmet/inspect-error": "^0.2.0",
-    "@gourmet/storage-fs": "^0.3.0",
-    "memory-fs": "^0.4.1",
-    "webpack-dev-middleware": "^3.1.2",
-    "webpack-hot-client": "^4.1.1"
+    "@gourmet/inspect-error": "^0.2.0"
   }
 }

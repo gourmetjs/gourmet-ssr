@@ -14,7 +14,6 @@ class PresetReactEmotion {
       "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
       "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
       "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable"),
-      "react-hot-loader": moduleDir("react-hot-loader"),
       "emotion": moduleDir("emotion"),
       "react-emotion": moduleDir("react-emotion"),
       "@gourmet/emotion-renderer": moduleDir("@gourmet/emotion-renderer")
@@ -30,7 +29,6 @@ PresetReactEmotion.meta = {
     "@gourmet/plugin-webpack-blob",
     "@gourmet/plugin-webpack-html-renderer",
     "@gourmet/plugin-react",
-    "@gourmet/plugin-react-hot-loader",
     "@gourmet/plugin-react-loadable",
     "@gourmet/plugin-react-emotion"
   ],

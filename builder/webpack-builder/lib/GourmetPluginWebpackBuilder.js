@@ -1,7 +1,7 @@
 "use strict";
 
 const npath = require("path");
-const nfs = require("fs");
+const fs = require("fs");
 const util = require("util");
 const crypto = require("crypto");
 const mkdirp = require("mkdirp");
@@ -164,19 +164,10 @@ class GourmetPluginWebpackBuilder {
   }
 
   emitFileSync(path, content) {
-    let fs = this.serverOutputFileSystem;
-
-    if (!fs) {
-      fs = {
-        writeFileSync: nfs.writeFileSync,
-        mkdirpSync: mkdirp.sync
-      };
-    }
-
     const dir = npath.dirname(path);
 
     if (dir)
-      fs.mkdirpSync(dir);
+      mkdirp.sync(dir);
 
     fs.writeFileSync(path, content);
   }

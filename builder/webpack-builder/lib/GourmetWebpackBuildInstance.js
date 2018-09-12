@@ -168,12 +168,6 @@ class GourmetWebpackBuildInstance {
 
   getDevTool(context, config) {
     function _devtool() {
-      if (context.target === "client") {
-        if (context.watch === "hot")
-          return context.sourceMap ? "cheap-eval-source-map" : false;
-        else if (context.watch)
-          return context.sourceMap ? "cheap-module-source-map" : false;
-      }
       return context.sourceMap ? "source-map" : false;
     }
 

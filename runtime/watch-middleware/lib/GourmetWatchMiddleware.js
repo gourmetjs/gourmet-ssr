@@ -1,13 +1,8 @@
 "use strict";
 
-const webpackDevMiddleware = require("webpack-dev-middleware");
-const hotClient = require("webpack-hot-client");
-const MemoryFs = require("memory-fs");
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
-const StorageFs = require("@gourmet/storage-fs");
 const inspectError = require("@gourmet/inspect-error");
 
-// --watch-fs: don't use memory-fs and save files in fs
 // --watch-port <n>: set the websocket port for watch mode (default: 3938)
 // --watch-delay <n>: watchOptions.aggregateTimeout
 // --watch-poll: watchOptions.poll
@@ -31,11 +26,9 @@ class GourmetWatchMiddleware {
 
   handle(req, res, next) {
     if (this._isBusy()) {
-      this._busy.reqQueue.push(() => {
-        return this._webpackDevMiddleware(req, res, next);
-      });
+      this._busy.reqQueue.push(next);
     } else {
-      return this._webpackDevMiddleware(req, res, next);
+      next();
     }
   }
 
@@ -47,16 +40,11 @@ class GourmetWatchMiddleware {
 
     argv._ = ["build"];
 
-    if (!argv.watchFs) {
-      this._outputFileSystem = new MemoryFs();
-      this.gourmet.setStorage(new StorageFs({fs: this._outputFileSystem}));
-    }
-
     cli.init(argv).then(() => {
       cli.verifyArgs();
       cli.context.watch = watch;
       return cli.context.plugins.runAsync("build:go", cli.context).then(() => {
-        this._webpackDevMiddleware = this._configureWatch(cli.context);
+        this._configureWatch(cli.context);
       });
     }).catch(err => {
       const con = cli.context.console;
@@ -65,13 +53,9 @@ class GourmetWatchMiddleware {
   }
 
   _configureWatch(context) {
-    const clientCon = context.builds.client.console;
     const serverComp = context.builds.server.webpack.compiler;
     const clientComp = context.builds.client.webpack.compiler;
     const watchOptions = this._getWatchOptions(context.argv);
-
-    if (this._outputFileSystem)
-      serverComp.outputFileSystem = context.builder.serverOutputFileSystem = this._outputFileSystem;
 
     this._runWatch(serverComp, watchOptions, (err, stats) => {
       const changed = this._printResult("server", err, stats, context);
@@ -80,27 +64,9 @@ class GourmetWatchMiddleware {
       this._setBusy("server", !err && !stats, context);
     });
 
-    this._runWatch(clientComp, Object.assign({wrapWatcher: true}, watchOptions), (err, stats) => {
+    this._runWatch(clientComp, watchOptions, (err, stats) => {
       this._printResult("client", err, stats, context);
       this._setBusy("client", !err && !stats, context);
-    });
-
-    hotClient(clientComp, {
-      hmr: context.watch === "hot",
-      allEntries: true,
-      port: context.argv.watchPort || 3938
-    });
-
-    return webpackDevMiddleware(clientComp, {
-      publicPath: context.staticPrefix,
-      index: false,
-      reporter() {},
-      logger: {
-        error() {},
-        warn() {},
-        info: clientCon.info,
-        log: clientCon.log
-      }
     });
   }
 
@@ -198,22 +164,10 @@ class GourmetWatchMiddleware {
       _invalid(callback);
     });
 
-    if (options.wrapWatcher) {
-      delete options.wrapWatcher;
-      const oldWatch = compiler.watch.bind(compiler);
-      compiler.watch = (options, callback) => {
-        return oldWatch(options, (err, stats) => {
-          if (err)
-            handler(err);
-          callback(err, stats);
-        });
-      };
-    } else {
-      compiler.watch(options, err => {
-        if (err)
-          handler(err);
-      });
-    }
+    compiler.watch(options, err => {
+      if (err)
+        handler(err);
+    });
   }
 
   _getWatchOptions(argv) {
