@@ -8,11 +8,8 @@ function add(info) {
     return;
   }
 
-  if (!module.hot || module.hot.status() !== "apply") {
-    // Allow the replacement of an existing item when we are in 'apply' mode of Webpack HMR.
-    if (loadables[info.id])
-      throw Error("ID conflict is detected in one of loadable components. Use 'signature' to resolve this issue.");
-  }
+  if (loadables[info.id])
+    throw Error("ID conflict is detected in one of loadable components. Use 'signature' to resolve this issue.");
 
   loadables[info.id] = info;
 }

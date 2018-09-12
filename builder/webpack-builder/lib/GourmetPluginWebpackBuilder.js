@@ -37,10 +37,6 @@ function _findDir(path, dir) {
   return -1;
 }
 
-function _isHotFile(name) {
-  return name.endsWith(".hot-update.js") || name.endsWith(".hot-update.json");
-}
-
 // ## Lifecycle events
 //  before:command:build
 //  command:build
@@ -181,7 +177,7 @@ class GourmetPluginWebpackBuilder {
           eps.forEach((ep, name) => {
             const assets = target === "client" ? globalAssets : [];
             res[name] = assets.concat(ep.getFiles().filter(name => {
-              return !name.endsWith(".map") && !_isHotFile(name);
+              return !name.endsWith(".map");
             }));
           });
         }
@@ -192,14 +188,12 @@ class GourmetPluginWebpackBuilder {
         const assets = compilation.assets;
 
         Object.keys(assets).forEach(name => {
-          if (!_isHotFile(name)) {
-            const asset = assets[name];
-            const info = {size: asset.size()};
-            const ext = npath.extname(name).toLowerCase();
-            if (ext === ".js")
-              info.modules = [];
-            files[name] = info;
-          }
+          const asset = assets[name];
+          const info = {size: asset.size()};
+          const ext = npath.extname(name).toLowerCase();
+          if (ext === ".js")
+            info.modules = [];
+          files[name] = info;
         });
 
         compilation.chunks.forEach(chunk => {
