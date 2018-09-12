@@ -8,7 +8,12 @@ const StorageFs = require("@gourmet/storage-fs");
 const inspectError = require("@gourmet/inspect-error");
 
 // --watch-fs: don't use memory-fs and save files in fs
-// --watch-port: set the websocket port for watch mode (default: 3938)
+// --watch-port <n>: set the websocket port for watch mode (default: 3938)
+// --watch-delay <n>: watchOptions.aggregateTimeout
+// --watch-poll: watchOptions.poll
+// --watch-ignore <p>: watchOptions.ignored
+// * See https://webpack.js.org/configuration/watch/#watchoptions
+
 class GourmetWatchMiddleware {
   constructor(gourmet) {
     if (!gourmet)
@@ -81,6 +86,7 @@ class GourmetWatchMiddleware {
 
     hotClient(clientComp, {
       hmr: context.watch === "hot",
+      allEntries: true,
       port: context.argv.watchPort || 3938
     });
 
@@ -213,7 +219,7 @@ class GourmetWatchMiddleware {
     const options = {};
 
     if (argv.watchDelay)
-      options.aggregateTimeout = parseInt(argv.watchDelay, 10);
+      options.aggregateTimeout = parseInt(argv.watchDelay, 300);
 
     if (argv.watchPoll)
       options.poll = argv.watchPoll;

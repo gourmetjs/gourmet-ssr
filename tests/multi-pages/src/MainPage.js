@@ -1,7 +1,8 @@
 import React from "react";
+import {hot} from "react-hot-loader";
 import renderProps from "./renderProps";
 
-export default class MainPage extends React.Component {
+class MainPage extends React.Component {
   static getInitialProps() {
     return {MainPage_getInitialProps: true};
   }
@@ -18,3 +19,5 @@ export default class MainPage extends React.Component {
     );
   }
 }
+
+export default hot(module)(MainPage);
