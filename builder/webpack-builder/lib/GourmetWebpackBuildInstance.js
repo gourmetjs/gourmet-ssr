@@ -129,8 +129,12 @@ class GourmetWebpackBuildInstance {
   getConfig(context) {
     const _get = (section, method) => {
       config[section] = method.call(this, context, config);
-      if (userConfig && userConfig[section])
-        merge(config[section], userConfig[section]);
+      if (userConfig && userConfig[section]) {
+        if (isPlainObject(userConfig[section]))
+          merge(config[section], userConfig[section]);
+        else
+          config[section] = userConfig[section];
+      }
     };
 
     const config = {};
@@ -146,6 +150,14 @@ class GourmetWebpackBuildInstance {
     _get("module", this.getModule);
     _get("entry", this.getEntry);
     _get("plugins", this.getPlugins);
+
+    if (userConfig) {
+      merge(config, omit(userConfig, [
+        "context", "target", "mode", "devtool",
+        "optimization", "output", "resolve",
+        "module", "entry", "plugins"
+      ]));
+    }
 
     config.recordsPath = this._recordsPath;
 

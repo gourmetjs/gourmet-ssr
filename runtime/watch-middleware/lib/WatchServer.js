@@ -1,30 +1,58 @@
 "use strict";
 
+const STATS = {
+  all: false,
+  warnings: true,
+  errors: true,
+  errorDetails: false
+};
+
+// https://github.com/webpack/webpack/blob/1f954b4f1281f2bb97492fcd911d270efb097fd5/lib/Stats.js#L270
+function _formatError(err) {
+  let text = "";
+  if (typeof err === "string")
+    err = {message: err};
+  if (err.file)
+    text += `${err.file}\n`;
+  text += err.message;
+  if (err.details)
+    text += `\n${err.details}`;
+  return text;
+}
+
 module.exports = class WatchServer {
-  constructor(context) {
-    this.context = context;
+  constructor(/*options*/) {
   }
 
-  run(compiler) {
-    const con = this.context.console;
+  // {error, stats, changed}
+  notify(server, client) {
+    if (server.error || client.error) {
+      this.broadcast("errors", {
+        server: server.error ? [_formatError(server.error)] : [],
+        client: client.error ? [_formatError(client.error)] : []
+      });
+    } else {
+      const serverStats = server.stats.toJson(STATS);
+      const clientStats = client.stats.toJson(STATS);
 
-    function _compile() {
-      con.log(con.colors.green("[watch] compiling..."));
-      _send("compile");
+      if (serverStats.errors.length || clientStats.errors.length) {
+        this.broadcast("errors", {
+          server: serverStats.errors,
+          client: clientStats.errors
+        });
+      } else if (serverStats.warnings.length || clientStats.warnings.length) {
+        this.broadcast("warnings", {
+          server: serverStats.warnings,
+          client: clientStats.warnings
+        });
+      } else {
+        if (server.changed || client.changed)
+          this.broadcast("reload");
+      }
     }
+  }
 
-    function _invalid(path) {
-      con.log(con.colors.green("[watch] invalidate..."));
-      _send("invalid");
-    }
-
-    function _done(stats) {
-      con.log(con.colors.green("[watch] compilation done."));
-      
-    }
-
-    compiler.hooks.compile.tap("GourmetWatchMiddleware", _compile);
-    compiler.hooks.invalid.tap("GourmetWatchMiddleware", _invalid);
-    compiler.hooks.done.tap("GourmetWatchMiddleware", _done);
+  broadcast(type, data) {
+    console.log(`BROADCAST: ${type}`, data);
   }
 };

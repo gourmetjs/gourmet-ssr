@@ -1,5 +1,6 @@
 "use strict";
 
+const promiseProtect = require("@gourmet/promise-protect");
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const inspectError = require("@gourmet/inspect-error");
 const WatchServer = require("./WatchServer");
@@ -45,7 +46,7 @@ class GourmetWatchMiddleware {
     cli.init(argv).then(() => {
       cli.verifyArgs();
       cli.context.watch = watch;
-      this._watchServer = new WatchServer(cli.context);
+      this._watchServer = new WatchServer(cli.context.argv);
       return cli.context.plugins.runAsync("build:go", cli.context).then(() => {
         this._configureWatch(cli.context);
       });
@@ -67,8 +68,6 @@ class GourmetWatchMiddleware {
     this._runWatch(clientComp, watchOptions, (err, stats) => {
       this._handleComp("client", err, stats, context);
     });
-
-    //this._watchServer.run(clientComp);
   }
 
   _isBusy() {
@@ -99,15 +98,18 @@ class GourmetWatchMiddleware {
       const client = _copy(context.builds.client.webpack);
 
       this._addToCompQueue(() => {
-        if ()
-        return context.builder.writeManifest(context, {
-          server: server.stats,
-          client: client.stats
+        return promiseProtect(() => {
+          if (server.changed || client.changed) {
+            return context.builder.writeManifest(context, {
+              server: server.stats,
+              client: client.stats
+            }).then(() => {
+              this.gourmet.cleanCache();
+            });
+          }
+        }).then(() => {
+          this._watchServer.notify(server, client);
         });
-
-              if (changed && !err && stats)
-        this.gourmet.cleanCache();
-
       }, context);
     }
   }
@@ -206,9 +208,9 @@ class GourmetWatchMiddleware {
     const con = build.console;
 
     if (err) {
-      build.webpack .error = err;
+      build.webpack.error = err;
       build.webpack.stats = null;
-      build.webpack.changed = true;
+      build.webpack.changed = false;
 
       con.error(err.stack || err);
 
@@ -216,7 +218,7 @@ class GourmetWatchMiddleware {
         con.error(err.details);
     } else if (stats) {
       const assets = stats.compilation.assets;
-      const changed = !Object.keys(assets).every(name => !assets[name].emitted);
+      const changed = !assets || !Object.keys(assets).every(name => !assets[name].emitted);
 
       build.webpack.error = null;
       build.webpack.stats = stats;

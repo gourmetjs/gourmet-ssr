@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@gourmet/gourmet-cli-impl": "^0.4.0",
-    "@gourmet/inspect-error": "^0.2.0"
+    "@gourmet/inspect-error": "^0.2.0",
+    "@gourmet/promise-protect": "^0.2.0"
   }
 }
