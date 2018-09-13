@@ -2,8 +2,10 @@
 
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const inspectError = require("@gourmet/inspect-error");
+const WatchServer = require("./WatchServer");
 
 // --watch-port <n>: set the websocket port for watch mode (default: 3938)
+// --watch-host <s>: set the websocket host for watch mode (default: "localhost")
 // --watch-delay <n>: watchOptions.aggregateTimeout
 // --watch-poll: watchOptions.poll
 // --watch-ignore <p>: watchOptions.ignored
@@ -36,13 +38,14 @@ class GourmetWatchMiddleware {
     const cli = new GourmetCli();
 
     const argv = Object.assign({}, this.gourmet.baseOptions);
-    const watch = argv.watch || true;
+    const watch = argv.watch;
 
     argv._ = ["build"];
 
     cli.init(argv).then(() => {
       cli.verifyArgs();
       cli.context.watch = watch;
+      this._watchServer = new WatchServer(cli.context);
       return cli.context.plugins.runAsync("build:go", cli.context).then(() => {
         this._configureWatch(cli.context);
       });
@@ -58,16 +61,14 @@ class GourmetWatchMiddleware {
     const watchOptions = this._getWatchOptions(context.argv);
 
     this._runWatch(serverComp, watchOptions, (err, stats) => {
-      const changed = this._printResult("server", err, stats, context);
-      if (changed && !err && stats)
-        this.gourmet.cleanCache();
-      this._setBusy("server", !err && !stats, context);
+      this._handleComp("server", err, stats, context);
     });
 
     this._runWatch(clientComp, watchOptions, (err, stats) => {
-      this._printResult("client", err, stats, context);
-      this._setBusy("client", !err && !stats, context);
+      this._handleComp("client", err, stats, context);
     });
+
+    //this._watchServer.run(clientComp);
   }
 
   _isBusy() {
@@ -81,17 +82,32 @@ class GourmetWatchMiddleware {
   }
 
   _setBusy(target, busy, context) {
+    function _copy(src) {
+      return {
+        error: src.error,
+        stats: src.stats,
+        changed: src.changed
+      };
+    }
+
     const oldBusy = this._isCompiling();
     this._busy[target] = busy;
     const newBusy = this._isCompiling();
 
     if (!newBusy && oldBusy !== newBusy) {
-      const stats = {
-        server: context.builds.server.webpack.stats,
-        client: context.builds.client.webpack.stats
-      };
+      const server = _copy(context.builds.server.webpack);
+      const client = _copy(context.builds.client.webpack);
+
       this._addToCompQueue(() => {
-        return context.builder.writeManifest(context, stats);
+        if ()
+        return context.builder.writeManifest(context, {
+          server: server.stats,
+          client: client.stats
+        });
+
+              if (changed && !err && stats)
+        this.gourmet.cleanCache();
+
       }, context);
     }
   }
@@ -185,33 +201,37 @@ class GourmetWatchMiddleware {
     return options;
   }
 
-  _printResult(target, err, stats, context) {
+  _handleComp(target, err, stats, context) {
     const build = context.builds[target];
     const con = build.console;
 
-    if (!err && !stats) {
-      con.log("Compiling...");
-      return false;
-    }
-
     if (err) {
+      build.webpack .error = err;
+      build.webpack.stats = null;
+      build.webpack.changed = true;
+
       con.error(err.stack || err);
+
       if (err.details)
         con.error(err.details);
-      return false;
-    }
+    } else if (stats) {
+      const assets = stats.compilation.assets;
+      const changed = !Object.keys(assets).every(name => !assets[name].emitted);
 
-    const hash = stats.compilation.hash;
-
-    if (this._lastCompilationHash[target] !== hash) {
-      this._lastCompilationHash[target] = hash;
+      build.webpack.error = null;
       build.webpack.stats = stats;
-      build.printResult(context);
-      return true;
+      build.webpack.changed = changed;
+
+      if (changed) {
+        build.printResult(context);
+      } else {
+        con.log("No change...");
+      }
     } else {
-      con.log("Compilation hash didn't change, ignoring...");
-      return false;
+      con.log("Compiling...");
     }
+
+    this._setBusy(target, !err && !stats, context);
   }
 }
 
