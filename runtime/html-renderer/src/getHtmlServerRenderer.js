@@ -6,6 +6,7 @@ const MultiStream = require("multistream");
 const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
 const resolveTemplate = require("@gourmet/resolve-template");
+const escapeScript = require("@gourmet/escape-script");
 const BaseRenderer = require("./BaseRenderer");
 const pageTemplate = require("./pageTemplate");
 
@@ -55,18 +56,18 @@ class HtmlServerRenderer extends BaseRenderer {
 
   createContext(context, {page, manifest}) {
     const config = manifest.config || {};
-    const gmctx = Object.assign({
+    const gmctx = merge({
       isServer: true,
       isClient: false,
       renderer: this,
-      html: merge({
+      html: {
         lang: "en",
         headTop: [],
         headMain: [],
         headBottom: [],
         bodyTop: [],
         bodyBottom: []
-      }, config.html),
+      },
       result: {
         statusCode: 200,
         headers: {}
@@ -74,7 +75,7 @@ class HtmlServerRenderer extends BaseRenderer {
       page,
       manifest,
       data: {}
-    }, context);
+    }, {html: config.html}, context);
     return gmctx;
   }
 
@@ -165,7 +166,7 @@ class HtmlServerRenderer extends BaseRenderer {
 
   getBodyTail(gmctx) {
     const prop = this.options.dataPropertyName || "__gourmet_data__";
-    const data = JSON.stringify(gmctx.data);
+    const data = escapeScript(JSON.stringify(gmctx.data));
     return [
       `<script>window.${prop}=${data};</script>`
     ].join("\n");

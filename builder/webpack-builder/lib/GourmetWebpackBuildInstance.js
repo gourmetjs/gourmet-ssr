@@ -233,7 +233,7 @@ class GourmetWebpackBuildInstance {
       if (!isPlainObject(def))
         value = this._generatePageInit(value, name, context, config);
 
-      value = context.plugins.runWaterfallSync("build:entry", value, name, def, context, config);
+      value = context.plugins.runWaterfallSync("build:entry", value, context, name, def, config);
 
       res[name] = (context.watch || value.length > 1) ? value : value[0];
     });

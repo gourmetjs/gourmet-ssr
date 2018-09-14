@@ -2,11 +2,13 @@
 
 const promiseProtect = require("@gourmet/promise-protect");
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
-const inspectError = require("@gourmet/inspect-error");
+const errorToString = require("@gourmet/error-to-string");
 const WatchServer = require("./WatchServer");
+const embedClient = require("./embedClient");
 
 // --watch-port <n>: set the websocket port for watch mode (default: 3938)
 // --watch-host <s>: set the websocket host for watch mode (default: "localhost")
+// --watch-reconnect: reconnect when failed (default)
 // --watch-delay <n>: watchOptions.aggregateTimeout
 // --watch-poll: watchOptions.poll
 // --watch-ignore <p>: watchOptions.ignored
@@ -14,8 +16,9 @@ const WatchServer = require("./WatchServer");
 
 class GourmetWatchMiddleware {
   constructor(gourmet) {
-    if (!gourmet)
-      throw Error("Instance of Gourmet Client is required");
+    if (!gourmet || !gourmet.cleanCache)
+      throw Error("Instance of `gourmet/client-lib` is required");
+
     this.gourmet = gourmet;
     this._busy = {
       server: true,
@@ -40,19 +43,27 @@ class GourmetWatchMiddleware {
 
     const argv = Object.assign({}, this.gourmet.baseOptions);
     const watch = argv.watch;
+    const options = {
+      port: argv.watchPort || 3938,
+      host: argv.watchHost || "localhost"
+    };
 
     argv._ = ["build"];
 
     cli.init(argv).then(() => {
       cli.verifyArgs();
       cli.context.watch = watch;
-      this._watchServer = new WatchServer(cli.context.argv);
+
+      this._watchServer = new WatchServer(options, cli.context.console);
+
+      embedClient(this.gourmet, options);
+
       return cli.context.plugins.runAsync("build:go", cli.context).then(() => {
         this._configureWatch(cli.context);
       });
     }).catch(err => {
       const con = cli.context.console;
-      con.error(`Error occurred while initializing GourmetWatchMiddleware\n${inspectError(err, 1)}`);
+      con.error(con.colors.brightRed(errorToString(err)));
     });
   }
 
@@ -89,6 +100,7 @@ class GourmetWatchMiddleware {
       };
     }
 
+    const con = context.console;
     const oldBusy = this._isCompiling();
     this._busy[target] = busy;
     const newBusy = this._isCompiling();
@@ -109,12 +121,26 @@ class GourmetWatchMiddleware {
           }
         }).then(() => {
           this._watchServer.notify(server, client);
+
+          if (server.error || client.error || server.stats.hasErrors() || client.stats.hasErrors()) {
+            con.log(con.colors.brightRed(">>>"));
+            con.log(con.colors.brightRed(">>> Compilation error(s)"));
+            con.log(con.colors.brightRed(">>>"));
+          } else if (server.stats.hasWarnings() || client.stats.hasWarnings()) {
+            con.log(con.colors.brightYellow(">>>"));
+            con.log(con.colors.brightYellow(">>> Compilation warning(s)"));
+            con.log(con.colors.brightYellow(">>>"));
+          } else {
+            con.log(con.colors.green(">>>"));
+            con.log(con.colors.green(">>> Bundles are ready to be served!"));
+            con.log(con.colors.green(">>>"));
+          }
         });
-      }, context);
+      }, con);
     }
   }
 
-  _addToCompQueue(func, context) {
+  _addToCompQueue(func, con) {
     function _run() {
       const func = busy.compQueue[0];
       func().then(() => {
@@ -134,10 +160,6 @@ class GourmetWatchMiddleware {
     }
 
     function _flush() {
-      con.log(con.colors.green(">>>"));
-      con.log(con.colors.green(">>> Bundles are ready to be served!"));
-      con.log(con.colors.green(">>>"));
-
       if (busy.reqQueue.length) {
         const q = busy.reqQueue;
         busy.reqQueue = [];
@@ -145,7 +167,6 @@ class GourmetWatchMiddleware {
       }
     }
 
-    const con = context.console;
     const busy = this._busy;
 
     busy.compQueue.push(func);

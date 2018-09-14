@@ -1,5 +1,8 @@
 "use strict";
 
+const WebSocket = require("ws");
+const errorToString = require("@gourmet/error-to-string");
+
 const STATS = {
   all: false,
   warnings: true,
@@ -7,29 +10,44 @@ const STATS = {
   errorDetails: false
 };
 
-// https://github.com/webpack/webpack/blob/1f954b4f1281f2bb97492fcd911d270efb097fd5/lib/Stats.js#L270
-function _formatError(err) {
-  let text = "";
-  if (typeof err === "string")
-    err = {message: err};
-  if (err.file)
-    text += `${err.file}\n`;
-  text += err.message;
-  if (err.details)
-    text += `\n${err.details}`;
-  return text;
-}
-
 module.exports = class WatchServer {
-  constructor(/*options*/) {
+  constructor(options, con) {
+    const wss = this._wss = new WebSocket.Server(options);
+
+    wss.on("connection", socket => {
+      con.info(`[watch] client connected (${wss.clients.size})`);
+
+      socket.on("error", err => {
+        if (err.code !== "ECONNRESET")
+          con.warn("[watch] socket error", errorToString(err));
+      });
+
+      socket.on("message", data => {
+        const payload = JSON.parse(data);
+
+        if (payload.type === "broadcast")
+          this.broadcast(payload.data.type, payload.data.data);
+        else
+          con.warn(`[watch] invalid client request: ${payload.type}`);
+      });
+    });
+
+    wss.on("error", err => {
+      con.error("[watch] cannot start WebSocket server", con.colors.brightRed(errorToString(err)));
+    });
+
+    wss.on("listening", () => {
+      const {port} = wss._server.address();
+      con.log(`[watch] WebSocket server listening on port ${port}`);
+    });
   }
 
   // {error, stats, changed}
   notify(server, client) {
     if (server.error || client.error) {
       this.broadcast("errors", {
-        server: server.error ? [_formatError(server.error)] : [],
-        client: client.error ? [_formatError(client.error)] : []
+        server: server.error ? [errorToString(server.error)] : [],
+        client: client.error ? [errorToString(client.error)] : []
       });
     } else {
       const serverStats = server.stats.toJson(STATS);
@@ -53,6 +71,10 @@ module.exports = class WatchServer {
   }
 
   broadcast(type, data) {
-    console.log(`BROADCAST: ${type}`, data);
+    const payload = JSON.stringify({type, data});
+    for (const client of this._wss.clients) {
+      if (client.readyState === WebSocket.OPEN)
+        client.send(payload);
+    }
   }
 };

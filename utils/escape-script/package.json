@@ -1,0 +1,6 @@
+{
+  "name": "@gourmet/escape-script",
+  "version": "0.1.0",
+  "description": "Escape JavaScript content to be embedded in HTML",
+  "main": "lib/escapeScript.js"
+}

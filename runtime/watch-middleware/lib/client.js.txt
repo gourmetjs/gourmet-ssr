@@ -1,0 +1,43 @@
+function _run(options, handler) {
+  function _connect() {
+    var socket = new WebSocket(options.serverUrl);
+
+    socket.addEventListener("open", function() {
+      retry = 0;
+      console.log("[watch] connected");
+    });
+
+    // It appears that "close" comes even without "open" for the initial failure.
+    // This behavior is observed in Chrome, Edge & Firefox.
+    socket.addEventListener("close", function() {
+      console.log("[watch] closed");
+
+      if (reconnect === undefined || reconnect) {
+        var delay = Math.round(1000 * Math.pow(Math.min(retry++, 8), 2) + Math.random() * 100);
+        setTimeout(function() {
+          console.log("[watch] retrying (" + retry + " / " + delay + "ms)");
+          _connect();
+        }, delay);
+      }
+    });
+
+    socket.addEventListener("message", function(event) {
+      var payload = JSON.parse(event.data);
+      handler(payload.type, payload.data);
+    });
+  }
+
+  var retry = 0;
+
+  _connect();
+}
+
+_run(window.__GOURMET_WATCH_OPTIONS__, function(type, data) {
+  if (type === "reload") {
+    var delay = (data && data.delay) || 0;
+    setTimeout(function() {
+      console.log("[watch] reloading page");
+      window.location.reload();
+    }, delay);
+  }
+});

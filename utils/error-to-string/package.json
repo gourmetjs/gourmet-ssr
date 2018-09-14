@@ -1,0 +1,5 @@
+{
+  "name": "@gourmet/error-to-string",
+  "version": "0.1.0",
+  "main": "lib/errorToString.js"
+}

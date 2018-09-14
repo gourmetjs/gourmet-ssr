@@ -1,0 +1,11 @@
+{
+  "name": "@gourmet/plugin-watch-client",
+  "version": "0.1.0",
+  "main": "lib/GourmetPluginWatchClient.js",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "peerDependencies": {
+    "@gourmet/watch-client": "*"
+  }
+}
