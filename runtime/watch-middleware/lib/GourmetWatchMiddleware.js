@@ -60,7 +60,7 @@ class GourmetWatchMiddleware {
       cli.verifyArgs();
       cli.context.watch = watch;
 
-      this._watchServer = new WatchServer(options, cli.context.console, this);
+      this._watchServer = new WatchServer(options, cli.context.console);
 
       embedClient(this.gourmet, options);
 
@@ -96,8 +96,7 @@ class GourmetWatchMiddleware {
     function _copy(src) {
       return {
         error: src.error,
-        stats: src.stats,
-        changed: src.changed
+        stats: src.stats
       };
     }
 
@@ -112,7 +111,7 @@ class GourmetWatchMiddleware {
 
       this._addToCompQueue(() => {
         return promiseProtect(() => {
-          if (server.changed || client.changed) {
+          if (server.stats && client.stats) {
             return context.builder.writeManifest(context, {
               server: server.stats,
               client: client.stats
@@ -125,20 +124,16 @@ class GourmetWatchMiddleware {
             con.log(con.colors.brightRed(">>>"));
             con.log(con.colors.brightRed(">>> Compilation error(s)"));
             con.log(con.colors.brightRed(">>>"));
-            this.lastHash = undefined;
-          } else if (server.stats.hasWarnings() || client.stats.hasWarnings()) {
-            con.log(con.colors.brightYellow(">>>"));
-            con.log(con.colors.brightYellow(">>> Compilation warning(s)"));
-            con.log(con.colors.brightYellow(">>>"));
-            this.lastHash = undefined;
           } else {
-            con.log(con.colors.green(">>>"));
-            con.log(con.colors.green(">>> Bundles are ready to be served!"));
-            con.log(con.colors.green(">>>"));
-            this.lastHash = {
-              server: server.stats.compilation.hash,
-              client: client.stats.compilation.hash
-            };
+            if (server.stats.hasWarnings() || client.stats.hasWarnings()) {
+              con.log(con.colors.brightYellow(">>>"));
+              con.log(con.colors.brightYellow(">>> Compilation warning(s)"));
+              con.log(con.colors.brightYellow(">>>"));
+            } else {
+              con.log(con.colors.green(">>>"));
+              con.log(con.colors.green(">>> Bundles are ready to be served!"));
+              con.log(con.colors.green(">>>"));
+            }
           }
           this._watchServer.notify(server, client);
         });
@@ -237,21 +232,16 @@ class GourmetWatchMiddleware {
     if (err) {
       build.webpack.error = err;
       build.webpack.stats = null;
-      build.webpack.changed = false;
 
       con.error(err.stack || err);
-
-      if (err.details)
-        con.error(err.details);
     } else if (stats) {
-      const assets = stats.compilation.assets;
-      const changed = !assets || !Object.keys(assets).every(name => !assets[name].emitted);
+      const oldHash = build.webpack.stats && build.webpack.stats.compilation.hash;
+      const newHash = stats.compilation.hash;
 
       build.webpack.error = null;
       build.webpack.stats = stats;
-      build.webpack.changed = changed;
 
-      if (changed) {
+      if (!oldHash || newHash !== oldHash) {
         build.printResult(context);
       } else {
         con.log("No change...");

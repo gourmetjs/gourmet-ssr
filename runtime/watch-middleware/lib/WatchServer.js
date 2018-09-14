@@ -1,50 +1,44 @@
 "use strict";
 
 const WebSocket = require("ws");
+const stripAnsi = require("strip-ansi");
+const escapeHtml = require("escape-html");
 const errorToString = require("@gourmet/error-to-string");
 
 const STATS = {
   all: false,
+  hash: true,
+  assets: false,
   warnings: true,
   errors: true,
   errorDetails: false
 };
 
-module.exports = class WatchServer {
-  constructor(options, con, watcher) {
-    const wss = this._wss = new WebSocket.Server(options);
+function _formatError(err) {
+  return escapeHtml(stripAnsi(errorToString(err)));
+}
 
-    this._watcher = watcher;
+module.exports = class WatchServer {
+  constructor(options, con) {
+    const wss = this._wss = new WebSocket.Server(options);
 
     wss.on("connection", socket => {
       con.log(`[watch] client connected (${wss.clients.size})`);
 
       socket.on("error", err => {
         if (err.code !== "ECONNRESET")
-          con.warn("[watch] socket error", errorToString(err));
+          con.warn("[watch] socket error", _formatError(err));
       });
 
       socket.on("close", () => {
         con.log(`[watch] client disconnected (${wss.clients.size})`);
       });
 
-      socket.on("message", data => {
-        const payload = JSON.parse(data);
-
-        if (payload.type === "broadcast")
-          this.broadcast(payload.data.type, payload.data.data);
-        else
-          con.warn(`[watch] invalid client request: ${payload.type}`);
-      });
-
-      if (watcher.isBusy())
-        this.send(socket, "hash");
-      else
-        this.send(socket, "hash", watcher.lastHash);
+      this.send(socket, "init", this._state);
     });
 
     wss.on("error", err => {
-      con.error("[watch] cannot start WebSocket server", con.colors.brightRed(errorToString(err)));
+      con.error("[watch] cannot start WebSocket server", con.colors.brightRed(_formatError(err)));
     });
 
     wss.on("listening", () => {
@@ -53,31 +47,25 @@ module.exports = class WatchServer {
     });
   }
 
-  // {error, stats, changed}
+  // {error, stats}
   notify(server, client) {
-    if (server.error || client.error) {
-      this.broadcast("errors", {
-        server: server.error ? [errorToString(server.error)] : [],
-        client: client.error ? [errorToString(client.error)] : []
-      });
+    const err = client.error || server.error;
+
+    if (err) {
+      this._state = {
+        error: _formatError(err)
+      };
     } else {
       const serverStats = server.stats.toJson(STATS);
       const clientStats = client.stats.toJson(STATS);
-
-      if (serverStats.errors.length || clientStats.errors.length) {
-        this.broadcast("errors", {
-          server: serverStats.errors,
-          client: clientStats.errors
-        });
-      } else if (serverStats.warnings.length || clientStats.warnings.length) {
-        this.broadcast("warnings", {
-          server: serverStats.warnings,
-          client: clientStats.warnings
-        });
-      } else {
-        this.broadcast("hash", this._watcher.lastHash);
-      }
+      const err = clientStats.errors[0] || serverStats.errors[0];
+      this._state = {
+        error: err ? _formatError(err) : undefined,
+        hash: serverStats.hash + ":" + clientStats.hash
+      };
     }
+
+    this.broadcast("done", this._state);
   }
 
   broadcast(type, data) {

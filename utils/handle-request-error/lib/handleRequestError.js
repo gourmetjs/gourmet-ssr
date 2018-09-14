@@ -1,6 +1,8 @@
 "use strict";
 
 const HttpStatus = require("http-status");
+const stripAnsi = require("strip-ansi");
+const escapeHtml = require("escape-html");
 const getConsole = require("@gourmet/console");
 const serializeRequestError = require("@gourmet/serialize-request-error");
 const inspectError = require("@gourmet/inspect-error");
@@ -28,9 +30,9 @@ function renderHtmlError(err, req, res, obj, options) {
   }
 
   const content = options.template({
-    message: message,
+    message: escapeHtml(stripAnsi(message)),
     statusCode: obj.statusCode,
-    detail: options.debug ? inspectError(obj) : null
+    detail: options.debug ? escapeHtml(stripAnsi(inspectError(obj))) : null
   });
 
   return {
@@ -46,10 +48,10 @@ function renderJsonError(err, req, res, obj, options) {
   const content = JSON.stringify({
     error: {
       name: obj.name,
-      message: obj.message,
+      message: stripAnsi(obj.message),
       code: obj.code,
       statusCode: obj.statusCode,
-      detail: options.debug ? null : obj
+      detail: options.debug ? obj : null
     }
   });
 

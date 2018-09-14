@@ -8,6 +8,8 @@
     "@gourmet/resolve-template": "^0.2.0",
     "@gourmet/send-content": "^0.2.0",
     "@gourmet/serialize-request-error": "^0.2.0",
-    "http-status": "^1.0.1"
+    "escape-html": "^1.0.3",
+    "http-status": "^1.0.1",
+    "strip-ansi": "^4.0.0"
   }
 }

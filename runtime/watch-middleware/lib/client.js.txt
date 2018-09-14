@@ -1,4 +1,31 @@
 (function(options) {
+  function _error(str) {
+    var style = [
+      "position:fixed",
+      "top:0",
+      "left:0",
+      "width:300px",
+      "border:2px solid #f5c6cb",
+      "color:#721c24",
+      "background-color:#f8d7da",
+      "text-align:left",
+      "white-space:pre-wrap",
+      "padding:14px 20px",
+      "margin:20px",
+      "font-size:14px"
+    ].join(";");
+
+    str = "Compilation error!\nSee the terminal for details."
+    var content = "<pre style=\"" + style + "\">" + str + "</pre>";
+
+    if (!errorDiv) {
+      errorDiv = document.createElement("div");
+      document.body.appendChild(errorDiv);
+    }
+
+    errorDiv.innerHTML = content;
+  }
+
   function _reload(delay) {
     setTimeout(function() {
       console.log("[watch] reloading page");
@@ -9,18 +36,19 @@
   function _handle(type, data) {
     if (type === "reload") {
       _reload(data && data.delay);
-    } else if (type === "hash") {
-      // {type: "hash"} => currently in the middle of compilation (for newly connected clients)
-      // {type: "hash", data: {server: "..", client: ".."}} => compilation done with these hash values
+    } else if (type === "init" || type === "done") {
       if (data) {
-        if (hash) {
-          if (hash.server !== data.server || hash.client !== data.client)
+        if (data.error) {
+          hash = "*";
+          return _error(data.error);
+        } else {
+          if (hash && hash !== data.hash)
             _reload();
+          hash = data.hash;
         }
-        hash = data;
       } else {
         if (!hash)
-          hash = {};  // reload when done
+          hash = "*"; // currently compiling, reload when done
       }
     }
   }
@@ -55,6 +83,7 @@
 
   var retry = 0;
   var hash;
+  var errorDiv;
 
   _connect();
 })(__GOURMET_WATCH_OPTIONS__);

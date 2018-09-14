@@ -9,6 +9,8 @@
     "@gourmet/merge": "^0.4.0",
     "@gourmet/omit": "^0.2.0",
     "@gourmet/promise-protect": "^0.2.0",
+    "escape-html": "^1.0.3",
+    "strip-ansi": "^4.0.0",
     "ws": "^6.0.0"
   }
 }
