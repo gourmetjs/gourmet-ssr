@@ -1,4 +1,4 @@
-function _run(options, handler) {
+(function(options, handler) {
   function _connect() {
     var socket = new WebSocket(options.serverUrl);
 
@@ -12,7 +12,7 @@ function _run(options, handler) {
     socket.addEventListener("close", function() {
       console.log("[watch] closed");
 
-      if (reconnect === undefined || reconnect) {
+      if (options.reconnect === undefined || options.reconnect) {
         var delay = Math.round(1000 * Math.pow(Math.min(retry++, 8), 2) + Math.random() * 100);
         setTimeout(function() {
           console.log("[watch] retrying (" + retry + " / " + delay + "ms)");
@@ -30,9 +30,7 @@ function _run(options, handler) {
   var retry = 0;
 
   _connect();
-}
-
-_run(window.__GOURMET_WATCH_OPTIONS__, function(type, data) {
+})(__GOURMET_WATCH_OPTIONS__, function(type, data) {
   if (type === "reload") {
     var delay = (data && data.delay) || 0;
     setTimeout(function() {

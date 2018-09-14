@@ -3,9 +3,11 @@
   "version": "0.5.0",
   "main": "lib/index.js",
   "dependencies": {
+    "@gourmet/escape-script": "^0.1.0",
     "@gourmet/error-to-string": "^0.1.0",
     "@gourmet/gourmet-cli-impl": "^0.4.0",
     "@gourmet/merge": "^0.4.0",
+    "@gourmet/omit": "^0.2.0",
     "@gourmet/promise-protect": "^0.2.0",
     "ws": "^6.0.0"
   }

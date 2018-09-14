@@ -45,7 +45,8 @@ class GourmetWatchMiddleware {
     const watch = argv.watch;
     const options = {
       port: argv.watchPort || 3938,
-      host: argv.watchHost || "localhost"
+      host: argv.watchHost || "localhost",
+      reconnect: argv.watchReconnect
     };
 
     argv._ = ["build"];
