@@ -10,7 +10,9 @@
     if (type === "reload") {
       _reload(data && data.delay);
     } else if (type === "hash") {
-      if (data && data.server && data.client) {
+      // {type: "hash"} => currently in the middle of compilation (for newly connected clients)
+      // {type: "hash", data: {server: "..", client: ".."}} => compilation done with these hash values
+      if (data) {
         if (hash) {
           if (hash.server !== data.server || hash.client !== data.client)
             _reload();
@@ -31,6 +33,8 @@
       console.log("[watch] connected");
     });
 
+    // It appears that "close" comes even without "open" for the initial failure.
+    // This behavior is observed in Chrome, Edge & Firefox.
     socket.addEventListener("close", function() {
       console.log("[watch] closed");
 
