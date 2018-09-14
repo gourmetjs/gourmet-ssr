@@ -37,7 +37,7 @@ class PluginManager {
 
     const prefix = !parent ? "=>" : `${parent} =>`;
     const plugins = items.map(item => typeof item === "string" ? item : item.name);
-    con.print({level: "info", indent: (indent + 1) * 2}, prefix, plugins);
+    con.print({level: "debug", indent: (indent + 1) * 2}, prefix, plugins);
 
     // Plugins are ordered in each batch (main `plugins` or each plugin's
     // `subplugins`) in loading phase.

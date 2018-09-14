@@ -89,7 +89,7 @@ class GourmetCli extends CliBase {
       } else if (auto === "append") {
         plugins = plugins.concat(this._scanPlugins(auto));
       }
-      context.console.info(`Loading user plugins (autoLoadPlugins=${auto})...`);
+      context.console.debug(`Loading user plugins (autoLoadPlugins=${auto})...`);
       context.plugins.load(plugins, context.workDir);
     });
   }

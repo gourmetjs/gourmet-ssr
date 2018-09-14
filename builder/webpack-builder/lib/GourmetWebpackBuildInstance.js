@@ -92,8 +92,8 @@ class GourmetWebpackBuildInstance {
 
       const con = this.console;
 
-      con.info(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
-      con.print({level: "info", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
+      con.debug(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
+      con.print({level: "debug", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
 
       if (context.watch)
         return;

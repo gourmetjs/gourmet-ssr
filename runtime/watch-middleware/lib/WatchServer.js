@@ -11,15 +11,21 @@ const STATS = {
 };
 
 module.exports = class WatchServer {
-  constructor(options, con) {
+  constructor(options, con, watcher) {
     const wss = this._wss = new WebSocket.Server(options);
 
+    this._watcher = watcher;
+
     wss.on("connection", socket => {
-      con.info(`[watch] client connected (${wss.clients.size})`);
+      con.log(`[watch] client connected (${wss.clients.size})`);
 
       socket.on("error", err => {
         if (err.code !== "ECONNRESET")
           con.warn("[watch] socket error", errorToString(err));
+      });
+
+      socket.on("close", () => {
+        con.log(`[watch] client disconnected (${wss.clients.size})`);
       });
 
       socket.on("message", data => {
@@ -30,6 +36,11 @@ module.exports = class WatchServer {
         else
           con.warn(`[watch] invalid client request: ${payload.type}`);
       });
+
+      if (watcher.isBusy())
+        this.send(socket, "hash");
+      else
+        this.send(socket, "hash", watcher.lastHash);
     });
 
     wss.on("error", err => {
@@ -64,8 +75,7 @@ module.exports = class WatchServer {
           client: clientStats.warnings
         });
       } else {
-        if (server.changed || client.changed)
-          this.broadcast("reload");
+        this.broadcast("hash", this._watcher.lastHash);
       }
     }
   }
@@ -76,5 +86,10 @@ module.exports = class WatchServer {
       if (client.readyState === WebSocket.OPEN)
         client.send(payload);
     }
+  }
+
+  send(client, type, data) {
+    const payload = JSON.stringify({type, data});
+    client.send(payload);
   }
 };

@@ -31,11 +31,16 @@ class GourmetWatchMiddleware {
   }
 
   handle(req, res, next) {
-    if (this._isBusy()) {
+    if (this.isBusy()) {
       this._busy.reqQueue.push(next);
     } else {
       next();
     }
+  }
+
+  isBusy() {
+    const busy = this._busy;
+    return Boolean(busy.server || busy.client || busy.compQueue.length);
   }
 
   _start() {
@@ -55,7 +60,7 @@ class GourmetWatchMiddleware {
       cli.verifyArgs();
       cli.context.watch = watch;
 
-      this._watchServer = new WatchServer(options, cli.context.console);
+      this._watchServer = new WatchServer(options, cli.context.console, this);
 
       embedClient(this.gourmet, options);
 
@@ -80,11 +85,6 @@ class GourmetWatchMiddleware {
     this._runWatch(clientComp, watchOptions, (err, stats) => {
       this._handleComp("client", err, stats, context);
     });
-  }
-
-  _isBusy() {
-    const busy = this._busy;
-    return Boolean(busy.server || busy.client || busy.compQueue.length);
   }
 
   _isCompiling() {
@@ -121,21 +121,26 @@ class GourmetWatchMiddleware {
             });
           }
         }).then(() => {
-          this._watchServer.notify(server, client);
-
           if (server.error || client.error || server.stats.hasErrors() || client.stats.hasErrors()) {
             con.log(con.colors.brightRed(">>>"));
             con.log(con.colors.brightRed(">>> Compilation error(s)"));
             con.log(con.colors.brightRed(">>>"));
+            this.lastHash = undefined;
           } else if (server.stats.hasWarnings() || client.stats.hasWarnings()) {
             con.log(con.colors.brightYellow(">>>"));
             con.log(con.colors.brightYellow(">>> Compilation warning(s)"));
             con.log(con.colors.brightYellow(">>>"));
+            this.lastHash = undefined;
           } else {
             con.log(con.colors.green(">>>"));
             con.log(con.colors.green(">>> Bundles are ready to be served!"));
             con.log(con.colors.green(">>>"));
+            this.lastHash = {
+              server: server.stats.compilation.hash,
+              client: client.stats.compilation.hash
+            };
           }
+          this._watchServer.notify(server, client);
         });
       }, con);
     }

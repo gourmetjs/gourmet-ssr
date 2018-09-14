@@ -112,7 +112,7 @@ class CliBase {
   loadBuiltinPlugins() {
     const plugins = this.builtinPlugins;
     if (plugins.length) {
-      this.context.console.info("Loading builtin plugins...");
+      this.context.console.debug("Loading builtin plugins...");
       this.context.plugins.load(plugins, __dirname);
     }
   }
