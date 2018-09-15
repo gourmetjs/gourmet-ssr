@@ -15,7 +15,7 @@ module.exports = context => ({
     },
     debug: context.getter(() => !context.stageIs("production")),
     optimize: context.getter(() => context.stageIs("production")),
-    sourceMap: true,
+    sourceMap: context.getter(() => !context.stageIs("production")),
     staticPrefix: "/s/",
 
     // `runtime` is located here as an independent section from Webpack or Babel

@@ -35,11 +35,9 @@ module.exports = class RendererSandbox {
       "Response"
     ].concat(keys);
 
-    const source = [
-      "(function(" + args.join(",") + ") { var __gourmet_module__=module, __gourmet_exports__=exports, __gourmet_require__=require;",
-      code,
-      "});"
-    ].join("\n");
+    const head = "(function(" + args.join(",") + ") { var __gourmet_module__=module, __gourmet_exports__=exports, __gourmet_require__=require;";
+    const tail = "});";
+    const source = head + code + "\n" + tail;
 
     this._wrapperFunc = vm.runInThisContext(source, Object.assign({
       displayErrors: true,
