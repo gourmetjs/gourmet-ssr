@@ -3,7 +3,6 @@ import renderProps from "./renderProps";
 
 export default class MainPage extends React.Component {
   static getInitialProps() {
-    throw Error("haha");
     return {MainPage_getInitialProps: true};
   }
 
