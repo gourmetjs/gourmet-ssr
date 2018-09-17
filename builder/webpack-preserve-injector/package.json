@@ -1,0 +1,12 @@
+{
+  "name": "@gourmet/plugin-webpack-preserve-injector",
+  "version": "0.1.0",
+  "description": "Gourmet Plugin to inject a `@preserve` comment at the top to keep line numbers relevant working with `@gourmet/renderer-sandbox`",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "main": "lib/GourmetPluginPreserveInjector.js",
+  "dependencies": {
+    "webpack-sources": "^1.2.0"
+  }
+}

@@ -35,9 +35,9 @@ function _merge(des, src) {
       const dt = _getType(desVal);
       let nv;
 
-      if (dt === ARRAY)
+      if (dt === ARRAY && srcVal !== undefined)
         nv = desVal.concat(srcVal);
-      else if (st === ARRAY && desVal != null)
+      else if (st === ARRAY && desVal !== undefined)
         nv = [desVal].concat(srcVal);
       else if (st === OBJECT && dt === OBJECT)
         nv = _merge(desVal, srcVal);
@@ -64,7 +64,7 @@ function _merge(des, src) {
 function merge(des, ...args) {
   for (let idx = 0, len = args.length; idx < len; idx++) {
     const src = args[idx];
-    if (isPlainObject(src))
+    if (src)
       _merge(des, src);
   }
   return des;
