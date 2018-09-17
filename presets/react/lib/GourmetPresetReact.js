@@ -18,7 +18,8 @@ class PresetReact {
 PresetReact.meta = {
   subplugins: [
     "@gourmet/plugin-webpack-builder",
-    "@gourmet/plugin-webpack-preserve-injector",
+    "@gourmet/plugin-preserve-injector",
+    "@gourmet/plugin-source-map-support",
     "@gourmet/plugin-webpack-babel",
     "@gourmet/plugin-webpack-global-css",
     "@gourmet/plugin-webpack-blob",

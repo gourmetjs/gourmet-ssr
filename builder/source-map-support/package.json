@@ -1,0 +1,8 @@
+{
+  "name": "@gourmet/plugin-source-map-support",
+  "version": "0.1.0",
+  "main": "lib/GourmetPluginSourceMapSupport.js",
+  "dependencies": {
+    "source-map-support": "gourmetjs/node-source-map-support"
+  }
+}

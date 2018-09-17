@@ -27,7 +27,12 @@ module.exports = context => ({
     },
 
     // Options to be given to the init function
-    initOptions: null
+    initOptions: null,
+
+    // If true, a global hook is installed in `Error` class to display stack trace
+    // based on source maps.
+    // Only used when `target` is "server" and `sourceMap` is true.
+    installSourceMapSupport: true
   },
 
   webpack: {
