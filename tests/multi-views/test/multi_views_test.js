@@ -58,7 +58,6 @@ test("run puppeteer", pt(async t => {
   const requestCount = app.requestCount;
 
   await page.click('a[href="/dashboard"]');
-
   await page.waitFor(100);
 
   title = await page.evaluate(() => {

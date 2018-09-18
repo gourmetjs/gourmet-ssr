@@ -108,7 +108,7 @@ class GourmetServerLauncher {
   run() {
     if (this.options.help || this.options.h)
       this.showHelp();
-    else if (cluster.isMaster && this.getCount() > 1)
+    else if (!this.options.watch && cluster.isMaster && this.getCount() > 1)
       this.runMaster();
     else
       this.runWorker();

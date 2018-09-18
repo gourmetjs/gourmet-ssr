@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import NewsView from "@gourmet/test-news-view";
 import cx from "classnames";
 import {css} from "emotion";
-import {hot} from "react-hot-loader";
 
 const cssContainer = css`
   max-width: 50em;
@@ -25,7 +24,7 @@ const cssArticle = css`
   border-bottom: 1px solid #dee2e6;
 `;
 
-class NewsApp extends Component {
+export default class NewsApp extends Component {
   render() {
     return (
       <div className={cx(cssContainer, "container")}>
@@ -42,5 +41,3 @@ class NewsApp extends Component {
     );
   }
 }
-
-export default hot(module)(NewsApp);

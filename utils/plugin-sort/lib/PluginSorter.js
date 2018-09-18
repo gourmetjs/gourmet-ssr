@@ -68,7 +68,7 @@ class PluginSorter {
 
       if (item.name[0] === "#") {
         const name = item.name.substr(1);
-        merge(virtual[name], item, {name});
+        virtual[name] = merge(virtual[name] || {}, item, {name});
       } else {
         plugins.push(item);
       }

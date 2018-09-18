@@ -24,7 +24,8 @@ const helpMessage = [
   "  --colors            Use ANSI colors in console output (default: auto detect)",
   "  --verbose, -v <n>   Set the verbosity level (debug|info|log*|warn|error|0-5)",
   "  --log-format <s>    Set the Morgan log format (dev*|combined|common|short|tiny|off)",
-  "  --no-debug          Do not show details in error response (default: '--debug')"
+  "  --no-debug          Do not show details in error response (default: '--debug')",
+  "  --watch             Run in watch mode (count is ignored and set to 1)"
 ].join("\n");
 
 const launcher = new GourmetServerLauncher(serverArgs({

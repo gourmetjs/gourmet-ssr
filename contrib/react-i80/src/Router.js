@@ -3,7 +3,8 @@
 const React = require("react");
 const p2r = require("path-to-regexp");
 const promiseProtect = require("@gourmet/promise-protect");
-const {unprefixPath, joinPath, parseHref} = require("./utils");
+const unprefixPath = require("@gourmet/unprefix-path");
+const parseHref = require("@gourmet/parse-href");
 const BoundRoute = require("./BoundRoute");
 
 let router;
@@ -47,6 +48,20 @@ function _prepare(routes, parentOptions) {
       return {re, keys, reverse, type};
     }
   });
+}
+
+function _join(items) {
+  return items.map((item, idx) => {
+    const prev = items[idx - 1];
+    if (!prev || prev[prev.length - 1] !== "/") {
+      if (item[0] !== "/")
+        item = "/" + item;
+    } else {
+      if (item[0] === "/")
+        item = item.substr(1);
+    }
+    return item;
+  }).join("");
 }
 
 module.exports = class Router {
@@ -171,7 +186,7 @@ module.exports = class Router {
         } else if (def.type === type) {
           route = new BoundRoute(gmctx, type, params);
           route.reverse = () => {
-            return joinPath(reverses.concat(def.reverse).map(r => {
+            return _join(reverses.concat(def.reverse).map(r => {
               if (!r)
                 throw Error("RegExp route pattern requires a reverse function to generate a URL");
               return r(route.params);

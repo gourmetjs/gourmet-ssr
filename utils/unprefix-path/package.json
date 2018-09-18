@@ -1,0 +1,8 @@
+{
+  "name": "@gourmet/unprefix-path",
+  "version": "0.1.0",
+  "main": "lib/unprefixPath.js",
+  "scripts": {
+    "test": "tape test/*_test.js"
+  }
+}

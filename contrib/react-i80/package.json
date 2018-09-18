@@ -3,12 +3,11 @@
   "version": "0.3.0",
   "browser": "src/index.client.js",
   "main": "src/index.server.js",
-  "scripts": {
-    "test": "tape test/*_test.js"
-  },
   "dependencies": {
     "@gourmet/omit": "^0.2.0",
+    "@gourmet/parse-href": "^0.1.0",
     "@gourmet/promise-protect": "^0.2.0",
+    "@gourmet/unprefix-path": "^0.1.0",
     "classnames": "^2.2.6",
     "encodeurl": "^1.0.2",
     "escape-html": "^1.0.3",

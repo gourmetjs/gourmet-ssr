@@ -2,11 +2,12 @@
 
 const ppath = require("path").posix;
 const isAbsUrl = require("is-absolute-url");
+const parseHref = require("@gourmet/parse-href");
 
 // Note that `this` is bound to gmctx, not HtmlServerRenderer instance.
 module.exports = function selfUrl(gmctx, url) {
   function _proto() {
-    let xfp = gmctx.headers["x-forwarded-proto"];
+    let xfp = gmctx.reqArgs.headers["x-forwarded-proto"];
 
     if (xfp) {
       // 'x-forwarded-proto' must be a single value no matter how many proxies
@@ -23,11 +24,11 @@ module.exports = function selfUrl(gmctx, url) {
         return xfp;
     }
 
-    return gmctx.encrypted ? "https" : "http";
+    return gmctx.reqArgs.encrypted ? "https" : "http";
   }
 
   function _host() {
-    let xfh = gmctx.headers["x-forwarded-host"];
+    let xfh = gmctx.reqArgs.headers["x-forwarded-host"];
 
     if (xfh) {
       // 'x-forwarded-host' must be a single value no matter how many proxies
@@ -44,7 +45,7 @@ module.exports = function selfUrl(gmctx, url) {
         return xfh;
     }
 
-    const host = gmctx.headers.host;
+    const host = gmctx.reqArgs.headers.host;
 
     if (!host)
       throw Error("There is no 'host' or 'x-forwarded-host' header.");
@@ -62,10 +63,11 @@ module.exports = function selfUrl(gmctx, url) {
     return _proto() + ":" + url;
 
   if (url[0] !== "/") {   // relative path based on the current path
-    if (url.endsWith("/"))
-      url = ppath.join(gmctx.path, url);
+    const path = parseHref(gmctx.reqArgs.url).path;
+    if (path.endsWith("/"))
+      url = ppath.join(path, url);
     else
-      url = ppath.join(ppath.dirname(gmctx.path), url);
+      url = ppath.join(ppath.dirname(path), url);
   }
 
   return _proto() + "://" + _host() + url;

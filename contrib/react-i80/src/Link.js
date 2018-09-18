@@ -3,8 +3,8 @@
 const React = require("react");
 const GourmetContext = require("@gourmet/react-context-gmctx");
 const omit = require("@gourmet/omit");
+const parseHref = require("@gourmet/parse-href");
 const cx = require("classnames");
-const {parseHref} = require("./utils");
 const Router = require("./Router");
 
 // to: string or Component

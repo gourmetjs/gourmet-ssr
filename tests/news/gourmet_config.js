@@ -1,8 +1,8 @@
 "use strict";
 
-module.exports = {
-  entry: {
-    main: "./src/${context:target}.js"
+module.exports = context => ({
+  pages: {
+    main: context.getter(() => context.target === "server" ? "./src/ServerPage.jsx" : "./src/ClientPage.jsx")
   },
   config: {
     html: {
@@ -12,4 +12,4 @@ module.exports = {
       ]
     }
   }
-};
+});

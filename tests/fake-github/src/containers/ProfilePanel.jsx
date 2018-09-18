@@ -64,7 +64,7 @@ export default class ProfilePanel extends PureComponent {
               <Label>Public email</Label>
               <Input type="select" defaultValue="v0">
                 {["Select a verified email to display"].concat(user.emails).map((email, idx) => {
-                  <option value={`v${idx}`}>{email}</option>;
+                  return <option value={`v${idx}`} key={idx}>{email}</option>;
                 })}
               </Input>
               <small className="form-text text-muted">

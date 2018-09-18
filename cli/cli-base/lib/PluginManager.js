@@ -73,7 +73,7 @@ class PluginManager {
         if (meta.subplugins)
           this.load(meta.subplugins, pluginDir || baseDir, item.name, indent + 1);
 
-        item = merge(omit(meta.schema, "name"), item);
+        item = merge(omit(meta.schema, "name") || {}, item);
 
         const plugin = new PluginClass(item.options, this._context);
 

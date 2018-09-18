@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-  entry: {
-    main: "./src/main/renderMain.js"
+  pages: {
+    main: "./src/MainPage.jsx"
   },
   config: {
     html: {

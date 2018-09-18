@@ -74,7 +74,7 @@ function loadable(options) {
   registrar.add(info);
 
   /* eslint-disable react/no-deprecated */
-  class LoadableComponent extends React.Component {
+  class InnerLoadable extends React.Component {
     constructor(props) {
       super(props);
 
@@ -87,10 +87,6 @@ function loadable(options) {
         loading: res.loading,
         loaded: res.loaded
       };
-    }
-
-    static preload() {
-      return info.init();
     }
 
     componentWillMount() {
@@ -173,27 +169,21 @@ function loadable(options) {
     }
   }
 
-  const suffix = info.id ? ("_" + info.id) : "";
+  class LoadableComponent extends React.Component {
+    static preload() {
+      return info.init();
+    }
 
-  LoadableComponent.displayName = "LoadableComponent" + suffix;
-
-  if (SERVER) {
-    // Wrappping a LoadableComponent with Context.Consumer breaks react-hot-loader
-    const hoc = props => React.createElement(
-      GourmetContext.Consumer,
-      null,
-      gmctx => React.createElement(
-        LoadableComponent,
-        Object.assign({gmctx}, props)
-      )
-    );
-
-    hoc.displayName = "LoadableComponentHoc" + suffix;
-
-    return hoc;
-  } else {
-    return LoadableComponent;
+    render() {
+      return (
+        <GourmetContext.Consumer>
+          {gmctx => <InnerLoadable gmctx={gmctx} {...this.props}/>}
+        </GourmetContext.Consumer>
+      );
+    }
   }
+
+  return LoadableComponent;
 }
 
 module.exports = loadable;

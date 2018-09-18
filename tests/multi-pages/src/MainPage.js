@@ -7,6 +7,9 @@ export default class MainPage extends React.Component {
   }
 
   render() {
+    // throw Error("fixme");
+    // Exception thrown here causes "Response headers already sent" but no
+    // stack trace in the terminal.
     return (
       <div>
         <h1>Index</h1>
