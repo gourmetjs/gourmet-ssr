@@ -1,10 +1,14 @@
 "use strict";
 
+const npath = require("path");
+const fs = require("fs");
+const merge = require("@gourmet/merge");
+const omit = require("@gourmet/omit");
+const escapeScript = require("@gourmet/escape-script");
 const promiseProtect = require("@gourmet/promise-protect");
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const errorToString = require("@gourmet/error-to-string");
 const WatchServer = require("./WatchServer");
-const embedClient = require("./embedClient");
 
 // --watch-port <n>: set the websocket port for watch mode (default: 3938)
 // --watch-host <s>: set the websocket host for watch mode (default: "localhost")
@@ -15,6 +19,28 @@ const embedClient = require("./embedClient");
 // * See https://webpack.js.org/configuration/watch/#watchoptions
 
 class GourmetWatchMiddleware {
+  static middleware(gourmet) {
+    const m = new GourmetWatchMiddleware(gourmet);
+    return GourmetWatchMiddleware.prototype.handle.bind(m);
+  }
+
+  static options(args) {
+    return {
+      port: args.watchPort || 3938,
+      host: args.watchHost || "localhost",
+      reconnect: args.watchReconnect
+    };
+  }
+
+  static client(options) {
+    const client = fs.readFileSync(npath.join(__dirname, "client.js.txt"), "utf8");
+    const opts = Object.assign({
+      serverUrl: `ws://${options.host}:${options.port}`
+    }, omit(options, ["port", "host"]));
+    const content = client.replace("__GOURMET_WATCH_OPTIONS__", JSON.stringify(opts));
+    return `<script>${escapeScript(content)}</script>`;
+  }
+
   constructor(gourmet) {
     if (!gourmet || !gourmet.cleanCache)
       throw Error("Instance of `gourmet/client-lib` is required");
@@ -47,22 +73,25 @@ class GourmetWatchMiddleware {
     const cli = new GourmetCli();
 
     const argv = Object.assign({}, this.gourmet.baseOptions);
-    const watch = argv.watch;
-    const options = {
-      port: argv.watchPort || 3938,
-      host: argv.watchHost || "localhost",
-      reconnect: argv.watchReconnect
-    };
+    const options = GourmetWatchMiddleware.options(argv);
 
     argv._ = ["build"];
 
     cli.init(argv).then(() => {
       cli.verifyArgs();
-      cli.context.watch = watch;
+      cli.context.watch = argv.watch;
 
       this._watchServer = new WatchServer(options, cli.context.console);
 
-      embedClient(this.gourmet, options);
+      this.gourmet.baseOptions = merge(this.gourmet.baseOptions, {
+        context: {
+          html: {
+            headBottom: [
+              GourmetWatchMiddleware.client(options)
+            ]
+          }
+        }
+      });
 
       return cli.context.plugins.runAsync("build:go", cli.context).then(() => {
         this._configureWatch(cli.context);

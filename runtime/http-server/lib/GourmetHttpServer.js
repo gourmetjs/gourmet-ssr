@@ -105,9 +105,8 @@ class GourmetHttpServer {
   }
 
   installErrorHandler() {
-    const errorMiddleware = require("@gourmet/error-middleware");
     const options = this.getErrorHandlerOptions();
-    this.app.use(errorMiddleware(options));
+    this.app.use(this.gourmet.errorMiddleware(options));
   }
 
   listen() {

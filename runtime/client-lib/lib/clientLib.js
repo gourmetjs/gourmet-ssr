@@ -118,10 +118,13 @@ function clientLib(baseOptions) {
     staticMiddleware: "local"
   }, baseOptions);
 
+  const mwf = middlewareFactory(gourmet);
+
   gourmet.setStorage = setStorage;
   gourmet.invoke = invoke;
   gourmet.cleanCache = cleanCache;
-  gourmet.middleware = middlewareFactory(gourmet);
+  gourmet.middleware = mwf.middleware;
+  gourmet.errorMiddleware = mwf.errorMiddleware;
 
   return gourmet;
 }

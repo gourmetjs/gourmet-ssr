@@ -5,6 +5,7 @@ module.exports =
 <html lang="en">
   <head>
     <title>Error ({{statusCode}}): {{message}}</title>
+    {{head}}
   </head>
   <body>
     <h1>{{message}}</h1>

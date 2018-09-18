@@ -1,7 +1,7 @@
 "use strict";
 
-const watchMiddleware = require("@gourmet/watch-middleware");
+const GourmetWatchMiddleware = require("@gourmet/watch-middleware");
 
 module.exports = function(gourmet) {
-  return watchMiddleware(gourmet);
+  return GourmetWatchMiddleware.middleware(gourmet);
 };

@@ -4,6 +4,7 @@ const HttpStatus = require("http-status");
 const stripAnsi = require("strip-ansi");
 const escapeHtml = require("escape-html");
 const getConsole = require("@gourmet/console");
+const merge = require("@gourmet/merge");
 const serializeRequestError = require("@gourmet/serialize-request-error");
 const inspectError = require("@gourmet/inspect-error");
 const sendContent = require("@gourmet/send-content");
@@ -30,6 +31,7 @@ function renderHtmlError(err, req, res, obj, options) {
   }
 
   const content = options.template({
+    head: options.head.join("\n"),
     message: escapeHtml(stripAnsi(message)),
     statusCode: obj.statusCode,
     detail: options.debug ? escapeHtml(stripAnsi(inspectError(obj))) : null
@@ -67,7 +69,7 @@ function renderJsonError(err, req, res, obj, options) {
 function handleRequestError(err, req, res, options) {
   const _handle = () => {
     if (res.headersSent) {
-      con.error(`${options.title}\nResponse headers already sent, destroying socket.`);
+      con.error(`${options.desc}\nResponse headers already sent, destroying socket.`);
       if (res.socket)
         res.socket.destroy();
       return;
@@ -80,10 +82,10 @@ function handleRequestError(err, req, res, options) {
 
     sendContent(res, result);
 
-    con.error(`${options.title}\n${inspectError(obj, 1)}`);
+    con.error(`${options.desc}\n${inspectError(obj, 1)}`);
   };
 
-  options = Object.assign(handleRequestError.defaultOptions, options);
+  options = merge.intact(handleRequestError.defaultOptions, options);
 
   const con = options.console;
 
@@ -98,9 +100,10 @@ function handleRequestError(err, req, res, options) {
 
 handleRequestError.defaultOptions = {
   console: getConsole("gourmet:net"),
-  title: "Error in serving a request",
+  desc: "Error in serving a request",
   hideMessage: false,
   debug: true,
+  head: [],
   template: resolveTemplate(errorTemplate),
   detect(req) {
     const accept = req.headers["accept"];

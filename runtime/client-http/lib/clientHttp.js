@@ -83,8 +83,11 @@ function clientHttp(baseOptions) {
     staticMiddleware: "proxy"
   }, baseOptions);
 
+  const mwf = middlewareFactory(gourmet);
+
   gourmet.invoke = invoke;
-  gourmet.middleware = middlewareFactory(gourmet);
+  gourmet.middleware = mwf.middleware;
+  gourmet.errorMiddleware = mwf.errorMiddleware;
   gourmet.getReqOpts = options => _getReqOpts(options).reqOpts;
 
   return gourmet;

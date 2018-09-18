@@ -4,7 +4,6 @@ const express = require("express");
 const morgan = require("morgan");
 const serverArgs = require("@gourmet/server-args");
 const gourmet = require("@gourmet/client-lib");
-const errorMiddleware = require("@gourmet/error-middleware");
 
 module.exports = function(def) {
   const app = express();
@@ -23,7 +22,7 @@ module.exports = function(def) {
     res.serve("main", {xyz: 123});
   });
 
-  app.use(errorMiddleware({debug: args.debug}));
+  app.use(gourmet.errorMiddleware());
 
   app.server = app.listen(args.port, () => {
     if (args.debug)

@@ -94,7 +94,7 @@ merge.intact = function(...args) {
 
   for (let idx = 0, len = args.length; idx < len; idx++) {
     const src = args[idx];
-    if (isPlainObject(src)) {
+    if (src) {
       if (!des) {
         des = src;
       } else if (des.__safeToWrite__) {
