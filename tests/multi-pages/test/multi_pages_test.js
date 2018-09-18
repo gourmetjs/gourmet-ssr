@@ -27,7 +27,6 @@ test("check server rendered content", pt(async t => {
   t.ok(res.body.indexOf("JSON: {&quot;MainPage_getInitialProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;greeting&quot;:&quot;Hello, world!&quot;}") !== -1);
 
   res = await got(`http://localhost:${port}/dashboard`);
-  console.log(res.body);
   t.ok(res.body.indexOf("<h1>Dashboard</h1>") !== -1);
   t.ok(res.body.indexOf("JSON: {&quot;DashboardPage_getInitialProps&quot;:true,&quot;DashboardPage_makePageProps&quot;:true,&quot;DashboardPage_renderPage&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;username&quot;:&quot;admin&quot;}") !== -1);
 }));
