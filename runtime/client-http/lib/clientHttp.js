@@ -48,7 +48,7 @@ function clientHttp(baseOptions) {
       }
     }
 
-    options = merge.intact(gourmet.baseOptions, options);
+    options = options ? merge({}, gourmet.baseOptions, options) : gourmet.baseOptions;
 
     let finished = false;
     const {reqOpts, httpm} = _getReqOpts(options);
@@ -76,7 +76,7 @@ function clientHttp(baseOptions) {
     return clientHttp(options);
   }
 
-  gourmet.baseOptions = merge.intact({
+  gourmet.baseOptions = merge({
     serverUrl: "http://localhost:3939/",
     page: "main",
     siloed: false,

@@ -7,7 +7,7 @@ const GourmetWatchMiddleware = require("@gourmet/watch-middleware");
 module.exports = function factory(gourmet, baseOptions) {
   return {
     middleware(options) {
-      gourmet.baseOptions = options = merge.intact({
+      gourmet.baseOptions = options = merge({
         staticMiddleware: false,  // "local", "proxy", "off" or falsy
         clientDir: null,          // when `staticMiddleware` is "local"
         staticPrefix: "/s/",      // when `staticMiddleware` is "local" or "proxy"

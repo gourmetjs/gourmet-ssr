@@ -85,29 +85,4 @@ merge.assign = function(value) {
   });
 };
 
-// Merges objects into a new object, keeping source objects intact.
-// This function tries to minimize unnecessary copying whenever possible.
-// Also, note that this function returns `undefined` if there is no plain
-// object in the arguments.
-merge.intact = function(...args) {
-  let des;
-
-  for (let idx = 0, len = args.length; idx < len; idx++) {
-    const src = args[idx];
-    if (src) {
-      if (!des) {
-        des = src;
-      } else if (des.__safeToWrite__) {
-        merge(des, src);
-      } else {
-        const obj = {};
-        Object.defineProperty(obj, "__safeToWrite__", {value: true});
-        des = merge(obj, des, src);
-      }
-    }
-  }
-
-  return des;
-};
-
 module.exports = merge;

@@ -85,7 +85,7 @@ function handleRequestError(err, req, res, options) {
     con.error(`${options.desc}\n${inspectError(obj, 1)}`);
   };
 
-  options = merge.intact(handleRequestError.defaultOptions, options);
+  options = options ? merge({}, handleRequestError.defaultOptions, options) : handleRequestError.defaultOptions;
 
   const con = options.console;
 

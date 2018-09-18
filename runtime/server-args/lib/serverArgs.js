@@ -15,7 +15,7 @@ module.exports = function serverArgs(def, argv, options) {
     host: process.env.HOST || "0.0.0.0"
   }, def);
 
-  options = merge.intact({
+  options = merge({
     alias: {
       workDir: ["dir", "d"],
       stage: ["s"]

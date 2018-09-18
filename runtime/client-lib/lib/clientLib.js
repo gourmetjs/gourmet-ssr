@@ -56,7 +56,7 @@ function clientLib(baseOptions) {
       }).catch(callback);
     }
 
-    options = merge.intact(gourmet.baseOptions, options);
+    options = options ? merge({}, gourmet.baseOptions, options) : gourmet.baseOptions;
 
     const {storage, serverDir, page, siloed} = options;
 
@@ -110,7 +110,7 @@ function clientLib(baseOptions) {
 
   let _cache = {};
 
-  gourmet.baseOptions = merge.intact({
+  gourmet.baseOptions = merge({
     storage: _defaultStorage,
     serverDir: null,
     page: "main",

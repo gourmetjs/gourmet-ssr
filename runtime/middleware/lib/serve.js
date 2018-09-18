@@ -7,7 +7,7 @@ const sendContent = require("@gourmet/send-content");
 module.exports = function(gourmet) {
   return function(req, res, next) {
     res.serve = function(page, clientProps, context) {
-      context = merge.intact({clientProps, reqArgs: getReqArgs(req)}, context);
+      context = merge({clientProps, reqArgs: getReqArgs(req)}, context);
       gourmet.invoke({page, context}, (err, result) => {
         if (err) {
           next(err);
