@@ -61,6 +61,9 @@ module.exports = function getReactClientRenderer(Base) {
     }
 
     setHead(gmctx, ...elements) {
+      if (elements[0] === "@top" || elements[0] === "@main" || elements[0] === "@bottom")
+        elements.shift();
+
       elements.forEach(element => {
         if (React.isValidElement(element)) {
           if (element.type === "title") {

@@ -131,6 +131,20 @@ module.exports = function getReactServerRenderer(Base) {
     }
 
     setHead(gmctx, ...elements) {
+      let head;
+
+      if (elements[0] === "@top")
+        head = gmctx.html.headTop;
+      else if (elements[0] === "@main")
+        head = gmctx.html.headMain;
+      else if (elements[0] === "@bottom")
+        head = gmctx.html.headBottom;
+
+      if (head)
+        elements.shift();
+      else
+        head = gmctx.html.headBottom;
+
       elements.forEach(element => {
         if (React.isValidElement(element)) {
           element = ReactDOMServer.renderToStaticMarkup(element);
@@ -138,8 +152,8 @@ module.exports = function getReactServerRenderer(Base) {
           throw Error("gmctx.setHead() only accepts React elements or strings");
         }
 
-        if (gmctx.html.headTop.indexOf(element) === -1)
-          gmctx.html.headTop.push(element);
+        if (head.indexOf(element) === -1)
+          head.push(element);
       });
     }
   };
