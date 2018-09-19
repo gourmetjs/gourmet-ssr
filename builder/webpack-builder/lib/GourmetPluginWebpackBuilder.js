@@ -149,7 +149,7 @@ class GourmetPluginWebpackBuilder {
       if (context.optimize)
         hash.update(content);
       else
-        hash.update(relativePath(path));
+        hash.update(relativePath(path, context.workDir));
 
       let name = hash.digest("hex").substr(0, this._hashLength);
 
