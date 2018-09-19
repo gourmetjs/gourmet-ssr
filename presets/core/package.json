@@ -1,21 +1,21 @@
 {
   "name": "@gourmet/preset-core",
   "description": "Gourmet Preset containing core packages for building and running a Gourmet SSR project",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "main": "lib/GourmetPresetCore.js",
   "keywords": [
     "gourmet-plugin",
     "gourmet-preset"
   ],
   "dependencies": {
-    "@gourmet/html-renderer": "^0.5.0",
-    "@gourmet/plugin-webpack-babel": "^0.5.0",
+    "@gourmet/html-renderer": "^0.6.0",
+    "@gourmet/plugin-preserve-injector": "^0.2.0",
+    "@gourmet/plugin-source-map-support": "^0.2.0",
+    "@gourmet/plugin-webpack-babel": "^0.6.0",
     "@gourmet/plugin-webpack-blob": "^0.3.0",
-    "@gourmet/plugin-webpack-builder": "^0.6.0",
-    "@gourmet/plugin-webpack-global-css": "^0.5.0",
+    "@gourmet/plugin-webpack-builder": "^0.7.0",
+    "@gourmet/plugin-webpack-global-css": "^0.6.0",
     "@gourmet/plugin-webpack-html-renderer": "^0.4.0",
-    "@gourmet/plugin-preserve-injector": "^0.1.0",
-    "@gourmet/plugin-source-map-support": "^0.1.0",
     "babel-core": "^6.26.3",
     "webpack": "^4.16.5"
   }

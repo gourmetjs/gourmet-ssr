@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-basic",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "build": "gourmet build --config-name gourmet_cfg",
@@ -10,18 +10,18 @@
     "test:prod": "gourmet build --config-name gourmet_cfg --verbose 1 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^0.5.1",
-    "@gourmet/server-args": "^0.3.1",
+    "@gourmet/client-lib": "^0.6.0",
+    "@gourmet/server-args": "^0.4.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^0.4.0",
-    "@gourmet/plugin-webpack-babel": "^0.5.0",
-    "@gourmet/plugin-webpack-builder": "^0.6.0",
+    "@gourmet/gourmet-cli": "^0.5.0",
+    "@gourmet/plugin-webpack-babel": "^0.6.0",
+    "@gourmet/plugin-webpack-builder": "^0.7.0",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
-    "@gourmet/server-args": "^0.3.1",
+    "@gourmet/server-args": "^0.4.0",
     "puppeteer": "^1.3.0",
     "tape": "^4.9.0"
   }
