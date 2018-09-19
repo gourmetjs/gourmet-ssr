@@ -11,10 +11,10 @@
     "@gourmet/get-exported": "^0.3.0",
     "@gourmet/is-stream": "^0.2.0",
     "@gourmet/merge": "^0.5.0",
+    "@gourmet/multi-stream": "^0.1.0",
     "@gourmet/promise-protect": "^0.2.0",
     "@gourmet/resolve-template": "^0.2.0",
-    "domready": "^1.0.8",
-    "multistream": "^2.1.0"
+    "domready": "^1.0.8"
   },
   "devDependencies": {
     "tape": "^4.9.0"

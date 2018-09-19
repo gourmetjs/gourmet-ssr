@@ -2,7 +2,7 @@
 
 const ppath = require("path").posix;
 const stream = require("stream");
-const MultiStream = require("multistream");
+const MultiStream = require("@gourmet/multi-stream");
 const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
 const resolveTemplate = require("@gourmet/resolve-template");
