@@ -26,8 +26,6 @@ module.exports = class RendererSandbox {
       "module",
       "exports",
       "require",
-      "window",
-      "self",
       "XMLHttpRequest",
       "fetch",
       "Headers",
@@ -55,8 +53,6 @@ module.exports = class RendererSandbox {
       m,              // module
       m.exports,      // exports
       m.require,      // require
-      global,         // window
-      global,         // self
       XMLHttpRequest, // XMLHttpRequest
       fetch,          // fetch
       fetch.Headers,  // Headers
