@@ -145,7 +145,12 @@ class GourmetPluginWebpackBuilder {
   getAssetFilenameGetter(context, {ext, isGlobal}={}) {
     return ({content, path}) => {
       const hash = crypto.createHash(this._hashFunction);
-      hash.update(content);
+
+      if (context.optimize)
+        hash.update(content);
+      else
+        hash.update(relativePath(path));
+
       let name = hash.digest("hex").substr(0, this._hashLength);
 
       const extname = npath.extname(path);
@@ -229,7 +234,7 @@ class GourmetPluginWebpackBuilder {
 
       function _path(m) {
         if (m.resource)
-          return relativePath(_resource(m.resource), context.workDir);
+          return relativePath(m.resource, context.workDir);
 
         const moduleType = m.constructor.name;
 

@@ -2,8 +2,11 @@
 
 const npath = require("path");
 
-module.exports = function relativePath(path, baseDir, dot=true) {
-  let check;
+module.exports = function relativePath(path, baseDir, {dot=true, cut=true}={}) {
+  let check, idx;
+
+  if (cut && (idx = path.indexOf("?")) !== -1)
+    path = path.substr(0, idx);
 
   if (baseDir)
     path = npath.relative(baseDir, path);

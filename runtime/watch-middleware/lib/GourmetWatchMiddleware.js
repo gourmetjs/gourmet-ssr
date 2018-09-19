@@ -125,7 +125,8 @@ class GourmetWatchMiddleware {
     function _copy(src) {
       return {
         error: src.error,
-        stats: src.stats
+        stats: src.stats,
+        assetsSeq: src.assetsSeq
       };
     }
 
@@ -266,11 +267,23 @@ class GourmetWatchMiddleware {
     } else if (stats) {
       const oldHash = build.webpack.stats && build.webpack.stats.compilation.hash;
       const newHash = stats.compilation.hash;
+      let changed = true;
 
       build.webpack.error = null;
       build.webpack.stats = stats;
 
-      if (!oldHash || newHash !== oldHash) {
+      if (oldHash && oldHash === newHash) {
+        const assets = stats.compilation.assets;
+        const no_change = Object.keys(assets).every(name => !assets[name].emitted);
+        if (no_change) 
+          changed = false;
+        else
+          build.webpack.assetsSeq++;
+      } else {
+        build.webpack.assetsSeq = 0;
+      }
+
+      if (changed) {
         build.printResult(context);
       } else {
         con.log("No change...");

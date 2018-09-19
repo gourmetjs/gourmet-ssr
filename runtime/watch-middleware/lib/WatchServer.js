@@ -61,7 +61,7 @@ module.exports = class WatchServer {
       const err = clientStats.errors[0] || serverStats.errors[0];
       this._state = {
         error: err ? _formatError(err) : undefined,
-        hash: serverStats.hash + ":" + clientStats.hash
+        hash: `${serverStats.hash}-${server.assetsSeq}:${clientStats.hash}-${client.assetsSeq}`
       };
     }
 

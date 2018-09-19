@@ -1,12 +1,7 @@
 import React, {Component} from "react";
 import NewsView from "@gourmet/test-news-view";
-import cx from "classnames";
 import {css} from "emotion";
-
-const cssContainer = css`
-  max-width: 50em;
-  padding: 2em 0;
-`;
+import "./NewsApp.css";
 
 const cssHeader = css`
   padding: 1em 0;
@@ -27,7 +22,7 @@ const cssArticle = css`
 export default class NewsApp extends Component {
   render() {
     return (
-      <div className={cx(cssContainer, "container")}>
+      <div className="news-container container">
         <h5>
           Latest US News Headlines
         </h5>
