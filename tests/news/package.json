@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-news",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "scripts": {
     "watch": "node lib/server.js --watch",
@@ -9,7 +9,7 @@
     "test": "gourmet build --verbose 1 && tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^0.6.0",
+    "@gourmet/client-lib": "^0.6.1",
     "@gourmet/server-args": "^0.4.0",
     "express": "^4.16.3",
     "got": "^8.3.1",
@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.5.0",
-    "@gourmet/preset-react-emotion": "^0.6.0",
+    "@gourmet/preset-react-emotion": "^0.6.1",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
     "@gourmet/test-news-view": "^0.5.0",
