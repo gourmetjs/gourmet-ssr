@@ -1,0 +1,8 @@
+.hello {
+  font-size: 150%;
+  font-weight: bold;
+  border: 10px solid #eee;
+  padding: 1em;
+  margin: 5em;
+  max-width: 20em;
+}

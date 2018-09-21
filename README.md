@@ -17,3 +17,15 @@
 - SSR source files are compiled and concatenated into a single bundle file per a page.
 - `XMLHttpRequest` & `fetch` are provided as global API.
 - How to include external modules without bundle them?
+
+# Module resolution
+
+## Alias
+
+## Webpack config
+
+- Alias: https://webpack.js.org/configuration/resolve/#resolve-aliasfields
+- Alias Field (package.json / browser): https://webpack.js.org/configuration/resolve/#resolve-aliasfields
+- Externals: https://webpack.js.org/configuration/externals/
+- Node: https://webpack.js.org/configuration/node/
+

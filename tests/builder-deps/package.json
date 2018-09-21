@@ -1,0 +1,25 @@
+{
+  "name": "@gourmet/test-builder-deps",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "watch": "node lib/server.js --watch"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^0.6.1",
+    "@gourmet/server-args": "^0.4.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^0.5.0",
+    "@gourmet/html-renderer": "^0.6.0",
+    "@gourmet/plugin-preserve-injector": "^0.2.0",
+    "@gourmet/plugin-webpack-babel": "^0.6.0",
+    "@gourmet/plugin-webpack-builder": "^0.7.1",
+    "@gourmet/plugin-webpack-html-renderer": "^0.4.0",
+    "babel-core": "^6.26.3",
+    "webpack": "^4.16.5"
+  }
+}

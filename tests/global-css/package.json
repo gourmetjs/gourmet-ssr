@@ -1,0 +1,18 @@
+{
+  "name": "@gourmet/test-global-css",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "watch": "node lib/server.js --watch"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^0.6.1",
+    "@gourmet/server-args": "^0.4.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^0.5.0",
+    "@gourmet/preset-core": "^0.5.1"
+  }
+}

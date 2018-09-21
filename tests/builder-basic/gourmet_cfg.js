@@ -32,7 +32,19 @@ module.exports = context => ({
     // If true, a global hook is installed in `Error` class to display stack trace
     // based on source maps.
     // Only used when `target` is "server" and `sourceMap` is true.
-    installSourceMapSupport: true
+    installSourceMapSupport: true,
+
+    modules: {
+      // - name: [client, server] // `name: value` for both client & server
+      // - true: normal reference
+      // - false: ignore, use `{}` as exported value instead
+      // - "external": load at runtime (i.e. `require()`)
+      // "jquery": [true, false],
+      // "react-dom/server": [false, true],
+      // "react-dom": [true, false],
+      // "aws-sdk": [false, "external"],
+      // "useless-module": false
+    }
   },
 
   webpack: {
