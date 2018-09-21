@@ -2,13 +2,7 @@
 
 module.exports = {
   pages: {
-    main: "./src/hello.js"
-  },
-  webpack: {
-    config: {
-      externals: {
-        "jquery": "jQuery"
-      }
-    }
+    main: "./src/hello.js",
+    admin: "./src/admin.js"
   }
 };

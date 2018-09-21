@@ -356,7 +356,7 @@ class GourmetWebpackBuildInstance {
       publicPath: context.staticPrefix,
       hashFunction: vars.hashFunction || "sha1",
       hashDigestLength: vars.hashLength || 24,
-      libraryTarget: "commonjs"
+      libraryTarget: context.target === "server" ? "commonjs" : "var"
     };
     return this._runMergeSync("build:output", output, "output", context, config);
   }

@@ -74,8 +74,8 @@ class GourmetPluginWebpackBuilder {
     this.moduleDir = moduleDir;
   }
 
-  addGlobalAsset(filename) {
-    this._globalAssets[filename] = true;
+  addGlobalAsset(filename, path) {
+    this._globalAssets[filename] = path;
   }
 
   getExtensionTester(extensions) {
@@ -145,11 +145,12 @@ class GourmetPluginWebpackBuilder {
   getAssetFilenameGetter(context, {ext, isGlobal}={}) {
     return ({content, path}) => {
       const hash = crypto.createHash(this._hashFunction);
+      const relPath = relativePath(path, context.workDir);
 
       if (context.optimize)
         hash.update(content);
       else
-        hash.update(relativePath(path, context.workDir));
+        hash.update(relPath);
 
       let name = hash.digest("hex").substr(0, this._hashLength);
 
@@ -162,7 +163,7 @@ class GourmetPluginWebpackBuilder {
       name += (ext || extname);
 
       if (isGlobal)
-        context.builder.addGlobalAsset(name);
+        context.builder.addGlobalAsset(name, relPath);
 
       return name;
     };
@@ -184,16 +185,41 @@ class GourmetPluginWebpackBuilder {
         const res = {};
         if (eps) {
           eps.forEach((ep, name) => {
-            const assets = target === "client" ? globalAssets : [];
-            res[name] = assets.concat(ep.getFiles().filter(name => {
+            const deps = ep.getFiles().filter(name => {
               return !name.endsWith(".map") && !_isHotFile(name);
-            }));
+            });
+            const assets = target === "client" ? _assets(deps) : [];
+            res[name] = assets.concat(deps);
           });
         }
         return res;
       }
 
-      function _analyze() {
+      function _assets(deps) {
+        // Reverse map {"src_path": "asset_filename"}
+        const map = Object.keys(globalAssets).reduce((obj, name) => {
+          const path = globalAssets[name];
+          obj[path] = name;
+          return obj;
+        }, {});
+        const assets = [];
+
+        deps.forEach(name => {
+          const info = files[name];
+          if (info && info.modules) {
+            info.modules.forEach(id => {
+              const path = modules[id];
+              if (path && map[path])
+                assets.push(map[path]);
+            });
+          }
+        });
+
+        return assets;
+      }
+
+      function _files() {
+        const files = {};
         const assets = compilation.assets;
 
         Object.keys(assets).forEach(name => {
@@ -214,9 +240,7 @@ class GourmetPluginWebpackBuilder {
               info.modules = Array.from(chunk.modulesIterable).map(m => m.id);
           });
         });
-      }
 
-      function _files() {
         return files;
       }
 
@@ -255,19 +279,19 @@ class GourmetPluginWebpackBuilder {
       }
 
       const compilation = stats[target].compilation;
-      const files = {};
-
-      _analyze();
+      const files = _files();
+      const modules = _modules();
+      const pages = _pages();
 
       return {
         compilation: compilation.hash,
-        pages: _pages(),
-        files: _files(),
-        modules: _modules()
+        pages,
+        files,
+        modules
       };
     }
 
-    const globalAssets = Object.keys(this._globalAssets);
+    const globalAssets = this._globalAssets;
     const obj = {};
 
     if (!stats) {

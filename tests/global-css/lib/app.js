@@ -14,6 +14,10 @@ module.exports = function(def) {
 
   app.use(gourmet.middleware(args));
 
+  app.get("/admin", (req, res) => {
+    res.serve("admin");
+  });
+
   app.get("*", (req, res) => {
     res.serve("main");
   });

@@ -1,3 +1,4 @@
+/* Client module for `--watch` mode */
 (function(options) {
   function _error(str) {
     var style = [
