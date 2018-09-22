@@ -1,5 +1,6 @@
 "use strict";
 
+const merge = require("@gourmet/merge");
 const sortPlugins = require("@gourmet/plugin-sort");
 
 class GourmetPluginWebpackBabel {
@@ -7,10 +8,13 @@ class GourmetPluginWebpackBabel {
     // Note that `babel-preset-env` below 7.x doesn't support
     // browserlist's config file or `package.json`.
     // https://github.com/babel/babel-preset-env/issues/26
-    return context.vars.get("builder.runtime." + context.target).then(value => {
-      return context.target === "client" ? {browsers: value || null} : {node: value || "6.1"};
-    }).then(targets => {
-      this._varCache = {targets};
+    return context.vars.getMulti(
+      "builder.runtime." + context.target,
+      ["builder.sourceModules", []]
+    ).then(([runtime, sourceModules]) => {
+      this._targets = context.target === "client" ? {browsers: runtime || null} : {node: runtime || "6.1"};
+      this._sourceModules = context.plugins.runMergeSync("build:source_modules", [], context);
+      merge(this._sourceModules, sourceModules);
     });
   }
 
@@ -29,7 +33,7 @@ class GourmetPluginWebpackBabel {
             preset: require.resolve("babel-preset-env"),
             options: {
               modules: false,
-              targets: this._varCache.targets,
+              targets: this._targets,
               loose: true
             }
           }],
@@ -69,7 +73,9 @@ class GourmetPluginWebpackBabel {
         select: {
           js_copy: {
             order: 9900,
-            test: [context.builder.getVendorDistTester()],
+            test: [context.builder.getDirTester("node_modules", (path, idx, dir) => {
+              return !this._isSource(path, idx, dir);
+            })],
             pipeline: "js_copy"
           },
           js: {
@@ -107,6 +113,23 @@ class GourmetPluginWebpackBabel {
       }
     }
     return options;
+  }
+
+  _isSource(path, idx, dir) {
+    function _sep(pos) {
+      const ch = path[pos];
+      return ch === "\\" || ch === "/";
+    }
+
+    return !this._sourceModules.every(pattern => {
+      if (typeof pattern === "string") {
+        const spos = idx + dir.length + 1;
+        const epos = spos + pattern.length;
+        if (_sep(spos - 1) && path.substring(spos, epos) === pattern && _sep(epos))
+          return false;
+      }
+      return true;
+    });
   }
 }
 

@@ -34,16 +34,23 @@ module.exports = context => ({
     // Only used when `target` is "server" and `sourceMap` is true.
     installSourceMapSupport: true,
 
+    // Explicitly specifies modules in `node_modules` to be included in compilation.
+    // In order to make a module to be compiled by default, implement a gourmet plugin
+    // that taps into `build:source_modules` hook.
+    //  - `sourceModules: ["@gourmet/http-headers"]`
+    //  - `sourceModules: context.getter(() => context.target === "client" ? ["@gourmet/http-headers"] : [])`
+    sourceModules: [],
+
     modules: {
-      // - name: [client, server] // `name: value` for both client & server
-      // - true: normal reference
-      // - false: ignore, use `{}` as exported value instead
-      // - "external": load at runtime (i.e. `require()`)
       // "jquery": [true, false],
       // "react-dom/server": [false, true],
       // "react-dom": [true, false],
       // "aws-sdk": [false, "external"],
       // "useless-module": false
+      // - name: [client, server] // `name: value` for both client & server
+      // - true: normal reference
+      // - false: ignore, use `{}` as exported value instead
+      // - "external": load at runtime (i.e. `require()`)
     }
   },
 

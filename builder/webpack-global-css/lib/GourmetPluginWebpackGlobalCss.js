@@ -82,7 +82,7 @@ class GourmetPluginWebpackGlobalCss {
           },
           css_resolve: {
             order: 9900,
-            test: [context.builder.getVendorDistTester()],
+            test: [context.builder.getDirTester("node_modules")],
             pipeline: "css_resolve"
           },
           css: {

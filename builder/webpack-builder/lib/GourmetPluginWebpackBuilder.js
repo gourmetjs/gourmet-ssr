@@ -99,32 +99,19 @@ class GourmetPluginWebpackBuilder {
     return tester;
   }
 
-  getDirTester(dir) {
+  getDirTester(dir, checker) {
     const tester = function(path) {
-      return _findDir(path, dir) !== -1;
-    };
-
-    tester[util.inspect.custom] = function() {
-      return `dirTester(${JSON.stringify(dir)})`;
-    };
-
-    return tester;
-  }
-
-  getVendorDistTester() {
-    const tester = function(path) {
-      const mod = _findDir(path, "node_modules");
-      if (mod !== -1) {
-        const src = _findDir(path, "src");
-        if (src !== -1 && src > mod)
-          return false;
+      const idx = _findDir(path, dir);
+      if (idx !== -1) {
+        if (typeof checker === "function")
+          return checker(path, idx, dir);
         return true;
       }
       return false;
     };
 
     tester[util.inspect.custom] = function() {
-      return "vendorDistTester()";
+      return `dirTester(${JSON.stringify(dir)})`;
     };
 
     return tester;
@@ -456,7 +443,7 @@ class GourmetPluginWebpackBuilder {
     if (this._manifestConfig)
       return Promise.resolve(this._manifestConfig);
 
-    this._manifestConfig = context.plugins.runMergeSync("build:manifest:config", {}, context);
+    this._manifestConfig = context.plugins.runMergeSync("build:manifest_config", {}, context);
 
     return context.vars.get("config").then(config => {
       return merge(this._manifestConfig, config);
