@@ -1,8 +1,10 @@
-import print from "./print";
-import renderer from "./renderer";
+"use strict";
+
+const print = require("./print").default;
+const renderer = require("./renderer").default;
 
 if (SERVER) {
-  __gourmet_module__.exports = ({page, manifest}) => {
+  module.exports = ({page, manifest}) => {
     const render = renderer({page, manifest});
     return ({reqArgs, clientProps}) => {
       return render(

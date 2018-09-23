@@ -356,7 +356,7 @@ class GourmetWebpackBuildInstance {
       publicPath: context.staticPrefix,
       hashFunction: vars.hashFunction || "sha1",
       hashDigestLength: vars.hashLength || 24,
-      libraryTarget: context.target === "server" ? "commonjs" : "var"
+      libraryTarget: context.target === "server" ? "commonjs2" : "var"
     };
     return this._runMergeSync("build:output", output, "output", context, config);
   }
@@ -499,7 +499,7 @@ class GourmetWebpackBuildInstance {
       `const Renderer = ${_renderer(info.renderer)};`,
       `const userObject = require("${userModule}");`,
       `const r = Renderer.create(userObject${options});`,
-      context.target === "server" ? "__gourmet_module__.exports = r.getRenderer.bind(r);" : "r.render();"
+      context.target === "server" ? "module.exports = r.getRenderer.bind(r);" : "r.render();"
     ].join("\n");
 
     context.builder.emitFileSync(outputPath, content);

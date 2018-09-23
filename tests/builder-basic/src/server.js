@@ -1,6 +1,6 @@
 import renderer from "./renderer";
 
-__gourmet_module__.exports = ({page, manifest}) => {
+export default ({page, manifest}) => {
   const render = renderer({page, manifest});
   return ({reqArgs, clientProps}) => {
     return render(
