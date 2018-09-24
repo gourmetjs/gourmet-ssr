@@ -6,10 +6,10 @@ module.exports = class WebpackPluginPreserveInjector {
   apply(compiler) {
     compiler.hooks.compilation.tap("WebpackPluginPreserveInjector", compilation => {
       const {mainTemplate} = compilation;
-      mainTemplate.hooks.render.tap(
+      mainTemplate.hooks.renderWithEntry.tap(
         "WebpackPluginPreserveInjector",
         source => {
-          return new ConcatSource("/* @preserve\n*/\n", source);
+          return new ConcatSource("// @preserve\n", source);
         }
       );
     });
