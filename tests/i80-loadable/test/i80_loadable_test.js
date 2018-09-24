@@ -46,8 +46,8 @@ test("run puppeteer", pt(async t => {
   const newRequests = app.history.slice(historyIndex);
 
   t.deepEqual(newRequests, [
-    "/s/profile.bundle.js"
-  ],  "`profile.bundle.js` must be loaded dynamically");
+    "/s/profile.js"
+  ],  "`profile.js` must be loaded dynamically");
 
   await browser.close();
 }));

@@ -10,7 +10,7 @@ class PluginReactEmotion {
             name: "babel-plugin-emotion",
             plugin: require.resolve("babel-plugin-emotion"),
             options: {
-              hoist: context.optimize,
+              hoist: context.minify,
               sourceMap: context.sourceMap,
               autoLabel: context.debug
             }

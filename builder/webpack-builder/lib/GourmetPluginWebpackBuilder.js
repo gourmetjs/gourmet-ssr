@@ -130,22 +130,27 @@ class GourmetPluginWebpackBuilder {
   }
 
   getAssetFilenameGetter(context, {ext, isGlobal}={}) {
-    return ({content, path}) => {
+    const _hash = data => {
       const hash = crypto.createHash(this._hashFunction);
+      hash.update(data);
+      return hash.digest("hex").substr(0, this._hashLength);
+    };
+
+    return ({content, path}) => {
       const relPath = relativePath(path, context.workDir);
-
-      if (context.optimize)
-        hash.update(content);
-      else
-        hash.update(relPath);
-
-      let name = hash.digest("hex").substr(0, this._hashLength);
-
       const extname = npath.extname(path);
-      const basename = npath.basename(path, extname);
+      let name;
 
-      if (!context.optimize)
-        name += "." + basename;
+      if (context.hashNames) {
+        name = _hash(content);
+      } else {
+        if (context.minify) {
+          name = _hash(relPath);
+        } else {
+          name = _hash(npath.posix.dirname(relPath));
+          name += "." + npath.basename(path, extname);
+        }
+      }
 
       name += (ext || extname);
 
@@ -289,7 +294,7 @@ class GourmetPluginWebpackBuilder {
     }
 
     return this._collectManifestConfig(context).then(config => {
-      ["stage", "debug", "optimize", "sourceMap", "staticPrefix"].forEach(name => {
+      ["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
         obj[name] = context[name];
       });
 
@@ -298,7 +303,7 @@ class GourmetPluginWebpackBuilder {
       obj.config = config;
 
       const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
-      const content = JSON.stringify(obj, null, context.optimize ? 2 : 2);
+      const content = JSON.stringify(obj, null, context.minify ? 0 : 2);
 
       this.emitFileSync(path, content);
 
@@ -397,7 +402,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   _prepareContextVars(context) {
-    return promiseEach(["debug", "optimize", "sourceMap", "staticPrefix"], name => {
+    return promiseEach(["debug", "minify", "sourceMap", "hashNames", "staticPrefix"], name => {
       return context.vars.get("builder." + name).then(userValue => {
         let value;
 
@@ -410,11 +415,14 @@ class GourmetPluginWebpackBuilder {
             case "debug":
               value = !context.stageIs("production");
               break;
-            case "optimize":
+            case "minify":
               value = context.stageIs("production");
               break;
             case "sourceMap":
               value = !context.stageIs("production");
+              break;
+            case "hashNames":
+              value = false;
               break;
             case "staticPrefix":
               value = "/s/";
@@ -463,11 +471,14 @@ GourmetPluginWebpackBuilder.meta = {
         debug: {
           help: "Enable debug mode ('--no-debug' to disable)"
         },
-        optimize: {
-          help: "Enable optimization ('--no-optimize' to disable)"
+        minify: {
+          help: "Minify asset content ('--no-minify' to disable)"
         },
         sourceMap: {
-          help: "Enable source map ('--no-source-map' to disable)"
+          help: "Generate source map ('--no-source-map' to disable)"
+        },
+        hashNames: {
+          help: "Use content hash based asset names ('--no-hash-names' to disable)"
         },
         staticPrefix: {
           help: "Static prefix URL (default: '/s/')"

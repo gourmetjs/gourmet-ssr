@@ -9,6 +9,8 @@ module.exports = function(def) {
   const args = serverArgs(def);
   const app = express();
 
+  app.args = args;
+
   if (args.debug)
     app.use(morgan("dev"));
 

@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "watch": "node lib/server.js --watch",
-    "test": "tape test/*_test.js"
+    "test": "yarn test:local && yarn test:prod",
+    "test:local": "gourmet build --verbose 1 && tape test/*_test.js",
+    "test:prod": "gourmet build --verbose 1 --stage prod && tape test/*_test.js --stage prod"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.6.2",

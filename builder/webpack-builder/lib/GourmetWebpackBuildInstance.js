@@ -174,7 +174,7 @@ class GourmetWebpackBuildInstance {
   }
 
   getMode(context, config) {
-    const mode = context.optimize ? "production" : "development";
+    const mode = context.minify ? "production" : "development";
     return context.plugins.runWaterfallSync("build:mode", mode, context, config);
   }
 
@@ -188,10 +188,10 @@ class GourmetWebpackBuildInstance {
 
   getOptimization(context, config) {
     const optimization = {
-      minimize: context.optimize,
+      minimize: context.minify,
       runtimeChunk: context.target === "client",
       splitChunks: (() => {
-        if (context.target === "server" || !context.optimize)
+        if (context.target === "server" || !context.minify)
           return false;
 
         return {
@@ -348,7 +348,7 @@ class GourmetWebpackBuildInstance {
 
   getOutput(context, config) {
     const vars = this._varsCache.webpack;
-    const name = (context.target === "server" || !context.optimize) ? "[name].bundle.js" : "[chunkHash].js";
+    const name = (context.target === "server" || !context.hashNames) ? "[name].js" : "[chunkHash].js";
     const output = {
       filename: name,
       chunkFilename: name,

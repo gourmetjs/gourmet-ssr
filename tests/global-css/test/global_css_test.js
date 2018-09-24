@@ -20,11 +20,12 @@ test("start server", t => {
 });
 
 test("check server rendered content", pt(async t => {
+  const name = app.args.stage === "prod" ? "026f7e4ba81f14cdacfbb976\\.css" : "hello\\.css";
   let res = await got(`http://localhost:${port}/`);
-  t.ok(/<link rel="stylesheet"[^<]+hello\.css/.test(res.body));
+  t.ok((new RegExp(`<link rel="stylesheet"[^<]+${name}`)).test(res.body));
 
   res = await got(`http://localhost:${port}/admin`);
-  t.notOk(/<link rel="stylesheet"[^<]+hello\.css/.test(res.body));
+  t.notOk((new RegExp(`<link rel="stylesheet"[^<]+${name}`)).test(res.body));
 }));
 
 test("close server", t => {
