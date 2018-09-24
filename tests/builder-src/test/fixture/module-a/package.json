@@ -1,0 +1,5 @@
+{
+  "name": "@gourmet/test-builder-src-module-a",
+  "description": "A simple module containing ES6 class syntax for testing of Gourmet SSR",
+  "version": "0.1.0"
+}

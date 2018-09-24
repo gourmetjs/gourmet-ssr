@@ -1,6 +1,5 @@
 "use strict";
 
-const merge = require("@gourmet/merge");
 const sortPlugins = require("@gourmet/plugin-sort");
 
 class GourmetPluginWebpackBabel {
@@ -13,8 +12,7 @@ class GourmetPluginWebpackBabel {
       ["builder.sourceModules", []]
     ).then(([runtime, sourceModules]) => {
       this._targets = context.target === "client" ? {browsers: runtime || null} : {node: runtime || "6.1"};
-      this._sourceModules = context.plugins.runMergeSync("build:source_modules", [], context);
-      merge(this._sourceModules, sourceModules);
+      this._sourceModules = context.plugins.runMergeSync("^build:source_modules", sourceModules, context);
     });
   }
 
