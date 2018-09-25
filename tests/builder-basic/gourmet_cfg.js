@@ -42,23 +42,22 @@ module.exports = context => ({
     //  - `sourceModules: context.getter(() => context.target === "client" ? ["@gourmet/http-headers"] : [])`
     sourceModules: [],
 
-    modules: {
-      // "jquery": [true, false],
-      // "react-dom/server": [false, true],
-      // "react-dom": [true, false],
-      // "aws-sdk": [false, "external"],
-      // "useless-module": false
-      // - name: [client, server] // `name: value` for both client & server
-      // - true: normal reference
-      // - false: ignore, use `{}` as exported value instead
-      // - "external": load at runtime (i.e. `require()`)
-    }
+    // Specifies modules to be either client-only, server-only or external(server-only)
+    //   {
+    //     jquery: "client",
+    //     "react-dom/server": "server",
+    //     "react-dom": "client",
+    //     "aws-sdk": "external",
+    //     "useless-module": false  // or null
+    //   }
+    moduleLinks: {}
   },
 
   webpack: {
     recordsDir: ".webpack",
     hashFunction: "sha1",
     hashLength: 24,
+
     module: {},
     resolve: {},
     pipelines: {},

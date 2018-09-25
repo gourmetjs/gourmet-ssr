@@ -61,6 +61,13 @@ const NO_RENDERER_CLASS = {
   code: "NO_RENDERER_CLASS"
 };
 
+const INVALID_MODULE_LINK_VALUE = {
+  message: "'moduleLinks.${name}' entry has an invalid value. Must be true, false or 'external'.",
+  code: "INVALID_MODULE_LINK_VALUE"
+};
+
+const MODULE_LINK_VALUES = [false, null, "server", "client", "external"];
+
 class GourmetWebpackBuildInstance {
   constructor(context) {
     this.target = context.target;
@@ -248,7 +255,8 @@ class GourmetWebpackBuildInstance {
   }
 
   getAlias(context, config) {
-    return this._runMergeSync("build:alias", {}, "alias", context, config);
+    const alias = this._getAliasFromModuleLinks(context);
+    return this._runMergeSync("build:alias", alias, "alias", context, config);
   }
 
   getModule(context, config) {
@@ -505,6 +513,26 @@ class GourmetWebpackBuildInstance {
     context.builder.emitFileSync(outputPath, content);
 
     return value.slice(0, value.length - 1).concat(relativePath(outputPath, context.workDir));
+  }
+
+  _getAliasFromModuleLinks(context) {
+    const links = this._varsCache.builder.moduleLinks || {};
+    const alias = {};
+
+    Object.keys(links).forEach(name => {
+      const value = links[name];
+      if (MODULE_LINK_VALUES.indexOf(value) !== -1) {
+        if (!value ||
+            ((value === "server" || value === "client") && context.target !== value) ||
+            (value === "external" && context.target !== "server")) {
+          alias[name + "$"] = require.resolve("./empty.js");
+        }
+      } else {
+        throw error(INVALID_MODULE_LINK_VALUE, {name});
+      }
+    });
+
+    return alias;
   }
 }
 
