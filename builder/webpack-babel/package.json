@@ -7,6 +7,7 @@
   ],
   "main": "lib/GourmetPluginWebpackBabel.js",
   "dependencies": {
+    "@gourmet/relative-path": "^0.3.1",
     "@gourmet/plugin-sort": "^0.5.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-dynamic-import-node": "^1.2.0",

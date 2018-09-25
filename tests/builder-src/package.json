@@ -1,10 +1,11 @@
 {
-  "name": "@gourmet/test-builder-deps",
+  "name": "@gourmet/test-builder-src",
   "version": "0.1.1",
   "private": true,
   "scripts": {
     "build": "gourmet build",
-    "watch": "node lib/server.js --watch"
+    "watch": "node lib/server.js --watch",
+    "test": "gourmet build --verbose 1 && gourmet build --verbose 1 --stage test && tape test/*_test.js"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.6.2",

@@ -187,7 +187,7 @@ class PluginManager {
       for (let idx = 0; idx < items.length; idx++) {
         const item = items[idx];
         const hooks = item.meta.hooks;
-        if (hooks && hooks.hasOwnProperty(eventName)) {
+        if (hooks && hooks[eventName]) {
           const handler = hooks[eventName];
           if (typeof handler !== "function")
             throw error(INVALID_HANDLER_VALUE, {name: item.name, eventName});

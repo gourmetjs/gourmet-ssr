@@ -1,5 +1,6 @@
 "use strict";
 
+const relativePath = require("@gourmet/relative-path");
 const sortPlugins = require("@gourmet/plugin-sort");
 
 class GourmetPluginWebpackBabel {
@@ -114,17 +115,18 @@ class GourmetPluginWebpackBabel {
   }
 
   _isSource(path, idx, dir) {
-    function _sep(pos) {
-      const ch = path[pos];
-      return ch === "\\" || ch === "/";
-    }
+    path = relativePath(path);
 
     return !this._sourceModules.every(pattern => {
       if (typeof pattern === "string") {
         const spos = idx + dir.length + 1;
         const epos = spos + pattern.length;
-        if (_sep(spos - 1) && path.substring(spos, epos) === pattern && _sep(epos))
+        if (path[spos - 1] === "/" && path.substring(spos, epos) === pattern && path[epos] === "/")
           return false;
+      } else if (pattern instanceof RegExp) {
+        return !pattern.test(path);
+      } else {
+        throw Error("Invalid pattern");
       }
       return true;
     });

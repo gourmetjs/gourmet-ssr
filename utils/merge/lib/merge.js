@@ -62,10 +62,18 @@ function _merge(des, src) {
  *  - Customizers are supported through `merge.custom`.
  **/
 function merge(des, ...args) {
+  const dt = _getType(des);
   for (let idx = 0, len = args.length; idx < len; idx++) {
     const src = args[idx];
-    if (src)
-      _merge(des, src);
+    const st = _getType(src);
+    if (src) {
+      if (dt === ARRAY && st === ARRAY)
+        des.push(...src);
+      else if (dt === OBJECT && st === OBJECT)
+        _merge(des, src);
+      else
+        throw Error("Invalid data type");
+    }
   }
   return des;
 }
