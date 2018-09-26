@@ -68,6 +68,9 @@ const INVALID_MODULE_LINK_VALUE = {
 
 const MODULE_LINK_VALUES = [false, null, "server", "client", "external"];
 
+// Don't forget that an instance of this class is kept and reused in `--watch`
+// mode whenever a change occurs. Change of `gourmet_config.js` in a watch
+// session doesn't need to be applied.
 class GourmetWebpackBuildInstance {
   constructor(context) {
     this.target = context.target;
@@ -134,67 +137,96 @@ class GourmetWebpackBuildInstance {
   }
 
   getConfig(context) {
-    const _get = (section, method) => {
-      config[section] = method.call(this, context, config);
-      if (userConfig && userConfig[section]) {
-        if (isPlainObject(userConfig[section]))
-          merge(config[section], userConfig[section]);
-        else
-          config[section] = userConfig[section];
+    // These are assigned as direct members of `this.config` because they are
+    // generic and relatively Webpack independent. Also, setting as members allow
+    // hooks later in the sequence to reference values set by previous hooks.
+    this.config = {};
+    this.config.defaultExtensions = this.getDefaultExtensions(context);
+    this.config.moduleLinks = this.getModuleLinks(context);
+    this.config.alias = this.getAlias(context);
+    this.config.define = this.getDefine(context);
+    this.config.webpack = this.getWebpackConfig(context);
+  }
+
+  getDefaultExtensions(context) {
+    const ext = [".js", ".json"];
+    context.plugins.runMergeSync("build:default_extensions", ext, context);
+    return merge(ext, this._varsCache.builder.defaultExtensions);
+  }
+
+  getModuleLinks(context) {
+    const links = {};
+    context.plugins.runMergeSync("build:module_links", links, context);
+    return merge(links, this._varsCache.builder.moduleLinks);
+  }
+
+  getAlias(context) {
+    const links = this.config.moduleLinks;
+    const alias = Object.keys(links).reduce((alias, name) => {
+      const value = links[name];
+      if (MODULE_LINK_VALUES.indexOf(value) !== -1) {
+        if (!value ||
+            ((value === "server" || value === "client") && context.target !== value) ||
+            (value === "external" && context.target !== "server")) {
+          alias[name + "$"] = require.resolve("./empty.js");
+        }
+      } else {
+        throw error(INVALID_MODULE_LINK_VALUE, {name});
       }
+      return alias;
+    }, {});
+    context.plugins.runMergeSync("build:alias", alias, context);
+    return merge(alias, this._varsCache.builder.alias);
+  }
+
+  getDefine(context) {
+    const define = {
+      "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
+      DEBUG: JSON.stringify(context.debug),
+      SERVER: JSON.stringify(context.target === "server"),
+      CLIENT: JSON.stringify(context.target === "client"),
+      STAGE: JSON.stringify(context.stage)
     };
-
-    const config = {};
-    const userConfig = this._varsCache.webpack.config;
-
-    _get("context", this.getContext);
-    _get("target", this.getTarget);
-    _get("mode", this.getMode);
-    _get("devtool", this.getDevTool);
-    _get("optimization", this.getOptimization);
-    _get("output", this.getOutput);
-    _get("resolve", this.getResolve);
-    _get("module", this.getModule);
-    _get("entry", this.getEntry);
-    _get("plugins", this.getPlugins);
-
-    if (userConfig) {
-      merge(config, omit(userConfig, [
-        "context", "target", "mode", "devtool",
-        "optimization", "output", "resolve",
-        "module", "entry", "plugins"
-      ]));
-    }
-
-    config.recordsPath = this._recordsPath;
-
-    return config;
+    context.plugins.runMergeSync("build:define", define, context);
+    return merge(define, this._varsCache.builder.define);
   }
 
-  getContext(context, config) {
-    return context.plugins.runWaterfallSync("build:context", context.workDir, context, config);
+  getWebpackConfig(context) {
+    const config = {
+      context: this._getWebpackContext(context),
+      target: this._getWebpackTarget(context),
+      mode: this._getWebpackMode(context),
+      devtool: this._getWebpackDevTool(context),
+      optimization: this._getWebpackOptimization(context),
+      output: this._getWebpackOutput(context),
+      resolve: this._getWebpackResolve(context),
+      module: this._getWebpackModule(context),
+      entry: this._getWebpackEntry(context),
+      plugins: this._getWebpackPlugins(context),
+      recordsPath: this._recordsPath
+    };
+    context.plugins.runMergeSync("build:webpack_config", config, context);
+    return merge(config, this._varsCache.webpack.config);
   }
 
-  getTarget(context, config) {
-    const target = context.target === "client" ? "web" : "node";
-    return context.plugins.runWaterfallSync("build:target", target, context, config);
+  _getWebpackContext(context) {
+    return context.workDir;
   }
 
-  getMode(context, config) {
-    const mode = context.minify ? "production" : "development";
-    return context.plugins.runWaterfallSync("build:mode", mode, context, config);
+  _getWebpackTarget(context) {
+    return context.target === "client" ? "web" : "node";
   }
 
-  getDevTool(context, config) {
-    function _devtool() {
-      return context.sourceMap ? "source-map" : false;
-    }
-
-    return context.plugins.runWaterfallSync("build:devtool", _devtool(), context, config);
+  _getWebpackMode(context) {
+    return context.minify ? "production" : "development";
   }
 
-  getOptimization(context, config) {
-    const optimization = {
+  _getWebpackDevTool(context) {
+    return context.sourceMap ? "source-map" : false;
+  }
+
+  _getWebpackOptimization(context) {
+    return {
       minimize: context.minify,
       runtimeChunk: context.target === "client",
       splitChunks: (() => {
@@ -209,10 +241,36 @@ class GourmetWebpackBuildInstance {
         };
       })()
     };
-    return context.plugins.runWaterfallSync("build:optimization", optimization, context, config);
   }
 
-  getEntry(context, config) {
+  _getWebpackOutput(context) {
+    const vars = this._varsCache.webpack;
+    const name = (context.target === "server" || !context.hashNames) ? "[name].js" : "[chunkHash].js";
+    return {
+      filename: name,
+      chunkFilename: name,
+      path: npath.join(context.builder.outputDir, context.stage, context.target),
+      publicPath: context.staticPrefix,
+      hashFunction: vars.hashFunction || "sha1",
+      hashDigestLength: vars.hashLength || 24,
+      libraryTarget: context.target === "server" ? "commonjs2" : "var"
+    };
+  }
+
+  _getWebpackResolve() {
+    return {
+      extensions: this.config.defaultExtensions,
+      alias: this.config.alias
+    };
+  }
+
+  _getWebpackModule(context) {
+    const rules = this.getRules(context);
+    const module = {rules};
+    return this._runMergeSync("build:module", module, "module", context, config);
+  }
+
+  getEntry(context) {
     const pages = this._varsCache.pages;
 
     if (!isPlainObject(pages))
@@ -246,23 +304,6 @@ class GourmetWebpackBuildInstance {
     });
 
     return res;
-  }
-
-  getResolve(context, config) {
-    const alias = this.getAlias(context, config);
-    const resolve = {extensions: [".js", ".json"], alias};
-    return this._runMergeSync("build:resolve", resolve, "resolve", context, config);
-  }
-
-  getAlias(context, config) {
-    const alias = this._getAliasFromModuleLinks(context);
-    return this._runMergeSync("build:alias", alias, "alias", context, config);
-  }
-
-  getModule(context, config) {
-    const rules = this.getRules(context, config);
-    const module = {rules};
-    return this._runMergeSync("build:module", module, "module", context, config);
   }
 
   getRules(context, config) {
@@ -352,31 +393,6 @@ class GourmetWebpackBuildInstance {
         oneOf: def.select ? _resolve(def.select) : undefined
       };
     });
-  }
-
-  getOutput(context, config) {
-    const vars = this._varsCache.webpack;
-    const name = (context.target === "server" || !context.hashNames) ? "[name].js" : "[chunkHash].js";
-    const output = {
-      filename: name,
-      chunkFilename: name,
-      path: npath.join(context.builder.outputDir, context.stage, context.target),
-      publicPath: context.staticPrefix,
-      hashFunction: vars.hashFunction || "sha1",
-      hashDigestLength: vars.hashLength || 24,
-      libraryTarget: context.target === "server" ? "commonjs2" : "var"
-    };
-    return this._runMergeSync("build:output", output, "output", context, config);
-  }
-
-  getDefine(context, config) {
-    return this._runMergeSync("build:define", {
-      "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
-      DEBUG: JSON.stringify(context.debug),
-      SERVER: JSON.stringify(context.target === "server"),
-      CLIENT: JSON.stringify(context.target === "client"),
-      STAGE: JSON.stringify(context.stage)
-    }, "define", context, config);
   }
 
   getPlugins(context, config) {
@@ -513,26 +529,6 @@ class GourmetWebpackBuildInstance {
     context.builder.emitFileSync(outputPath, content);
 
     return value.slice(0, value.length - 1).concat(relativePath(outputPath, context.workDir));
-  }
-
-  _getAliasFromModuleLinks(context) {
-    const links = this._varsCache.builder.moduleLinks || {};
-    const alias = {};
-
-    Object.keys(links).forEach(name => {
-      const value = links[name];
-      if (MODULE_LINK_VALUES.indexOf(value) !== -1) {
-        if (!value ||
-            ((value === "server" || value === "client") && context.target !== value) ||
-            (value === "external" && context.target !== "server")) {
-          alias[name + "$"] = require.resolve("./empty.js");
-        }
-      } else {
-        throw error(INVALID_MODULE_LINK_VALUE, {name});
-      }
-    });
-
-    return alias;
   }
 }
 

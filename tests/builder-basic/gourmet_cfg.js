@@ -35,6 +35,17 @@ module.exports = context => ({
     // Only used when `target` is "server" and `sourceMap` is true.
     installSourceMapSupport: true,
 
+    // Additional default extensions to append
+    // Default: [".js", ".json"]
+    // With `@gourmet/preset-react`: [".js", ".json", ".jsx"]
+    defaultExtensions: [],
+
+    // Module alias definitions. Output `context.build.alias` is generated from
+    // `moduleLinks` and `alias`.
+    alias: {},
+
+    define: {},
+
     // Explicitly specifies modules in `node_modules` to be included in compilation.
     // In order to make a module to be compiled by default, implement a gourmet plugin
     // that taps into `build:source_modules` hook.
@@ -63,8 +74,6 @@ module.exports = context => ({
     pipelines: {},
     loaders: {},
     output: {},
-    alias: {},
-    define: {},
     plugins: [],
     config: {}
   },
