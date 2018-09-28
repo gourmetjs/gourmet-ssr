@@ -2,11 +2,9 @@
 
 class PluginHtmlRenderer {
   onRenderer({target}) {
-    return {
-      renderer: [
-        "@gourmet/html-renderer" + (target === "server" ? "/server" : "")
-      ]
-    };
+    return [
+      "@gourmet/html-renderer" + (target === "server" ? "/server" : "")
+    ];
   }
 }
 

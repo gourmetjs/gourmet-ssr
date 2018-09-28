@@ -48,7 +48,7 @@ module.exports = class WatchServer {
   }
 
   // {error, stats}
-  notify(server, client) {
+  notify(server, client, context) {
     const err = client.error || server.error;
 
     if (err) {
@@ -58,7 +58,7 @@ module.exports = class WatchServer {
     } else {
       const serverStats = server.stats.toJson(STATS);
       const clientStats = client.stats.toJson(STATS);
-      const err = clientStats.errors[0] || serverStats.errors[0];
+      const err = !context.argv.ignoreCompileErrors && (clientStats.errors[0] || serverStats.errors[0]);
       this._state = {
         error: err ? _formatError(err) : undefined,
         hash: `${serverStats.hash}-${server.assetsSeq}:${clientStats.hash}-${client.assetsSeq}`

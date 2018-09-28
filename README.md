@@ -42,6 +42,48 @@ module.exports = {
   pages: {
     main: "./src/main.js"
   }
-});
+};
 ```
 - Modules can also declare themselves as "source modules" by implementing Gourmet Plugin hook "build:source_modules".
+
+## Controlling modules' linkage using `builder.moduleLinks`
+
+- "react" will be bundled on client and loaded from `node_modules` on server.
+- "react-dom/server" will be ignored on client and loaded from `node_modules` on server.
+
+```js
+// gourmet_config.js
+module.exports = {
+  builder: {
+    moduleLinks: {
+      "react": "client:external",
+      "react-dom/server": "external"
+    }
+  },
+  pages: {
+    main: "./src/main.js"
+  }
+};
+```
+
+- "domready" will be bundled on client and ignored on server.
+- "classname" will be ignored on client and bundled on server.
+- "mkdirp" will be ignored on client and loaded from `node_modules` on server.
+- "none": will be ignored on both client and server.
+
+```js
+// gourmet_config.js
+module.exports = {
+  builder: {
+    moduleLinks: {
+      "domready": "client",
+      "classnames": "server",
+      "mkdirp": "external",
+      "none": false
+    }
+  },
+  pages: {
+    main: "./src/main"
+  }
+};
+```

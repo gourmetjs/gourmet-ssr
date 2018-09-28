@@ -35,16 +35,6 @@ const INVALID_PAGE_VALUE = {
   code: "INVALID_PAGE_VALUE"
 };
 
-const INVALID_USER_OBJECT = {
-  message: "'webpack.${sectionName}' must be a plain object",
-  code: "INVALID_USER_OBJECT"
-};
-
-const INVALID_USER_ARRAY = {
-  message: "'webpack.${sectionName}' must be an array",
-  code: "INVALID_USER_ARRAY"
-};
-
 const INVALID_WEBPACK_PLUGIN = {
   message: "Webpack plugin entry must be an object with '{name, [plugin]}' shape: ${item}",
   code: "INVALID_WEBPACK_PLUGIN"
@@ -66,7 +56,7 @@ const INVALID_MODULE_LINK_VALUE = {
   code: "INVALID_MODULE_LINK_VALUE"
 };
 
-const MODULE_LINK_VALUES = [false, null, "server", "client", "external"];
+const MODULE_LINK_VALUES = [false, null, "server", "client", "external", "client:external"];
 
 // Don't forget that an instance of this class is kept and reused in `--watch`
 // mode whenever a change occurs. Change of `gourmet_config.js` in a watch
@@ -145,7 +135,12 @@ class GourmetWebpackBuildInstance {
     this.config.moduleLinks = this.getModuleLinks(context);
     this.config.alias = this.getAlias(context);
     this.config.define = this.getDefine(context);
+    this.config.pipelines = this.getPipelines(context);
+    this.config.loaders = this.getLoaders(context);
+    this.config.plugins = this.getWebpackPlugins(context);
     this.config.webpack = this.getWebpackConfig(context);
+
+    return this.config.webpack;
   }
 
   getDefaultExtensions(context) {
@@ -161,20 +156,7 @@ class GourmetWebpackBuildInstance {
   }
 
   getAlias(context) {
-    const links = this.config.moduleLinks;
-    const alias = Object.keys(links).reduce((alias, name) => {
-      const value = links[name];
-      if (MODULE_LINK_VALUES.indexOf(value) !== -1) {
-        if (!value ||
-            ((value === "server" || value === "client") && context.target !== value) ||
-            (value === "external" && context.target !== "server")) {
-          alias[name + "$"] = require.resolve("./empty.js");
-        }
-      } else {
-        throw error(INVALID_MODULE_LINK_VALUE, {name});
-      }
-      return alias;
-    }, {});
+    const alias = {};
     context.plugins.runMergeSync("build:alias", alias, context);
     return merge(alias, this._varsCache.builder.alias);
   }
@@ -191,6 +173,24 @@ class GourmetWebpackBuildInstance {
     return merge(define, this._varsCache.builder.define);
   }
 
+  getPipelines(context) {
+    const pipelines = {};
+    context.plugins.runMergeSync("build:pipelines", pipelines, context);
+    return merge(pipelines, this._varsCache.webpack.pipelines);
+  }
+
+  getLoaders(context) {
+    const loaders = {};
+    context.plugins.runMergeSync("build:loaders", loaders, context);
+    return merge(loaders, this._varsCache.webpack.loaders);
+  }
+
+  getWebpackPlugins(context) {
+    const plugins = [];
+    context.plugins.runMergeSync("build:webpack_plugins", plugins, context);
+    return merge(plugins, this._varsCache.webpack.plugins);
+  }
+
   getWebpackConfig(context) {
     const config = {
       context: this._getWebpackContext(context),
@@ -201,12 +201,26 @@ class GourmetWebpackBuildInstance {
       output: this._getWebpackOutput(context),
       resolve: this._getWebpackResolve(context),
       module: this._getWebpackModule(context),
+      externals: this._getWebpackExternals(context),
       entry: this._getWebpackEntry(context),
       plugins: this._getWebpackPlugins(context),
       recordsPath: this._recordsPath
     };
     context.plugins.runMergeSync("build:webpack_config", config, context);
     return merge(config, this._varsCache.webpack.config);
+  }
+
+  printResult(context) {
+    const debug = this.console.enabled({level: "debug"});
+    const argv = context.argv;
+    const options = {
+      colors: this.console.useColors,
+      warnings: true,
+      errors: true,
+      errorDetails: debug || argv.errorDetails,
+      maxModules: (debug || argv.displayModules) ? Infinity : 15
+    };
+    this.console.log(this.webpack.stats.toString(options));
   }
 
   _getWebpackContext(context) {
@@ -239,7 +253,8 @@ class GourmetWebpackBuildInstance {
           maxInitialRequests: 20,
           maxAsyncRequests: 20
         };
-      })()
+      })(),
+      noEmitOnErrors: !context.argv.ignoreCompileErrors && !context.debug
     };
   }
 
@@ -257,56 +272,38 @@ class GourmetWebpackBuildInstance {
     };
   }
 
-  _getWebpackResolve() {
+  _getWebpackResolve(context) {
     return {
       extensions: this.config.defaultExtensions,
-      alias: this.config.alias
+      alias: this._getWebpackAlias(context)
     };
   }
 
-  _getWebpackModule(context) {
-    const rules = this.getRules(context);
-    const module = {rules};
-    return this._runMergeSync("build:module", module, "module", context, config);
-  }
-
-  getEntry(context) {
-    const pages = this._varsCache.pages;
-
-    if (!isPlainObject(pages))
-      throw error(INVALID_PAGES);
-
-    const names = Object.keys(pages);
-
-    if (!names.length)
-      throw error(INVALID_PAGES);
-
-    const res = {};
-
-    names.forEach(name => {
-      function _value(val) {
-        if (typeof val === "string")
-          return [val];
-        else if (Array.isArray(val))
-          return [].concat(val);
-        throw error(INVALID_PAGE_VALUE, {name});
+  _getWebpackAlias(context) {
+    const links = this.config.moduleLinks;
+    const alias = Object.keys(links).reduce((alias, name) => {
+      const value = links[name];
+      if (MODULE_LINK_VALUES.indexOf(value) !== -1) {
+        if (!value ||
+            ((value === "server" || value === "client") && context.target !== value) ||
+            (value === "external" && context.target !== "server")) {
+          alias[name + "$"] = require.resolve("./empty.js");
+        }
+      } else {
+        throw error(INVALID_MODULE_LINK_VALUE, {name});
       }
-
-      const def = pages[name];
-      let value = _value(isPlainObject(def) ? def[context.target] : def);
-
-      if (!isPlainObject(def))
-        value = this._generatePageInit(value, name, context, config);
-
-      value = context.plugins.runWaterfallSync("build:entry", value, context, name, def, config);
-
-      res[name] = (context.watch || value.length > 1) ? value : value[0];
-    });
-
-    return res;
+      return alias;
+    }, {});
+    return merge(alias, this.config.alias);
   }
 
-  getRules(context, config) {
+  _getWebpackModule(context) {
+    return {
+      rules: this._getWebpackRules(context)
+    };
+  }
+
+  _getWebpackRules(context) {
     function _resolve(select) {
       function _sort() {
         return Object.keys(select).map((key, idx) => {
@@ -365,13 +362,12 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    const pipelines = this._runMergeSync("build:pipelines", {}, "pipelines", context, config);
-    const defs = this._runMergeSync("build:loaders", {}, "loaders", context, config);
+    const pipelines = this.config.pipelines;
+    const loaders = this.config.loaders;
+    const keys = Object.keys(loaders);
 
-    const keys = Object.keys(defs);
-
-    const allExts = Object.keys(defs).reduce((exts, name) => {
-      const def = defs[name];
+    const allExts = Object.keys(loaders).reduce((exts, name) => {
+      const def = loaders[name];
       if (Array.isArray(def.extensions))
         return exts.concat(def.extensions);
       else
@@ -379,7 +375,7 @@ class GourmetWebpackBuildInstance {
     }, []);
 
     return keys.map(key => {
-      const def = defs[key];
+      const def = loaders[key];
       let test = [];
 
       if (Array.isArray(def.extensions))
@@ -395,9 +391,59 @@ class GourmetWebpackBuildInstance {
     });
   }
 
-  getPlugins(context, config) {
-    const define = this.getDefine(context, config);
-    let plugins = [];
+  _getWebpackEntry(context) {
+    const pages = this._varsCache.pages;
+
+    if (!isPlainObject(pages))
+      throw error(INVALID_PAGES);
+
+    const names = Object.keys(pages);
+
+    if (!names.length)
+      throw error(INVALID_PAGES);
+
+    const res = {};
+
+    names.forEach(name => {
+      function _value(val) {
+        if (typeof val === "string")
+          return [val];
+        else if (Array.isArray(val))
+          return [].concat(val);
+        throw error(INVALID_PAGE_VALUE, {name});
+      }
+
+      const def = pages[name];
+      let value = _value(isPlainObject(def) ? def[context.target] : def);
+
+      if (!isPlainObject(def))
+        value = this._generatePageInit(value, name, context);
+
+      value = context.plugins.runWaterfallSync("build:entry", value, context, name, def);
+
+      res[name] = (context.watch || value.length > 1) ? value : value[0];
+    });
+
+    return res;
+  }
+
+  _getWebpackExternals(context) {
+    if (context.target === "server") {
+      const links = this.config.moduleLinks;
+      return Object.keys(links).reduce((externals, name) => {
+        const value = links[name];
+        if (value === "external" || value === "client:external")
+          externals[name] = name;
+        return externals;
+      }, {});
+    } else {
+      return {};
+    }
+  }
+
+  _getWebpackPlugins() {
+    const define = this.config.define;
+    const plugins = [].concat(this.config.plugins);
 
     if (isPlainObject(define) && Object.keys(define).length > 1) {
       plugins.push({
@@ -406,8 +452,6 @@ class GourmetWebpackBuildInstance {
         options: define
       });
     }
-
-    plugins = this._runMergeSync("build:plugins", plugins, "plugins", context, config);
 
     return sortPlugins(plugins, {
       normalize(item) {
@@ -424,19 +468,6 @@ class GourmetWebpackBuildInstance {
         return plugin;
       }
     });
-  }
-
-  printResult(context) {
-    const debug = this.console.enabled({level: "debug"});
-    const argv = context.argv;
-    const options = {
-      colors: this.console.useColors,
-      warnings: true,
-      errors: true,
-      errorDetails: debug || argv.errorDetails,
-      maxModules: (debug || argv.displayModules) ? Infinity : 15
-    };
-    this.console.log(this.webpack.stats.toString(options));
   }
 
   _prepareRecords(context) {
@@ -465,39 +496,7 @@ class GourmetWebpackBuildInstance {
     return npath.join(dir, `webpack-records.${this.target}.json`);
   }
 
-  _runMergeSync(eventName, obj, sectionName, context, config, ...args) {
-    let wrapped = false;
-
-    if (Array.isArray(obj)) {
-      wrapped = true;
-      obj = {
-        [sectionName]: obj
-      };
-    }
-
-    context.plugins.runMergeSync(eventName, obj, context, config, ...args);
-
-    const userObj = (sectionName && this._varsCache.webpack && this._varsCache.webpack[sectionName]);
-
-    if (userObj) {
-      if (wrapped) {
-        if (!Array.isArray(userObj))
-          throw error(INVALID_USER_ARRAY, {sectionName});
-        merge(obj, {[sectionName]: userObj});
-      } else {
-        if (!isPlainObject(userObj))
-          throw error(INVALID_USER_OBJECT, {sectionName});
-        merge(obj, userObj);
-      }
-    }
-
-    if (wrapped)
-      return obj[sectionName];
-    else
-      return obj;
-  }
-
-  _generatePageInit(value, name, context, config) {
+  _generatePageInit(value, name, context) {
     function _renderer(list) {
       return [
         "[",
@@ -506,21 +505,21 @@ class GourmetWebpackBuildInstance {
       ].join("\n");
     }
 
-    const info = context.plugins.runMergeSync("build:page_renderer", {renderer: []}, context, config, value, name);
+    const renderer = context.plugins.runMergeSync("build:page_renderer", [], context, value, name);
 
-    if (!info.renderer || !Array.isArray(info.renderer) || !info.renderer.length)
+    if (!renderer || !Array.isArray(renderer) || !renderer.length)
       throw error(NO_RENDERER_CLASS);
 
     const infoDir = npath.join(context.builder.outputDir, context.stage, "info");
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
-    const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: config.resolve.extensions});
+    const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: this.config.defaultExtensions});
     const userModule = relativePath(absPath, infoDir);
     const iopts = this._varsCache.builder.initOptions;
     const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";
 
     const content = [
       '"use strict"',
-      `const Renderer = ${_renderer(info.renderer)};`,
+      `const Renderer = ${_renderer(renderer)};`,
       `const userObject = require("${userModule}");`,
       `const r = Renderer.create(userObject${options});`,
       context.target === "server" ? "module.exports = r.getRenderer.bind(r);" : "r.render();"

@@ -2,6 +2,6 @@
 
 module.exports = {
   pages: {
-    main: "./src/containers/HelloApp.jsx"
+    main: "./src/containers/HelloApp"
   }
 };

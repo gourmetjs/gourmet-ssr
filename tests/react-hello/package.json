@@ -14,7 +14,9 @@
     "@gourmet/client-lib": "^0.6.2",
     "@gourmet/server-args": "^0.4.0",
     "express": "^4.16.3",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
   },
   "devDependencies": {
     "@gourmet/console": "^0.2.0",
@@ -24,8 +26,6 @@
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
     "puppeteer": "^1.3.0",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
     "tape": "^4.9.0"
   }
 }

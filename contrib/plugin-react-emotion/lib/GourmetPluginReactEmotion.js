@@ -22,11 +22,9 @@ class PluginReactEmotion {
 
   onPageRenderer({target}) {
     if (target === "server") {
-      return {
-        renderer: [
-          "@gourmet/emotion-renderer/server"
-        ]
-      };
+      return [
+        "@gourmet/emotion-renderer/server"
+      ];
     }
   }
 }

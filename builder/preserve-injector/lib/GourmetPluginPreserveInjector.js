@@ -6,19 +6,17 @@ class GourmetPluginPreserveInjector {
   onPlugins(context) {
     // `@gourmet/renderer-sandbox` is used only for the server rendering.
     if (context.target === "server") {
-      return {
-        plugins: [{
-          name: "@gourmet/webpack-preserve-injector",
-          plugin: WebpackPluginPreserveInjector
-        }]
-      };
+      return [{
+        name: "@gourmet/webpack-preserve-injector",
+        plugin: WebpackPluginPreserveInjector
+      }];
     }
   }
 }
 
 GourmetPluginPreserveInjector.meta = {
   hooks: {
-    "build:plugins": GourmetPluginPreserveInjector.prototype.onPlugins
+    "build:webpack_plugins": GourmetPluginPreserveInjector.prototype.onPlugins
   }
 };
 

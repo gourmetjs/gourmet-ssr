@@ -380,7 +380,6 @@ class GourmetPluginWebpackBuilder {
     return context.vars.get("builder.stageTypes").then(checker => {
       if (checker === undefined) {
         checker = {
-          "local": ["local"],
           "production": ["prod", "production"]
         };
       }

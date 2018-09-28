@@ -10,7 +10,6 @@ module.exports = context => ({
   // Builder configuration
   builder: {
     stageTypes: {
-      "local": ["local"],
       "production": ["prod", "production"]
     },
     debug: context.getter(() => !context.stageIs("production")),
@@ -44,6 +43,12 @@ module.exports = context => ({
     // `moduleLinks` and `alias`.
     alias: {},
 
+    // These are defined by default
+    //  - process.env.NODE_ENV = context.debug ? "development" : "production"
+    //  - DEBUG: context.debug
+    //  - SERVER: context.target === "server"
+    //  - CLIENT: context.target === "client"
+    //  - STAGE: context.stage
     define: {},
 
     // Explicitly specifies modules in `node_modules` to be included in compilation.
@@ -68,14 +73,9 @@ module.exports = context => ({
     recordsDir: ".webpack",
     hashFunction: "sha1",
     hashLength: 24,
-
-    module: {},
-    resolve: {},
     pipelines: {},
     loaders: {},
-    output: {},
-    plugins: [],
-    config: {}
+    plugins: []
   },
 
   pages: {

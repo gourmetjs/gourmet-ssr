@@ -71,10 +71,10 @@ class GourmetWatchMiddleware {
 
   _start() {
     const cli = new GourmetCli();
-
-    const argv = Object.assign({}, this.gourmet.baseOptions);
+    const argv = cli.parseArgs(process.argv.slice(2));
     const options = GourmetWatchMiddleware.options(argv);
 
+    argv.workDir = this.gourmet.baseOptions.workDir;
     argv._ = ["build"];
 
     cli.init(argv).then(() => {
@@ -150,7 +150,7 @@ class GourmetWatchMiddleware {
             });
           }
         }).then(() => {
-          if (server.error || client.error || server.stats.hasErrors() || client.stats.hasErrors()) {
+          if (server.error || client.error) {
             con.log(con.colors.brightRed(">>>"));
             con.log(con.colors.brightRed(">>> Compilation error(s)"));
             con.log(con.colors.brightRed(">>>"));
@@ -165,7 +165,7 @@ class GourmetWatchMiddleware {
               con.log(con.colors.green(">>>"));
             }
           }
-          this._watchServer.notify(server, client);
+          this._watchServer.notify(server, client, context);
         });
       }, con);
     }

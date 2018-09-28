@@ -28,20 +28,16 @@ class PluginReact {
     };
   }
 
-  onResolve() {
-    // Appends `.jsx` to `resolve.extensions` so that `.jsx` can be omitted
+  onExtensions() {
+    // Add `.jsx` to default extensions so that `.jsx` can be omitted
     // in `require` or `import`.
-    return {
-      extensions: [".jsx"]
-    };
+    return [".jsx"];
   }
 
   onRenderer({target}) {
-    return {
-      renderer: [
-        "@gourmet/react-renderer" + (target === "server" ? "/server" : "")
-      ]
-    };
+    return [
+      "@gourmet/react-renderer" + (target === "server" ? "/server" : "")
+    ];
   }
 }
 
@@ -52,7 +48,7 @@ PluginReact.meta = {
   hooks: {
     "build:pipelines": PluginReact.prototype.onPipelines,
     "build:loaders": PluginReact.prototype.onLoaders,
-    "build:resolve": PluginReact.prototype.onResolve,
+    "build:default_extensions": PluginReact.prototype.onExtensions,
     "build:page_renderer": PluginReact.prototype.onRenderer
   }
 };

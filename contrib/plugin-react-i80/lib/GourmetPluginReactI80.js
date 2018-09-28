@@ -2,9 +2,7 @@
 
 class PluginReactI80 {
   onRenderer({target}) {
-    return {
-      renderer: [`@gourmet/react-i80/renderer.${target}.js`]
-    };
+    return [`@gourmet/react-i80/renderer.${target}.js`];
   }
 }
 

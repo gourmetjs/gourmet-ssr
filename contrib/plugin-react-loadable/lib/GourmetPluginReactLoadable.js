@@ -18,7 +18,7 @@ class PluginReactLoadable {
               libraryName: "@gourmet/react-loadable",
               modules: target === "server",
               resolveModule(moduleName, refPath) {
-                const extensions = context.builds[target].webpack.config.resolve.extensions;
+                const extensions = context.builds[target].config.defaultExtensions;
                 let path;
 
                 try {
