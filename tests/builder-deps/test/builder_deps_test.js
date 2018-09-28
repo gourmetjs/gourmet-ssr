@@ -45,9 +45,11 @@ test("run puppeteer", pt(async t => {
     "url": "object (external)",
     "fs": "object (external)",
     "domready": "empty (bundle)",
-    "classnames": "function (bundle)",
+    "rimraf": "function (bundle)",
+    "classnames": "function (external)",
     "mkdirp": "function (external)",
-    "none": "empty (bundle)"
+    "none": "empty (bundle)",
+    "./data.json": "object (bundle)"
   }, "server output");
 
   t.deepEqual(JSON.parse(info.client), {
@@ -62,9 +64,11 @@ test("run puppeteer", pt(async t => {
     "url": "object (bundle)",
     "fs": "error",
     "domready": "function (bundle)",
-    "classnames": "empty (bundle)",
+    "rimraf": "empty (bundle)",
+    "classnames": "function (bundle)",
     "mkdirp": "empty (bundle)",
-    "none": "empty (bundle)"
+    "none": "empty (bundle)",
+    "./data.json": "object (bundle)"
   }, "client output");
 
   await browser.close();

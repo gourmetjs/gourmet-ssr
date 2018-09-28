@@ -10,7 +10,8 @@ module.exports = {
 
     moduleLinks: {
       "domready": "client",
-      "classnames": "server",
+      "rimraf": "server",
+      "classnames": "client:external",
       "mkdirp": "external",
       "none": false
     }

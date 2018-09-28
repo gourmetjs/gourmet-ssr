@@ -365,14 +365,13 @@ class GourmetWebpackBuildInstance {
     const pipelines = this.config.pipelines;
     const loaders = this.config.loaders;
     const keys = Object.keys(loaders);
+    const allExts = [].concat(this.config.defaultExtensions);
 
-    const allExts = Object.keys(loaders).reduce((exts, name) => {
+    Object.keys(loaders).forEach(name => {
       const def = loaders[name];
       if (Array.isArray(def.extensions))
-        return exts.concat(def.extensions);
-      else
-        return exts;
-    }, []);
+        return allExts.push(...def.extensions);
+    });
 
     return keys.map(key => {
       const def = loaders[key];

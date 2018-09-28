@@ -62,9 +62,11 @@ module.exports = gmctx => {
     url: _module(() => require("url"), () => require.resolve("url")),
     fs: _module(() => require("fs"), () => require.resolve("fs")),
     domready: _module(() => require("domready"), () => require.resolve("domready")),
+    rimraf: _module(() => require("rimraf"), () => require.resolve("rimraf")),
     classnames: _module(() => require("classnames"), () => require.resolve("classnames")),
     mkdirp: _module(() => require("mkdirp"), () => require.resolve("mkdirp")),
-    none: _module(() => require("none"), () => require.resolve("none"))
+    none: _module(() => require("none"), () => require.resolve("none")),
+    "./data.json": _module(() => require("./data.json"), () => require.resolve("./data.json"))
   }, null, 2);
 
   if (CLIENT) {
