@@ -5,7 +5,7 @@
   "scripts": {
     "build": "gourmet build",
     "watch": "node lib/server.js --watch",
-    "test": "yarn test:local && yarn test:prod",
+    "test": "npm run test:local && npm run test:prod",
     "test:local": "gourmet build --verbose 1 --ignore-compile-errors && tape test/*_test.js",
     "test:prod": "gourmet build --verbose 1 --stage prod --ignore-compile-errors && tape test/*_test.js --stage prod"
   },

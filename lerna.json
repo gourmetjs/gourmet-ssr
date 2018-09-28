@@ -1,6 +1,6 @@
 {
-  "lerna": "2.9.0",
-  "npmClient": "yarn",
+  "lerna": "3.4.0",
+  "npmClient": "npm",
   "packages": [
     "utils/*",
     "cli/*",

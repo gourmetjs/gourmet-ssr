@@ -6,7 +6,7 @@
     "watch": "node lib/server.js --watch",
     "start": "node lib/server.js",
     "build": "gourmet build",
-    "test": "yarn test:local && yarn test:prod",
+    "test": "npm run test:local && npm run test:prod",
     "test:local": "gourmet build --verbose 1 && tape test/*_test.js",
     "test:prod": "gourmet build --verbose 1 --stage prod && tape test/*_test.js --stage prod"
   },

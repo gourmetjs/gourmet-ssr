@@ -4,19 +4,17 @@
     "lrun": "lerna run --stream",
     "updated": "lerna updated",
     "lpub": "lerna publish",
-    "deps:win": "lerna exec --bail=false --concurrency=1 -- \"echo %LERNA_PACKAGE_NAME% && dependency-check .\"",
-    "clean": "lerna clean --stream",
-    "bootstrap": "lerna bootstrap --stream",
+    "clean": "lerna clean",
+    "bootstrap": "lerna bootstrap",
     "test": "lerna run test --concurrency=1 --stream",
     "lint": "eslint . --ext .js,.jsx"
   },
   "devDependencies": {
-    "dependency-check": "^3.1.0",
     "eslint": "^5.5.0",
     "eslint-config-gourmet": "^2.6.0",
     "babel-eslint": "^9.0.0",
     "eslint-plugin-babel": "^5.2.0",
     "eslint-plugin-react": "^7.11.1",
-    "lerna": "^2.9.0"
+    "lerna": "^3.4.0"
   }
 }
