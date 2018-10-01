@@ -68,14 +68,15 @@ function renderJsonError(err, req, res, obj, options) {
 
 function handleRequestError(err, req, res, options) {
   const _handle = () => {
+    const obj = serializeRequestError(req, err, options);
+
     if (res.headersSent) {
-      con.error(`${options.desc}\nResponse headers already sent, destroying socket.`);
+      con.error(`${options.desc} (response headers already sent, destroying socket)\n${inspectError(obj, 1)}`);
       if (res.socket)
         res.socket.destroy();
       return;
     }
 
-    const obj = serializeRequestError(req, err, options);
     const type = options.detect(req);
     const render = (options.renderers && options.renderers[type]) || _defaultRenderers[type];
     const result = render(err, req, res, obj, options);

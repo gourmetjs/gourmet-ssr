@@ -1,7 +1,7 @@
 "use strict";
 
 class PluginReact {
-  onPipelines() {
+  onPipelines(context) {
     return {
       js: [{
         loader: "#babel-loader",
@@ -14,7 +14,7 @@ class PluginReact {
           plugins: [
             "babel-plugin-transform-class-properties",
             "babel-plugin-transform-object-rest-spread"
-          ]
+          ].concat(context.debug ? ["babel-plugin-transform-react-jsx-source"] : [])
         }
       }]
     };

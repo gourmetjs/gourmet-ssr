@@ -2,6 +2,7 @@
   "name": "@gourmet/emotion-renderer",
   "version": "0.3.0",
   "dependencies": {
-    "emotion-server": "^9.2.6"
+    "emotion-server": "^9.2.6",
+    "pump": "^3.0.0"
   }
 }

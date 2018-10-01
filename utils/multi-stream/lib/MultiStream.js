@@ -105,17 +105,13 @@ module.exports = class MultiStream extends stream.Readable {
     stream.on("readable", onReadable);
     stream.once("end", onEnd);
     stream.once("close", onClose);
-
   }
 
   _attachErrorListener(stream) {
-    if (!stream)
-      return;
-
-    const onError = err => {
-      this.destroy(err);
-    };
-
-    stream.once("error", onError);
+    if (stream) {
+      stream.once("error", err => {
+        this.destroy(err);
+      });
+    }
   }
 };

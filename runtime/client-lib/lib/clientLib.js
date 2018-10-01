@@ -46,10 +46,9 @@ function clientLib(baseOptions) {
       if (err)
         return callback(err);
 
-      if (!item.render || siloed)
-        item.render = _getRenderer(item);
-
       promiseProtect(() => {
+        if (!item.render || siloed)
+          item.render = _getRenderer(item);
         return item.render(context);
       }).then(result => {
         callback(null, result);

@@ -32,6 +32,7 @@ class HtmlServerRenderer extends BaseRenderer {
     this._pageTemplate = resolveTemplate(this.options.pageTemplate, pageTemplate);
   }
 
+  // This is a synchronous function
   renderToMedium(gmctx, content) {
     return content;
   }
@@ -47,8 +48,7 @@ class HtmlServerRenderer extends BaseRenderer {
     return context => {
       const gmctx = this.createContext(context, opts);
       return this.invokeUserRenderer(gmctx).then(content => {
-        return this.renderToMedium(gmctx, content);
-      }).then(bodyMain => {
+        const bodyMain = this.renderToMedium(gmctx, content);
         return this.renderHtml(gmctx, bodyMain);
       });
     };
