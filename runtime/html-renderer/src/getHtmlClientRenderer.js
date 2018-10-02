@@ -69,7 +69,7 @@ class HtmlClientRenderer extends BaseRenderer {
         "font-size:14px"
       ].join(";");
       const div = document.createElement("div");
-      div.innerHTML = `<pre style="${style}">${errmsg}</pre>`;
+      div.innerHTML = `<pre id="render_error" style="${style}">${errmsg}</pre>`;
       document.body.appendChild(div);
     }
   }

@@ -17,13 +17,11 @@ const _defaultRenderers = {
 };
 
 function renderHtmlError(err, req, res, obj, options) {
-  if (obj.statusCode === undefined)
-    obj.statusCode = 500;
-
+  const statusCode = obj.statusCode || 500;
   let message;
 
   if (options.hideMessage) {
-    message = HttpStatus[obj.statusCode];
+    message = HttpStatus[statusCode];
     if (message === undefined)
       message = "Unknown error";
   } else {
@@ -33,12 +31,12 @@ function renderHtmlError(err, req, res, obj, options) {
   const content = options.template({
     head: options.head.join("\n"),
     message: escapeHtml(stripAnsi(message)),
-    statusCode: obj.statusCode,
+    statusCode,
     detail: options.debug ? escapeHtml(stripAnsi(inspectError(obj))) : null
   });
 
   return {
-    statusCode: obj.statusCode,
+    statusCode,
     headers: {
       "content-type": "text/html; charset=utf-8"
     },
@@ -47,18 +45,19 @@ function renderHtmlError(err, req, res, obj, options) {
 }
 
 function renderJsonError(err, req, res, obj, options) {
+  const statusCode = obj.statusCode || 500;
   const content = JSON.stringify({
     error: {
       name: obj.name,
       message: stripAnsi(obj.message),
       code: obj.code,
-      statusCode: obj.statusCode,
+      statusCode,
       detail: options.debug ? obj : null
     }
   });
 
   return {
-    statusCode: obj.statusCode,
+    statusCode,
     headers: {
       "content-type": "application/json"
     },
