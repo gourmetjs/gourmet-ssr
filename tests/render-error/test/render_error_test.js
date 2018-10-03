@@ -18,7 +18,7 @@ test("start server", t => {
   }, {
     console: getConsole({
       name: "gourmet:net",
-      minLevel: "none"
+      minLevel: 6
     })
   });
   app.server.on("listening", () => {
