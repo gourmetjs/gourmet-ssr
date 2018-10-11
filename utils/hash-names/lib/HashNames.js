@@ -1,7 +1,8 @@
 "use strict";
 
+const util = require("util");
 const crypto = require("crypto");
-const baseX = require("base-x");
+const basex = require("base-x");
 const error = require("@gourmet/error");
 
 // This table is extracted from `https://github.com/webpack/loader-utils`
@@ -16,38 +17,49 @@ const baseChars = {
   "base64": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
 };
 
-const INVALID_HASH_KEY = {
-  message: "Hash key '${hash}' conflicts with existing keys in case-insensitive setup",
-  code: "INVALID_HASH_KEY"
+const COLLISION_ERROR = {
+  message: "Truncated hash '${name}' from '${data}' collided with existing one.\n${suggestionMesage}",
+  code: "COLLISION_ERROR"
 };
 
 class HashNames {
-  constructor({
-    encoding="base62",
-    hashType="sha1",
-    minLength=4,
-    avoidCaseConflict=true
-  }={}) {
-    if (baseChars[encoding]) {
-      this.encoder = baseX(baseChars[encoding]).encode;
-      if (parseInt(encoding.substr(4), 10) >= 49)
-        this.converter = function(name) {return name.toLowerCase();};
+  constructor(options) {
+    this.options = options = Object.assign({
+      hashType: "sha1",
+      encoding: "base62",
+      digestLength: 27,
+      errorOnCollision: false,
+      suggestionMesage: null,
+      avoidCaseCollision: false
+    }, options);
+
+    if (baseChars[options.encoding]) {
+      this.encode = basex(baseChars[options.encoding]).encode;
+      if (options.avoidCaseCollision && parseInt(options.encoding.substr(4), 10) >= 49)
+        this.lower = name => name.toLowerCase();
       else
-        this.converter = function(name) {return name;};
+        this.lower = name => name;
     } else {
-      this.encoder = function(buf) {return buf.toString(encoding);};
-      this.converter = function(name) {return name;};
+      this.encode = buf => buf.toString(options.encoding);
+      this.lower = name => name;
     }
-    this.hashType = hashType;
-    this.minLength = minLength;
-    this.avoidCaseConflict = avoidCaseConflict;
+
+    // shortened names indexed by full hash
     this._names = {};
   }
 
-  getEntry(content, {addNew=true}={}) {
+  // Generates a base62 hash digest from the data, truncates it to `digestLength`
+  // and checks the history to see if it collides with any existing one.
+  // If it does, throws an error if `errorOnCollision` is true.
+  // If `errorOnCollision` is false, this function silently increases the length
+  // of truncation until it doesn't collide. If `avoidCaseCollision` is true,
+  // it means the output file system is case insensitive and collision check
+  // should take this into account. In theory, the final name can be longer
+  // than the original full hash.
+  getEntry(data) {
     const _find = name => {
       const keys = Object.keys(names);
-      const namei = this.converter(name);
+      const namei = this.lower(name);
       for (let idx = 0; idx < keys.length; idx++) {
         const key = keys[idx];
         if (names[key].namei === namei)
@@ -56,71 +68,55 @@ class HashNames {
       return false;
     };
 
-    const hash = this.getHash(content);
+    const options = this.options;
+    const hash = this.getHash(data);
     const names = this._names;
+    let name, idx;
 
     if (names[hash])
       return {hash, name: names[hash].name};
 
-    if (!addNew)
-      return undefined;
-
-    let name;
-    let idx;
-
-    for (idx = this.minLength; idx <= hash.length; idx++) {
+    for (idx = options.digestLength; idx <= hash.length; idx++) {
       name = hash.substr(0, idx);
-      if (!_find(name))
+      if (_find(name)) {
+        if (options.errorOnCollision) {
+          if (typeof data === "string" && data.length > 200)
+            data = data.substring(0, 200) + "...";
+          data = util.inspect(data);
+          throw error(COLLISION_ERROR, {name, data, suggestionMesage: options.suggestionMesage || ""});
+        }
+      } else {
         break;
+      }
     }
 
     if (idx > hash.length) {
-      for (let idx = 0; idx < 65536; idx++) {
-        name = hash + idx.toString(16);
-        if (!_find(name))
-          break;
+      if (options.avoidCaseCollision) {
+        for (idx = 0; idx < 65536; idx++) {
+          name = hash + idx.toString(16);
+          if (!_find(name))
+            break;
+        }
+      } else {
+        idx = 65536;
       }
       if (idx >= 65536)
-        throw error(INVALID_HASH_KEY, {hash});
+        throw Error("Critical error - a full hash collision detected: " + hash);
     }
 
-    names[hash] = {
-      name,
-      namei: this.converter(name)
-    };
+    names[hash] = {name, namei: this.lower(name)};
 
-    return {hash, name};
+    return {hash, name: names[hash].name};
   }
 
-  // Gets a short ID for the content
-  getName(content, options) {
-    return this.getEntry(content, options).name;
+  get(data) {
+    return this.getEntry(data).name;
   }
 
-  // Gets a full hash of the content
-  getHash(content) {
-    const hash = crypto.createHash(this.hashType);
-    hash.update(content);
-    return this.encoder(hash.digest());
-  }
-
-  serialize() {
-    const names = this._names;
-    return Object.keys(names).reduce((obj, hash) => {
-      obj[hash] = names[hash].name;
-      return obj;
-    }, {});
-  }
-
-  deserialize(obj) {
-    this._names = Object.keys(obj).reduce((names, hash) => {
-      const name = obj[hash];
-      names[hash] = {
-        name,
-        namei: this.converter(name)
-      };
-      return names;
-    }, {});
+  getHash(data) {
+    const hash = crypto.createHash(this.options.hashType);
+    hash.update(data);
+    return this.encode(hash.digest());
   }
 }
 

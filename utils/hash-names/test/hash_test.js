@@ -3,8 +3,18 @@
 const test = require("tape");
 const HashNames = require("..");
 
-test("HashNames basics", t => {
-  const hashNames = new HashNames();
+function _serialize(hashNames) {
+  const keys = Object.keys(hashNames._names);
+  return keys.reduce((obj, key) => {
+    obj[key] = hashNames._names[key].name;
+    return obj;
+  }, {});
+}
+
+test("basics", t => {
+  const hashNames = new HashNames({
+    digestLength: 4
+  });
 
   let info = hashNames.getEntry("Hello, world!");
 
@@ -13,10 +23,10 @@ test("HashNames basics", t => {
     name: "l9hR"
   });
 
-  // Add an entry to make a conflict
-  hashNames._names["1HYPQr2xj1nmnkQXBCJXUdQoy5l"] = {
-    name: "1HYP",
-    namei: "1hyp"
+  // Add an entry to make a collision
+  hashNames._names["1HyPaaaaaaaaaaaaaaaaaaaaaaa"] = {
+    name: "1HyP",
+    namei: "1HyP"
   };
 
   info = hashNames.getEntry("foo");
@@ -26,28 +36,34 @@ test("HashNames basics", t => {
     name: "1HyPQ"  // 5 chars due to a conflict
   });
 
-  info = hashNames.getEntry("Hello, world!", {addNew: false});
+  info = hashNames.getEntry("Hello, world!");
 
   t.deepEqual(info, {
     hash: "l9hRRUOhKqFuQZcPLvN7M8r5mlz",
     name: "l9hR"
   });
 
-  t.deepEqual(hashNames.serialize(), {
+  t.deepEqual(_serialize(hashNames), {
     "l9hRRUOhKqFuQZcPLvN7M8r5mlz": "l9hR",
-    "1HYPQr2xj1nmnkQXBCJXUdQoy5l": "1HYP",
+    "1HyPaaaaaaaaaaaaaaaaaaaaaaa": "1HyP",
     "1HyPQr2xj1nmnkQXBCJXUdQoy5l": "1HyPQ"
   });
 
   t.end();
 });
 
-test("HashNames long conflicts", t => {
-  const hashNames = new HashNames({hashType: "md5"});
+test("overflow collisions due to case insensitivity", t => {
+  const LEN = 24;
 
-  const hash = "1H7lwuiRG1ZBDSTfkgKopq";
+  const hashNames = new HashNames({
+    digestLength: LEN,
+    avoidCaseCollision: true
+  });
 
-  for (let idx = 4; idx <= hash.length; idx++) {
+  // Real digest of "bar" is `e63x7qMRBPz6VSwltzKdIDB3ogR`
+  const hash = "E63X7QMRBPZ6VSWLTZKDIDB3OGR";
+
+  for (let idx = LEN; idx <= hash.length; idx++) {
     const name = hash.substr(0, idx);
     const key = name + "-".repeat(hash.length - idx);
     hashNames._names[key] = {
@@ -65,34 +81,19 @@ test("HashNames long conflicts", t => {
   }
 
   t.deepEqual(hashNames.getEntry("bar"), {
-    hash: "1H7lwuiRG1ZBDSTfkgKopQ",
-    name: "1H7lwuiRG1ZBDSTfkgKopQ3"
+    hash: "e63x7qMRBPz6VSwltzKdIDB3ogR",
+    name: "e63x7qMRBPz6VSwltzKdIDB3ogR3"
   });
 
-  t.deepEqual(hashNames.serialize(), {
-    "1H7l------------------": "1H7l",
-    "1H7lw-----------------": "1H7lw",
-    "1H7lwu----------------": "1H7lwu",
-    "1H7lwui---------------": "1H7lwui",
-    "1H7lwuiR--------------": "1H7lwuiR",
-    "1H7lwuiRG-------------": "1H7lwuiRG",
-    "1H7lwuiRG1------------": "1H7lwuiRG1",
-    "1H7lwuiRG1Z-----------": "1H7lwuiRG1Z",
-    "1H7lwuiRG1ZB----------": "1H7lwuiRG1ZB",
-    "1H7lwuiRG1ZBD---------": "1H7lwuiRG1ZBD",
-    "1H7lwuiRG1ZBDS--------": "1H7lwuiRG1ZBDS",
-    "1H7lwuiRG1ZBDST-------": "1H7lwuiRG1ZBDST",
-    "1H7lwuiRG1ZBDSTf------": "1H7lwuiRG1ZBDSTf",
-    "1H7lwuiRG1ZBDSTfk-----": "1H7lwuiRG1ZBDSTfk",
-    "1H7lwuiRG1ZBDSTfkg----": "1H7lwuiRG1ZBDSTfkg",
-    "1H7lwuiRG1ZBDSTfkgK---": "1H7lwuiRG1ZBDSTfkgK",
-    "1H7lwuiRG1ZBDSTfkgKo--": "1H7lwuiRG1ZBDSTfkgKo",
-    "1H7lwuiRG1ZBDSTfkgKop-": "1H7lwuiRG1ZBDSTfkgKop",
-    "1H7lwuiRG1ZBDSTfkgKopq": "1H7lwuiRG1ZBDSTfkgKopq",
-    "1H7lwuiRG1ZBDSTfkgKopq0": "1H7lwuiRG1ZBDSTfkgKopq0",
-    "1H7lwuiRG1ZBDSTfkgKopq1": "1H7lwuiRG1ZBDSTfkgKopq1",
-    "1H7lwuiRG1ZBDSTfkgKopq2": "1H7lwuiRG1ZBDSTfkgKopq2",
-    "1H7lwuiRG1ZBDSTfkgKopQ": "1H7lwuiRG1ZBDSTfkgKopQ3"
+  t.deepEqual(_serialize(hashNames), {
+    "E63X7QMRBPZ6VSWLTZKDIDB3---": "E63X7QMRBPZ6VSWLTZKDIDB3",
+    "E63X7QMRBPZ6VSWLTZKDIDB3O--": "E63X7QMRBPZ6VSWLTZKDIDB3O",
+    "E63X7QMRBPZ6VSWLTZKDIDB3OG-": "E63X7QMRBPZ6VSWLTZKDIDB3OG",
+    "E63X7QMRBPZ6VSWLTZKDIDB3OGR": "E63X7QMRBPZ6VSWLTZKDIDB3OGR",
+    "E63X7QMRBPZ6VSWLTZKDIDB3OGR0": "E63X7QMRBPZ6VSWLTZKDIDB3OGR0",
+    "E63X7QMRBPZ6VSWLTZKDIDB3OGR1": "E63X7QMRBPZ6VSWLTZKDIDB3OGR1",
+    "E63X7QMRBPZ6VSWLTZKDIDB3OGR2": "E63X7QMRBPZ6VSWLTZKDIDB3OGR2",
+    "e63x7qMRBPz6VSwltzKdIDB3ogR": "e63x7qMRBPz6VSwltzKdIDB3ogR3"
   });
 
   t.end();

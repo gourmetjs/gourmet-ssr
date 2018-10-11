@@ -1,6 +1,7 @@
 "use strict";
 
 const npath = require("path");
+const ppath = npath.posix;
 const fs = require("fs");
 const util = require("util");
 const crypto = require("crypto");
@@ -11,6 +12,7 @@ const promiseEach = require("@gourmet/promise-each");
 const promiseProtect = require("@gourmet/promise-protect");
 const moduleDir = require("@gourmet/module-dir");
 const relativePath = require("@gourmet/relative-path");
+const HashNames = require("@gourmet/hash-names");
 const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
@@ -130,26 +132,17 @@ class GourmetPluginWebpackBuilder {
   }
 
   getAssetFilenameGetter(context, {ext, isGlobal}={}) {
-    const _hash = data => {
-      const hash = crypto.createHash(this._hashFunction);
-      hash.update(data);
-      return hash.digest("hex").substr(0, this._hashLength);
-    };
-
     return ({content, path}) => {
       const relPath = relativePath(path, context.workDir);
-      const extname = npath.extname(path);
-      let name;
+      const dirname = ppath.dirname(relPath);
+      const extname = ppath.extname(relPath);
+      const basename = ppath.basename(relPath, extname);
+      const hash = this.pathHash.get(dirname);
+      let name = hash + "." + basename;
 
-      if (context.hashNames) {
-        name = _hash(content);
-      } else {
-        if (context.minify) {
-          name = _hash(relPath);
-        } else {
-          name = _hash(npath.posix.dirname(relPath));
-          name += "." + npath.basename(path, extname);
-        }
+      if (context.contentHash) {
+        const digest = crypto.createHash("sha1").update(content).digest("hex");
+        name += "." + digest;
       }
 
       name += (ext || extname);
@@ -294,7 +287,8 @@ class GourmetPluginWebpackBuilder {
     }
 
     return this._collectManifestConfig(context).then(config => {
-      ["stage", "debug", "minify", "sourceMap", "hashNames", "staticPrefix"].forEach(name => {
+      ["stage", "debug", "minify", "sourceMap", "staticPrefix",
+        "granularity", "contentHash"].forEach(name => {
         obj[name] = context[name];
       });
 
@@ -401,7 +395,7 @@ class GourmetPluginWebpackBuilder {
   }
 
   _prepareContextVars(context) {
-    return promiseEach(["debug", "minify", "sourceMap", "hashNames", "staticPrefix"], name => {
+    return promiseEach(["debug", "minify", "sourceMap", "staticPrefix", "granularity", "contentHash"], name => {
       return context.vars.get("builder." + name).then(userValue => {
         let value;
 
@@ -420,11 +414,14 @@ class GourmetPluginWebpackBuilder {
             case "sourceMap":
               value = !context.stageIs("production");
               break;
-            case "hashNames":
-              value = false;
-              break;
             case "staticPrefix":
               value = "/s/";
+              break;
+            case "granularity":
+              value = context.stageIs("production") ? 2 : 1;
+              break;
+            case "contentHash":
+              value = false;
               break;
             default:
               throw Error(`Internal error: add '${name}' to the switch/case`);
@@ -437,12 +434,34 @@ class GourmetPluginWebpackBuilder {
   }
 
   _prepareHashConfig(context) {
-    return context.vars.getMulti(
-      ["webpack.hashFunction", "sha1"],
-      ["webpack.hashLength", 24]
-    ).then(([func, len]) => {
-      this._hashFunction = func;
-      this._hashLength = len;
+    function _flipCase(s) {
+      const buf = [];
+      for (let idx = 0; idx < s.length; idx++) {
+        let code = s.charCodeAt(idx);
+        if (code >= 65 && code <= 90)
+          code += 32;
+        else if (code >= 97 && code <= 122)
+          code -= 32;
+        buf.push(code);
+      }
+      return String.fromCharCode(...buf);
+    }
+
+    return context.vars.get("builder.pathHashLength", 10).then(pathHashLength => {
+      mkdirp.sync(this.outputDir);
+
+      const flipped = _flipCase(this.outputDir);
+      const insensitive = fs.existsSync(flipped);
+
+      if (insensitive && context.stageIs("production"))
+        context.console.warn("Warning: Build output will be saved in case insensitive filesystem. We recommend a case sensitive filesystem for production build.");
+
+      this.pathHash = new HashNames({
+        errorOnCollision: true,
+        suggestionMessage: "Please rename the collided filename or increase the value of `builder.pathHashLength`.",
+        digestLength: pathHashLength,
+        avoidCaseCollision: insensitive
+      });
     });
   }
 
@@ -476,11 +495,14 @@ GourmetPluginWebpackBuilder.meta = {
         sourceMap: {
           help: "Generate source map ('--no-source-map' to disable)"
         },
-        hashNames: {
-          help: "Use content hash based asset names ('--no-hash-names' to disable)"
-        },
         staticPrefix: {
           help: "Static prefix URL (default: '/s/')"
+        },
+        granularity: {
+          help: "Set bundling granularity (0: off, 1: coarse - HTTP/1, 2: fine - HTTP/2"
+        },
+        contentHash: {
+          help: "Generate content hash based asset names to support long-term caching"
         },
         colors: {
           help: "Use colors in console output (default: auto)"

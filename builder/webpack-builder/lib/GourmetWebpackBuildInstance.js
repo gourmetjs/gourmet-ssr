@@ -58,6 +58,8 @@ const INVALID_MODULE_LINK_VALUE = {
 
 const MODULE_LINK_VALUES = [false, null, "server", "client", "external", "client:external"];
 
+const NODE_MODULES = "/node_modules/";
+
 // Don't forget that an instance of this class is kept and reused in `--watch`
 // mode whenever a change occurs. Change of `gourmet_config.js` in a watch
 // session doesn't need to be applied.
@@ -240,34 +242,56 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackOptimization(context) {
+    const granularity = context.target === "client" ? context.granularity : 0;
+
     return {
       minimize: context.minify,
-      runtimeChunk: context.target === "client",
+      runtimeChunk: granularity === 2 ? "single" : false,
       splitChunks: (() => {
-        if (context.target === "server" || !context.minify)
+        if (!granularity)
           return false;
 
-        return {
+        let minBundleSize = this._varsCache.builder.minBundleSize;
+
+        if (minBundleSize === undefined)
+          minBundleSize = granularity === 2 ? 4000 : 30000;
+
+        const obj = {
           chunks: "all",
-          minSize: 10000,
-          maxInitialRequests: 20,
-          maxAsyncRequests: 20
+          minSize: minBundleSize,
+          maxInitialRequests: 10000,
+          maxAsyncRequests: 10000
         };
+
+        if (granularity === 1)
+          return obj;
+
+        return Object.assign(obj, {
+          cacheGroups: {
+            vendors: false,
+            newVendors: {
+              minChunks: 1,
+              priority: -10,
+              test: this._getVendorTester(context),
+              name: this._getVendorNamer(context)
+            }
+          }
+        });
       })(),
       noEmitOnErrors: !context.argv.ignoreCompileErrors && !context.debug
     };
   }
 
   _getWebpackOutput(context) {
-    const vars = this._varsCache.webpack;
-    const name = (context.target === "server" || !context.hashNames) ? "[name].js" : "[chunkHash].js";
+    const name = (context.target === "server" || !context.contentHash) ? "[name].js" : "[name].[contentHash].js";
     return {
       filename: name,
       chunkFilename: name,
       path: npath.join(context.builder.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix,
-      hashFunction: vars.hashFunction || "sha1",
-      hashDigestLength: vars.hashLength || 24,
+      hashFunction: "sha1",
+      hashDigest: "hex",
+      hashDigestLength: 40,
       libraryTarget: context.target === "server" ? "commonjs2" : "var"
     };
   }
@@ -527,6 +551,48 @@ class GourmetWebpackBuildInstance {
     context.builder.emitFileSync(outputPath, content);
 
     return value.slice(0, value.length - 1).concat(relativePath(outputPath, context.workDir));
+  }
+
+  _getVendorTester(context) {
+    return module => {
+      let path = module.nameForCondition && module.nameForCondition();
+      if (path) {
+        path = relativePath(path, context.workDir);
+        return path.lastIndexOf(NODE_MODULES) !== -1;
+      }
+      return false;
+    };
+  }
+
+  _getVendorNamer(context) {
+    return module => {
+      let path = module.nameForCondition && module.nameForCondition();
+      if (path) {
+        path = relativePath(path, context.workDir);
+        const idx = path.lastIndexOf(NODE_MODULES);
+        if (idx !== -1) {
+          const pos = idx + NODE_MODULES.length;
+          const mod = this._getModuleName(path, pos);
+          const prefix = path.substring(0, pos - 1);
+          return context.builder.pathHash.get(prefix) + "." + mod;
+        }
+      }
+      return "vendors";
+    };
+  }
+
+  _getModuleName(path, pos) {
+    let idx = path.indexOf("/", pos);
+    if (idx !== -1) {
+      if (path[pos] === "@") {
+        idx = path.indexOf("/", idx + 1);
+        if (idx !== -1)
+          return path.substring(pos + 1, idx).replace("/", ".");
+      } else {
+        return path.substring(pos, idx);
+      }
+    }
+    throw Error("Cannot find a module name from the path: " + path);
   }
 }
 

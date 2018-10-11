@@ -9,6 +9,7 @@
   "dependencies": {
     "@gourmet/console": "^0.2.0",
     "@gourmet/error": "^0.2.0",
+    "@gourmet/hash-names": "^0.2.0",
     "@gourmet/is-plain-object": "^0.2.0",
     "@gourmet/merge": "^0.5.0",
     "@gourmet/module-dir": "^0.2.0",

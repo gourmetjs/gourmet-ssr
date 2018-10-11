@@ -15,8 +15,51 @@ module.exports = context => ({
     debug: context.getter(() => !context.stageIs("production")),
     minify: context.getter(() => context.stageIs("production")),
     sourceMap: context.getter(() => !context.stageIs("production")),
-    hashNames: false,
     staticPrefix: "/s/",
+
+    // Specify the level of granularity of bundling.
+    // This only applies to client. Server compilation is always set to 0.
+    // - 0: do not split
+    //      - one bundle per page
+    // - 1: moderate level, suitable for HTTP/1
+    //      - one common `vendors` bundle for modules from `node_modules`
+    //      - 
+    //      - one bundle containing non-vendor modules per page 
+    // - 2: fine level, suitable for HTTP/2
+    //      - a common `runtime` bundle for Webpack bootstrapping
+    //      - separate bundle per a module from `node_modules`
+    //      - one bundle containing non-vendor modules per page
+    granularity: context.getter(() => context.stageIs("production") ? 2 : 1),
+
+    // If this is true, asset filenames contain their content hash to
+    // support long-term caching.
+    contentHash: false,
+
+    // Customize bundling
+    bundles: {
+      // react: ["react", "react-dom"],   // from `node_modules`
+      // lib: ["./utils", "./shared"]     // relative path from `workDir`
+    },
+
+    // minBundleSize = granularity === 2 ? 4000 : 30000
+    minBundleSize: context.getter(() => context.granularity === 2 ? 4000 : 30000),
+
+    // This specifies the length of base62 encoded hash prefix for a path.
+    // It is tested against 3 million file paths that 'base62:8' doesn't make
+    // any collision, including lowercased paths to simulate case insensitive
+    // file systems. Based on this experimentation, 10 appears to be a safe
+    // number with sufficient margin.
+    pathHashLength: 10,
+
+    // Length of base62 hash digest.
+    // It is tested against 3 million file paths that 'base62:8' doesn't make
+    // any collision, including lowercased paths to simulate case insensitive
+    // file systems. But in real use, content hash might see more collisions.
+    // We have a safeguard for collisions by dynamically increase truncating
+    // You can always increase this value to avoid collisions in the first
+    // place at the price of increased bundle size (and also invalidation
+    // of all current bundles).
+    hashLength: 8,
 
     // `runtime` is located here as an independent section from Webpack or Babel
     // because the format is kinda standardized based on browserlist and
@@ -71,8 +114,6 @@ module.exports = context => ({
 
   webpack: {
     recordsDir: ".webpack",
-    hashFunction: "sha1",
-    hashLength: 24,
     pipelines: {},
     loaders: {},
     plugins: []
