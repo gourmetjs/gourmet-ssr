@@ -48,9 +48,6 @@ module.exports = {
 
 ## Controlling modules' linkage using `builder.moduleLinks`
 
-- "react" will be bundled on client and loaded from `node_modules` on server.
-- "react-dom/server" will be ignored on client and loaded from `node_modules` on server.
-
 ```js
 // gourmet_config.js
 module.exports = {
@@ -66,10 +63,8 @@ module.exports = {
 };
 ```
 
-- "domready" will be bundled on client and ignored on server.
-- "classname" will be ignored on client and bundled on server.
-- "mkdirp" will be ignored on client and loaded from `node_modules` on server.
-- "none": will be ignored on both client and server.
+- "react" will be bundled on client and loaded from `node_modules` on server.
+- "react-dom/server" will be ignored on client and loaded from `node_modules` on server.
 
 ```js
 // gourmet_config.js
@@ -87,3 +82,29 @@ module.exports = {
   }
 };
 ```
+
+- "domready" will be bundled on client and ignored on server.
+- "classname" will be ignored on client and bundled on server.
+- "mkdirp" will be ignored on client and loaded from `node_modules` on server.
+- "none": will be ignored on both client and server.
+
+## Hash based naming
+
+- !minify
+  [folder_hash/category].name.[ext]
+- minify
+  [path_hash].[ext]
+- minify && contentHash
+  [content_hash].[ext]
+- !minify && contentHash
+  [folder_hash/category].name.[content_hash].[ext]
+
+- set base hash long enough (12 chars?)
+- generate chunk names at optimize phase (hash of content_hash becomes name)
+
+moduleId
+content hash
+name hash
+
+- splitLevel: 0, 1, 2
+- contentHash: true / false

@@ -145,6 +145,9 @@ class GourmetPluginWebpackBuilder {
         name += "." + digest;
       }
 
+      if (this.shortenerHash)
+        name = this.shortenerHash.get(name);
+
       name += (ext || extname);
 
       if (isGlobal)
@@ -447,7 +450,15 @@ class GourmetPluginWebpackBuilder {
       return String.fromCharCode(...buf);
     }
 
-    return context.vars.get("builder.pathHashLength", 10).then(pathHashLength => {
+    return context.vars.getMulti(
+      ["builder.pathHashLength", 10],
+      ["builder.shortPathHashLength", 8],
+      ["builder.shortContentHashLength", 10],
+    ).then(([
+      pathHashLength,
+      shortPathHashLength,
+      shortContentHashLength
+    ]) => {
       mkdirp.sync(this.outputDir);
 
       const flipped = _flipCase(this.outputDir);
@@ -462,6 +473,13 @@ class GourmetPluginWebpackBuilder {
         digestLength: pathHashLength,
         avoidCaseCollision: insensitive
       });
+
+      if (context.minify) {
+        this.shortenerHash = new HashNames({
+          digestLength: context.contentHash ? shortContentHashLength : shortPathHashLength,
+          avoidCaseCollision: insensitive
+        });
+      }
     });
   }
 
@@ -513,9 +531,6 @@ GourmetPluginWebpackBuilder.meta = {
         },
         ignoreCompileErrors: {
           help: "Ignore compilation errors and continue"
-        },
-        records: {
-          help: "Update the records file ('save|revert|clean|update')"
         }
       }
     }

@@ -22,6 +22,7 @@
     "@gourmet/promise-read-file": "^0.2.0",
     "@gourmet/promise-write-file": "^0.2.0",
     "@gourmet/relative-path": "^0.3.1",
+    "@gourmet/webpack-plugin-chunk-name-shortener": "^0.1.0",
     "mkdirp": "^0.5.1",
     "resolve": "^1.6.0"
   },

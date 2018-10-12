@@ -2,16 +2,15 @@
 
 const {ConcatSource} = require("webpack-sources");
 
+const NAME = "WebpackPluginPreserveInjector";
+
 module.exports = class WebpackPluginPreserveInjector {
   apply(compiler) {
-    compiler.hooks.compilation.tap("WebpackPluginPreserveInjector", compilation => {
+    compiler.hooks.compilation.tap(NAME, compilation => {
       const {mainTemplate} = compilation;
-      mainTemplate.hooks.renderWithEntry.tap(
-        "WebpackPluginPreserveInjector",
-        source => {
-          return new ConcatSource("// @preserve\n", source);
-        }
-      );
+      mainTemplate.hooks.renderWithEntry.tap(NAME, source => {
+        return new ConcatSource("// @preserve\n", source);
+      });
     });
   }
 };

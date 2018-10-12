@@ -11,9 +11,9 @@ const merge = require("@gourmet/merge");
 const promiseProtect = require("@gourmet/promise-protect");
 const omit = require("@gourmet/omit");
 const relativePath = require("@gourmet/relative-path");
+const WebpackPluginChunkNameShortener = require("@gourmet/webpack-plugin-chunk-name-shortener");
 const resolve = require("resolve");
 const webpack = require("webpack");
-const recordsFile = require("./recordsFile");
 
 const INVALID_PIPELINE = {
   message: "Pipeline '${pipeline}' is not defined or invalid",
@@ -81,8 +81,6 @@ class GourmetWebpackBuildInstance {
         pages: pages || {}
       };
     }).then(() => {
-      return this._prepareRecords(context);
-    }).then(() => {
       return context.plugins.runAsync("build:init", context);
     });
   }
@@ -91,6 +89,12 @@ class GourmetWebpackBuildInstance {
     return context.plugins.runMergeAsync("build:config", {}, context).then(config => {
       this.webpack.config = config;
       this.webpack.compiler = webpack(config);
+
+      if (context.target === "client" && context.builder.shortenerHash) {
+        const compiler = this.webpack.compiler;
+        const plugin = new WebpackPluginChunkNameShortener({hashNames: context.builder.shortenerHash});
+        plugin.apply(compiler);
+      }
 
       const con = this.console;
 
@@ -123,7 +127,6 @@ class GourmetWebpackBuildInstance {
         this.printResult(context);
         if (this.webpack.stats.hasErrors() && !context.argv.ignoreCompileErrors)
           throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});
-        return this._finishRecords(context);
       }
     });
   }
@@ -205,8 +208,7 @@ class GourmetWebpackBuildInstance {
       module: this._getWebpackModule(context),
       externals: this._getWebpackExternals(context),
       entry: this._getWebpackEntry(context),
-      plugins: this._getWebpackPlugins(context),
-      recordsPath: this._recordsPath
+      plugins: this._getWebpackPlugins(context)
     };
     context.plugins.runMergeSync("build:webpack_config", config, context);
     return merge(config, this._varsCache.webpack.config);
@@ -444,7 +446,7 @@ class GourmetWebpackBuildInstance {
 
       value = context.plugins.runWaterfallSync("build:entry", value, context, name, def);
 
-      res[name] = (context.watch || value.length > 1) ? value : value[0];
+      res[name] = value.length > 1 ? value : value[0];
     });
 
     return res;
@@ -464,13 +466,29 @@ class GourmetWebpackBuildInstance {
     }
   }
 
-  _getWebpackPlugins() {
+  _getWebpackPlugins(context) {
     const define = this.config.define;
     const plugins = [].concat(this.config.plugins);
+    let idHashLength = this._varsCache.webpack.idHashLength;
+
+    if (idHashLength === undefined)
+      idHashLength = 4;
+
+    if (context.target === "client" && idHashLength) {
+      plugins.push({
+        name: "webpack/HashedModuleIdsPlugin",
+        plugin: webpack.HashedModuleIdsPlugin,
+        options: {
+          hashFunction: "sha1",
+          hashDigest: "base64",
+          hashDigestLength: this._varsCache.webpack.idHashLength
+        }
+      });
+    }
 
     if (isPlainObject(define) && Object.keys(define).length > 1) {
       plugins.push({
-        name: "webpack/define-plugin",
+        name: "webpack/DefinePlugin",
         plugin: webpack.DefinePlugin,
         options: define
       });
@@ -491,32 +509,6 @@ class GourmetWebpackBuildInstance {
         return plugin;
       }
     });
-  }
-
-  _prepareRecords(context) {
-    return recordsFile.prepare(
-      this._getUserRecordsPath(context),
-      this._recordsPath = this._getRecordsPath(context),
-      context.argv.records
-    );
-  }
-
-  _finishRecords(context) {
-    return recordsFile.finish(
-      this._getUserRecordsPath(context),
-      this._getRecordsPath(context),
-      context.argv.records
-    );
-  }
-
-  _getUserRecordsPath(context) {
-    const dir = npath.resolve(context.workDir, this._varsCache.webpack.recordsDir || ".webpack");
-    return npath.join(dir, context.stage, `webpack-records.${this.target}.json`);
-  }
-
-  _getRecordsPath(context) {
-    const dir = npath.join(context.builder.outputDir, context.stage, "info");
-    return npath.join(dir, `webpack-records.${this.target}.json`);
   }
 
   _generatePageInit(value, name, context) {

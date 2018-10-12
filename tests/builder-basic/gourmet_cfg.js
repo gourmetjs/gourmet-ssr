@@ -44,22 +44,24 @@ module.exports = context => ({
     // minBundleSize = granularity === 2 ? 4000 : 30000
     minBundleSize: context.getter(() => context.granularity === 2 ? 4000 : 30000),
 
-    // This specifies the length of base62 encoded hash prefix for a path.
+    // This specifies the length of base62 encoded hash prefix for a source path.
+    // Source path's hash cannot be adjusted at runtime so any collision causes
+    // compilation error.
     // It is tested against 3 million file paths that 'base62:8' doesn't make
     // any collision, including lowercased paths to simulate case insensitive
     // file systems. Based on this experimentation, 10 appears to be a safe
     // number with sufficient margin.
     pathHashLength: 10,
 
-    // Length of base62 hash digest.
-    // It is tested against 3 million file paths that 'base62:8' doesn't make
-    // any collision, including lowercased paths to simulate case insensitive
-    // file systems. But in real use, content hash might see more collisions.
-    // We have a safeguard for collisions by dynamically increase truncating
-    // You can always increase this value to avoid collisions in the first
-    // place at the price of increased bundle size (and also invalidation
-    // of all current bundles).
-    hashLength: 8,
+    // When minify option is on, the asset file names are also shortened.
+    // This is used when `builder.contentHash` is off.
+    // Note that the length of final name can be adjusted if collision occurs.
+    shortPathHashLength: 8,
+
+    // When minify option is on, the asset file names are also shortened.
+    // This is used when `builder.contentHash` is on.
+    // Note that the length of final name can be adjusted if collision occurs.
+    shortContentHashLength: 10,
 
     // `runtime` is located here as an independent section from Webpack or Babel
     // because the format is kinda standardized based on browserlist and
@@ -113,7 +115,9 @@ module.exports = context => ({
   },
 
   webpack: {
-    recordsDir: ".webpack",
+    // Setting non-zero value enables hashed module IDs instead of numbers.
+    idHashLength: context.getter(() => context.stageIs("production") ? 4 : 0),
+
     pipelines: {},
     loaders: {},
     plugins: []

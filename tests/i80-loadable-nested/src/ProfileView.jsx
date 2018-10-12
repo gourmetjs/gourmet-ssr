@@ -8,7 +8,7 @@ module.exports = class ProfileView extends React.Component {
   static routeDisplayName = "Profile";
 
   static routeLoadable = loadable({
-    loader: () => import(/* webpackChunkName: "profile" */ "./ProfilePanel"),
+    loader: () => import("./ProfilePanel"),
     loading: CustomLoading
   });
 
