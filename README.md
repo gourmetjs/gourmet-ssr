@@ -90,13 +90,13 @@ module.exports = {
 
 ## Hash based naming
 
-- !minify
+- !production
   [folder_hash/category].name.[ext]
-- minify
+- production
   [path_hash].[ext]
-- minify && contentHash
+- production && contentHash
   [content_hash].[ext]
-- !minify && contentHash
+- !production && contentHash
   [folder_hash/category].name.[content_hash].[ext]
 
 - set base hash long enough (12 chars?)

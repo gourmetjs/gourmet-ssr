@@ -236,7 +236,7 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackMode(context) {
-    return context.minify ? "production" : "development";
+    return context.stageIs("production") ? "production" : "development";
   }
 
   _getWebpackDevTool(context) {
@@ -472,7 +472,7 @@ class GourmetWebpackBuildInstance {
     let idHashLength = this._varsCache.webpack.idHashLength;
 
     if (idHashLength === undefined)
-      idHashLength = 4;
+      idHashLength = context.stageIs("production") ? 4 : 0;
 
     if (context.target === "client" && idHashLength) {
       plugins.push({

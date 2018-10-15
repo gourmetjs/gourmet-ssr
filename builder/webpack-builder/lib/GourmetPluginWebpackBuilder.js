@@ -474,7 +474,7 @@ class GourmetPluginWebpackBuilder {
         avoidCaseCollision: insensitive
       });
 
-      if (context.minify) {
+      if (context.stageIs("production")) {
         this.shortenerHash = new HashNames({
           digestLength: context.contentHash ? shortContentHashLength : shortPathHashLength,
           avoidCaseCollision: insensitive
