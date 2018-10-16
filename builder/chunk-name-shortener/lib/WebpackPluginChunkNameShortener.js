@@ -1,53 +1,60 @@
 "use strict";
 
-const npath = require("path");
-
 const NAME = "WebpackPluginChunckNameShortener";
 
 module.exports = class WebpackPluginChunckNameShortener {
-  constructor({hashNames}) {
+  constructor({hashNames, contentHash, console}) {
     this.hashNames = hashNames;
+    this.contentHash = contentHash;
+    this.console = console;
   }
 
   apply(compiler) {
-    if (this.hashNames) {
-      compiler.hooks.compilation.tap(NAME, compilation => {
-        const {mainTemplate} = compilation;
-        mainTemplate.hooks.assetPath.tap(NAME, (path, data) => {
-          // When you use dynamic import (`import("...")`), this can get called
-          // with path string like the following:
-          //  `"" + ({"12":"home","13":"messages","14":"profile","15":"photo"}[chunkId]||chunkId) + ".js"`
-          if (data.chunk && path.indexOf("[chunkId]") === -1) {
-            const extname = npath.extname(path);
-            const dirbase = path.substring(0, path.length - extname.length);
-            return this.hashNames.get(dirbase) + extname;
-          }
-          return path;
+    compiler.hooks.compilation.tap(NAME, compilation => {
+      //this.debugPrintAllAsyncChunks(compilation);
+
+      // Before calculate truncated hash names, sort chunks based on their
+      // original names first. This can minimize switching of order even if
+      // names collide.
+      compilation.hooks.afterHash.tap(NAME, () => {
+        const items = [];
+        for (const chunk of compilation.chunks) {
+          items.push({
+            name: (chunk.name || chunk.id) + "",
+            chunk
+          });
+        }
+        items.sort((a, b) => {
+          if (a.name < b.name)
+            return -1;
+          else if (a.name > b.name)
+            return 1;
+          else
+            return 0;
+        });
+        items.forEach(({name, chunk}) => {
+          // TODO: contentHash embedding
+          //if (!name.startsWith("$$runtime~~")) {
+          if (this.contentHash)
+            name += "." + chunk.contentHash["javascript"];
+          chunk.name = this.hashNames.get(name);
+          //}
+          this.console.debug(`chunk: id=${chunk.id} orgName=${name} newName=${chunk.name} contentHash=`, chunk.contentHash);
         });
       });
-      /*
-        compilation.hooks.afterOptimizeChunkIds.tap(NAME, chunks => {
-          const items = [];
-          for (const chunk of chunks) {
-            items.push({
-              name: (chunk.name || chunk.id) + "",
-              chunk
-            });
-          }
-          items.sort((a, b) => {
-            if (a.name < b.name)
-              return -1;
-            else if (a.name > b.name)
-              return 1;
-            else
-              return 0;
-          });
-          items.forEach(({name, chunk}) => {
-            console.log(name);
-            chunk.name = this.hashNames.get(name);
-          });
-        });
-      });*/
-    }
+    });
   }
+
+  /*
+  debugPrintAllAsyncChunks(compilation) {
+    compilation.hooks.afterHash.tap(NAME, () => {
+      const asyncChunks = new Set();
+      for (const chunk of compilation.chunks)
+        chunk.getAllAsyncChunks().forEach(chunk => asyncChunks.add(chunk));
+      for (const chunk of asyncChunks) {
+        console.log(`async chunk: id=${chunk.id} name=${chunk.name}`, chunk.contentHash);
+      }
+    });
+  }
+  */
 };

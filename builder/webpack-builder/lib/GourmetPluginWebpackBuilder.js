@@ -140,7 +140,7 @@ class GourmetPluginWebpackBuilder {
       const hash = this.pathHash.get(dirname);
       let name = hash + "." + basename;
 
-      if (context.contentHash) {
+      if (context.stageIs("production") && context.contentHash) {
         const digest = crypto.createHash("sha1").update(content).digest("hex");
         name += "." + digest;
       }
@@ -450,33 +450,27 @@ class GourmetPluginWebpackBuilder {
       return String.fromCharCode(...buf);
     }
 
-    return context.vars.getMulti(
-      ["builder.pathHashLength", 10],
-      ["builder.shortPathHashLength", 8],
-      ["builder.shortContentHashLength", 10],
-    ).then(([
-      pathHashLength,
-      shortPathHashLength,
-      shortContentHashLength
-    ]) => {
+    return context.vars.get("builder.hashLength").then(hashLength => {
+      if (hashLength === undefined)
+        hashLength = context.stageIs("production") && context.contentHash ? 10 : 8;
+
       mkdirp.sync(this.outputDir);
 
       const flipped = _flipCase(this.outputDir);
       const insensitive = fs.existsSync(flipped);
 
-      if (insensitive && context.stageIs("production"))
-        context.console.warn("Warning: Build output will be saved in case insensitive filesystem. We recommend a case sensitive filesystem for production build.");
-
-      this.pathHash = new HashNames({
-        errorOnCollision: true,
-        suggestionMessage: "Please rename the collided filename or increase the value of `builder.pathHashLength`.",
-        digestLength: pathHashLength,
-        avoidCaseCollision: insensitive
-      });
-
       if (context.stageIs("production")) {
+        this.pathHash = new HashNames({
+          digestLength: 27,
+          avoidCaseCollision: false
+        });
         this.shortenerHash = new HashNames({
-          digestLength: context.contentHash ? shortContentHashLength : shortPathHashLength,
+          digestLength: hashLength,
+          avoidCaseCollision: insensitive
+        });
+      } else {
+        this.pathHash = new HashNames({
+          digestLength: hashLength,
           avoidCaseCollision: insensitive
         });
       }

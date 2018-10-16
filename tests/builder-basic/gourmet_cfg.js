@@ -35,6 +35,13 @@ module.exports = context => ({
     // support long-term caching.
     contentHash: false,
 
+    // This specifies the length of base62 encoded hash digest used for asset
+    // file names.
+    // It is tested against 3 million file paths that 'base62:8' doesn't make
+    // any collision, including lowercased paths to simulate case insensitive
+    // file systems.
+    hashLength: context.getter(() => context.stageIs("production") && context.contentHash ? 10 : 8),
+
     // Customize bundling
     bundles: {
       // react: ["react", "react-dom"],   // from `node_modules`
@@ -43,25 +50,6 @@ module.exports = context => ({
 
     // minBundleSize = granularity === 2 ? 4000 : 30000
     minBundleSize: context.getter(() => context.granularity === 2 ? 4000 : 30000),
-
-    // This specifies the length of base62 encoded hash prefix for a source path.
-    // Source path's hash cannot be adjusted at runtime so any collision causes
-    // compilation error.
-    // It is tested against 3 million file paths that 'base62:8' doesn't make
-    // any collision, including lowercased paths to simulate case insensitive
-    // file systems. Based on this experimentation, 10 appears to be a safe
-    // number with sufficient margin.
-    pathHashLength: 10,
-
-    // When minify option is on, the asset file names are also shortened.
-    // This is used when `builder.contentHash` is off.
-    // Note that the length of final name can be adjusted if collision occurs.
-    shortPathHashLength: 8,
-
-    // When minify option is on, the asset file names are also shortened.
-    // This is used when `builder.contentHash` is on.
-    // Note that the length of final name can be adjusted if collision occurs.
-    shortContentHashLength: 10,
 
     // `runtime` is located here as an independent section from Webpack or Babel
     // because the format is kinda standardized based on browserlist and

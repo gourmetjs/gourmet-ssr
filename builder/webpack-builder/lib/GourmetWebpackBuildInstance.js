@@ -90,12 +90,6 @@ class GourmetWebpackBuildInstance {
       this.webpack.config = config;
       this.webpack.compiler = webpack(config);
 
-      if (context.target === "client" && context.builder.shortenerHash) {
-        const compiler = this.webpack.compiler;
-        const plugin = new WebpackPluginChunkNameShortener({hashNames: context.builder.shortenerHash});
-        plugin.apply(compiler);
-      }
-
       const con = this.console;
 
       con.debug(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
@@ -245,10 +239,25 @@ class GourmetWebpackBuildInstance {
 
   _getWebpackOptimization(context) {
     const granularity = context.target === "client" ? context.granularity : 0;
+    /*
+    // TODO: contentHash embedding
+    let granularity, contentHash;
+
+    if (context.target === "client") {
+      granularity = context.granularity;
+      contentHash = context.stageIs("production") && context.contentHash;
+    } else {
+      granularity = 0;
+      contentHash = false;
+    }
+    */
 
     return {
       minimize: context.minify,
       runtimeChunk: granularity === 2 ? "single" : false,
+      //runtimeChunk: !contentHash ? (granularity === 2 ? "signle" : false) : {
+      //  name: entrypoint => `$$runtime~~${entrypoint.name}`
+      //},
       splitChunks: (() => {
         if (!granularity)
           return false;
@@ -285,10 +294,9 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackOutput(context) {
-    const name = (context.target === "server" || !context.contentHash) ? "[name].js" : "[name].[contentHash].js";
     return {
-      filename: name,
-      chunkFilename: name,
+      filename: "[name].js",
+      chunkFilename: "[name].js",
       path: npath.join(context.builder.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix,
       hashFunction: "sha1",
@@ -482,6 +490,18 @@ class GourmetWebpackBuildInstance {
           hashFunction: "sha1",
           hashDigest: "base64",
           hashDigestLength: this._varsCache.webpack.idHashLength
+        }
+      });
+    }
+
+    if (context.target === "client" && context.builder.shortenerHash) {
+      plugins.push({
+        name: "@gourmet/webpack-plugin-chunk-name-shortener",
+        plugin: WebpackPluginChunkNameShortener,
+        options: {
+          hashNames: context.builder.shortenerHash,
+          contentHash: context.contentHash,
+          console: context.console
         }
       });
     }

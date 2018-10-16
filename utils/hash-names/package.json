@@ -6,7 +6,6 @@
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/error": "^0.2.0",
     "base-x": "^3.0.4"
   },
   "devDependencies": {
