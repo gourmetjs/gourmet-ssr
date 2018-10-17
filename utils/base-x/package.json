@@ -1,0 +1,8 @@
+{
+  "name": "@gourmet/base-x",
+  "version": "0.1.0",
+  "main": "lib/getBaseX.js",
+  "dependencies": {
+    "base-x": "^3.0.4"
+  }
+}

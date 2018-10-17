@@ -15,6 +15,7 @@ const relativePath = require("@gourmet/relative-path");
 const HashNames = require("@gourmet/hash-names");
 const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
+const b62 = require("@gourmet/base-x")("base62");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 
 const INVALID_STAGE_TYPES = {
@@ -134,15 +135,16 @@ class GourmetPluginWebpackBuilder {
   getAssetFilenameGetter(context, {ext, isGlobal}={}) {
     return ({content, path}) => {
       const relPath = relativePath(path, context.workDir);
-      const dirname = ppath.dirname(relPath);
       const extname = ppath.extname(relPath);
-      const basename = ppath.basename(relPath, extname);
-      const hash = this.pathHash.get(dirname);
-      let name = hash + "." + basename;
+      let name;
 
       if (context.contentHash) {
-        const digest = crypto.createHash("sha1").update(content).digest("hex");
-        name += "." + digest;
+        name = b62.encode(crypto.createHash("sha1").update(content).digest("hex"));
+      } else {
+        const dirname = ppath.dirname(relPath);
+        const basename = ppath.basename(relPath, extname);
+        const hash = this.pathHash.get(dirname);
+        name = hash + "." + basename;
       }
 
       if (this.shortenerHash)
@@ -398,7 +400,11 @@ class GourmetPluginWebpackBuilder {
   }
 
   _prepareContextVars(context) {
-    return promiseEach(["debug", "minify", "sourceMap", "staticPrefix", "granularity", "contentHash"], name => {
+    return promiseEach([
+      "debug", "minify", "sourceMap",
+      "staticPrefix", "granularity",
+      "shortenNames", "contentHash"
+    ], name => {
       return context.vars.get("builder." + name).then(userValue => {
         let value;
 
@@ -422,6 +428,9 @@ class GourmetPluginWebpackBuilder {
               break;
             case "granularity":
               value = context.stageIs("production") ? 2 : 1;
+              break;
+            case "shortenNames":
+              value = context.stageIs("production");
               break;
             case "contentHash":
               value = false;
@@ -452,16 +461,16 @@ class GourmetPluginWebpackBuilder {
 
     return context.vars.get("builder.hashLength").then(hashLength => {
       if (hashLength === undefined)
-        hashLength = context.stageIs("production") && context.contentHash ? 10 : 8;
+        hashLength = context.contentHash ? 10 : 8;
 
       mkdirp.sync(this.outputDir);
 
       const flipped = _flipCase(this.outputDir);
       const insensitive = fs.existsSync(flipped);
 
-      if (context.stageIs("production")) {
+      if (context.shortenNames) {
         this.pathHash = new HashNames({
-          digestLength: 27,
+          digestLength: hashLength,
           avoidCaseCollision: false
         });
         this.shortenerHash = new HashNames({
@@ -512,6 +521,9 @@ GourmetPluginWebpackBuilder.meta = {
         },
         granularity: {
           help: "Set bundling granularity (0: off, 1: coarse - HTTP/1, 2: fine - HTTP/2"
+        },
+        shortenNames: {
+          help: "Make output file names short using truncated hash digests"
         },
         contentHash: {
           help: "Generate content hash based asset names to support long-term caching"

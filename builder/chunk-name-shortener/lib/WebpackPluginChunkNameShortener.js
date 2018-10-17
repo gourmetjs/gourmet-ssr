@@ -3,9 +3,8 @@
 const NAME = "WebpackPluginChunckNameShortener";
 
 module.exports = class WebpackPluginChunckNameShortener {
-  constructor({hashNames, contentHash, console}) {
+  constructor({hashNames, console}) {
     this.hashNames = hashNames;
-    this.contentHash = contentHash;
     this.console = console;
   }
 
@@ -33,13 +32,8 @@ module.exports = class WebpackPluginChunckNameShortener {
             return 0;
         });
         items.forEach(({name, chunk}) => {
-          // TODO: contentHash embedding
-          //if (!name.startsWith("$$runtime~~")) {
-          if (this.contentHash)
-            name += "." + chunk.contentHash["javascript"];
           chunk.name = this.hashNames.get(name);
-          //}
-          this.console.debug(`chunk: id=${chunk.id} orgName=${name} newName=${chunk.name} contentHash=`, chunk.contentHash);
+          //this.console.debug(`chunk: id=${chunk.id} orgName=${name} newName=${chunk.name} contentHash=`, chunk.contentHash);
         });
       });
     });

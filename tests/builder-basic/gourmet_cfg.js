@@ -31,6 +31,9 @@ module.exports = context => ({
     //      - one bundle containing non-vendor modules per page
     granularity: context.getter(() => context.stageIs("production") ? 2 : 1),
 
+    // If this is true, output file names are shortened using truncated hash digests
+    shortenNames: context.getter(() => context.stageIs("production")),
+
     // If this is true, asset filenames contain their content hash to
     // support long-term caching.
     contentHash: false,
@@ -40,7 +43,7 @@ module.exports = context => ({
     // It is tested against 3 million file paths that 'base62:8' doesn't make
     // any collision, including lowercased paths to simulate case insensitive
     // file systems.
-    hashLength: context.getter(() => context.stageIs("production") && context.contentHash ? 10 : 8),
+    hashLength: context.getter(() => context.contentHash ? 10 : 8),
 
     // Customize bundling
     bundles: {

@@ -2,19 +2,7 @@
 
 const util = require("util");
 const crypto = require("crypto");
-const basex = require("base-x");
-
-// This table is extracted from `https://github.com/webpack/loader-utils`
-const baseChars = {
-  "base26": "abcdefghijklmnopqrstuvwxyz",
-  "base32": "123456789abcdefghjkmnpqrstuvwxyz", // no 0lio
-  "base36": "0123456789abcdefghijklmnopqrstuvwxyz",
-  "base49": "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ", // no lIO
-  "base52": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-  "base58": "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ", // no 0lIO
-  "base62": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-  "base64": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
-};
+const basex = require("@gourmet/base-x");
 
 class HashNames {
   constructor(options) {
@@ -26,16 +14,11 @@ class HashNames {
       warningOnCollision: true
     }, options);
 
-    if (baseChars[options.encoding]) {
-      this.encode = basex(baseChars[options.encoding]).encode;
-      if (options.avoidCaseCollision && parseInt(options.encoding.substr(4), 10) >= 49)
-        this.lower = name => name.toLowerCase();
-      else
-        this.lower = name => name;
-    } else {
-      this.encode = buf => buf.toString(options.encoding);
+    this.encode = basex(options.encoding).encode;
+    if (options.avoidCaseCollision && parseInt(options.encoding.substr(4), 10) >= 49)
+      this.lower = name => name.toLowerCase();
+    else
       this.lower = name => name;
-    }
 
     // shortened names indexed by full hash
     this._names = {};

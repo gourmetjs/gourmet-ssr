@@ -14,6 +14,7 @@ const relativePath = require("@gourmet/relative-path");
 const WebpackPluginChunkNameShortener = require("@gourmet/webpack-plugin-chunk-name-shortener");
 const resolve = require("resolve");
 const webpack = require("webpack");
+const Base62Hash = require("./Base62Hash");
 
 const INVALID_PIPELINE = {
   message: "Pipeline '${pipeline}' is not defined or invalid",
@@ -243,9 +244,6 @@ class GourmetWebpackBuildInstance {
     return {
       minimize: context.minify,
       runtimeChunk: granularity === 2 ? "single" : false,
-      //runtimeChunk: !contentHash ? (granularity === 2 ? "signle" : false) : {
-      //  name: entrypoint => `$$runtime~~${entrypoint.name}`
-      //},
       splitChunks: (() => {
         if (!granularity)
           return false;
@@ -282,16 +280,19 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackOutput(context) {
+    let hashLength = this._varsCache.builder.hashLength;
+
+    if (hashLength === undefined)
+      hashLength = context.contentHash ? 10 : 8;
+
     return {
-      filename: "[name].js",
-      chunkFilename: "[name].js",
-      // filename: context.target === "client" ? "[name].[contentHash].js" : "[name].js",
-      // chunkFilename:  context.target === "client" ? "[name].[contentHash].js" : "[name].js",
+      filename: (context.target === "client" && context.contentHash) ? `[contentHash:${hashLength}].js` : "[name].js",
+      chunkFilename: (context.target === "client" && context.contentHash) ? `[contentHash:${hashLength}].js` : "[name].js",
       path: npath.join(context.builder.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix,
-      hashFunction: "sha1",
-      hashDigest: "hex",
-      hashDigestLength: 40,
+      hashFunction: Base62Hash,
+      hashDigest: "base64", // actually becomes base62
+      hashDigestLength: 27,
       libraryTarget: context.target === "server" ? "commonjs2" : "var"
     };
   }
@@ -484,13 +485,12 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    if (context.target === "client" && context.builder.shortenerHash) {
+    if (context.target === "client" && !context.contentHash && context.builder.shortenerHash) {
       plugins.push({
         name: "@gourmet/webpack-plugin-chunk-name-shortener",
         plugin: WebpackPluginChunkNameShortener,
         options: {
           hashNames: context.builder.shortenerHash,
-          contentHash: context.contentHash,
           console: context.console
         }
       });

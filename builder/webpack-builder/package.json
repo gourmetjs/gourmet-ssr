@@ -7,6 +7,7 @@
   ],
   "main": "lib/GourmetPluginWebpackBuilder.js",
   "dependencies": {
+    "@gourmet/base-x": "^0.1.0",
     "@gourmet/console": "^0.2.0",
     "@gourmet/error": "^0.2.0",
     "@gourmet/hash-names": "^0.2.0",
