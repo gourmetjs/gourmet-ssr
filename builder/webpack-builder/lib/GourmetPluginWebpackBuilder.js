@@ -140,7 +140,7 @@ class GourmetPluginWebpackBuilder {
       const hash = this.pathHash.get(dirname);
       let name = hash + "." + basename;
 
-      if (context.stageIs("production") && context.contentHash) {
+      if (context.contentHash) {
         const digest = crypto.createHash("sha1").update(content).digest("hex");
         name += "." + digest;
       }

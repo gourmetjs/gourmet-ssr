@@ -239,18 +239,6 @@ class GourmetWebpackBuildInstance {
 
   _getWebpackOptimization(context) {
     const granularity = context.target === "client" ? context.granularity : 0;
-    /*
-    // TODO: contentHash embedding
-    let granularity, contentHash;
-
-    if (context.target === "client") {
-      granularity = context.granularity;
-      contentHash = context.stageIs("production") && context.contentHash;
-    } else {
-      granularity = 0;
-      contentHash = false;
-    }
-    */
 
     return {
       minimize: context.minify,
@@ -297,6 +285,8 @@ class GourmetWebpackBuildInstance {
     return {
       filename: "[name].js",
       chunkFilename: "[name].js",
+      // filename: context.target === "client" ? "[name].[contentHash].js" : "[name].js",
+      // chunkFilename:  context.target === "client" ? "[name].[contentHash].js" : "[name].js",
       path: npath.join(context.builder.outputDir, context.stage, context.target),
       publicPath: context.staticPrefix,
       hashFunction: "sha1",

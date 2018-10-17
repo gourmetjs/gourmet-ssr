@@ -10,6 +10,7 @@ module.exports = function(def) {
   const app = express();
 
   app.history = [];
+  app.args = args;
 
   app.use((req, res, next) => {
     app.history.push(req.url);
