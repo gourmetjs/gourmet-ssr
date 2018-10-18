@@ -88,23 +88,9 @@ module.exports = {
 - "mkdirp" will be ignored on client and loaded from `node_modules` on server.
 - "none": will be ignored on both client and server.
 
-## Hash based naming
+## Long-term caching
 
-- !production
-  [folder_hash/category].name.[ext]
-- production
-  [path_hash].[ext]
-- production && contentHash
-  [content_hash].[ext]
-- !production && contentHash
-  [folder_hash/category].name.[content_hash].[ext]
-
-- set base hash long enough (12 chars?)
-- generate chunk names at optimize phase (hash of content_hash becomes name)
-
-moduleId
-content hash
-name hash
-
-- splitLevel: 0, 1, 2
-- contentHash: true / false
+- enabled with `builder.contentHash` (CLI option: `--content-hash`)
+- note that `minify` doesn't change the hash
+- hash encoding is always `base62` and collision from case insensitive file system (Windows & Mac) is handled by dynamically increase the truncation length
+- however, we recommend to use case sensitive file system (Linux) to avoid this issue in the first place

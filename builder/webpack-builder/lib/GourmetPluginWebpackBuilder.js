@@ -470,7 +470,7 @@ class GourmetPluginWebpackBuilder {
 
       if (context.shortenNames) {
         this.pathHash = new HashNames({
-          digestLength: hashLength,
+          digestLength: 27,
           avoidCaseCollision: false
         });
         this.shortenerHash = new HashNames({
