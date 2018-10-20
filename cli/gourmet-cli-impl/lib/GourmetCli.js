@@ -8,6 +8,7 @@ const error = require("@gourmet/error");
 const CliBase = require("@gourmet/cli-base");
 const Variables = require("@gourmet/variables");
 const ContextSource = require("./ContextSource");
+const ConfigSource = require("./ConfigSource");
 
 const CONFIG_FILE_NAME = "gourmet_config";
 
@@ -61,6 +62,7 @@ class GourmetCli extends CliBase {
 
     context.package = this._loadModuleSafe(npath.join(context.workDir, "package.json"));
     context.getter = Variables.getter;
+    context.value = Variables.value;
 
     for (let idx = 0; idx < filenames.length; idx++) {
       const filename = filenames[idx];
@@ -75,6 +77,38 @@ class GourmetCli extends CliBase {
           this._initVars(config);
         });
       }
+    }
+  }
+
+  _initVars(config) {
+    const context = this.context;
+
+    const vars = context.vars = new Variables(config, {
+      defaultSource: "config",
+      handlerContext: context,
+      functionsAsGetters: true
+    });
+
+    const args = process.env.GOURMET_CONFIG_OBJECT ? JSON.parse(process.env.GOURMET_CONFIG_OBJECT) : {};
+
+    vars.addSource("env", new Variables.Env());
+    vars.addSource("argv", new Variables.Opt(context.argv));
+    vars.addSource("file", new Variables.File(context.workDir));
+    vars.addSource("context", new ContextSource(context));
+    vars.addSource("config", new ConfigSource(args));
+
+    // `--config.foo.bar val` form
+    if (context.argv.config)
+      vars.getSource("config").addUpper(context.argv.config);
+  }
+
+  _loadModuleSafe(path) {
+    try {
+      return require(path);
+    } catch (err) {
+      if (err.code !== "MODULE_NOT_FOUND")
+        throw err;
+      return null;
     }
   }
 
@@ -94,26 +128,6 @@ class GourmetCli extends CliBase {
     });
   }
 
-  _initVars(config) {
-    const context = this.context;
-    context.vars = new Variables(config, {handlerContext: context});
-    context.vars.addBuiltinSources({
-      argv: context.argv,
-      workDir: context.workDir
-    });
-    context.vars.addSource("context", new ContextSource(context));
-  }
-
-  _loadModuleSafe(path) {
-    try {
-      return require(path);
-    } catch (err) {
-      if (err.code !== "MODULE_NOT_FOUND")
-        throw err;
-      return null;
-    }
-  }
-  
   _scanPlugins(auto) {
     if (auto && this.context.package) {
       const deps = Object.assign({}, this.context.package.dependencies, this.context.package.devDependencies);

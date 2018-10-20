@@ -12,6 +12,7 @@ const File = require("./sources/File");
 const VarNode = require("./VarNode");
 const VarExpr = require("./VarExpr");
 const VarGetter = require("./VarGetter");
+const VarValue = require("./VarValue");
 
 const VAR_SOURCE_EXISTS = {
   message: "Variable source already exists: ${source}",
@@ -29,16 +30,20 @@ const EVAL_STRING_REQUIRED = {
 };
 
 class Variables {
-  constructor(context, {
-    syntax=/(\\?)\${([^{}]+?)}/,
-    defaultSource="self",
-    handlerContext={}
-  }={}) {
+  constructor(context, options) {
+    this.options = Object.assign({
+      syntax: /(\\?)\${([^{}]+?)}/,
+      defaultSource: "self",
+      handlerContext: {},
+      functionsAsGetters: false
+    }, options);
+
     this._sources = {};
+
     this.setContext(context);
-    this.setSyntax(syntax);
-    this.setDefaultSource(defaultSource);
-    this.setHandlerContext(handlerContext);
+    this.setSyntax(this.options.syntax);
+    this.setDefaultSource(this.options.defaultSource);
+    this.setHandlerContext(this.options.handlerContext);
   }
 
   setContext(context) {
@@ -130,8 +135,8 @@ class Variables {
 
   // Same as `get` but stops resolving values at the node of `path` and
   // doesn't go any deeper. Not for end user but for the source development.
-  getNode(path, options={}) {
-    return promiseDeepProp(this._context, path, (value, prop, parent) => {
+  getNode(path, options={}, obj=this._context) {
+    return promiseDeepProp(obj, path, (value, prop, parent) => {
       if (value instanceof VarNode)
         return value.resolve(this, prop, parent, path, options);
       else
@@ -141,15 +146,8 @@ class Variables {
     });
   }
 
-  // Prepares a JavaScript value to be used as a part or entirety of an context.
-  // Specifically, this wraps all text values with `VarExpr`.
   prepareValue(value) {
-    return deepClone(value, value => {
-      if (typeof value === "string")
-        return new VarExpr(value);
-      else
-        return value;
-    });
+    return Variables.prepareValue(value, this.options);
   }
 
   // Adds a variable source (instance of `VariableSource` class)
@@ -167,10 +165,12 @@ class Variables {
   }
 
   cleanCache() {
-    this._context = deepClone(this._context, value => {
-      if (value instanceof VarExpr)
-        value.cleanCache();
-      return value;
+    this._context = Variables.cleanCache(this._context);
+
+    Object.keys(this._sources).forEach(name => {
+      const source = this._sources[name];
+      if (source.cleanCache)
+        source.cleanCache(this);
     });
   }
 
@@ -221,8 +221,38 @@ class Variables {
   }
 }
 
+// Prepares a JavaScript value to be used as a part or entirety of an context.
+// Specifically, this wraps all text values with `VarExpr`.
+Variables.prepareValue = function(value, options={}) {
+  return deepClone(value, value => {
+    if (typeof value === "string")
+      return new VarExpr(value);
+    else if (options.functionsAsGetters && typeof value === "function")
+      return new VarGetter(value);
+    else
+      return value;
+  });
+};
+
+Variables.cleanCache = function(value) {
+  return deepClone(value, value => {
+    if (value instanceof VarExpr)
+      value.cleanCache();
+    return value;
+  });
+};
+
+// You should use this wrapper if `functionsAsAsGetters` is not set and you
+// want to use a function as getter.
 Variables.getter = function(handler) {
   return new VarGetter(handler);
+};
+
+// You should use this wrapper if `functionsAsAsGetters` is set and you
+// want to give a real function object, not a getter.
+// Also, this can be used to wrap a string literal to bypass interpolation.
+Variables.value = function(value) {
+  return new VarValue(value);
 };
 
 Variables.Self = Self;

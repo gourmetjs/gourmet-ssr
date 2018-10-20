@@ -75,15 +75,7 @@ class GourmetWebpackBuildInstance {
   }
 
   init(context) {
-    return context.vars.getMulti("builder", "webpack", "pages").then(([builder, webpack, pages]) => {
-      this._varsCache = {
-        builder: builder || {},
-        webpack: webpack || {},
-        pages: pages || {}
-      };
-    }).then(() => {
-      return context.plugins.runAsync("build:init", context);
-    });
+    return context.plugins.runAsync("build:init", context);
   }
 
   run(context) {
@@ -146,19 +138,19 @@ class GourmetWebpackBuildInstance {
   getDefaultExtensions(context) {
     const ext = [".js", ".json"];
     context.plugins.runMergeSync("build:default_extensions", ext, context);
-    return merge(ext, this._varsCache.builder.defaultExtensions);
+    return merge(ext, context.config.builder.defaultExtensions);
   }
 
   getModuleLinks(context) {
     const links = {};
     context.plugins.runMergeSync("build:module_links", links, context);
-    return merge(links, this._varsCache.builder.moduleLinks);
+    return merge(links, context.config.builder.moduleLinks);
   }
 
   getAlias(context) {
     const alias = {};
     context.plugins.runMergeSync("build:alias", alias, context);
-    return merge(alias, this._varsCache.builder.alias);
+    return merge(alias, context.config.builder.alias);
   }
 
   getDefine(context) {
@@ -170,25 +162,25 @@ class GourmetWebpackBuildInstance {
       STAGE: JSON.stringify(context.stage)
     };
     context.plugins.runMergeSync("build:define", define, context);
-    return merge(define, this._varsCache.builder.define);
+    return merge(define, context.config.builder.define);
   }
 
   getPipelines(context) {
     const pipelines = {};
     context.plugins.runMergeSync("build:pipelines", pipelines, context);
-    return merge(pipelines, this._varsCache.webpack.pipelines);
+    return merge(pipelines, context.config.webpack.pipelines);
   }
 
   getLoaders(context) {
     const loaders = {};
     context.plugins.runMergeSync("build:loaders", loaders, context);
-    return merge(loaders, this._varsCache.webpack.loaders);
+    return merge(loaders, context.config.webpack.loaders);
   }
 
   getWebpackPlugins(context) {
     const plugins = [];
     context.plugins.runMergeSync("build:webpack_plugins", plugins, context);
-    return merge(plugins, this._varsCache.webpack.plugins);
+    return merge(plugins, context.config.webpack.plugins);
   }
 
   getWebpackConfig(context) {
@@ -206,7 +198,7 @@ class GourmetWebpackBuildInstance {
       plugins: this._getWebpackPlugins(context)
     };
     context.plugins.runMergeSync("build:webpack_config", config, context);
-    return merge(config, this._varsCache.webpack.config);
+    return merge(config, context.config.webpack.config);
   }
 
   printResult(context) {
@@ -235,23 +227,20 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackDevTool(context) {
-    return context.sourceMap ? "source-map" : false;
+    return context.config.builder.sourceMap ? "source-map" : false;
   }
 
   _getWebpackOptimization(context) {
-    const granularity = context.target === "client" ? context.granularity : 0;
+    const granularity = context.target === "client" ? context.config.builder.granularity : 0;
 
     return {
-      minimize: context.minify,
+      minimize: context.config.builder.minify,
       runtimeChunk: granularity === 2 ? "single" : false,
       splitChunks: (() => {
         if (!granularity)
           return false;
 
-        let minBundleSize = this._varsCache.builder.minBundleSize;
-
-        if (minBundleSize === undefined)
-          minBundleSize = granularity === 2 ? 4000 : 30000;
+        const minBundleSize = context.config.builder.minBundleSize;
 
         const obj = {
           chunks: "all",
@@ -280,16 +269,13 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackOutput(context) {
-    let hashLength = this._varsCache.builder.hashLength;
-
-    if (hashLength === undefined)
-      hashLength = context.contentHash ? 10 : 8;
+    const hashLength = context.config.builder.hashLength;
 
     return {
-      filename: (context.target === "client" && context.contentHash) ? `[contentHash:${hashLength}].js` : "[name].js",
-      chunkFilename: (context.target === "client" && context.contentHash) ? `[contentHash:${hashLength}].js` : "[name].js",
-      path: npath.join(context.builder.outputDir, context.stage, context.target),
-      publicPath: context.staticPrefix,
+      filename: (context.target === "client" && context.config.builder.contentHash) ? `[contentHash:${hashLength}].js` : "[name].js",
+      chunkFilename: (context.target === "client" && context.config.builder.contentHash) ? `[contentHash:${hashLength}].js` : "[name].js",
+      path: npath.join(context.outputDir, context.stage, context.target),
+      publicPath: context.config.builder.staticPrefix,
       hashFunction: Base62Hash,
       hashDigest: "base64", // actually becomes base62
       hashDigestLength: 27,
@@ -416,7 +402,7 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackEntry(context) {
-    const pages = this._varsCache.pages;
+    const pages = context.config.pages;
 
     if (!isPlainObject(pages))
       throw error(INVALID_PAGES);
@@ -468,10 +454,7 @@ class GourmetWebpackBuildInstance {
   _getWebpackPlugins(context) {
     const define = this.config.define;
     const plugins = [].concat(this.config.plugins);
-    let idHashLength = this._varsCache.webpack.idHashLength;
-
-    if (idHashLength === undefined)
-      idHashLength = context.stageIs("production") ? 4 : 0;
+    const idHashLength = context.config.webpack.idHashLength;
 
     if (context.target === "client" && idHashLength) {
       plugins.push({
@@ -480,12 +463,12 @@ class GourmetWebpackBuildInstance {
         options: {
           hashFunction: "sha1",
           hashDigest: "base64",
-          hashDigestLength: this._varsCache.webpack.idHashLength
+          hashDigestLength: idHashLength
         }
       });
     }
 
-    if (context.target === "client" && !context.contentHash && context.builder.shortenerHash) {
+    if (context.target === "client" && !context.config.builder.contentHash && context.builder.shortenerHash) {
       plugins.push({
         name: "@gourmet/webpack-plugin-chunk-name-shortener",
         plugin: WebpackPluginChunkNameShortener,
@@ -535,11 +518,11 @@ class GourmetWebpackBuildInstance {
     if (!renderer || !Array.isArray(renderer) || !renderer.length)
       throw error(NO_RENDERER_CLASS);
 
-    const infoDir = npath.join(context.builder.outputDir, context.stage, "info");
+    const infoDir = npath.join(context.outputDir, context.stage, "info");
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
     const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: this.config.defaultExtensions});
     const userModule = relativePath(absPath, infoDir);
-    const iopts = this._varsCache.builder.initOptions;
+    const iopts = context.config.builder.initOptions;
     const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";
 
     const content = [

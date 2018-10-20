@@ -17,7 +17,6 @@
     "@gourmet/omit": "^0.2.0",
     "@gourmet/plugin-sort": "^0.5.0",
     "@gourmet/prefix-lines": "^0.2.0",
-    "@gourmet/promise-each": "^0.2.0",
     "@gourmet/promise-map": "^0.2.0",
     "@gourmet/promise-protect": "^0.2.0",
     "@gourmet/promise-read-file": "^0.2.0",

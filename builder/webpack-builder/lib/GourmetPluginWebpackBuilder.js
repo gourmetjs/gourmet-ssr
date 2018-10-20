@@ -8,7 +8,6 @@ const crypto = require("crypto");
 const mkdirp = require("mkdirp");
 const getConsole = require("@gourmet/console");
 const prefixLines = require("@gourmet/prefix-lines");
-const promiseEach = require("@gourmet/promise-each");
 const promiseProtect = require("@gourmet/promise-protect");
 const moduleDir = require("@gourmet/module-dir");
 const relativePath = require("@gourmet/relative-path");
@@ -17,6 +16,7 @@ const merge = require("@gourmet/merge");
 const error = require("@gourmet/error");
 const b62 = require("@gourmet/base-x")("base62");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
+const defaultConfig = require("./defaultConfig");
 
 const INVALID_STAGE_TYPES = {
   message: "'builder.stageTypes' configuration must be an object or a function",
@@ -138,7 +138,7 @@ class GourmetPluginWebpackBuilder {
       const extname = ppath.extname(relPath);
       let name;
 
-      if (context.contentHash) {
+      if (context.build.v.builder.contentHash) {
         name = b62.encode(crypto.createHash("sha1").update(content).digest("hex"));
       } else {
         const dirname = ppath.dirname(relPath);
@@ -269,16 +269,24 @@ class GourmetPluginWebpackBuilder {
       }
 
       const compilation = stats[target].compilation;
+      const config = stats[target].config;
       const files = _files();
       const modules = _modules();
       const pages = _pages();
 
-      return {
+      const obj = ["debug", "minify", "sourceMap"].reduce((obj , name) => {
+        obj[name] = config.builder[name];
+        return obj;
+      }, {});
+
+      Object.assign(obj, {
         compilation: compilation.hash,
         pages,
         files,
         modules
-      };
+      });
+
+      return obj;
     }
 
     const globalAssets = this._globalAssets;
@@ -292,17 +300,18 @@ class GourmetPluginWebpackBuilder {
     }
 
     return this._collectManifestConfig(context).then(config => {
-      ["stage", "debug", "minify", "sourceMap", "staticPrefix",
-        "granularity", "contentHash"].forEach(name => {
-        obj[name] = context[name];
+      const build = context.builds.client;
+
+      ["stage", "granularity", "shortenNames", "hashLength", "contentHash", "staticPrefix"].forEach(name => {
+        obj[name] = build.builder[name];
       });
 
       obj.server = _section("server");
       obj.client = _section("client");
       obj.config = config;
 
-      const path = npath.join(this.outputDir, context.stage, "server/manifest.json");
-      const content = JSON.stringify(obj, null, context.minify ? 0 : 2);
+      const path = npath.join(context.outputDir, context.stage, "server/manifest.json");
+      const content = JSON.stringify(obj, null, build.v.builder.minify ? 0 : 2);
 
       this.emitFileSync(path, content);
 
@@ -335,8 +344,6 @@ class GourmetPluginWebpackBuilder {
     }).then(() => {
       return this._prepareStageTypes(context);
     }).then(() => {
-      return this._prepareContextVars(context);
-    }).then(() => {
       return this._prepareHashConfig(context);
     });
   }
@@ -348,6 +355,8 @@ class GourmetPluginWebpackBuilder {
       context.vars.cleanCache();
       context.target = target;
       build = context.builds[target] = new GourmetWebpackBuildInstance(context);
+      context.config = context.vars.get("");
+      context.debug = context.config.builder.debug;
       return build.init(context);
     }).then(() => {
       return build.run(context);
@@ -355,6 +364,7 @@ class GourmetPluginWebpackBuilder {
       return build.finish(context);
     }).then(() => {
       context.target = undefined;
+      context.build = undefined;
     });
   }
 
@@ -370,19 +380,30 @@ class GourmetPluginWebpackBuilder {
 
   _init(context) {
     const argv = context.argv;
+
     context.stage = argv.stage || argv.s || "local";
     context.builds = {};
-    this.outputDir = npath.resolve(context.workDir, argv.build || ".gourmet");
+
+    context.vars.getSource("config").addLower(defaultConfig);
+
+    const args = [
+      "outputDir", "debug", "minify", "sourceMap",
+      "granularity", "shortenNames", "contentHash", "hashLength"
+    ].reduce((obj, name) => {
+      if (argv[name] !== undefined)
+        obj[name] = argv[name];
+      return obj;
+    }, {});
+
+    context.vars.getSource("config").addUpper({builder: args});
+
+    return context.vars.get("builder.outputDir").then(dir => {
+      context.outputDir = npath.resolve(context.workDir, dir || ".gourmet");
+    });
   }
 
   _prepareStageTypes(context) {
     return context.vars.get("builder.stageTypes").then(checker => {
-      if (checker === undefined) {
-        checker = {
-          "production": ["prod", "production"]
-        };
-      }
-
       if (typeof checker === "object") {
         const types = checker;
         checker = function(stage, type) {
@@ -396,52 +417,6 @@ class GourmetPluginWebpackBuilder {
       context.stageIs = function(type) {
         return checker(this.stage, type);
       };
-    });
-  }
-
-  _prepareContextVars(context) {
-    return promiseEach([
-      "debug", "minify", "sourceMap",
-      "staticPrefix", "granularity",
-      "shortenNames", "contentHash"
-    ], name => {
-      return context.vars.get("builder." + name).then(userValue => {
-        let value;
-
-        if (context.argv[name] !== undefined) {
-          value = context.argv[name];   // CLI option has the highest priority
-        } else if (userValue !== undefined) {
-          value = userValue;
-        } else {
-          switch (name) {
-            case "debug":
-              value = !context.stageIs("production");
-              break;
-            case "minify":
-              value = context.stageIs("production");
-              break;
-            case "sourceMap":
-              value = !context.stageIs("production");
-              break;
-            case "staticPrefix":
-              value = "/s/";
-              break;
-            case "granularity":
-              value = context.stageIs("production") ? 2 : 1;
-              break;
-            case "shortenNames":
-              value = context.stageIs("production");
-              break;
-            case "contentHash":
-              value = false;
-              break;
-            default:
-              throw Error(`Internal error: add '${name}' to the switch/case`);
-          }
-        }
-
-        context[name] = value;
-      });
     });
   }
 
@@ -459,16 +434,19 @@ class GourmetPluginWebpackBuilder {
       return String.fromCharCode(...buf);
     }
 
-    return context.vars.get("builder.hashLength").then(hashLength => {
-      if (hashLength === undefined)
-        hashLength = context.contentHash ? 10 : 8;
+    return context.vars.getMulti(
+      "builder.hashLength",
+      "builder.shortenNames"
+    ).then(([
+      hashLength,
+      shortenNames
+    ]) => {
+      mkdirp.sync(context.outputDir);
 
-      mkdirp.sync(this.outputDir);
-
-      const flipped = _flipCase(this.outputDir);
+      const flipped = _flipCase(context.outputDir);
       const insensitive = fs.existsSync(flipped);
 
-      if (context.shortenNames) {
+      if (shortenNames) {
         this.pathHash = new HashNames({
           digestLength: 27,
           avoidCaseCollision: false
@@ -516,9 +494,6 @@ GourmetPluginWebpackBuilder.meta = {
         sourceMap: {
           help: "Generate source map ('--no-source-map' to disable)"
         },
-        staticPrefix: {
-          help: "Static prefix URL (default: '/s/')"
-        },
         granularity: {
           help: "Set bundling granularity (0: off, 1: coarse - HTTP/1, 2: fine - HTTP/2"
         },
@@ -527,6 +502,12 @@ GourmetPluginWebpackBuilder.meta = {
         },
         contentHash: {
           help: "Generate content hash based asset names to support long-term caching"
+        },
+        hashLength: {
+          help: "Length of hash digest of asset names"
+        },
+        config: {
+          help: "Arbitrary config value ('--config.builder.staticPrefix /ss/' becomes `{builder:{staticPrefix:\"/ss\"}'"
         },
         colors: {
           help: "Use colors in console output (default: auto)"
