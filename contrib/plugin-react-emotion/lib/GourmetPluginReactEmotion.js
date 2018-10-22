@@ -11,7 +11,7 @@ class PluginReactEmotion {
             plugin: require.resolve("babel-plugin-emotion"),
             options: {
               hoist: context.stageIs("production"),
-              sourceMap: context.build.v.builder.sourceMap,
+              sourceMap: context.config.builder.sourceMap,
               autoLabel: context.debug
             }
           }]

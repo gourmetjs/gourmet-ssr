@@ -9,6 +9,7 @@ module.exports = function serverArgs(def, argv, options) {
     watch: undefined,
     stage: "local",
     workDir: undefined,
+    outputDir: undefined,
     serverDir: undefined,
     clientDir: undefined,
     port: process.env.PORT || 3000,
@@ -25,8 +26,9 @@ module.exports = function serverArgs(def, argv, options) {
   const args = cliArgs(def, argv, options);
 
   args.workDir = npath.resolve(process.cwd(), args.workDir || "");
-  args.serverDir = npath.resolve(args.workDir, args.serverDir || `.gourmet/${args.stage}/server`);
-  args.clientDir = npath.resolve(args.workDir, args.clientDir || `.gourmet/${args.stage}/client`);
+  args.outputDir = npath.resolve(args.workDir, args.outputDir || ".gourmet");
+  args.serverDir = npath.resolve(args.outputDir, args.serverDir || `${args.stage}/server`);
+  args.clientDir = npath.resolve(args.outputDir, args.clientDir || `${args.stage}/client`);
 
   return args;
 };

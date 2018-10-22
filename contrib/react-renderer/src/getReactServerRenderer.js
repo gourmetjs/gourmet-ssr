@@ -121,7 +121,7 @@ module.exports = function getReactServerRenderer(Base) {
 
       const deps = this.getStaticDeps(gmctx);
       const bundles = this.getBundles(gmctx, modules, deps);
-      const staticPrefix = gmctx.manifest.staticPrefix;
+      const staticPrefix = gmctx.manifest.client.staticPrefix;
 
       return [
         super.getBodyTail(gmctx)

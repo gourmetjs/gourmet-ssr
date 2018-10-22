@@ -2,6 +2,12 @@
 
 module.exports = {
   builder: {
+    stageTypes: {
+      "production": ["prod", "ltc"]
+    },
+    outputDir: "../../.gourmet/react-hello",
+    contentHash: context => context.stage === "ltc",
+
     initOptions: {
       dataPropertyName: "__INIT_DATA__"
     },
@@ -10,6 +16,7 @@ module.exports = {
       "react-dom/server": "external"
     }
   },
+
   pages: {
     main: "./src/HelloApp.jsx"
   }

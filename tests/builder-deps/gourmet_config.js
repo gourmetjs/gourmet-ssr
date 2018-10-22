@@ -1,13 +1,14 @@
 "use strict";
 
 module.exports = {
-  pages: {
-    main: "./src/main"
-  },
-
   builder: {
-    installSourceMapSupport: false,
+    stageTypes: {
+      "production": ["prod", "ltc"]
+    },
+    outputDir: "../../.gourmet/builder-deps",
+    contentHash: context => context.stage === "ltc",
 
+    installSourceMapSupport: false,
     moduleLinks: {
       "domready": "client",
       "rimraf": "server",
@@ -15,5 +16,9 @@ module.exports = {
       "mkdirp": "external",
       "none": false
     }
+  },
+
+  pages: {
+    main: "./src/main"
   }
 };

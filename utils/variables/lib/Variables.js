@@ -69,9 +69,9 @@ class Variables {
     this.addSource("file", new File(workDir));
   }
 
-  // Gets a property value of the context, resolving variable references to
-  // concrete values. The result can be any JavaScript value, such as
-  // string, number, object, array, ..etc.
+  // Gets a property value of the context using default source, resolving
+  // variable references to concrete values.
+  // The result can be any JavaScript value, such as string, number, object, array, ..etc.
   //
   // - [context] `{ bootstrap: {theme: "${sys:stage}-blue"} }`
   // - [code] `vars.get("bootstrap").then(boostrap => { console.log(JSON.stringify(bootstrap)) })`
@@ -82,12 +82,14 @@ class Variables {
   // options:
   //  - force: do not use a cached value
   get(path, defVal, options={}) {
-    return promiseDeepProp(this._context, path, (value, prop, parent) => {
-      if (value instanceof VarNode)
-        return value.resolve(this, prop, parent, path, options);
-      else
-        return value;
-    }).then(value => {
+    const src = this._sources[this.defaultSource];
+    const info = {
+      type: "ref",
+      source: this.defaultSource,
+      path,
+      query: {}
+    };
+    return src.resolve(this, info, options).then(value => {
       return this._resolveAllAndClone(value, path, defVal, options);
     });
   }

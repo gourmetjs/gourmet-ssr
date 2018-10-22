@@ -5,7 +5,11 @@ const morgan = require("morgan");
 const serverArgs = require("@gourmet/server-args");
 
 module.exports = function(def, gourmet) {
-  const args = serverArgs(def);
+  const args = serverArgs(Object.assign({
+    workDir: __dirname + "/..",
+    outputDir: "../../.gourmet/react-hello",
+    debug: process.env.NODE_ENV !== "production"
+  }, def));
   const app = express();
 
   if (args.debug)

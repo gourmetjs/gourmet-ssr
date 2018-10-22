@@ -8,13 +8,13 @@ class GourmetPluginWebpackBabel {
     // Note that `babel-preset-env` below 7.x doesn't support
     // browserlist's config file or `package.json`.
     // https://github.com/babel/babel-preset-env/issues/26
-    return context.vars.getMulti(
-      "builder.runtime." + context.target,
-      ["builder.sourceModules", []]
-    ).then(([runtime, sourceModules]) => {
-      this._targets = context.target === "client" ? {browsers: runtime || null} : {node: runtime || "6.1"};
-      this._sourceModules = context.plugins.runMergeSync("^build:source_modules", sourceModules, context);
-    });
+    if (context.target === "client")
+      this._targets = {browsers: context.config.builder.runtime.client};
+    else
+      this._targets = {node: context.config.builder.runtime.server};
+
+    const sourceModules = [].concat(context.config.builder.sourceModules);
+    this._sourceModules = context.plugins.runMergeSync("^build:source_modules", sourceModules, context);
   }
 
   onPipelines(context) {

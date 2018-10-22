@@ -5,9 +5,8 @@
   "main": "lib/GourmetCli.js",
   "dependencies": {
     "@gourmet/cli-base": "^0.5.0",
-    "@gourmet/deep-clone": "^0.2.0",
     "@gourmet/error": "^0.2.0",
-    "@gourmet/merge": "^0.5.0",
+    "@gourmet/plain-merge": "^0.1.0",
     "@gourmet/promise-deep-prop": "^0.2.0",
     "@gourmet/promise-protect": "^0.2.0",
     "@gourmet/variables": "^0.2.0",

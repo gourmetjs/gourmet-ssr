@@ -145,7 +145,7 @@ class HtmlServerRenderer extends BaseRenderer {
 
   renderStaticDeps(gmctx) {
     const deps = this.getStaticDeps(gmctx);
-    const staticPrefix = gmctx.manifest.staticPrefix;
+    const staticPrefix = gmctx.manifest.client.staticPrefix;
     const styles = [];
     const scripts = [];
 

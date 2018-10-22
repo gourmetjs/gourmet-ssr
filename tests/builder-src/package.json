@@ -3,8 +3,6 @@
   "version": "0.1.1",
   "private": true,
   "scripts": {
-    "build": "gourmet build",
-    "watch": "node lib/server.js --watch",
     "test": "gourmet build --verbose 1 && gourmet build --verbose 1 --stage test && tape test/*_test.js"
   },
   "dependencies": {

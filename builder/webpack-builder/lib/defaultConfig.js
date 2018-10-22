@@ -14,6 +14,7 @@ module.exports = {
     outputDir: ".gourmet",
 
     debug: context => !context.stageIs("production"),
+
     minify: context => context.stageIs("production"),
     sourceMap: context => !context.stageIs("production"),
 
@@ -78,16 +79,17 @@ module.exports = {
     // Only used when `target` is "server" and `sourceMap` is true.
     installSourceMapSupport: true,
 
-    // Additional default extensions to append
-    // Default: [".js", ".json"]
+    // Additional extensions to append to the intrinsic default
+    // Intrinsic default: [".js", ".json"]
     // With `@gourmet/preset-react`: [".js", ".json", ".jsx"]
     defaultExtensions: [],
 
-    // Module alias definitions. Output `context.build.config.alias` is generated from
+    // Module alias definitions. Output `buildConfig.alias` is generated from
     // `moduleLinks` and `alias`.
     alias: {},
 
-    // These are defined by default
+    // Additional definitions to add to the intrinsic default
+    // Intrinsic default:
     //  - process.env.NODE_ENV = context.debug ? "development" : "production"
     //  - DEBUG: context.debug
     //  - SERVER: context.target === "server"
@@ -99,7 +101,7 @@ module.exports = {
     // In order to make a module to be compiled by default, implement a gourmet plugin
     // that taps into `build:source_modules` hook.
     //  - `sourceModules: ["@gourmet/http-headers"]`
-    //  - `sourceModules: context.getter(() => context.target === "client" ? ["@gourmet/http-headers"] : [])`
+    //  - `sourceModules: context => context.target === "client" ? ["@gourmet/http-headers"] : []`
     sourceModules: [],
 
     // Specifies modules to be either client-only, server-only or external(server-only)

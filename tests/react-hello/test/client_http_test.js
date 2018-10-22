@@ -1,6 +1,7 @@
 "use strict";
 
 const test = require("tape");
+const serverArgs = require("@gourmet/server-args");
 const puppeteer = require("puppeteer");
 const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
@@ -13,13 +14,13 @@ let gourmetServer, gourmetPort;
 let app, port;
 
 test("start back server", pt(() => {
-  gourmetServer = new GourmetHttpServer({
+  gourmetServer = new GourmetHttpServer(serverArgs({
     workDir: __dirname + "/..",
-    serverDir: ".gourmet/local/server",
-    clientDir: ".gourmet/local/client",
+    outputDir: "../../.gourmet/react-hello",
+    debug: process.env.NODE_ENV !== "production",
     port: 0,
     console: getConsole({minLevel: "error", name: "gourmet:net"})
-  });
+  }));
   gourmetServer.start();
   return gourmetServer.ready().then(port => {
     gourmetPort = port;

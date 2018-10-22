@@ -6,7 +6,11 @@ const serverArgs = require("@gourmet/server-args");
 const gourmet = require("@gourmet/client-lib");
 
 module.exports = function(def) {
-  const args = serverArgs(def);
+  const args = serverArgs(Object.assign({
+    workDir: __dirname + "/..",
+    outputDir: "../../.gourmet/i80-loadable",
+    debug: process.env.NODE_ENV !== "production"
+  }, def));
   const app = express();
 
   app.history = [];

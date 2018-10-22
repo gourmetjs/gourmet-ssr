@@ -321,6 +321,7 @@ test("getMulti", t => {
 
   let value = 5;
 
+  vars.addSource("self", new Variables.Self());
   vars.addSource("val", new Val());
 
   return Promise.resolve().then(() => {

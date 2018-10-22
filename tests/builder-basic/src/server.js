@@ -7,7 +7,7 @@ export default ({page, manifest}) => {
       "** SERVER **",
       `page: ${page}`,
       `stage: ${manifest.stage}`,
-      `staticPrefix: ${manifest.staticPrefix}`,
+      `staticPrefix: ${manifest.client.staticPrefix}`,
       `reqArgs.url: ${reqArgs.url}`,
       `clientProps: ${JSON.stringify(clientProps)}`
     );

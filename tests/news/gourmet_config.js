@@ -1,9 +1,18 @@
 "use strict";
 
-module.exports = context => ({
-  pages: {
-    main: context.getter(() => context.target === "server" ? "./src/ServerPage.jsx" : "./src/ClientPage.jsx")
+module.exports = {
+  builder: {
+    stageTypes: {
+      "production": ["prod", "ltc"]
+    },
+    outputDir: "../../.gourmet/news",
+    contentHash: context => context.stage === "ltc"
   },
+
+  pages: {
+    main: context => context.target === "server" ? "./src/ServerPage.jsx" : "./src/ClientPage.jsx"
+  },
+
   config: {
     html: {
       headTop: [
@@ -12,4 +21,4 @@ module.exports = context => ({
       ]
     }
   }
-});
+};

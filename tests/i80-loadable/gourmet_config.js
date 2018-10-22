@@ -1,9 +1,18 @@
 "use strict";
 
 module.exports = {
+  builder: {
+    stageTypes: {
+      "production": ["prod", "ltc"]
+    },
+    outputDir: "../../.gourmet/i80-loadable",
+    contentHash: context => context.stage === "ltc"
+  },
+
   pages: {
     main: "./src/MainPage.jsx"
   },
+
   config: {
     html: {
       headTop: [

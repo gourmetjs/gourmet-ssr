@@ -138,7 +138,7 @@ class GourmetPluginWebpackBuilder {
       const extname = ppath.extname(relPath);
       let name;
 
-      if (context.build.v.builder.contentHash) {
+      if (context.config.builder.contentHash) {
         name = b62.encode(crypto.createHash("sha1").update(content).digest("hex"));
       } else {
         const dirname = ppath.dirname(relPath);
@@ -269,12 +269,17 @@ class GourmetPluginWebpackBuilder {
       }
 
       const compilation = stats[target].compilation;
-      const config = stats[target].config;
+      const config = context.builds[target].config;
       const files = _files();
       const modules = _modules();
       const pages = _pages();
 
-      const obj = ["debug", "minify", "sourceMap"].reduce((obj , name) => {
+      const obj = [
+        "debug", "minify", "sourceMap"
+      ].concat(target === "client" ? [
+        "staticPrefix", "granularity", "shortenNames",
+        "hashLength", "contentHash"
+      ] : []).reduce((obj , name) => {
         obj[name] = config.builder[name];
         return obj;
       }, {});
@@ -290,7 +295,7 @@ class GourmetPluginWebpackBuilder {
     }
 
     const globalAssets = this._globalAssets;
-    const obj = {};
+    const obj = {stage: context.stage};
 
     if (!stats) {
       stats = {
@@ -300,18 +305,12 @@ class GourmetPluginWebpackBuilder {
     }
 
     return this._collectManifestConfig(context).then(config => {
-      const build = context.builds.client;
-
-      ["stage", "granularity", "shortenNames", "hashLength", "contentHash", "staticPrefix"].forEach(name => {
-        obj[name] = build.builder[name];
-      });
-
       obj.server = _section("server");
       obj.client = _section("client");
       obj.config = config;
 
       const path = npath.join(context.outputDir, context.stage, "server/manifest.json");
-      const content = JSON.stringify(obj, null, build.v.builder.minify ? 0 : 2);
+      const content = JSON.stringify(obj, null, context.builds.server.config.builder.minify ? 0 : 2);
 
       this.emitFileSync(path, content);
 
@@ -355,8 +354,9 @@ class GourmetPluginWebpackBuilder {
       context.vars.cleanCache();
       context.target = target;
       build = context.builds[target] = new GourmetWebpackBuildInstance(context);
-      context.config = context.vars.get("");
-      context.debug = context.config.builder.debug;
+      return context.vars.get("builder.debug");
+    }).then(debug => {
+      context.debug = debug;
       return build.init(context);
     }).then(() => {
       return build.run(context);
@@ -364,7 +364,6 @@ class GourmetPluginWebpackBuilder {
       return build.finish(context);
     }).then(() => {
       context.target = undefined;
-      context.build = undefined;
     });
   }
 

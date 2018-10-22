@@ -7,7 +7,11 @@ const gourmet = require("@gourmet/client-lib");
 
 module.exports = function(def) {
   const app = express();
-  const args = app.args = serverArgs(def);
+  const args = app.args = serverArgs(Object.assign({
+    workDir: __dirname + "/..",
+    outputDir: "../../.gourmet/builder-basic",
+    debug: process.env.NODE_ENV !== "production"
+  }, def));
 
   if (args.debug)
     app.use(morgan("dev"));

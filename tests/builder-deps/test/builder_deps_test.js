@@ -10,7 +10,6 @@ let app, port;
 
 test("start server", t => {
   app = run({
-    workDir: __dirname + "/..",
     port: 0,
     debug: false
   });

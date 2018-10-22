@@ -11,8 +11,8 @@ class GourmetPluginSourceMapSupport {
   }
 
   onEntry(value, context) {
-    const v = context.config.builder;
-    if (context.target === "server" && v.installSourceMapSupport && v.sourceMap) {
+    const config = context.config.builder;
+    if (context.target === "server" && config.installSourceMapSupport && config.sourceMap) {
       return [
         require.resolve("../src/install.js")
       ].concat(value);

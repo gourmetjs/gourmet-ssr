@@ -10,7 +10,11 @@ const API_URL = "https://newsapi.org/v2/everything";
 const API_KEY = process.env.NEWS_API_KEY || "154b5ab8953e468eb882083b815c65fb";
 
 module.exports = function(def) {
-  const args = serverArgs(def);
+  const args = serverArgs(Object.assign({
+    workDir: __dirname + "/..",
+    outputDir: "../../.gourmet/news",
+    debug: process.env.NODE_ENV !== "production"
+  }, def));
   const app = express();
 
   if (args.debug)

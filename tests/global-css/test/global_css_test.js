@@ -9,7 +9,6 @@ let app, port;
 
 test("start server", t => {
   app = run({
-    workDir: __dirname + "/..",
     port: 0,
     debug: false
   });
@@ -20,7 +19,7 @@ test("start server", t => {
 });
 
 test("check server rendered content", pt(async t => {
-  const name = app.args.stage === "prod" ? "c3Z6rog8\\.css" : "hello\\.css";
+  const name = app.args.stage === "prod" ? "c3Z6rog8\\.css" : app.args.stage === "ltc" ? "AcOJqixhjq\\.css" : "hello\\.css";
   let res = await got(`http://localhost:${port}/`);
   t.ok((new RegExp(`<link rel="stylesheet"[^<]+${name}`)).test(res.body));
 

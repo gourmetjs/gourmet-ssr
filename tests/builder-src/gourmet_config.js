@@ -1,16 +1,18 @@
 "use strict";
 
-module.exports = context => ({
+module.exports = {
   builder: {
+    outputDir: "../../.gourmet/builder-src",
     installSourceMapSupport: false,
-    sourceModules: context.getter(() => {
+    sourceModules: context => {
       return context.stage === "test" ? ["@gourmet/test-builder-src-module-a"] : [];
-    }),
-    runtime: context.getter(() => {
-      return context.stage === "test" ? {client: null, server: "4"} : {client: null, server: "8"};
-    })
+    },
+    runtime: {
+      client: null,
+      server: context => context.stage === "test" ? "4" : "8"
+    }
   },
   pages: {
     main: "./src/main.js"
   }
-});
+};

@@ -5,9 +5,10 @@
   "scripts": {
     "build": "gourmet build",
     "start": "node lib/local.js",
-    "test": "npm run test:local && npm run test:prod",
+    "test": "npm run test:local && npm run test:prod && npm run test:ltc",
     "test:local": "gourmet build --verbose 1 && tape test/*_test.js",
-    "test:prod": "gourmet build --verbose 1 --stage prod && tape test/*_test.js --stage prod"
+    "test:prod": "gourmet build --verbose 1 --stage prod && tape test/*_test.js --stage prod",
+    "test:ltc": "gourmet build --verbose 1 --stage ltc && tape test/*_test.js --stage ltc"
   },
   "dependencies": {
     "@gourmet/client-http": "^0.5.2",

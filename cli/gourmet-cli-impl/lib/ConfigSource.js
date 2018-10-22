@@ -1,40 +1,39 @@
 "use strict";
 
-const merge = require("@gourmet/merge");
-const deepClone = require("@gourmet/deep-clone");
+const merge = require("@gourmet/plain-merge");
 
 class ConfigSource {
   // Caller is responsible for preparing `upper` and 'lowwer' using
   // `prepareValue` based on the use case of object it gives.
   // If you give a raw object without preparing it with `prepareValue`,
   // it will be used just as-is, skipping any variable expansions.
-  constructor(upper, lower) {
-    this._upper = deepClone(upper || {});   // overriding values (e.g. cli options, env variables)
-    this._lower = deepClone(lower || {});   // default value (e.g. set by plugins)
+  constructor(config, upper, lower) {
+    this._config = config;
+    this._upper = merge({}, upper);   // overriding values (e.g. cli options, env variables)
+    this._lower = merge({}, lower);   // default value (e.g. set by plugins)
+    this._isDirty = true;
   }
 
   async resolve(vars, info, options) {
-    let value = await vars.getNode(info.path, options, this._upper);
-    if (value === undefined) {
-      value = await vars.getNode(info.path, options);
-      if (value === undefined)
-        value = await vars.getNode(info.path, options, this._lower);
-    }
-    return value;
+    this._buildContext(vars);
+    return vars.getNode(info.path, options);
   }
 
   addUpper(obj) {
     merge(this._upper, obj);
+    this._isDirty = true;
   }
 
   addLower(obj) {
     merge(this._lower, obj);
+    this._isDirty = true;
   }
 
-  cleanCache(vars) {
-    const Variables = vars.constructor;
-    this._upper = Variables.cleanCache(this._upper);
-    this._lower = Variables.cleanCache(this._lower);
+  _buildContext(vars) {
+    if (this._isDirty) {
+      const config = merge({}, this._lower, this._config, this._upper);
+      vars.setContext(config);
+    }
   }
 }
 

@@ -10,7 +10,6 @@ let app, port;
 
 test("start server", t => {
   app = run({
-    workDir: __dirname + "/..",
     port: 0,
     debug: false
   });
@@ -46,7 +45,7 @@ test("run puppeteer", pt(async t => {
   const newRequests = app.history.slice(historyIndex);
 
   t.deepEqual(newRequests, [
-    app.args.stage === "prod" ? "/s/dj7zHVlC.js" : "/s/profile.js"
+    app.args.stage === "prod" ? "/s/dj7zHVlC.js" : app.args.stage === "ltc" ? "/s/dO0HL9WoVm.js" : "/s/profile.js"
   ],  "`profile.js` must be loaded dynamically");
 
   await browser.close();
