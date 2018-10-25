@@ -10,7 +10,7 @@ class GourmetPluginWebpackGlobalCss {
         name: "@gourmet/webpack-file-loader",
         loader: require.resolve("@gourmet/webpack-file-loader"),
         options: {
-          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
+          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", type: "global_css"}),
           emitFile: context.target === "client"
         }
       }, {
@@ -46,7 +46,7 @@ class GourmetPluginWebpackGlobalCss {
         name: "@gourmet/webpack-file-loader",
         loader: require.resolve("@gourmet/webpack-file-loader"),
         options: {
-          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
+          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", type: "global_css"}),
           emitFile: context.target === "client"
         }
       }, {
@@ -63,7 +63,7 @@ class GourmetPluginWebpackGlobalCss {
         name: "@gourmet/webpack-file-loader",
         loader: require.resolve("@gourmet/webpack-file-loader"),
         options: {
-          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", isGlobal: true}),
+          name: context.builder.getAssetFilenameGetter(context, {ext: ".css", type: "global_css"}),
           emitFile: context.target === "client"
         }
       }]
@@ -122,9 +122,9 @@ class GourmetPluginWebpackGlobalCss {
 
 GourmetPluginWebpackGlobalCss.meta = {
   hooks: {
-    "build:pipelines": GourmetPluginWebpackGlobalCss.prototype.onPipelines,
-    "build:loaders": GourmetPluginWebpackGlobalCss.prototype.onLoaders,
-    "build:loader_options:postcss-loader": GourmetPluginWebpackGlobalCss.prototype.onPostCssOptions
+    "build:webpack_pipelines": GourmetPluginWebpackGlobalCss.prototype.onPipelines,
+    "build:webpack_loaders": GourmetPluginWebpackGlobalCss.prototype.onLoaders,
+    "build:webpack_loader_options:postcss-loader": GourmetPluginWebpackGlobalCss.prototype.onPostCssOptions
   }
 };
 

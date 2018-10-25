@@ -1,10 +1,14 @@
 "use strict";
 
 class PresetCore {
-  onAlias(context) {
+  onUserConfig(context) {
     const moduleDir = context.builder.moduleDir(__dirname);
     return {
-      "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer")
+      builder: {
+        alias: {
+          "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer")
+        }
+      }
     };
   }
 }
@@ -20,7 +24,7 @@ PresetCore.meta = {
     "@gourmet/plugin-webpack-html-renderer"
   ],
   hooks: {
-    "build:alias": PresetCore.prototype.onAlias
+    "build:user_config": PresetCore.prototype.onUserConfig
   }
 };
 

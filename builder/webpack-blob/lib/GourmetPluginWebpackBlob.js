@@ -31,8 +31,8 @@ class GourmetPluginWebpackBlob {
 
 GourmetPluginWebpackBlob.meta = {
   hooks: {
-    "build:pipelines": GourmetPluginWebpackBlob.prototype.onPipelines,
-    "build:loaders": GourmetPluginWebpackBlob.prototype.onLoaders
+    "build:webpack_pipelines": GourmetPluginWebpackBlob.prototype.onPipelines,
+    "build:webpack_loaders": GourmetPluginWebpackBlob.prototype.onLoaders
   }
 };
 

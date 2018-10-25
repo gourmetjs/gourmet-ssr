@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("fs");
 const test = require("tape");
 const pt = require("@gourmet/promise-tape");
 const puppeteer = require("puppeteer");
@@ -20,6 +21,7 @@ test("start server", t => {
 });
 
 test("run puppeteer", pt(async t => {
+  const args = app.args;
   const browser = await puppeteer.launch(testArgs);
   const page = await browser.newPage();
 
@@ -43,10 +45,20 @@ test("run puppeteer", pt(async t => {
   t.equal(h1, "View: Profile");
 
   const newRequests = app.history.slice(historyIndex);
+  let filename;
 
-  t.deepEqual(newRequests, [
-    app.args.stage === "prod" ? "/s/dj7zHVlC.js" : app.args.stage === "ltc" ? "/s/dO0HL9WoVm.js" : "/s/profile.js"
-  ],  "`profile.js` must be loaded dynamically");
+  if (args.stage === "ltc") { 
+    const stats = JSON.parse(fs.readFileSync(`${args.outputDir}/${args.stage}/info/stats.client.json`, "utf8"));
+    Object.keys(stats.assetsByChunkName).forEach(name => {
+      if (name === "profile")
+        filename = stats.assetsByChunkName[name];
+    });
+    t.ok(/^[a-zA-Z0-9]{10}\.js$/.test(filename), "filename must be 10 chars base62 encoded string");
+  } else {
+    filename = args.stage === "prod" ? "dj7zHVlC.js" : "profile.js";
+  }
+
+  t.deepEqual(newRequests, [`/s/${filename}`], "'profile' must be loaded dynamically");
 
   await browser.close();
 }));

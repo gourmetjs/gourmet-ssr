@@ -31,20 +31,9 @@
 
 ## Modules under `node_modules` are not transpiled by default
 
-- By default, JavaScript files under `node_modules` directory are not transpiled to reduce compilation time.
-- You can declare specific modules to be transpiled even if they are under `node_moodules` by listing them as an array in `builder.sourceModules`.
-```js
-// gourmet_config.js
-module.exports = {
-  builder: {
-    sourceModules: ["module-a", "module-b"]
-  },
-  pages: {
-    main: "./src/main.js"
-  }
-};
-```
-- Modules can also declare themselves as "source modules" by implementing Gourmet Plugin hook "build:source_modules".
+- By default, vendor modules from `node_modules` will not be complied and copied as-is for better build performance.
+- However, source files located under one of directories specified in `vendorSourceDirs` will be included in compilation.
+ - Default value is `["gourmet-source"]`.
 
 ## Controlling modules' linkage using `builder.moduleLinks`
 

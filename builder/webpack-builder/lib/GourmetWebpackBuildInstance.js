@@ -75,7 +75,12 @@ class GourmetWebpackBuildInstance {
   }
 
   init(context) {
-    return context.vars.get("").then(config => {
+    return context.plugins.runMergeAsync("build:user_config", {}, context).then(value => {
+      return context.vars.get("").then(config => {
+        merge(value, config);
+        return context.plugins.runMergeAsync("build:after:user_config", value, context);
+      });
+    }).then(config => {
       const con = context.console;
       con.debug(con.colors.brightYellow(`>>> Config for ${context.target}:`));
       con.print({level: "debug", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
@@ -118,6 +123,8 @@ class GourmetWebpackBuildInstance {
     return promiseProtect(() => {
       if (!context.watch) {
         this.printResult(context);
+        if (context.argv.saveWebpackStats)
+          this.saveWebpackStats(context);
         if (this.webpack.stats.hasErrors() && !context.argv.ignoreCompileErrors)
           throw error(COMPILATION_ERROR, {count: this.webpack.stats.compilation.errors.length});
       }
@@ -125,74 +132,7 @@ class GourmetWebpackBuildInstance {
   }
 
   getConfig(context) {
-    // These are assigned as direct members of `this.buildConfig` because they are
-    // generic and relatively Webpack independent. Also, setting as members allow
-    // hooks later in the sequence to reference values set by previous hooks.
-    this.buildConfig = {};
-    this.buildConfig.defaultExtensions = this.getDefaultExtensions(context);
-    this.buildConfig.moduleLinks = this.getModuleLinks(context);
-    this.buildConfig.alias = this.getAlias(context);
-    this.buildConfig.define = this.getDefine(context);
-    this.buildConfig.pipelines = this.getPipelines(context);
-    this.buildConfig.loaders = this.getLoaders(context);
-    this.buildConfig.plugins = this.getWebpackPlugins(context);
-    this.buildConfig.webpack = this.getWebpackConfig(context);
-
-    return this.buildConfig.webpack;
-  }
-
-  getDefaultExtensions(context) {
-    // Intrinsic default is defined here to give plugins a higher priority.
-    const ext = [".js", ".json"];
-    context.plugins.runMergeSync("build:default_extensions", ext, context);
-    return merge(ext, context.config.builder.defaultExtensions);
-  }
-
-  getModuleLinks(context) {
-    const links = {};
-    context.plugins.runMergeSync("build:module_links", links, context);
-    return merge(links, context.config.builder.moduleLinks);
-  }
-
-  getAlias(context) {
-    const alias = {};
-    context.plugins.runMergeSync("build:alias", alias, context);
-    return merge(alias, context.config.builder.alias);
-  }
-
-  getDefine(context) {
-    // Intrinsic default is defined here to give plugins a higher priority.
-    const define = {
-      "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
-      DEBUG: JSON.stringify(context.debug),
-      SERVER: JSON.stringify(context.target === "server"),
-      CLIENT: JSON.stringify(context.target === "client"),
-      STAGE: JSON.stringify(context.stage)
-    };
-    context.plugins.runMergeSync("build:define", define, context);
-    return merge(define, context.config.builder.define);
-  }
-
-  getPipelines(context) {
-    const pipelines = {};
-    context.plugins.runMergeSync("build:pipelines", pipelines, context);
-    return merge(pipelines, context.config.webpack.pipelines);
-  }
-
-  getLoaders(context) {
-    const loaders = {};
-    context.plugins.runMergeSync("build:loaders", loaders, context);
-    return merge(loaders, context.config.webpack.loaders);
-  }
-
-  getWebpackPlugins(context) {
-    const plugins = [];
-    context.plugins.runMergeSync("build:webpack_plugins", plugins, context);
-    return merge(plugins, context.config.webpack.plugins);
-  }
-
-  getWebpackConfig(context) {
-    const config = {
+    return this._getConfigItem(context, "webpack_config", {
       context: this._getWebpackContext(context),
       target: this._getWebpackTarget(context),
       mode: this._getWebpackMode(context),
@@ -204,9 +144,7 @@ class GourmetWebpackBuildInstance {
       externals: this._getWebpackExternals(context),
       entry: this._getWebpackEntry(context),
       plugins: this._getWebpackPlugins(context)
-    };
-    context.plugins.runMergeSync("build:webpack_config", config, context);
-    return merge(config, context.config.webpack.config);
+    }, context.config.webpack.config);
   }
 
   printResult(context) {
@@ -225,6 +163,20 @@ class GourmetWebpackBuildInstance {
     else if (this.webpack.stats.hasWarnings())
       method = "warn";
     this.console[method](this.webpack.stats.toString(options));
+  }
+
+  saveWebpackStats(context) {
+    const stats = this.webpack.stats.toJson();
+    const path = npath.join(context.outputDir, context.stage, `info/stats.${context.target}.json`);
+    const content = JSON.stringify(stats, null, 2);
+    context.builder.emitFileSync(path, content);
+  }
+
+  _getConfigItem(context, eventName, value, userConfig) {
+    context.plugins.runMergeSync(`build:${eventName}`, value, context);
+    merge(value, userConfig);
+    context.plugins.runMergeSync(`build:after:${eventName}`, value, context);
+    return value;
   }
 
   _getWebpackContext(context) {
@@ -298,13 +250,13 @@ class GourmetWebpackBuildInstance {
 
   _getWebpackResolve(context) {
     return {
-      extensions: this.buildConfig.defaultExtensions,
+      extensions: context.config.builder.defaultExtensions,
       alias: this._getWebpackAlias(context)
     };
   }
 
   _getWebpackAlias(context) {
-    const links = this.buildConfig.moduleLinks;
+    const links = context.config.builder.moduleLinks;
     const alias = Object.keys(links).reduce((alias, name) => {
       const value = links[name];
       if (MODULE_LINK_VALUES.indexOf(value) !== -1) {
@@ -318,7 +270,7 @@ class GourmetWebpackBuildInstance {
       }
       return alias;
     }, {});
-    return merge(alias, this.buildConfig.alias);
+    return merge(alias, context.config.builder.alias);
   }
 
   _getWebpackModule(context) {
@@ -380,16 +332,16 @@ class GourmetWebpackBuildInstance {
         },
         finalize: item => {
           const loader = item.loader || item.name;
-          const options = context.plugins.runWaterfallSync(`build:loader_options:${item.name}`, item.options, item.name, context);
+          const options = context.plugins.runWaterfallSync(`build:webpack_loader_options:${item.name}`, item.options, item.name, context);
           return options ? {loader, options} : loader;
         }
       });
     }
 
-    const pipelines = this.buildConfig.pipelines;
-    const loaders = this.buildConfig.loaders;
+    const pipelines = this._getConfigItem(context, "webpack_pipelines", {}, context.config.webpack.pipelines);
+    const loaders = this._getConfigItem(context, "webpack_loaders", {}, context.config.webpack.loaders);
     const keys = Object.keys(loaders);
-    const allExts = [].concat(this.buildConfig.defaultExtensions);
+    const allExts = [].concat(context.config.builder.defaultExtensions);
 
     Object.keys(loaders).forEach(name => {
       const def = loaders[name];
@@ -452,7 +404,7 @@ class GourmetWebpackBuildInstance {
 
   _getWebpackExternals(context) {
     if (context.target === "server") {
-      const links = this.buildConfig.moduleLinks;
+      const links = context.config.builder.moduleLinks;
       return Object.keys(links).reduce((externals, name) => {
         const value = links[name];
         if (value === "external" || value === "client:external")
@@ -465,8 +417,8 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackPlugins(context) {
-    const define = this.buildConfig.define;
-    const plugins = [].concat(this.buildConfig.plugins);
+    const define = context.config.builder.define;
+    const plugins = this._getConfigItem(context, "webpack_plugins", [], context.config.webpack.plugins);
     const idHashLength = context.config.webpack.idHashLength;
 
     if (context.target === "client" && idHashLength) {
@@ -533,7 +485,7 @@ class GourmetWebpackBuildInstance {
 
     const infoDir = npath.join(context.outputDir, context.stage, "info");
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
-    const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: this.buildConfig.defaultExtensions});
+    const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: context.config.builder.defaultExtensions});
     const userModule = relativePath(absPath, infoDir);
     const iopts = context.config.builder.initOptions;
     const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";

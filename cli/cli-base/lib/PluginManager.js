@@ -90,7 +90,7 @@ class PluginManager {
   // a return value of the function.
   // If the loop reached to the end, `null` is returned instead.
   // If the event name begins with a caret as `"^after:command:deploy"`,
-  // handers are iterated in reverse order.
+  // handlers are iterated in reverse order.
   forEachSync(eventName, callback) {
     const handlers = this._getEventHandlers(eventName);
     for (let idx = 0; idx < handlers.length; idx++) {

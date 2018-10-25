@@ -13,8 +13,15 @@ class GourmetPluginWebpackBabel {
     else
       this._targets = {node: context.config.builder.runtime.server};
 
-    const sourceModules = [].concat(context.config.builder.sourceModules);
-    this._sourceModules = context.plugins.runMergeSync("^build:source_modules", sourceModules, context);
+    this._vendorSourceDirs = context.config.builder.vendorSourceDirs.map(dir => {
+      if (typeof dir !== "string")
+        return dir;
+      if (dir[0] !== "/")
+        dir = "/" + dir;
+      if (dir[dir.length - 1] !== "/")
+        dir = dir + "/";
+      return dir;
+    });
   }
 
   onPipelines(context) {
@@ -115,30 +122,34 @@ class GourmetPluginWebpackBabel {
   }
 
   _isSource(path, idx, dir) {
+    const dirs = this._vendorSourceDirs;
+
     path = relativePath(path);
 
-    return !this._sourceModules.every(pattern => {
+    for (let idx = 0; idx < dirs.length; idx++) {
+      const pattern = dirs[idx];
       if (typeof pattern === "string") {
-        const spos = idx + dir.length + 1;
-        const epos = spos + pattern.length;
-        if (path[spos - 1] === "/" && path.substring(spos, epos) === pattern && path[epos] === "/")
-          return false;
+        const spos = idx + dir.length;
+        if (path.indexOf(pattern, spos) !== -1)
+          return true;
       } else if (pattern instanceof RegExp) {
-        return !pattern.test(path);
+        if (pattern.test(path))
+          return true;
       } else {
         throw Error("Invalid pattern");
       }
-      return true;
-    });
+    }
+
+    return false;
   }
 }
 
 GourmetPluginWebpackBabel.meta = {
   hooks: {
     "build:init": GourmetPluginWebpackBabel.prototype.onInit,
-    "build:pipelines": GourmetPluginWebpackBabel.prototype.onPipelines,
-    "build:loaders": GourmetPluginWebpackBabel.prototype.onLoaders,
-    "build:loader_options:babel-loader": GourmetPluginWebpackBabel.prototype.onLoaderOptions
+    "build:webpack_pipelines": GourmetPluginWebpackBabel.prototype.onPipelines,
+    "build:webpack_loaders": GourmetPluginWebpackBabel.prototype.onLoaders,
+    "build:webpack_loader_options:babel-loader": GourmetPluginWebpackBabel.prototype.onLoaderOptions
   }
 };
 

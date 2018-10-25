@@ -4,11 +4,11 @@ module.exports = {
   builder: {
     outputDir: "../../.gourmet/builder-src",
     installSourceMapSupport: false,
-    sourceModules: context => {
-      return context.stage === "test" ? ["@gourmet/test-builder-src-module-a"] : [];
+    vendorSourceDirs: context => {
+      return context.stage === "test" ? ["@gourmet/test-builder-src-module-a"] : ["gourmet-source"];
     },
     runtime: {
-      client: null,
+      client: "IE 10",
       server: context => context.stage === "test" ? "4" : "8"
     }
   },

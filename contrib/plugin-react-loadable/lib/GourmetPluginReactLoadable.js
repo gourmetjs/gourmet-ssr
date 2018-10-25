@@ -18,7 +18,7 @@ class PluginReactLoadable {
               libraryName: "@gourmet/react-loadable",
               modules: target === "server",
               resolveModule(moduleName, refPath) {
-                const extensions = context.builds[target].buildConfig.defaultExtensions;
+                const extensions = context.config.builder.defaultExtensions;
                 let path;
 
                 try {
@@ -44,7 +44,7 @@ class PluginReactLoadable {
 
 PluginReactLoadable.meta = {
   hooks: {
-    "build:pipelines": PluginReactLoadable.prototype.onPipelines
+    "build:webpack_pipelines": PluginReactLoadable.prototype.onPipelines
   }
 };
 

@@ -1,6 +1,16 @@
 "use strict";
 
 class PluginReact {
+  onUserConfig() {
+    // Add `.jsx` to default extensions so that `.jsx` can be omitted
+    // in `require` or `import`.
+    return {
+      builder: {
+        defaultExtensions: [".jsx"]
+      }
+    };
+  }
+
   onPipelines(context) {
     return {
       js: [{
@@ -28,12 +38,6 @@ class PluginReact {
     };
   }
 
-  onExtensions() {
-    // Add `.jsx` to default extensions so that `.jsx` can be omitted
-    // in `require` or `import`.
-    return [".jsx"];
-  }
-
   onRenderer({target}) {
     return [
       "@gourmet/react-renderer" + (target === "server" ? "/server" : "")
@@ -46,9 +50,9 @@ PluginReact.meta = {
     after: "@gourmet/plugin-webpack-html-renderer"
   },
   hooks: {
-    "build:pipelines": PluginReact.prototype.onPipelines,
-    "build:loaders": PluginReact.prototype.onLoaders,
-    "build:default_extensions": PluginReact.prototype.onExtensions,
+    "build:user_config": PluginReact.prototype.onUserConfig,
+    "build:webpack_pipelines": PluginReact.prototype.onPipelines,
+    "build:webpack_loaders": PluginReact.prototype.onLoaders,
     "build:page_renderer": PluginReact.prototype.onRenderer
   }
 };

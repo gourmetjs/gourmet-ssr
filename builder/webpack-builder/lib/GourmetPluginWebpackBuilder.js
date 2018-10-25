@@ -58,7 +58,7 @@ function _isHotFile(name) {
 //  after:command:build
 class GourmetPluginWebpackBuilder {
   constructor(options, context) {
-    this._globalAssets = {};
+    this._assets = {};
     context.builder = this;
 
     // TODO: implement separate consoles for client and server
@@ -77,8 +77,8 @@ class GourmetPluginWebpackBuilder {
     this.moduleDir = moduleDir;
   }
 
-  addGlobalAsset(filename, path) {
-    this._globalAssets[filename] = path;
+  addAsset(filename, path, type) {
+    this._assets[filename] = {path, type};
   }
 
   getExtensionTester(extensions) {
@@ -132,7 +132,7 @@ class GourmetPluginWebpackBuilder {
     return negator;
   }
 
-  getAssetFilenameGetter(context, {ext, isGlobal}={}) {
+  getAssetFilenameGetter(context, {ext, type="blob"}={}) {
     return ({content, path}) => {
       const relPath = relativePath(path, context.workDir);
       const extname = ppath.extname(relPath);
@@ -152,8 +152,7 @@ class GourmetPluginWebpackBuilder {
 
       name += (ext || extname);
 
-      if (isGlobal)
-        context.builder.addGlobalAsset(name, relPath);
+      context.builder.addAsset(name, relPath, type);
 
       return name;
     };
@@ -187,9 +186,10 @@ class GourmetPluginWebpackBuilder {
 
       function _assets(deps) {
         // Reverse map {"src_path": "asset_filename"}
-        const map = Object.keys(globalAssets).reduce((obj, name) => {
-          const path = globalAssets[name];
-          obj[path] = name;
+        const map = Object.keys(allAssets).reduce((obj, name) => {
+          const info = allAssets[name];
+          if (info.type.startsWith("global_"))
+            obj[info.path] = name;
           return obj;
         }, {});
         const assets = [];
@@ -214,12 +214,12 @@ class GourmetPluginWebpackBuilder {
 
         Object.keys(assets).forEach(name => {
           if (!_isHotFile(name)) {
-            const asset = assets[name];
-            const info = {size: asset.size()};
             const ext = npath.extname(name).toLowerCase();
-            if (ext === ".js")
-              info.modules = [];
-            files[name] = info;
+            const asset = assets[name];
+            files[name] = Object.assign({
+              size: asset.size(),
+              modules: (ext === ".js") ? [] : undefined
+            }, allAssets[name]);
           }
         });
 
@@ -294,7 +294,7 @@ class GourmetPluginWebpackBuilder {
       return obj;
     }
 
-    const globalAssets = this._globalAssets;
+    const allAssets = this._assets;
     const obj = {stage: context.stage};
 
     if (!stats) {
@@ -517,6 +517,9 @@ GourmetPluginWebpackBuilder.meta = {
         },
         ignoreCompileErrors: {
           help: "Ignore compilation errors and continue"
+        },
+        saveWebpackStats: {
+          help: "Save Webpack's stats.json file"
         }
       }
     }

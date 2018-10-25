@@ -4,13 +4,17 @@
 // supplemental to avoid peer dependency warnings from React, Webpack & Babel
 // plugins.
 class PresetReact {
-  onAlias(context) {
+  onUserConfig(context) {
     const moduleDir = context.builder.moduleDir(__dirname);
     return {
-      "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer"),
-      "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
-      "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
-      "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable")
+      builder: {
+        alias: {
+          "@gourmet/html-renderer": moduleDir("@gourmet/html-renderer"),
+          "@gourmet/react-context-gmctx": moduleDir("@gourmet/react-context-gmctx"),
+          "@gourmet/react-renderer": moduleDir("@gourmet/react-renderer"),
+          "@gourmet/react-loadable": moduleDir("@gourmet/react-loadable")
+        }
+      }
     };
   }
 }
@@ -28,7 +32,7 @@ PresetReact.meta = {
     "@gourmet/plugin-react-loadable"
   ],
   hooks: {
-    "build:alias": PresetReact.prototype.onAlias
+    "build:user_config": PresetReact.prototype.onUserConfig
   }
 };
 

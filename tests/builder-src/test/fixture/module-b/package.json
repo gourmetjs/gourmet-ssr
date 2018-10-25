@@ -1,10 +1,6 @@
 {
   "name": "@gourmet/test-builder-src-module-b",
-  "description": "A simple module containing both Gourmet Plugin and ES6 class syntax for testing of Gourmet SSR",
-  "version": "0.1.0",
-  "main": "lib/GourmetPluginModuleB.js",
-  "module": "src/main.js",
-  "keywords": [
-    "gourmet-plugin"
-  ]
+  "description": "A simple module containing ES6 class syntax for testing of Gourmet SSR",
+  "version": "0.1.1",
+  "module": "gourmet-source/main.js"
 }

@@ -1,11 +1,15 @@
 "use strict";
 
 class GourmetPluginSourceMapSupport {
-  onAlias(context) {
+  onUserConfig(context) {
     if (context.config.builder.installSourceMapSupport) {
       const moduleDir = context.builder.moduleDir(__dirname);
       return {
-        "source-map-support": moduleDir("source-map-support")
+        builder: {
+          alias: {
+            "source-map-support": moduleDir("source-map-support")
+          }
+        }
       };
     }
   }
@@ -23,7 +27,7 @@ class GourmetPluginSourceMapSupport {
 
 GourmetPluginSourceMapSupport.meta = {
   hooks: {
-    "build:alias": GourmetPluginSourceMapSupport.prototype.onAlias,
+    "build:alias": GourmetPluginSourceMapSupport.prototype.onUserConfig,
     "build:entry": GourmetPluginSourceMapSupport.prototype.onEntry
   }
 };

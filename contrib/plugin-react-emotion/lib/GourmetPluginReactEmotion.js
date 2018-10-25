@@ -34,7 +34,7 @@ PluginReactEmotion.meta = {
     after: "@gourmet/plugin-react"
   },
   hooks: {
-    "build:pipelines": PluginReactEmotion.prototype.onPipelines,
+    "build:webpack_pipelines": PluginReactEmotion.prototype.onPipelines,
     "build:page_renderer": PluginReactEmotion.prototype.onPageRenderer
   }
 };

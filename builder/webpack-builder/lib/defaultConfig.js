@@ -79,30 +79,29 @@ module.exports = {
     // Only used when `target` is "server" and `sourceMap` is true.
     installSourceMapSupport: true,
 
-    // Additional extensions to append to the intrinsic default
-    // Intrinsic default: [".js", ".json"]
+    // Additional extensions to attach if extension is not given to `require`.
     // With `@gourmet/preset-react`: [".js", ".json", ".jsx"]
-    defaultExtensions: [],
+    defaultExtensions: [".js", ".json"],
 
-    // Module alias definitions. Output `buildConfig.alias` is generated from
-    // `moduleLinks` and `alias`.
+    // Module alias definitions. Final Webpack's alias definitions are
+    // generated from `moduleLinks` and `alias`.
     alias: {},
 
-    // Additional definitions to add to the intrinsic default
-    // Intrinsic default:
-    //  - process.env.NODE_ENV = context.debug ? "development" : "production"
-    //  - DEBUG: context.debug
-    //  - SERVER: context.target === "server"
-    //  - CLIENT: context.target === "client"
-    //  - STAGE: context.stage
-    define: {},
+    // Definitions to be provided as free variables
+    define: context => ({
+      "process.env.NODE_ENV": JSON.stringify(context.debug ? "development" : "production"),
+      DEBUG: JSON.stringify(context.debug),
+      SERVER: JSON.stringify(context.target === "server"),
+      CLIENT: JSON.stringify(context.target === "client"),
+      STAGE: JSON.stringify(context.stage)
+    }),
 
-    // Explicitly specifies modules in `node_modules` to be included in compilation.
-    // In order to make a module to be compiled by default, implement a gourmet plugin
-    // that taps into `build:source_modules` hook.
-    //  - `sourceModules: ["@gourmet/http-headers"]`
-    //  - `sourceModules: context => context.target === "client" ? ["@gourmet/http-headers"] : []`
-    sourceModules: [],
+    // By default, vendor modules from `node_modules` will not be complied and
+    // copied as-is for better build performance.
+    // However, source files located under one of these directories
+    // will be included in compilation.
+    //  - `vendorSourceDirs: ["gourmet-source", "src"]`
+    vendorSourceDirs: ["gourmet-source"],
 
     // Specifies modules to be either client-only, server-only or external(server-only)
     //   {

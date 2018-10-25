@@ -25,9 +25,9 @@ test("Both module-a & module-b should be compiled as source modules for `test` s
   const server = fs.readFileSync(npath.join(outputDir, "test/server/main.js"), "utf8");
 
   t.ok(/module\.exports = function ModuleA\(\) \{\s+_classCallCheck\(this, ModuleA\);\s+\};/.test(client), "client 'module-a' must be compiled");
-  t.ok(/module\.exports = function ModuleB\(\) \{\s+_classCallCheck\(this, ModuleB\);\s+\};/.test(client), "client 'module-b' must be compiled");
+  t.ok(/module\.exports = class ModuleB \{\};/.test(server), "server 'module-b' must be intact");
   t.ok(/module\.exports = function ModuleA\(\) \{\s+_classCallCheck\(this, ModuleA\);\s+\};/.test(server), "server 'module-a' must be compiled");
-  t.ok(/module\.exports = function ModuleB\(\) \{\s+_classCallCheck\(this, ModuleB\);\s+\};/.test(server), "server 'module-b' must be compiled");
+  t.ok(/module\.exports = class ModuleB \{\};/.test(server), "server 'module-b' must be intact");
 
   t.end();
 });
