@@ -41,30 +41,36 @@ class CliBase {
   }
 
   runCommand(argv) {
-    promiseMain(
-      promiseProtect(() => {
-        return this.init(argv);
-      }).then(() => {
-        const context = this.context;
-        this.verifyArgs();
-        context.console.info("Running command with argv:", argv);
-        return context.plugins.runAsync("before:command:" + context.command, context).then(() => {
-          return context.plugins.forEachAsync("command:" + context.command, handler => {
-            return promiseProtect(() => {
-              return handler(context);
-            }).then(res => {
-              // Returning `false` from the command handler means a pass-through.
-              if (res !== false)
-                return true;
-            });
-          }).then(consumed => {
-            if (!consumed)
-              throw error(COMMAND_NOT_HANDLED, {command: context.command});
+    return promiseProtect(() => {
+      return this.init(argv);
+    }).then(() => {
+      const context = this.context;
+      this.verifyArgs();
+      context.console.info("Running command with argv:", argv);
+      return context.plugins.runAsync("before:command:" + context.command, context).then(() => {
+        return context.plugins.forEachAsync("command:" + context.command, handler => {
+          return promiseProtect(() => {
+            return handler(context);
+          }).then(res => {
+            // Returning `false` from the command handler means a pass-through.
+            if (res !== false)
+              return true;
           });
-        }).then(() => {
-          return context.plugins.runAsync("after:command:" + context.command, context);
+        }).then(consumed => {
+          if (!consumed)
+            throw error(COMMAND_NOT_HANDLED, {command: context.command});
         });
-      }).catch(err => {
+      }).then(() => {
+        return context.plugins.runAsync("after:command:" + context.command, context);
+      }).then(() => {
+        return context;
+      });
+    });
+  }
+
+  main(argv) {
+    promiseMain(
+      this.runCommand(argv).catch(err => {
         if (err instanceof HandledError) {
           const con = (this.context && this.context.console) || getConsole("gourmet:cli");
           con.error(con.colors.brightRed(">>>"));

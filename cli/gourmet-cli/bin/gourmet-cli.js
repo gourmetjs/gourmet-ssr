@@ -3,4 +3,4 @@
 
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
 const cli = new GourmetCli();
-cli.runCommand(cli.parseArgs(process.argv.slice(2)));
+cli.main(cli.parseArgs(process.argv.slice(2)));

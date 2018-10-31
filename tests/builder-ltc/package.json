@@ -1,0 +1,25 @@
+{
+  "name": "@gourmet/test-builder-ltc",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "gourmet build --ignore-compile-errors",
+    "start": "node lib/server.js --ignore-compile-errors",
+    "watch": "node lib/server.js --watch --ignore-compile-errors",
+    "test": "tape test/*_test.js"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^0.6.2",
+    "@gourmet/server-args": "^0.4.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^0.5.0",
+    "@gourmet/gourmet-cli-impl": "^0.5.0",
+    "@gourmet/preset-core": "^0.5.2",
+    "@gourmet/promise-tape": "^0.3.0",
+    "mkdirp": "^0.5.1",
+    "tape": "^4.9.0"
+  }
+}

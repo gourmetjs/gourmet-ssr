@@ -81,5 +81,27 @@ module.exports = {
 
 - enabled with `builder.contentHash` (CLI option: `--content-hash`)
 - note that `minify` doesn't change the hash
-- hash encoding is always `base62` and collision from case insensitive file system (Windows & Mac) is handled by dynamically increase the truncation length
+- hash encoding is always `base62` and collision from case insensitive file system (Windows & Mac) is handled by increasing the truncation length dynamically
 - however, we recommend to use case sensitive file system (Linux) to avoid this issue in the first place
+
+## Customizing bundling
+
+- In addition to `builder.granularity`, you can further customize bundling process using `builder.bundles` as follows.
+
+```js
+// gourmet_config.js
+module.exports = {
+  // ...
+  builder: {
+    bundles: {
+      react: ["react", "react-dom"],
+      components: "./src/components",
+      containers: "./src/containers"
+    }
+  }
+};
+```
+
+- This will create a single bundle file containing both `react` and `react-dom` instead of two separate bundles.
+- This will create two bundle files `components` and `containers` containing all files under specified directories.
+- By grouping together tightly related files into a single bundle, you can expect better possibility of cache hit on the browser.
