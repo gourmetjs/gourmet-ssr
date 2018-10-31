@@ -216,10 +216,12 @@ class GourmetPluginWebpackBuilder {
           if (!_isHotFile(name)) {
             const ext = npath.extname(name).toLowerCase();
             const asset = assets[name];
-            files[name] = Object.assign({
+            const info = files[name] = Object.assign({
               size: asset.size(),
               modules: (ext === ".js") ? [] : undefined
             }, allAssets[name]);
+            if (!info.type && info.modules)
+              info.type = "bundle";
           }
         });
 
@@ -247,6 +249,8 @@ class GourmetPluginWebpackBuilder {
       }
 
       function _path(m) {
+        // We don't use `m.nameForCondition()` here because it works for
+        // only handful of cases.
         if (m.resource)
           return relativePath(m.resource, context.workDir);
 
@@ -255,13 +259,13 @@ class GourmetPluginWebpackBuilder {
         if (moduleType === "ExternalModule")
           return "@extern:" + _resource(m.request);
 
-        if (moduleType === "ConcatenatedModule")
-          return "@concat:" + _path(m.rootModule);
-
         if (moduleType === "MultiModule")
           return "@multi:" + m.dependencies.map(m => _path(m)).join(":");
 
-        if (moduleType === "SingleEntryDependency")
+        if (moduleType === "ConcatenatedModule")
+          return _path(m.rootModule);
+
+        if (moduleType === "SingleEntryDependency") // this always comes together with MultiModule?
           return _path(m.module);
 
         context.console.warn("Unknown module type:", moduleType);
