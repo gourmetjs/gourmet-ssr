@@ -6,7 +6,14 @@ module.exports = {
       "production": ["prod", "ltc"]
     },
     outputDir: "../../.gourmet/fake-github",
-    contentHash: context => context.stage === "ltc"
+    granularity: 2,
+    sourceMap: false,
+    contentHash: context => context.stage === "ltc",
+    bundles: {
+      react: ["react", "react-dom"],
+      components: "./src/components",
+      containers: "./src/containers"
+    }
   },
 
   pages: {

@@ -196,6 +196,21 @@ class GourmetWebpackBuildInstance {
   }
 
   _getWebpackOptimization(context) {
+    const _bundles = () => {
+      const bundles = context.config.builder.bundles;
+      return Object.keys(bundles).reduce((obj, name, idx) => {
+        obj[name] = {
+          priority: 100 + bundles.length - idx,
+          minChunks: 1,
+          minSize: 0,
+          maxSize: 0,
+          name: name + ".bundle",
+          test: this._getBundleTester(context, bundles[name])
+        };
+        return obj;
+      }, {});
+    };
+
     const granularity = context.target === "client" ? context.config.builder.granularity : 0;
 
     return {
@@ -211,14 +226,12 @@ class GourmetWebpackBuildInstance {
           chunks: "all",
           minSize: minBundleSize,
           maxInitialRequests: 10000,
-          maxAsyncRequests: 10000
+          maxAsyncRequests: 10000,
+          cacheGroups: {}
         };
 
-        if (granularity === 1)
-          return obj;
-
-        return Object.assign(obj, {
-          cacheGroups: {
+        if (granularity === 2) {
+          Object.assign(obj.cacheGroups, {
             vendors: false,
             newVendors: {
               minChunks: 1,
@@ -226,8 +239,12 @@ class GourmetWebpackBuildInstance {
               test: this._getVendorTester(context),
               name: this._getVendorNamer(context)
             }
-          }
-        });
+          });
+        }
+
+        Object.assign(obj.cacheGroups, _bundles());
+
+        return obj;
       })(),
       noEmitOnErrors: !context.argv.ignoreCompileErrors && !context.debug
     };
@@ -543,6 +560,38 @@ class GourmetWebpackBuildInstance {
       }
     }
     throw Error("Cannot find a module name from the path: " + path);
+  }
+
+  _getBundleTester(context, dirs) {
+    if (typeof dirs === "string")
+      dirs = [dirs];
+
+    const testers = dirs.map(dir => {
+      if (dir.startsWith("./") || dir.startsWith("../")) {
+        if (dir[dir.length - 1] !== "/")
+          dir = dir + "/";
+        return path => path.startsWith(dir);
+      } else {
+        if (dir[0] !== "/")
+          dir = "/" + dir;
+        if (dir[dir.length - 1] !== "/")
+          dir = dir + "/";
+        dir = "/node_modules" + dir;
+        return path => path.indexOf(dir) !== -1;
+      }
+    });
+
+    return module => {
+      let path = module.nameForCondition && module.nameForCondition();
+      if (path) {
+        path = relativePath(path, context.workDir);
+        for (let idx = 0; idx < testers.length; idx++) {
+          if (testers[idx](path))
+            return true;
+        }
+      }
+      return false;
+    };
   }
 }
 

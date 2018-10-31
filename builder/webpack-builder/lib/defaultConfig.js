@@ -57,10 +57,10 @@ module.exports = {
       // lib: ["./utils", "./shared"]     // relative path from `workDir`
     },
 
-    // Minimum size of bundles in bytes to keep bundles from being too small.
+    // Minimum size of bundles in bytes to keep them from being too small.
     minBundleSize: async context => {
       const granularity = await context.vars.get("builder.granularity");
-      return granularity === 2 ? 4000 : 30000;
+      return granularity === 2 ? 0 : 30000;
     },
 
     // `runtime` is located here as an independent section from Webpack or Babel
