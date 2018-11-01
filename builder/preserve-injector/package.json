@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-preserve-injector",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Gourmet Plugin to inject a `@preserve` comment at the top of server bundles to keep line numbers relevant working with `@gourmet/renderer-sandbox`",
   "keywords": [
     "gourmet-plugin"

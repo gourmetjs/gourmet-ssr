@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/watch-middleware",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "main": "lib/GourmetWatchMiddleware.js",
   "dependencies": {
     "@gourmet/error-to-string": "^0.2.0",
     "@gourmet/escape-script": "^0.2.0",
-    "@gourmet/gourmet-cli-impl": "^0.5.0",
-    "@gourmet/merge": "^0.5.0",
+    "@gourmet/gourmet-cli-impl": "^0.6.0",
+    "@gourmet/merge": "^0.6.0",
     "@gourmet/omit": "^0.2.0",
     "@gourmet/promise-protect": "^0.2.0",
     "escape-html": "^1.0.3",

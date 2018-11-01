@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/error",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Simple error object creator",
   "main": "lib/error.js",
   "dependencies": {

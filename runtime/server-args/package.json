@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/server-args",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "main": "lib/serverArgs.js",
   "dependencies": {
     "@gourmet/cli-args": "^0.2.0",
-    "@gourmet/merge": "^0.5.0"
+    "@gourmet/merge": "^0.6.0"
   }
 }
