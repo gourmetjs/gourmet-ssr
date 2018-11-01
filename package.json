@@ -4,6 +4,7 @@
     "lrun": "lerna run --stream",
     "updated": "lerna updated",
     "lpub": "lerna publish",
+    "lver": "lerna version",
     "clean": "lerna clean",
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test --concurrency=1 --stream",
