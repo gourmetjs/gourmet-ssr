@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/react-context-gmctx",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Simple module to share a React 16.x context object to provide and consume `gmctx`",
   "main": "gourmet-source/GourmetContext.js",
   "peerDependencies": {
