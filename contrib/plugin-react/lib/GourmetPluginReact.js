@@ -14,17 +14,18 @@ class PluginReact {
   onPipelines(context) {
     return {
       js: [{
-        loader: "#babel-loader",
+        virtual: true,
+        name: "babel-loader",
         options: {
           presets: [{
-            name: "babel-preset-react",
-            preset: require.resolve("babel-preset-react"),
-            after: "babel-preset-env"
-          }],
-          plugins: [
-            "babel-plugin-transform-class-properties",
-            "babel-plugin-transform-object-rest-spread"
-          ].concat(context.debug ? ["babel-plugin-transform-react-jsx-source"] : [])
+            name: "@babel/preset-react",
+            preset: require.resolve("@babel/preset-react"),
+            after: "@babel/preset-env",
+            options: {
+              useBuiltIns: true,
+              development: context.debug
+            }
+          }]
         }
       }]
     };

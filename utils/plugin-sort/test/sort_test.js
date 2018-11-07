@@ -136,12 +136,15 @@ test("Item ordering - constraints", t => {
 test("virtual items", t => {
   t.deepEqual(
     sortPlugins([
+      {name: "A", options: {a: {b: 1}, d: 99, c: 99}, virtual: true},
       {name: "A", options: {c: 2}},
       {name: "B", options: {a: 1}},
       {name: "C", options: {a: {b: 2, c: {d: 3}}}},
-      {name: "#A", options: {d: 3}},
-      {name: "#B", disable: true},
-      {name: "#*", options: {a: {b: 1}}}
+      {name: "A", options: {d: 3}, virtual: true},
+      {name: "A", options: {d: 3, e:["a"]}, virtual: true},
+      {name: "A", options: {f:["b"]}, virtual: true},
+      {name: "B", disable: true, virtual: true},
+      {name: "X", options: {x: 1}, virtual: true}
     ], {
       finalize(item) {
         return {
@@ -151,7 +154,7 @@ test("virtual items", t => {
       }
     }),
     [
-      {name: "A", options: {a: {b: 1}, c: 2, d: 3}},
+      {name: "A", options: {a: {b: 1}, c: 2, d: 3, e: ["a"], f: ["b"]}},
       {name: "C", options: {a: {b: 2, c: {d: 3}}}}
     ]
   );
@@ -161,12 +164,15 @@ test("virtual items", t => {
 test("schema", t => {
   t.deepEqual(
     sortPlugins([
+      {name: "A", options: {a: {b: 1}, d: 99, c: 99}, virtual: true},
       {name: "A", options: {c: 2}},
       {name: "B", options: {a: 1}},
       {name: "C", options: {a: {b: 2, c: {d: 3}}}},
-      {name: "#A", options: {d: 3}},
-      {name: "#B", disable: true},
-      {name: "#*", options: {a: {b: 1}}}
+      {name: "A", options: {d: 3}, virtual: true},
+      {name: "A", options: {d: 3, e:["a"]}, virtual: true},
+      {name: "A", options: {f:["b"]}, virtual: true},
+      {name: "B", disable: true, virtual: true},
+      {name: "X", options: {x: 1}, virtual: true}
     ], {
       finalize(item) {
         return {
@@ -181,7 +187,7 @@ test("schema", t => {
     }),
     [
       {name: "C", options: {a: {b: 2, c: {d: 3}}, d: 4}},
-      {name: "A", options: {a: {b: 1}, c: 2, d: 3}}
+      {name: "A", options: {a: {b: 1}, c: 2, d: 3, e: ["a"], f: ["b"]}}
     ]
   );
   t.end();

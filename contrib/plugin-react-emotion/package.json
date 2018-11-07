@@ -3,7 +3,7 @@
   "version": "0.5.0",
   "main": "lib/GourmetPluginReactEmotion.js",
   "dependencies": {
-    "babel-plugin-emotion": "^9.1.0"
+    "babel-plugin-emotion": "^9.2.11"
   },
   "peerDependencies": {
     "@gourmet/emotion-renderer": "*"

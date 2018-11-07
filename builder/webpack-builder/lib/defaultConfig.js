@@ -67,8 +67,8 @@ module.exports = {
     // because the format is kinda standardized based on browserlist and
     // can be used for other purposes such as CSS compilation.
     runtime: {
-      client: null,   // browserlist's default
-      server: "6.1"   // node 6.10
+      client: null,   // browserslist's default: "> 0.5%, last 2 versions, Firefox ESR, not dead"
+      server: "node 8.11"
     },
 
     // Options to be given to the init function

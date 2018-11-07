@@ -9,7 +9,8 @@ class PluginReactLoadable {
     const target = context.target;
     return {
       js: [{
-        name: "#babel-loader",
+        virtual: true,
+        name: "babel-loader",
         options: {
           plugins: [{
             name: "@gourmet/babel-plugin-gourmet-loadable",

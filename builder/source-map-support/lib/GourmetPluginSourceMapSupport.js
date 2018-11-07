@@ -27,7 +27,7 @@ class GourmetPluginSourceMapSupport {
 
 GourmetPluginSourceMapSupport.meta = {
   hooks: {
-    "build:alias": GourmetPluginSourceMapSupport.prototype.onUserConfig,
+    "build:user_config": GourmetPluginSourceMapSupport.prototype.onUserConfig,
     "build:entry": GourmetPluginSourceMapSupport.prototype.onEntry
   }
 };
