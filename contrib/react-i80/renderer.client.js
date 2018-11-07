@@ -1,1 +1,1 @@
-module.exports = require("./src/getI80ClientRenderer"); // eslint-disable-line strict
+module.exports = require("./gourmet-source/getI80ClientRenderer"); // eslint-disable-line strict
