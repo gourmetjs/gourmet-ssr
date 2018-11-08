@@ -1,1 +1,1 @@
-module.exports = require("./src/getReactServerRenderer.js"); // eslint-disable-line strict
+module.exports = require("./gourmet-source/getReactServerRenderer.js"); // eslint-disable-line strict

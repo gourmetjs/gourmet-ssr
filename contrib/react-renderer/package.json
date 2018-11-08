@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/react-renderer",
-  "version": "0.6.0",
-  "main": "src/getReactClientRenderer.js",
+  "version": "0.7.0",
+  "main": "gourmet-source/getReactClientRenderer.js",
   "dependencies": {
     "@gourmet/loadable-registrar": "^0.3.0",
     "@gourmet/promise-protect": "^0.2.0"
