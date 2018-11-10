@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-deps",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.6.0",
-    "@gourmet/preset-core": "^0.7.0",
+    "@gourmet/preset-core": "^0.8.0",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
     "domready": "^1.0.8",
