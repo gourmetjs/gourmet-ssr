@@ -461,7 +461,7 @@ class GourmetWebpackBuildInstance {
       });
     }
 
-    if (isPlainObject(define) && Object.keys(define).length > 1) {
+    if (isPlainObject(define) && Object.keys(define).length) {
       plugins.push({
         name: "webpack/DefinePlugin",
         plugin: webpack.DefinePlugin,
