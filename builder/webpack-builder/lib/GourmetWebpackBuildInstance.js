@@ -75,7 +75,12 @@ class GourmetWebpackBuildInstance {
   }
 
   init(context) {
-    return context.plugins.runMergeAsync("build:user_config", {}, context).then(value => {
+    return context.plugins.runAsync("build:preinit", context).then(() => {
+      const value = context.plugins.runMergeSync("build:default_config", {}, context);
+      if (value && Object.keys(value).length)
+        context.vars.getSource("config").addLower(value);
+      return context.plugins.runMergeAsync("build:user_config", {}, context);
+    }).then(value => {
       return context.vars.get("").then(config => {
         merge(value, config);
         return context.plugins.runMergeAsync("build:after:user_config", value, context);

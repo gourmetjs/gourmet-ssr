@@ -22,7 +22,7 @@ class PluginReact {
             preset: require.resolve("@babel/preset-react"),
             after: "@babel/preset-env",
             options: {
-              useBuiltIns: true,
+              useBuiltIns: context.config.babel.useBuiltIns,
               development: context.debug
             }
           }]
