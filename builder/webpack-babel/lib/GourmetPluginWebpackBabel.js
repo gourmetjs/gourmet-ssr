@@ -32,25 +32,29 @@ class GourmetPluginWebpackBabel {
         envName: context.target === "server" ? context.stage + ":server" : context.stage,
 
         // Loosen the level of standard conformity for a smaller output and better performance.
-        // This is a global option that is given to many presets and plugins wherever applicable.
+        // This is a global option that is given to all presets and plugins.
         loose: true,
+
+        // Use standard JavaScript built-ins instead of internal Babel helpers.
+        // I.e. Use `Object.assign()` instead of `_extend()`.
+        // This is a global option that is given to all presets and plugins.
+        useBuiltIns: true,
+
+        // Enable more spec compliant, but potentially slower, transformations.
+        // This is a global option that is given to all presets and plugins.
+        spec: false,
 
         // This options is the same as `useBuiltIns` of `@babel/preset-env`.
         //  - `"usage"`: Insert reference to polyfills (`require("core-js/...")`) at the top of
-        //    each file for the features that it uses but environment doesn't support.
+        //    each file for the features that it uses but the target environment doesn't support.
         //  - `"entry"`: Add an entry file to all pages, containing reference to all individual
-        //    polyfills that the environment doesn't support.
+        //    polyfills that the target environment doesn't support.
         //  - `false`: Turn off the automatic polyfilling. It is the user's responsibility
         //    to include required polyfills.
         // For simple projects, `"usage"` will generate a smaller output. However, if your project
         // contains many source files that have references to polyfills, they will all add up and
         // may result in a bigger output. `"entry"` can be a better option for that kind of projects.
         polyfill: "usage",
-
-        // Use standard JavaScript built-ins such as `Object.assign()` instead of internal
-        // Babel helpers such as `_extend()`.
-        // This is a global option that is given to many presets and plugins wherever applicable.
-        useBuiltIns: true,
 
         // Where to load browserslist configuration:
         //  - "gourmet": global setting from `builder.runtime` of `gourmet_config.js`.
@@ -59,6 +63,13 @@ class GourmetPluginWebpackBabel {
         // * See https://github.com/browserslist/browserslist#queries for more details about
         //   browserslist's configuration files.
         browserslist: "gourmet",  // "gourmet", "root", "file",
+
+        // Include transformations that are in proposal state.
+        // 3 is the highest level that is almost finished to become a part of standard.
+        // 0 is the lowest level that is extremely experimental.
+        // https://tc39.github.io/process-document/
+        // Currently, only possible value for this options is either `false` or `3`.
+        withProposals: 3,
 
         // Note that the format of `presets` and `plugins` is extended from Babel's.
         // Preset: `{name: "name", preset: "optional_path_to_preset", options: {...}}`
@@ -93,6 +104,7 @@ class GourmetPluginWebpackBabel {
         name: "babel-loader",
         loader: bl === "file" ? npath.join(__dirname, "custom-babel-loader.js") : require.resolve("babel-loader"),
         options: {
+          sourceType: "unambiguous",
           configFile: babel.configFile,
           root: babel.root,
           babelrc: babel.babelrc,
@@ -105,8 +117,10 @@ class GourmetPluginWebpackBabel {
               configPath: context.workDir,
               targets: bl === "gourmet" ? context.config.builder.runtime[context.target] : null,
               ignoreBrowserslistConfig: bl === "gourmet",
-              loose: babel.loose,
-              useBuiltIns: babel.polyfill
+              useBuiltIns: babel.polyfill,  // `@babel/preset-env` interprets `useBuiltIns` a little differently.
+
+              // https://github.com/facebook/create-react-app/blob/1d8d9eaaeef0e4dbcefedac40d3f18b892c8c18b/packages/babel-preset-react-app/create.js#L91
+              exclude: ["transform-typeof-symbol"]
             }
           }].concat(babel.presets),
 
@@ -125,17 +139,24 @@ class GourmetPluginWebpackBabel {
               });
             }
 
-            plugins.push({
-              name: "@babel/plugin-proposal-class-properties",
-              plugin: require.resolve("@babel/plugin-proposal-class-properties"),
-              options: {loose: babel.loose}
-            });
+            if (babel.withProposals !== false) {
+              if (babel.withProposals >= 3) {
+                plugins.push({
+                  name: "@babel/plugin-syntax-import-meta",
+                  plugin: require.resolve("@babel/plugin-syntax-import-meta")
+                });
 
-            plugins.push({
-              name: "@babel/plugin-proposal-object-rest-spread",
-              plugin: require.resolve("@babel/plugin-proposal-object-rest-spread"),
-              options: {loose: babel.loose, useBuiltIns: babel.useBuiltIns}
-            });
+                plugins.push({
+                  name: "@babel/plugin-proposal-class-properties",
+                  plugin: require.resolve("@babel/plugin-proposal-class-properties")
+                });
+
+                plugins.push({
+                  name: "@babel/plugin-proposal-json-strings",
+                  plugin: require.resolve("@babel/plugin-proposal-json-strings")
+                });
+              }
+            }
 
             // We can't turn this on by default due to the following issue:
             // https://github.com/webpack/webpack/issues/4039
@@ -171,14 +192,24 @@ class GourmetPluginWebpackBabel {
     };
   }
 
-  onLoaderOptions(options) {
+  onLoaderOptions(options, name, context) {
     function _sort(items) {
+      const babel = context.config.babel;
       return items && sortPlugins(items, {
         normalize(item) {
           return typeof item === "string" ? {name: item} : item;
         },
         finalize(item) {
           return [item.preset || item.plugin || item.name, item.options || {}, item.name];
+        },
+        schema: {
+          "*": {
+            options: {
+              loose: babel.loose,
+              useBuiltIns: babel.useBuiltIns,
+              spec: babel.spec
+            }
+          }
         }
       });
     }

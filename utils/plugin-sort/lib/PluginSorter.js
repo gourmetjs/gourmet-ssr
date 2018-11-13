@@ -61,13 +61,15 @@ class PluginSorter {
     for (let idx = 0; idx < items.length; idx++) {
       const item = this._normalize(items[idx]);
 
-      if (!isPlainObject(item))
-        throw Error("'normalize' should return an object");
+      if (item) {
+        if (!isPlainObject(item))
+          throw Error("'normalize' should return an object");
 
-      if (typeof item.name !== "string")
-        throw Error("Name is required");
+        if (typeof item.name !== "string")
+          throw Error("Name is required");
 
-      output.push(item);
+        output.push(item);
+      }
     }
 
     return output;

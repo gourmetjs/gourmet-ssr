@@ -22,8 +22,14 @@ class PluginReact {
             preset: require.resolve("@babel/preset-react"),
             after: "@babel/preset-env",
             options: {
-              useBuiltIns: context.config.babel.useBuiltIns,
               development: context.debug
+            }
+          }],
+          plugins: [context.debug && {
+            name: "babel-plugin-transform-react-remove-prop-types",
+            plugin: require.resolve("babel-plugin-transform-react-remove-prop-types"),
+            options: {
+              removeImport: true
             }
           }]
         }
