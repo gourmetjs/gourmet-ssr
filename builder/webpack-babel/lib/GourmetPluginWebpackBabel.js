@@ -32,16 +32,16 @@ class GourmetPluginWebpackBabel {
         envName: context.target === "server" ? context.stage + ":server" : context.stage,
 
         // Loosen the level of standard conformity for a smaller output and better performance.
-        // This is a global option that is given to all presets and plugins.
+        // This is a global option that is given to presets and plugins wherever applicable.
         loose: true,
 
         // Use standard JavaScript built-ins instead of internal Babel helpers.
-        // I.e. Use `Object.assign()` instead of `_extend()`.
-        // This is a global option that is given to all presets and plugins.
+        // i.e. Use `Object.assign()` instead of `_extend()`.
+        // This is a global option that is given to presets and plugins wherever applicable.
         useBuiltIns: true,
 
         // Enable more spec compliant, but potentially slower, transformations.
-        // This is a global option that is given to all presets and plugins.
+        // This is a global option that is given to presets and plugins wherever applicable.
         spec: false,
 
         // This options is the same as `useBuiltIns` of `@babel/preset-env`.
@@ -117,7 +117,11 @@ class GourmetPluginWebpackBabel {
               configPath: context.workDir,
               targets: bl === "gourmet" ? context.config.builder.runtime[context.target] : null,
               ignoreBrowserslistConfig: bl === "gourmet",
-              useBuiltIns: babel.polyfill,  // `@babel/preset-env` interprets `useBuiltIns` a little differently.
+
+              // `@babel/preset-env` interprets `useBuiltIns` a little differently.
+              loose: babel.loose,
+              spec: babel.spec,
+              useBuiltIns: babel.polyfill,
 
               // https://github.com/facebook/create-react-app/blob/1d8d9eaaeef0e4dbcefedac40d3f18b892c8c18b/packages/babel-preset-react-app/create.js#L91
               exclude: ["transform-typeof-symbol"]
@@ -148,7 +152,10 @@ class GourmetPluginWebpackBabel {
 
                 plugins.push({
                   name: "@babel/plugin-proposal-class-properties",
-                  plugin: require.resolve("@babel/plugin-proposal-class-properties")
+                  plugin: require.resolve("@babel/plugin-proposal-class-properties"),
+                  options: {
+                    loose: babel.loose
+                  }
                 });
 
                 plugins.push({
@@ -157,6 +164,16 @@ class GourmetPluginWebpackBabel {
                 });
               }
             }
+
+            plugins.push({
+              name: "@babel/plugin-transform-runtime",
+              plugin: require.resolve("@babel/plugin-transform-runtime"),
+              options: {
+                corejs: false,
+                helpers: true,
+                regenerator: true
+              }
+            });
 
             // We can't turn this on by default due to the following issue:
             // https://github.com/webpack/webpack/issues/4039
@@ -194,22 +211,12 @@ class GourmetPluginWebpackBabel {
 
   onLoaderOptions(options, name, context) {
     function _sort(items) {
-      const babel = context.config.babel;
       return items && sortPlugins(items, {
         normalize(item) {
           return typeof item === "string" ? {name: item} : item;
         },
         finalize(item) {
           return [item.preset || item.plugin || item.name, item.options || {}, item.name];
-        },
-        schema: {
-          "*": {
-            options: {
-              loose: babel.loose,
-              useBuiltIns: babel.useBuiltIns,
-              spec: babel.spec
-            }
-          }
         }
       });
     }
