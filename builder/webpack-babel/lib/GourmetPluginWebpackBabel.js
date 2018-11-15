@@ -62,6 +62,8 @@ class GourmetPluginWebpackBabel {
         //  - "file": file-relative configuration lookup beginning at each source file's directory
         // * See https://github.com/browserslist/browserslist#queries for more details about
         //   browserslist's configuration files.
+        // * `file` option will impact the build time negatively because it creates a new Babel
+        //   pipeline per source file.
         browserslist: "gourmet",  // "gourmet", "root", "file",
 
         // Include transformations that are in proposal state.
@@ -209,7 +211,7 @@ class GourmetPluginWebpackBabel {
     };
   }
 
-  onLoaderOptions(options, name, context) {
+  onLoaderOptions(options) {
     function _sort(items) {
       return items && sortPlugins(items, {
         normalize(item) {

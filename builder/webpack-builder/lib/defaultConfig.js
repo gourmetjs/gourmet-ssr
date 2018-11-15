@@ -100,8 +100,8 @@ module.exports = {
     // copied as-is for better build performance.
     // However, source files located under one of these directories
     // will be included in compilation.
-    //  - `vendorSourceDirs: ["gourmet-source", "src"]`
-    vendorSourceDirs: ["gourmet-source"],
+    //  - `vendorSourceDirs: ["gourmet-source", "gmsrc"]`
+    vendorSourceDirs: ["gourmet-source", "gmsrc"],
 
     // Specifies modules to be either client-only, server-only or external(server-only)
     //   {

@@ -14,8 +14,6 @@ export default class HelloApp extends PureComponent {
     );
   }
 
-  message = "Hello";
-  
   render() {
     return (
       <div className="container">

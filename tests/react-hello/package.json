@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "gourmet build",
-    "start": "node lib/local.js",
+    "watch": "node lib/local.js --watch",
     "test": "npm run test:local && npm run test:prod && npm run test:ltc",
     "test:local": "gourmet build --verbose 1 && tape test/*_test.js",
     "test:prod": "gourmet build --verbose 1 --stage prod && tape test/*_test.js --stage prod",

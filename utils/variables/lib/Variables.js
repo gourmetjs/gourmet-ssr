@@ -90,7 +90,7 @@ class Variables {
       query: {}
     };
     return src.resolve(this, info, options).then(value => {
-      return this._resolveAllAndClone(value, path, defVal, options);
+      return this.resolveAllAndClone(value, path, defVal, options);
     });
   }
 
@@ -108,7 +108,7 @@ class Variables {
       throw error(EVAL_STRING_REQUIRED);
     const node = new VarExpr(text);
     return node.resolve(this, null, null, "", options).then(value => {
-      return this._resolveAllAndClone(value, "", defVal, options);
+      return this.resolveAllAndClone(value, "", defVal, options);
     });
   }
 
@@ -179,7 +179,7 @@ class Variables {
   // Recursively resolves all the values and replace the literal forms to final
   // strings. This is used for creating a final deep copy of the value for
   // user consumption.
-  _resolveAllAndClone(value, path, defVal, options) {
+  resolveAllAndClone(value, path, defVal, options) {
     const _replaceLiterals = value => {
       if (typeof value !== "string")
         return value;

@@ -9,9 +9,6 @@ module.exports = require("babel-loader").custom(babel => {
     config(cfg) {
       let options = cfg.options;
 
-      if (cfg.hasFilesystemConfig())
-        return options;
-
       const presets = options.presets;
 
       for (let idx = 0; presets && idx < presets.length; idx++) {

@@ -20,37 +20,14 @@ function _getType(obj) {
   return OTHER;
 }
 
-function _merge(des, src) {
+function _mergeObj(des, src) {
   const props = Object.keys(src);
-
   for (let idx = 0; idx < props.length; idx++) {
     const prop = props[idx];
-    const srcVal = src[prop];
-    const desVal = des[prop];
-
-    if (srcVal instanceof Customizer) {
-      des[prop] = srcVal.customizer.call(null, desVal);
-    } else {
-      const st = _getType(srcVal);
-      const dt = _getType(desVal);
-      let nv;
-
-      if (dt === ARRAY && srcVal !== undefined)
-        nv = desVal.concat(srcVal);
-      else if (st === ARRAY && desVal !== undefined)
-        nv = [desVal].concat(srcVal);
-      else if (st === OBJECT && dt === OBJECT)
-        nv = _merge(desVal, srcVal);
-      else if (st === OBJECT)
-        nv = _merge({}, srcVal);  // make a copy
-      else
-        nv = srcVal;
-
-      if (nv !== undefined)
-        des[prop] = nv;
-    }
+    const value = merge(undefined, des[prop], src[prop]);
+    if (value !== undefined)
+      des[prop] = value;
   }
-
   return des;
 }
 
@@ -61,18 +38,34 @@ function _merge(des, src) {
  *  - Non-plain objects (class instances) are ref-copied, not cloned.
  *  - Customizers are supported through `merge.custom`.
  **/
-function merge(des, ...args) {
-  const dt = _getType(des);
-  for (let idx = 0, len = args.length; idx < len; idx++) {
-    const src = args[idx];
-    const st = _getType(src);
-    if (src) {
-      if (dt === ARRAY && st === ARRAY)
-        des.push(...src);
-      else if (dt === OBJECT && st === OBJECT)
-        _merge(des, src);
-      else
-        throw Error("Invalid data type");
+function merge(des, ...values) {
+  for (let idx = 0, len = values.length; idx < len; idx++) {
+    const value = values[idx];
+    if (value !== undefined) {
+      if (value instanceof Customizer) {
+        des = value.customizer.call(null, des);
+      } else {
+        const st = _getType(value);
+        const dt = _getType(des);
+        if (dt === ARRAY) {
+          if (st === ARRAY)
+            des.push(...value);
+          else
+            des.push(value);
+        } else if (st === ARRAY) {
+          if (des !== undefined)
+            des = [des].concat(value);
+          else
+            des = [].concat(value);
+        } else if (st === OBJECT) {
+          if (dt === OBJECT)
+            _mergeObj(des, value);
+          else
+            des = _mergeObj({}, value);
+        } else {
+          des = value;
+        }
+      }
     }
   }
   return des;
