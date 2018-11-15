@@ -268,6 +268,9 @@ class GourmetPluginWebpackBuilder {
         if (moduleType === "SingleEntryDependency") // this always comes together with MultiModule?
           return _path(m.module);
 
+        if (moduleType === "ContextModule")
+          return "@context:" + relativePath(m.context, context.workDir);
+
         context.console.warn("Unknown module type:", moduleType);
         return null;
       }

@@ -41,6 +41,10 @@ module.exports = gmctx => {
     return exp + (link ? ` (${link})` : "");
   }
 
+  function _load(name) {
+    return require("./files/" + name + ".js");
+  }
+
   let modules;
 
   if (SERVER) {
@@ -66,7 +70,8 @@ module.exports = gmctx => {
     classnames: _module(() => require("classnames"), () => require.resolve("classnames")),
     mkdirp: _module(() => require("mkdirp"), () => require.resolve("mkdirp")),
     none: _module(() => require("none"), () => require.resolve("none")),
-    "./data.json": _module(() => require("./data.json"), () => require.resolve("./data.json"))
+    "./data.json": _module(() => require("./data.json"), () => require.resolve("./data.json")),
+    context: _load(SERVER ? "1" : "2")
   }, null, 2);
 
   if (CLIENT) {

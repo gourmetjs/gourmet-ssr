@@ -48,7 +48,8 @@ test("run puppeteer", pt(async t => {
     "classnames": "function (external)",
     "mkdirp": "function (external)",
     "none": "empty (bundle)",
-    "./data.json": "object (bundle)"
+    "./data.json": "object (bundle)",
+    "context": "module 1"
   }, "server output");
 
   t.deepEqual(JSON.parse(info.client), {
@@ -67,7 +68,8 @@ test("run puppeteer", pt(async t => {
     "classnames": "function (bundle)",
     "mkdirp": "empty (bundle)",
     "none": "empty (bundle)",
-    "./data.json": "object (bundle)"
+    "./data.json": "object (bundle)",
+    "context": "module 2"
   }, "client output");
 
   await browser.close();
