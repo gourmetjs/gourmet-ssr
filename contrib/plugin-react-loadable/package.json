@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/plugin-react-loadable",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "main": "lib/GourmetPluginReactLoadable.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/babel-plugin-gourmet-loadable": "^0.2.0",
+    "@gourmet/babel-plugin-gourmet-loadable": "^0.3.0",
     "@gourmet/relative-path": "^0.3.1",
     "resolve": "^1.6.0"
   }

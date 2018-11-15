@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/merge",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Merges objects with special handling of arrays and non-plain objects",
   "main": "gmsrc/merge.js",
   "scripts": {

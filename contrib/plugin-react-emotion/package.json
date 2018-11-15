@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-react-emotion",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "main": "lib/GourmetPluginReactEmotion.js",
   "dependencies": {
     "babel-plugin-emotion": "^9.2.11"

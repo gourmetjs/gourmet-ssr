@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plain-merge",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Merges plain objects. Kind of deep version of `Object.assign()`.",
   "main": "gmsrc/plainMerge.js",
   "dependencies": {

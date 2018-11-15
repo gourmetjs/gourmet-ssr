@@ -1,11 +1,11 @@
 {
   "name": "@gourmet/handle-request-error",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "main": "lib/handleRequestError.js",
   "dependencies": {
     "@gourmet/console": "^0.2.0",
     "@gourmet/inspect-error": "^0.2.0",
-    "@gourmet/merge": "^0.6.0",
+    "@gourmet/merge": "^0.7.0",
     "@gourmet/resolve-template": "^0.2.0",
     "@gourmet/send-content": "^0.2.0",
     "@gourmet/serialize-request-error": "^0.2.0",

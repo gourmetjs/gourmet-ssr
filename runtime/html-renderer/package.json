@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/html-renderer",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "main": "gourmet-source/getHtmlClientRenderer.js",
   "scripts": {
     "test": "tape test/*_test.js"
@@ -10,7 +10,7 @@
     "@gourmet/escape-script": "^0.2.0",
     "@gourmet/get-exported": "^0.3.0",
     "@gourmet/is-stream": "^0.2.0",
-    "@gourmet/merge": "^0.6.0",
+    "@gourmet/merge": "^0.7.0",
     "@gourmet/multi-stream": "^0.2.0",
     "@gourmet/promise-protect": "^0.2.0",
     "@gourmet/resolve-template": "^0.2.0",
