@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-basic",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "scripts": {
     "build": "gourmet build --config-name gourmet_cfg",
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.7.0",
     "@gourmet/plugin-webpack-babel": "^0.8.0",
-    "@gourmet/plugin-webpack-builder": "^0.10.0",
+    "@gourmet/plugin-webpack-builder": "^0.10.1",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
     "puppeteer": "^1.3.0",
