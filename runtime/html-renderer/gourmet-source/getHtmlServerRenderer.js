@@ -75,7 +75,7 @@ class HtmlServerRenderer extends BaseRenderer {
       page,
       manifest,
       data: {}
-    }, {html: config.html}, context);
+    }, {html: config.html}, context || undefined);
     return gmctx;
   }
 

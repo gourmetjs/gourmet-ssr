@@ -16,7 +16,7 @@
     "@gourmet/plugin-webpack-builder": "^0.9.0",
     "@gourmet/plugin-webpack-global-css": "^0.7.0",
     "@gourmet/plugin-webpack-html-renderer": "^0.5.0",
-    "babel-core": "^6.26.3",
-    "webpack": "^4.16.5"
+    "@babel/core": "^7.1.2",
+    "webpack": "^4.24.0"
   }
 }

@@ -4,7 +4,8 @@ class PluginReactEmotion {
   onPipelines(context) {
     return {
       js: [{
-        loader: "#babel-loader",
+        virtual: true,
+        name: "babel-loader",
         options: {
           plugins: [{
             name: "babel-plugin-emotion",

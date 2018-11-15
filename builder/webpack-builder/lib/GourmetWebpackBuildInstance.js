@@ -75,7 +75,14 @@ class GourmetWebpackBuildInstance {
   }
 
   init(context) {
-    return context.plugins.runMergeAsync("build:user_config", {}, context).then(value => {
+    // Unlike `build:default_config`, `build:user_config` & `build:after:user_config` must return
+    // a fully resolved final object. Variable expressions or `context => ...` function are not supported.
+    return context.plugins.runAsync("build:preinit", context).then(() => {
+      const value = context.plugins.runMergeSync("build:default_config", {}, context);
+      if (value && Object.keys(value).length)
+        context.vars.getSource("config").addLower(context.vars.prepareValue(value));
+      return context.plugins.runMergeAsync("build:user_config", {}, context);
+    }).then(value => {
       return context.vars.get("").then(config => {
         merge(value, config);
         return context.plugins.runMergeAsync("build:after:user_config", value, context);

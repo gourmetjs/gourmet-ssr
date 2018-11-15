@@ -83,7 +83,7 @@ class GourmetCli extends CliBase {
   _initVars(config) {
     const context = this.context;
 
-    const vars = context.vars = new Variables(null, {
+    const vars = context.vars = new Variables(config, {
       defaultSource: "config",
       handlerContext: context,
       functionsAsGetters: true
@@ -95,7 +95,7 @@ class GourmetCli extends CliBase {
     vars.addSource("argv", new Variables.Opt(context.argv));
     vars.addSource("file", new Variables.File(context.workDir));
     vars.addSource("context", new ContextSource(context));
-    vars.addSource("config", new ConfigSource(config, args));
+    vars.addSource("config", new ConfigSource(args));
 
     // `--config.foo.bar val` form
     if (context.argv.config)

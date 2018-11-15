@@ -1,6 +1,7 @@
 "use strict";
 
 const merge = require("@gourmet/merge");
+const omit = require("@gourmet/omit");
 const isPlainObject = require("@gourmet/is-plain-object");
 
 // Scale of multiplication for calculating base orders.
@@ -40,58 +41,94 @@ class PluginSorter {
   }
 
   // Returns a copied array of plugins, which are normalized, sorted and finalized.
-  // If an item's name starts with '#', it has the same effect as the schema,
-  // and excluded from the finalized result array.
+  // Virtual items are merged into real items and excluded from the finalized result array.
   run(items) {
     if (!Array.isArray(items))
       throw Error("Items must be an array");
 
-    items = this._prepareItems(items);
+    items = this._normalizeItems(items);
+    items = this._applySchema(items);   // all items are copied and safe to be modified in-place after this
+    items = this._mergeVirtuals(items);
+    items = this._excludeDisabled(items);
     items = this._sortItems(items);
 
     return this._finalizeItems(items);
   }
 
-  // Normalizes, applies schema to, and filters items.
-  _prepareItems(items) {
-    const virtual = {};
-    const plugins = [];
+  _normalizeItems(items) {
+    const output = [];
 
     for (let idx = 0; idx < items.length; idx++) {
       const item = this._normalize(items[idx]);
 
-      if (!isPlainObject(item))
-        throw Error("'normalize' should return an object");
+      if (item) {
+        if (!isPlainObject(item))
+          throw Error("'normalize' should return an object");
 
-      if (typeof item.name !== "string")
-        throw Error("Name is required");
+        if (typeof item.name !== "string")
+          throw Error("Name is required");
 
-      if (item.name[0] === "#") {
-        const name = item.name.substr(1);
-        virtual[name] = merge(virtual[name] || {}, item, {name});
-      } else {
-        plugins.push(item);
+        output.push(item);
       }
     }
 
-    return this._applySchema(plugins, virtual);
+    return output;
   }
 
-  _applySchema(items, virtual) {
+  _applySchema(items) {
     const schema = this._schema;
     const s = schema["*"];
-    const v = virtual["*"];
-    const plugins = [];
+    const output = [];
 
     for (let idx = 0; idx < items.length; idx++) {
       const item = items[idx];
       const name = item.name;
-      const res = merge({after:[], before:[]}, s, v, schema[name], virtual[name], item);
-      if (!res.disable)
-        plugins.push(res);
+      if (!item.virtual)
+        output.push(merge({after:[], before:[]}, s, schema[name], item));
+      else
+        output.push(merge({after:[], before:[]}, item));
     }
 
-    return plugins;
+    return output;
+  }
+
+  _mergeVirtuals(items) {
+    const virtual = {};
+    const output = [];
+
+    for (let idx = 0; idx < items.length; idx++) {
+      let item = items[idx];
+      const name = item.name;
+      const v = virtual[name];
+      if (item.virtual) {
+        item = omit(item, "virtual");
+        virtual[name] = v ? merge(v, item) : item;
+        for (let j = 0; j < output.length; j++) {
+          const o = output[j];
+          if (o.name === name)
+            merge(o, item);
+        }
+      } else {
+        if (v)
+          output.push(merge({}, v, item));
+        else
+          output.push(item);
+      }
+    }
+
+    return output;
+  }
+
+  _excludeDisabled(items) {
+    const output = [];
+
+    for (let idx = 0; idx < items.length; idx++) {
+      const item = items[idx];
+      if (!item.disable)
+        output.push(item);
+    }
+
+    return output;
   }
 
   // Sort items based on the `group` field, constraints(`before`, `after`)

@@ -8,7 +8,7 @@
     "clean": "lerna clean",
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test --concurrency=1 --stream",
-    "lint": "eslint . --ext .js,.jsx"
+    "lint": "eslint . --ext .js,.jsx --ignore-pattern node_modules"
   },
   "devDependencies": {
     "eslint": "^5.5.0",

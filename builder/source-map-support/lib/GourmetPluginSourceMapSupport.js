@@ -1,8 +1,8 @@
 "use strict";
 
 class GourmetPluginSourceMapSupport {
-  onUserConfig(context) {
-    if (context.config.builder.installSourceMapSupport) {
+  async onUserConfig(context) {
+    if (await context.vars.get("builder.installSourceMapSupport")) {
       const moduleDir = context.builder.moduleDir(__dirname);
       return {
         builder: {
@@ -27,7 +27,7 @@ class GourmetPluginSourceMapSupport {
 
 GourmetPluginSourceMapSupport.meta = {
   hooks: {
-    "build:alias": GourmetPluginSourceMapSupport.prototype.onUserConfig,
+    "build:user_config": GourmetPluginSourceMapSupport.prototype.onUserConfig,
     "build:entry": GourmetPluginSourceMapSupport.prototype.onEntry
   }
 };

@@ -67,8 +67,8 @@ module.exports = {
     // because the format is kinda standardized based on browserlist and
     // can be used for other purposes such as CSS compilation.
     runtime: {
-      client: null,   // browserlist's default
-      server: "6.1"   // node 6.10
+      client: null,   // browserslist's default: "> 0.5%, last 2 versions, Firefox ESR, not dead"
+      server: "node 8.11"
     },
 
     // Options to be given to the init function
@@ -100,8 +100,8 @@ module.exports = {
     // copied as-is for better build performance.
     // However, source files located under one of these directories
     // will be included in compilation.
-    //  - `vendorSourceDirs: ["gourmet-source", "src"]`
-    vendorSourceDirs: ["gourmet-source"],
+    //  - `vendorSourceDirs: ["gourmet-source", "gmsrc"]`
+    vendorSourceDirs: ["gourmet-source", "gmsrc"],
 
     // Specifies modules to be either client-only, server-only or external(server-only)
     //   {
