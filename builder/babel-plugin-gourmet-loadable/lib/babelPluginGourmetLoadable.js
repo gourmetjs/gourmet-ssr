@@ -8,11 +8,13 @@ const MM3 = require("imurmurhash");
 //  - resolveModule(moduleName, refPath): resolve the module and returns a path of the module file
 //    that is relative to the project working directory.
 module.exports = function babelPluginGourmetLoadable({types: t}) {
-  function _evalString(path, context) {
+  function _evalString(path, context, throwOnExpr) {
     const res = path.evaluate();
     if (res.confident && typeof res.value === "string")
       return res.value;
-    throw Error(`'${context}' must have a string literal as only argument.`);
+    if (throwOnExpr)
+      throw Error(`'${context}' must have a string literal as only argument.`);
+    return null;
   }
 
   function _processBinding(bindingName, path, state) {
@@ -50,9 +52,11 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         Import(path) {
           const callExpression = path.parentPath;
           const moduleName = _evalString(callExpression.get("arguments")[0], "import()");
-          const relPath = state.opts.resolveModule(moduleName, state.file.opts.filename);
-          if (relPath)
-            modules.push(relPath);
+          if (moduleName) {
+            const relPath = state.opts.resolveModule(moduleName, state.file.opts.filename);
+            if (relPath)
+              modules.push(relPath);
+          }
         }
       });
 
@@ -64,7 +68,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         });
 
         if (propertiesMap.signature) {
-          const sig = _evalString(propertiesMap.signature.get("value"), "signature");
+          const sig = _evalString(propertiesMap.signature.get("value"), "signature", true);
           items.push(":", sig);
         }
 
@@ -102,7 +106,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
 
         const lib = _evalString(path.get("arguments.0"), "require()");
 
-        if (lib !== state.opts.libraryName)
+        if (!lib || lib !== state.opts.libraryName)
           return;
 
         const parent = path.parentPath;
