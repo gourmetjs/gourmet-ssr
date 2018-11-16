@@ -17,6 +17,7 @@
     "@babel/runtime": "^7.1.5",
     "@gourmet/plugin-sort": "^0.7.0",
     "@gourmet/relative-path": "^0.3.1",
+    "@gourmet/merge": "^0.7.0",
     "babel-loader": "^8.0.4",
     "babel-plugin-dynamic-import-node": "^2.2.0"
   },

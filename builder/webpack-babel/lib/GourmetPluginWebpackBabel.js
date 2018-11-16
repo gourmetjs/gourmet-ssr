@@ -3,6 +3,7 @@
 const npath = require("path");
 const relativePath = require("@gourmet/relative-path");
 const sortPlugins = require("@gourmet/plugin-sort");
+const merge = require("@gourmet/merge");
 
 class GourmetPluginWebpackBabel {
   onDefaultConfig(context) {
@@ -77,7 +78,13 @@ class GourmetPluginWebpackBabel {
         // Preset: `{name: "name", preset: "optional_path_to_preset", options: {...}}`
         // Plugin: `{name: "name", plugin: "optional_path_to_preset", options: {...}}`
         presets: [],
-        plugins: []
+        plugins: [],
+
+        // Additional custom options to provide to `babel-loader`.
+        options: {},
+
+        // Additional custom options to provide to `@babel/preset-env`.
+        envOptions: {}
       }
     };
   }
@@ -100,91 +107,89 @@ class GourmetPluginWebpackBabel {
     // `plugins` are appended too.
     const babel = context.config.babel;
     const bl = babel.browserslist;
+    const envOptions = {
+      modules: false,
+      configPath: context.workDir,
+      targets: bl === "gourmet" ? context.config.builder.runtime[context.target] : null,
+      ignoreBrowserslistConfig: bl === "gourmet",
+
+      // `@babel/preset-env` interprets `useBuiltIns` a little differently.
+      loose: babel.loose,
+      spec: babel.spec,
+      useBuiltIns: babel.polyfill,
+
+      // https://github.com/facebook/create-react-app/blob/1d8d9eaaeef0e4dbcefedac40d3f18b892c8c18b/packages/babel-preset-react-app/create.js#L91
+      exclude: ["transform-typeof-symbol"]
+    };
+    const options = {
+      sourceType: "unambiguous",
+      configFile: babel.configFile,
+      root: babel.root,
+      babelrc: babel.babelrc,
+      envName: babel.envName,
+
+      presets: [{
+        name: "@babel/preset-env",
+        preset: require.resolve("@babel/preset-env"),
+        options: merge(envOptions, babel.envOptions)
+      }].concat(babel.presets),
+
+      plugins: (() => {
+        const plugins = [];
+
+        if (context.target === "client") {
+          plugins.push({
+            name: "@babel/plugin-syntax-dynamic-import",
+            plugin: require.resolve("@babel/plugin-syntax-dynamic-import")
+          });
+        } else {
+          plugins.push({
+            name: "babel-plugin-dynamic-import-node",
+            plugin: require.resolve("babel-plugin-dynamic-import-node")
+          });
+        }
+
+        if (babel.withProposals !== false) {
+          if (babel.withProposals >= 3) {
+            plugins.push({
+              name: "@babel/plugin-syntax-import-meta",
+              plugin: require.resolve("@babel/plugin-syntax-import-meta")
+            });
+
+            plugins.push({
+              name: "@babel/plugin-proposal-class-properties",
+              plugin: require.resolve("@babel/plugin-proposal-class-properties"),
+              options: {
+                loose: babel.loose
+              }
+            });
+
+            plugins.push({
+              name: "@babel/plugin-proposal-json-strings",
+              plugin: require.resolve("@babel/plugin-proposal-json-strings")
+            });
+          }
+        }
+
+        plugins.push({
+          name: "@babel/plugin-transform-runtime",
+          plugin: require.resolve("@babel/plugin-transform-runtime"),
+          options: {
+            corejs: false,
+            helpers: true,
+            regenerator: true
+          }
+        });
+
+        return plugins.concat(babel.plugins);
+      })()
+    };
 
     return {
       js: [{
         name: "babel-loader",
         loader: bl === "file" ? npath.join(__dirname, "custom-babel-loader.js") : require.resolve("babel-loader"),
-        options: {
-          sourceType: "unambiguous",
-          configFile: babel.configFile,
-          root: babel.root,
-          babelrc: babel.babelrc,
-          envName: babel.envName,
-          presets: [{
-            name: "@babel/preset-env",
-            preset: require.resolve("@babel/preset-env"),
-            options: {
-              modules: false,
-              configPath: context.workDir,
-              targets: bl === "gourmet" ? context.config.builder.runtime[context.target] : null,
-              ignoreBrowserslistConfig: bl === "gourmet",
-
-              // `@babel/preset-env` interprets `useBuiltIns` a little differently.
-              loose: babel.loose,
-              spec: babel.spec,
-              useBuiltIns: babel.polyfill,
-
-              // https://github.com/facebook/create-react-app/blob/1d8d9eaaeef0e4dbcefedac40d3f18b892c8c18b/packages/babel-preset-react-app/create.js#L91
-              exclude: ["transform-typeof-symbol"]
-            }
-          }].concat(babel.presets),
-
-          plugins: (() => {
-            const plugins = [];
-
-            if (context.target === "client") {
-              plugins.push({
-                name: "@babel/plugin-syntax-dynamic-import",
-                plugin: require.resolve("@babel/plugin-syntax-dynamic-import")
-              });
-            } else {
-              plugins.push({
-                name: "babel-plugin-dynamic-import-node",
-                plugin: require.resolve("babel-plugin-dynamic-import-node")
-              });
-            }
-
-            if (babel.withProposals !== false) {
-              if (babel.withProposals >= 3) {
-                plugins.push({
-                  name: "@babel/plugin-syntax-import-meta",
-                  plugin: require.resolve("@babel/plugin-syntax-import-meta")
-                });
-
-                plugins.push({
-                  name: "@babel/plugin-proposal-class-properties",
-                  plugin: require.resolve("@babel/plugin-proposal-class-properties"),
-                  options: {
-                    loose: babel.loose
-                  }
-                });
-
-                plugins.push({
-                  name: "@babel/plugin-proposal-json-strings",
-                  plugin: require.resolve("@babel/plugin-proposal-json-strings")
-                });
-              }
-            }
-
-            plugins.push({
-              name: "@babel/plugin-transform-runtime",
-              plugin: require.resolve("@babel/plugin-transform-runtime"),
-              options: {
-                corejs: false,
-                helpers: true,
-                regenerator: true
-              }
-            });
-
-            // We can't turn this on by default due to the following issue:
-            // https://github.com/webpack/webpack/issues/4039
-            //
-            //   "babel-plugin-transform-runtime"
-
-            return plugins.concat(babel.plugins);
-          })()
-        }
+        options: merge(options, babel.options)
       }],
       js_copy: []
     };
