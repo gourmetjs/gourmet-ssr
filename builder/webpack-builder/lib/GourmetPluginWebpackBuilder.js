@@ -139,7 +139,7 @@ class GourmetPluginWebpackBuilder {
       let name;
 
       if (context.config.builder.contentHash) {
-        name = b62.encode(crypto.createHash("sha1").update(content).digest("hex"));
+        name = b62.encode(Buffer.from(crypto.createHash("sha1").update(content).digest("hex")));
       } else {
         const dirname = ppath.dirname(relPath);
         const basename = ppath.basename(relPath, extname);

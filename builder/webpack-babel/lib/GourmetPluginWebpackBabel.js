@@ -84,7 +84,7 @@ class GourmetPluginWebpackBabel {
         options: {},
 
         // Additional custom options to provide to `@babel/preset-env`.
-        envOptions: {}
+        presetEnv: {}
       }
     };
   }
@@ -107,7 +107,7 @@ class GourmetPluginWebpackBabel {
     // `plugins` are appended too.
     const babel = context.config.babel;
     const bl = babel.browserslist;
-    const envOptions = {
+    const presetEnv = {
       modules: false,
       configPath: context.workDir,
       targets: bl === "gourmet" ? context.config.builder.runtime[context.target] : null,
@@ -131,7 +131,7 @@ class GourmetPluginWebpackBabel {
       presets: [{
         name: "@babel/preset-env",
         preset: require.resolve("@babel/preset-env"),
-        options: merge(envOptions, babel.envOptions)
+        options: merge(presetEnv, babel.presetEnv)
       }].concat(babel.presets),
 
       plugins: (() => {

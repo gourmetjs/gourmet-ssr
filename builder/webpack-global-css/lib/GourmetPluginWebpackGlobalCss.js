@@ -1,9 +1,64 @@
 "use strict";
 
 const sortPlugins = require("@gourmet/plugin-sort");
+const merge = require("@gourmet/merge");
 
 class GourmetPluginWebpackGlobalCss {
+  onDefaultConfig() {
+    return {
+      postcss: {
+        // Use 'postcss-loader's configuration files instead of options
+        // specified in `gourmet_config.js`.
+        // If you set this to `true`, `postcss=loader` is specified without any
+        // options or plugins. You should specify options in `postcss.config.js`
+        // file as described in https://github.com/postcss/postcss-loader#configuration
+        useConfigFile: false,
+
+        // `postcss-loader`'s `sourceMap` option follows `builder.sourceMap` by default.
+        sourceMap: context => {
+          return context.vars.get("builder.sourceMap");
+        },
+
+        // Where to load browserslist configuration:
+        //  - "gourmet": global setting from `builder.runtime` of `gourmet_config.js`.
+        //  - "file": file-relative configuration lookup beginning at each source file's directory
+        browserslist: "gourmet",  // "gourmet", "file",
+
+        // Note that the format of `plugins` is extended from Babel's.
+        // `{name: "name", plugin: fn, options: {...}}`
+        plugins: [],
+
+        // Additional custom options to provide to `postcss-loader`.
+        options: {},
+
+        // Additional custom options to provide to `autoprefixer`.
+        autoprefixer: {},
+
+        // Additional custom options to provide to `clean-css`.
+        cleancss: {}
+      }
+    };
+  }
+
   onPipelines(context) {
+    const postcss = context.config.postcss;
+    const bl = postcss.browserslist;
+    const autoprefixer = merge({
+      browsers: bl === "gourmet" ? context.config.builder.runtime.client : undefined,
+      env: context.target === "server" ? context.stage + ":server" : context.stage
+    }, postcss.autoprefixer);
+    const options = merge({
+      plugins: [{
+        name: "autoprefixer",
+        plugin: require("autoprefixer"),
+        options: autoprefixer
+      }, context.config.builder.minify && {
+        name: "@gourmet/postcss-plugin-cleancss",
+        plugin: require("@gourmet/postcss-plugin-cleancss"),
+        options: postcss.cleancss
+      }].concat(postcss.plugins).filter(Boolean)
+    }, postcss.options);
+
     return {
       // "css": performs a full transformation of CSS file
       css: [{
@@ -30,15 +85,7 @@ class GourmetPluginWebpackGlobalCss {
       }, {
         name: "postcss-loader",
         loader: require.resolve("postcss-loader"),
-        options: {
-          plugins: [{
-            // Autoprefixer uses `browserslist` and putting options under `browserslist`
-            // key of `package.json` is recommended way of configuring it as opposed to
-            // specifying options here.
-            name: "autoprefixer",
-            plugin: require("autoprefixer")
-          }]
-        }
+        options: postcss.useConfigFile ? undefined : options
       }],
 
       // "css_resolve": performs a resolution of 'url' and '@import', skipping PostCSS
@@ -122,6 +169,7 @@ class GourmetPluginWebpackGlobalCss {
 
 GourmetPluginWebpackGlobalCss.meta = {
   hooks: {
+    "build:default_config": GourmetPluginWebpackGlobalCss.prototype.onDefaultConfig,
     "build:webpack_pipelines": GourmetPluginWebpackGlobalCss.prototype.onPipelines,
     "build:webpack_loaders": GourmetPluginWebpackGlobalCss.prototype.onLoaders,
     "build:webpack_loader_options:postcss-loader": GourmetPluginWebpackGlobalCss.prototype.onPostCssOptions

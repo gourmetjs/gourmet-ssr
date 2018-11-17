@@ -1,0 +1,10 @@
+{
+  "name": "@gourmet/postcss-plugin-cleancss",
+  "version": "0.1.0",
+  "description": "PostCSS plugin wrapper for clean-css",
+  "main": "lib/postcssPluginCleanCss.js",
+  "dependencies": {
+    "postcss": "^7.0.5",
+    "clean-css": "^4.2.1"
+  }
+}

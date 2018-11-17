@@ -14,7 +14,7 @@ module.exports = {
       browserslist: "file"  // from `src/.browserlistrc`
     };
     return Object.assign(options, {
-      envOptions: {
+      presetEnv: {
         debug: !process.env.npm_lifecycle_event || !process.env.npm_lifecycle_event.startsWith("test")
       }
     });
