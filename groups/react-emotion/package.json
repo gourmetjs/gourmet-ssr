@@ -1,0 +1,19 @@
+{
+  "name": "@gourmet/group-react-emotion",
+  "description": "Gourmet Group containing additional packages for React Emotion projects",
+  "version": "0.1.0",
+  "main": "lib/GourmetGroupReactEmotion.js",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "dependencies": {
+    "@gourmet/emotion-renderer": "^0.5.0",
+    "@gourmet/plugin-react-emotion": "^0.6.0",
+    "emotion": "^9.2.6",
+    "react-emotion": "^9.2.6"
+  },
+  "peerDependencies": {
+    "react": "16",
+    "react-dom": "16"
+  }
+}
