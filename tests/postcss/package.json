@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "gourmet build"
+    "build": "gourmet build",
+    "build:local": "gourmet build --verbose 1",
+    "build:prod": "gourmet build --verbose 1 --stage prod",
+    "build:file": "gourmet build --verbose 1 --stage file",
+    "build:config": "gourmet build --verbose 1 --stage config",
+    "test": "npm run build:local && npm run build:prod && npm run build:file && npm run build:config && tape test/*_test.js"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.8.0",
@@ -13,6 +18,8 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.7.0",
-    "@gourmet/preset-core": "^0.9.1"
+    "@gourmet/preset-core": "^0.9.1",
+    "postcss-color-rgba-fallback": "^3.0.0",
+    "tape": "^4.9.0"
   }
 }

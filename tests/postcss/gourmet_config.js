@@ -14,7 +14,7 @@ module.exports = {
     },
 
     browserslist: context => {
-      return context.stage === "browsers" ? "file" : "gourmet";
+      return context.stage === "file" ? "file" : "gourmet";
     }
   },
 

@@ -20,11 +20,11 @@ class GourmetPluginWebpackGlobalCss {
         },
 
         // Where to load browserslist configuration:
-        //  - "gourmet": global setting from `builder.runtime` of `gourmet_config.js`.
+        //  - "gourmet": global setting from `builder.runtime.client` of `gourmet_config.js`.
         //  - "file": file-relative configuration lookup beginning at each source file's directory
         browserslist: "gourmet",  // "gourmet", "file",
 
-        // Note that the format of `plugins` is extended from Babel's.
+        // Note that the format of `plugins` is extended from PostCSS's.
         // `{name: "name", plugin: fn, options: {...}}`
         plugins: [],
 
