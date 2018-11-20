@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/group-react-emotion",
   "description": "Gourmet Group containing additional packages for React Emotion projects",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/GourmetGroupReactEmotion.js",
   "keywords": [
     "gourmet-plugin"

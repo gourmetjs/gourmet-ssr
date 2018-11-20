@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-i80-basic",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "watch": "node lib/server.js --watch",
@@ -19,8 +19,8 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.7.0",
-    "@gourmet/preset-react-emotion": "^0.10.1",
-    "@gourmet/group-react-i80": "^0.1.0",
+    "@gourmet/group-react-i80": "^0.2.0",
+    "@gourmet/preset-react-emotion": "^0.11.0",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
     "classnames": "^2.2.6",

@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/preset-core",
   "description": "Gourmet Preset containing core packages for building and running a Gourmet SSR project",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "main": "lib/GourmetPresetCore.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/group-core": "^0.1.0",
+    "@gourmet/group-core": "^0.2.0",
     "webpack": "^4.26.0"
   }
 }
