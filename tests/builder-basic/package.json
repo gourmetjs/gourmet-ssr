@@ -17,6 +17,8 @@
     "morgan": "^1.9.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "webpack": "^4.26.0",
     "@gourmet/gourmet-cli": "^0.7.0",
     "@gourmet/plugin-webpack-babel": "^0.9.0",
     "@gourmet/plugin-webpack-builder": "^0.11.0",

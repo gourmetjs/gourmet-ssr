@@ -7,7 +7,6 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@babel/core": "^7.1.2",
     "@gourmet/html-renderer": "^0.9.0",
     "@gourmet/plugin-preserve-injector": "^0.3.0",
     "@gourmet/plugin-source-map-support": "^0.5.0",
@@ -18,6 +17,7 @@
     "@gourmet/plugin-webpack-html-renderer": "^0.5.0"
   },
   "peerDependencies": {
+    "@babel/core": "7",
     "webpack": "4"
   }
 }

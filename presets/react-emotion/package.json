@@ -7,11 +7,12 @@
     "gourmet-plugin"
   ],
   "dependencies": {
+    "@babel/core": "^7.1.2",
+    "webpack": "^4.26.0",
+    "prop-types": "^15.6.2",
     "@gourmet/group-core": "^0.2.0",
     "@gourmet/group-react": "^0.2.0",
-    "@gourmet/group-react-emotion": "^0.2.0",
-    "prop-types": "^15.6.2",
-    "webpack": "^4.26.0"
+    "@gourmet/group-react-emotion": "^0.2.0"
   },
   "peerDependencies": {
     "react": "16",

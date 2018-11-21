@@ -1,0 +1,17 @@
+{
+  "name": "@gourmet/test-standalone-runner",
+  "private": true,
+  "scripts": {
+    "copy-all": "node copy-all.js",
+    "install-all": "node install-all.js",
+    "test-all": "node test-all.js"
+  },
+  "devDependencies": {
+    "@gourmet/promise-each": "^0.2.0",
+    "@gourmet/promise-main": "^0.2.0",
+    "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
+    "pshell": "^1.1.0",
+    "rimraf": "^2.6.2"
+  }
+}

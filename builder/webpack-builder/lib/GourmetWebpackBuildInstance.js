@@ -275,7 +275,16 @@ class GourmetWebpackBuildInstance {
   _getWebpackResolve(context) {
     return {
       extensions: context.config.builder.defaultExtensions,
-      alias: this._getWebpackAlias(context)
+      alias: this._getWebpackAlias(context),
+      modules: [
+        "node_modules",
+
+        // We add `workDir` as a final fallback for the source files that are
+        // located out of project's root. One example is the auto-generated
+        // `init.*.client.js` & `init.*.server.js` files under `info` directory
+        // when `builder.outputDir` is set to somewhere out of project's root.
+        context.workDir
+      ]
     };
   }
 

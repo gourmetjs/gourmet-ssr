@@ -1,5 +1,6 @@
 .DS_Store
 .gourmet
 .test
+.local-chromium
 *.log
 node_modules
