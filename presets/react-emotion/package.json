@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/preset-react-emotion",
   "description": "Gourmet Preset containing a whole set of packages for React Emotion projects",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "main": "lib/GourmetPresetReactEmotion.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
     "@babel/core": "^7.1.2",
-    "@gourmet/group-core": "^0.2.1",
+    "@gourmet/group-core": "^0.2.2",
     "@gourmet/group-react": "^0.2.0",
     "@gourmet/group-react-emotion": "^0.2.0",
     "prop-types": "^15.6.2",

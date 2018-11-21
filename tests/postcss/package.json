@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-postcss",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.7.0",
-    "@gourmet/preset-core": "^0.10.1",
+    "@gourmet/preset-core": "^0.10.2",
     "postcss-color-rgba-fallback": "^3.0.0",
     "tape": "^4.9.0"
   }
