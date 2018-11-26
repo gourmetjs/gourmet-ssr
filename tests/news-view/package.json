@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-news-view",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "module": "gmsrc/NewsView.jsx",
   "dependencies": {
     "@gourmet/promise-repeat": "^0.2.0",

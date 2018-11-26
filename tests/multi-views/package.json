@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-multi-views",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "start": "node lib/server.js",
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.7.0",
-    "@gourmet/group-react-i80": "^0.2.0",
+    "@gourmet/group-react-i80": "^0.3.0",
     "@gourmet/preset-react": "^0.11.2",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",

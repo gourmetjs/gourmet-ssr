@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-src",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "build": "gourmet build && gourmet build --stage test",
