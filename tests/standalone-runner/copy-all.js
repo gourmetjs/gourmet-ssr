@@ -2,6 +2,7 @@
 
 const npath = require("path");
 const fs = require("fs");
+const nutil = require("util");
 const rimraf = require("rimraf");
 const mkdirp = require("mkdirp");
 const ncp = require("ncp").ncp;
@@ -11,10 +12,10 @@ const promiseMain = require("@gourmet/promise-main");
 const TEST_DIR = npath.join(__dirname, "..");
 const TARGET_DIR = npath.join(__dirname, "../../../.gourmet-standalone/tests");
 
-function main() {
-  rimraf.sync(TARGET_DIR);
+async function main() {
+  await nutil.promisify(rimraf)(TARGET_DIR);
 
-  return promiseEach(fs.readdirSync(TEST_DIR), name => {
+  await promiseEach(fs.readdirSync(TEST_DIR), async name => {
     const srcDir = npath.join(TEST_DIR, name);
     const desDir = npath.join(TARGET_DIR, name);
 
@@ -25,20 +26,13 @@ function main() {
 
     mkdirp.sync(desDir);
 
-    return new Promise((resolve, reject) => {
-      console.log(`Copying '${srcDir}' to '${desDir}'`);
+    console.log(`Copying '${srcDir}' to '${desDir}'`);
 
-      ncp(srcDir, desDir, {
-        filter: path => {
-          return path.indexOf("node_modules") === -1;
-        },
-        stopOnError: true
-      }, err => {
-        if (err)
-          reject(err);
-        else
-          resolve();
-      });
+    await nutil.promisify(ncp)(srcDir, desDir, {
+      filter: path => {
+        return path.indexOf("node_modules") === -1;
+      },
+      stopOnError: true
     });
   });
 }
