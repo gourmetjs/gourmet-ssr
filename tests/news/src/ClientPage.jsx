@@ -1,5 +1,5 @@
 import React from "react";
-import NewsDataClient from "@gourmet/test-news-view/src/NewsDataClient";
+import NewsDataClient from "@gourmet/test-news-view/gmsrc/NewsDataClient";
 import NewsApp from "./NewsApp";
 
 export default class ClientPage {

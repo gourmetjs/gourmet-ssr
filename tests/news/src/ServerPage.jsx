@@ -1,5 +1,5 @@
 import React from "react";
-import NewsDataServer from "@gourmet/test-news-view/src/NewsDataServer";
+import NewsDataServer from "@gourmet/test-news-view/gmsrc/NewsDataServer";
 import NewsApp from "./NewsApp";
 
 export default class ServerPage {

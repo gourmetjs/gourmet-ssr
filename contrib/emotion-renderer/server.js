@@ -1,1 +1,1 @@
-module.exports = require("./gourmet-source/getEmotionServerRenderer.js"); // eslint-disable-line strict
+module.exports = require("./gmsrc/getEmotionServerRenderer.js"); // eslint-disable-line strict

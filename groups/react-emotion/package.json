@@ -9,8 +9,8 @@
   "dependencies": {
     "@gourmet/emotion-renderer": "^0.5.0",
     "@gourmet/plugin-react-emotion": "^0.6.0",
-    "emotion": "^9.2.6",
-    "react-emotion": "^9.2.6"
+    "emotion": "^9.2.12",
+    "react-emotion": "^9.2.12"
   },
   "peerDependencies": {
     "react": "16",

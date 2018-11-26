@@ -16,6 +16,7 @@
     "@gourmet/gourmet-cli": "^0.7.0",
     "@gourmet/preset-core": "^0.10.2",
     "@gourmet/test-builder-src-module-a": "^0.1.0",
-    "@gourmet/test-builder-src-module-b": "^0.1.1"
+    "@gourmet/test-builder-src-module-b": "^0.1.1",
+    "tape": "^4.9.0"
   }
 }
