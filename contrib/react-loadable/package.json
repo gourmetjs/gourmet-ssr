@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/react-loadable",
   "version": "0.5.0",
-  "main": "gourmet-source/loadable.js",
+  "main": "gmsrc/loadable.js",
   "dependencies": {
     "@gourmet/loadable-registrar": "^0.3.0",
     "@gourmet/react-context-gmctx": "^0.4.0"

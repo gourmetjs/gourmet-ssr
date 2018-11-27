@@ -18,7 +18,7 @@ class GourmetPluginSourceMapSupport {
     const config = context.config.builder;
     if (context.target === "server" && config.installSourceMapSupport && config.sourceMap) {
       return [
-        require.resolve("../gourmet-source/install.js")
+        require.resolve("../gmsrc/install.js")
       ].concat(value);
     }
     return value;

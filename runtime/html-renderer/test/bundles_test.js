@@ -1,7 +1,7 @@
 "use strict";
 
 const test = require("tape");
-const HtmlServerRenderer = require("../gourmet-source/getHtmlServerRenderer")();
+const HtmlServerRenderer = require("../gmsrc/getHtmlServerRenderer")();
 
 test("getBundles() basic", t => {
   const r = new HtmlServerRenderer();

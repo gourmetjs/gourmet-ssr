@@ -1,5 +1,5 @@
 {
   "name": "@gourmet/loadable-registrar",
   "version": "0.3.0",
-  "main": "lib/registrar.js"
+  "main": "gmsrc/registrar.js"
 }

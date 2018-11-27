@@ -2,7 +2,7 @@
   "name": "@gourmet/error",
   "version": "0.3.0",
   "description": "Simple error object creator",
-  "main": "lib/error.js",
+  "main": "gmsrc/error.js",
   "dependencies": {
     "lodash.template": "^4.4.0"
   }

@@ -1,8 +1,8 @@
 {
   "name": "@gourmet/react-i80",
   "version": "0.6.0",
-  "browser": "gourmet-source/index.client.js",
-  "main": "gourmet-source/index.server.js",
+  "browser": "gmsrc/index.client.js",
+  "main": "gmsrc/index.server.js",
   "dependencies": {
     "@gourmet/omit": "^0.2.0",
     "@gourmet/parse-href": "^0.2.0",

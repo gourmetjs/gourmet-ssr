@@ -1,4 +1,4 @@
 "use strict";
 
-// Include the real source file from `gourmet-source` directory to enable the transpilation.
-module.exports = require("./gourmet-source/HandledError");
+// Include the real source file from `gmsrc` directory to enable the transpilation.
+module.exports = require("./gmsrc/HandledError");

@@ -1,1 +1,1 @@
-module.exports = require("./gourmet-source/getHtmlServerRenderer.js"); // eslint-disable-line strict
+module.exports = require("./gmsrc/getHtmlServerRenderer.js"); // eslint-disable-line strict
