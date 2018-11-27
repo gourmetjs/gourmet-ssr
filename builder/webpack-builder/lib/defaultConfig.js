@@ -64,10 +64,11 @@ module.exports = {
     },
 
     // `runtime` is located here as an independent section from Webpack or Babel
-    // because the format is kinda standardized based on browserlist and
+    // because the format is kinda standardized based on the browserlist and
     // can be used for other purposes such as CSS compilation.
+    // We set `client` to browserslist's default + `ie 11` for the safety.
     runtime: {
-      client: null,   // browserslist's default: "> 0.5%, last 2 versions, Firefox ESR, not dead"
+      client: "> 0.5%, last 2 versions, Firefox ESR, not dead, ie 11",
       server: "node 8.11"
     },
 
