@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-babel",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -8,14 +8,14 @@
     "test": "gourmet build --verbose 1 && tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^0.8.0",
+    "@gourmet/client-lib": "^0.8.1",
     "@gourmet/server-args": "^0.6.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^0.7.0",
-    "@gourmet/preset-core": "^0.10.2",
+    "@gourmet/gourmet-cli": "^0.7.1",
+    "@gourmet/preset-core": "^0.10.3",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
     "domready": "^1.0.8",

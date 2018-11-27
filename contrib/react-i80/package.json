@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/react-i80",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "browser": "gmsrc/index.client.js",
   "main": "gmsrc/index.server.js",
   "dependencies": {

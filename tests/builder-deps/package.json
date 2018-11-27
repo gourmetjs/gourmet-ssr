@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-deps",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -11,7 +11,7 @@
     "test:ltc": "gourmet build --verbose 1 --stage ltc --ignore-compile-errors && tape test/*_test.js --stage ltc"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^0.8.0",
+    "@gourmet/client-lib": "^0.8.1",
     "@gourmet/server-args": "^0.6.0",
     "classnames": "^2.2.6",
     "express": "^4.16.3",
@@ -19,8 +19,8 @@
     "morgan": "^1.9.0"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^0.7.0",
-    "@gourmet/preset-core": "^0.10.2",
+    "@gourmet/gourmet-cli": "^0.7.1",
+    "@gourmet/preset-core": "^0.10.3",
     "@gourmet/promise-tape": "^0.3.0",
     "@gourmet/puppeteer-args": "^0.4.0",
     "domready": "^1.0.8",

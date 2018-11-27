@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/web-proxy",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": "lib/index.js",
   "dependencies": {
-    "@gourmet/error": "^0.3.0",
+    "@gourmet/error": "^0.3.1",
     "@gourmet/get-req-opts": "^0.1.1",
     "@gourmet/handle-request-error": "^0.5.0",
     "@gourmet/http-module": "^0.2.0",

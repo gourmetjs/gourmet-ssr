@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-builder",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "description": "Gourmet Webpack Builder main plugin",
   "keywords": [
     "gourmet-plugin"
@@ -9,7 +9,7 @@
   "dependencies": {
     "@gourmet/base-x": "^0.2.0",
     "@gourmet/console": "^0.2.0",
-    "@gourmet/error": "^0.3.0",
+    "@gourmet/error": "^0.3.1",
     "@gourmet/hash-names": "^0.3.0",
     "@gourmet/is-plain-object": "^0.2.0",
     "@gourmet/merge": "^0.7.0",
