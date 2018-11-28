@@ -1,7 +1,6 @@
 "use strict";
 
 const npath = require("path");
-const fs = require("fs");
 const resolve = require("resolve");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
@@ -10,10 +9,10 @@ const Variables = require("@gourmet/variables");
 const ContextSource = require("./ContextSource");
 const ConfigSource = require("./ConfigSource");
 
-const CONFIG_FILE_NAME = "gourmet_config";
+const CONFIG_PATH = "gourmet_config.js";
 
 const CONFIG_FILE_NOT_FOUND = {
-  message: "Project config file '${filename}' not found in directory '${workDir}'",
+  message: "Project config file '${path}' not found",
   code: "CONFIG_FILE_NOT_FOUND"
 };
 
@@ -32,52 +31,42 @@ class GourmetCli extends CliBase {
   verifyArgs() {
     const context = this.context;
 
-    if (!context.vars) {
+    if (!context.configObject) {
       const info = this.findCommandInfo(context.command);
       if (!info || info.requiresConfig !== false) {
-        const filenames = this._getConfigFilenames();
-        const workDir = context.workDir;
-        throw error(CONFIG_FILE_NOT_FOUND, {filename: filenames[0], workDir});
+        const path = this._getConfigPath();
+        throw error(CONFIG_FILE_NOT_FOUND, {path});
       }
     }
 
     return super.verifyArgs();
   }
 
-  _getConfigFilenames() {
+  _getConfigPath() {
     const context = this.context;
-    const basename = context.argv.configName || CONFIG_FILE_NAME;
-    const ext = npath.extname(basename).toLowerCase();
-    if (ext === ".js" || ext === ".json")
-      return [basename];
-    return [
-      basename + ".js",
-      basename + ".json"
-    ];
+    const path = context.argv.configPath || process.env.GOURMET_CONFIG_PATH || CONFIG_PATH;
+    return npath.join(context.workDir, path);
   }
 
   _loadConfig() {
     const context = this.context;
-    const filenames = this._getConfigFilenames();
+    const path = this._getConfigPath();
+    let config = this._loadModuleSafe(path);
+
+    context.configObject = config;
+    context.configPath = path;
 
     context.package = this._loadModuleSafe(npath.join(context.workDir, "package.json"));
     context.getter = Variables.getter;
     context.value = Variables.value;
 
-    for (let idx = 0; idx < filenames.length; idx++) {
-      const filename = filenames[idx];
-      const path = npath.join(context.workDir, filename);
-
-      if (fs.existsSync(path)) {
-        return promiseProtect(() => {
-          const config = require(path);
-          context.console.info("Project configuration:", path);
-          return typeof config === "function" ? config(context) : config;
-        }).then(config => {
-          this._initVars(config);
-        });
-      }
+    if (config) {
+      context.console.info("Project configuration:", path);
+      if (typeof config === "function")
+        config = config(context);
     }
+
+    this._initVars(config || {});
   }
 
   _initVars(config) {

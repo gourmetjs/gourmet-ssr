@@ -3,12 +3,12 @@
   "version": "0.11.3",
   "private": true,
   "scripts": {
-    "build": "gourmet build --config-name gourmet_cfg",
+    "build": "gourmet build --config-path config/gourmet_cfg",
     "start": "node lib/server.js",
     "test": "npm run test:local && npm run test:prod && npm run test:ltc",
-    "test:local": "gourmet build --config-name gourmet_cfg --verbose 1 && tape test/*_test.js",
-    "test:prod": "gourmet build --config-name gourmet_cfg --verbose 1 --stage prod && tape test/*_test.js --stage prod",
-    "test:ltc": "gourmet build --config-name gourmet_cfg --verbose 1 --stage ltc && tape test/*_test.js --stage ltc"
+    "test:local": "gourmet build --config-path config/gourmet_cfg --verbose 1 && tape test/*_test.js",
+    "test:prod": "gourmet build --config-path config/gourmet_cfg --verbose 1 --stage prod && tape test/*_test.js --stage prod",
+    "test:ltc": "gourmet build --config-path config/gourmet_cfg --verbose 1 --stage ltc && tape test/*_test.js --stage ltc"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.8.1",
