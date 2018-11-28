@@ -3,9 +3,9 @@
   "version": "0.6.3",
   "private": true,
   "scripts": {
-    "build": "gourmet build --ignore-compile-errors",
-    "start": "node lib/server.js --ignore-compile-errors",
-    "watch": "node lib/server.js --watch --ignore-compile-errors",
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "watch": "node lib/server.js --watch",
     "test": "tape test/*_test.js"
   },
   "dependencies": {

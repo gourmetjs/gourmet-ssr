@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = () => {
-  return import("../../../.test/builder-ltc/message.js").then(mod => {
+  return import("../../../.gourmet/builder-ltc/src/message.js").then(mod => {
     return [
       "<pre>",
       mod.default,

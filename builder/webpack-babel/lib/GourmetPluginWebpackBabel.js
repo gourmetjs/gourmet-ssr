@@ -241,6 +241,15 @@ class GourmetPluginWebpackBabel {
     return options;
   }
 
+  onEntry(value, context) {
+    if (context.config.babel.polyfill === "entry") {
+      return [
+        require.resolve("../gmsrc/babel-polyfill-entry.js")
+      ].concat(value);
+    }
+    return value;
+  }
+
   _isSource(path, idx, dir) {
     const dirs = this._vendorSourceDirs;
 
@@ -270,7 +279,8 @@ GourmetPluginWebpackBabel.meta = {
     "build:init": GourmetPluginWebpackBabel.prototype.onInit,
     "build:webpack_pipelines": GourmetPluginWebpackBabel.prototype.onPipelines,
     "build:webpack_loaders": GourmetPluginWebpackBabel.prototype.onLoaders,
-    "build:webpack_loader_options:babel-loader": GourmetPluginWebpackBabel.prototype.onLoaderOptions
+    "build:webpack_loader_options:babel-loader": GourmetPluginWebpackBabel.prototype.onLoaderOptions,
+    "build:entry": GourmetPluginWebpackBabel.prototype.onEntry
   }
 };
 

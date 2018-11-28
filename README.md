@@ -105,3 +105,8 @@ module.exports = {
 - This will create a single bundle file containing both `react` and `react-dom` instead of two separate bundles.
 - This will create two bundle files `components` and `containers` containing all files under specified directories.
 - By grouping together tightly related files into a single bundle, you can expect better possibility of cache hit on the browser.
+
+## Polyfill
+
+- IE 11 is supported.
+- Transpilation and polyfill are automatically enabled based on the value of `builder.runtime` & `babel.polyfill`.

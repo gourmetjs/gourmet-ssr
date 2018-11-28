@@ -9,7 +9,7 @@ module.exports = function parseHref(href) {
   const parts = [];
   let spos = 0;
 
-  ["/", "?", "#"].forEach(ch => {
+  ["/", "?", "#"].forEach(function(ch) {
     let idx, offset = 0;
 
     if (ch === "/") {

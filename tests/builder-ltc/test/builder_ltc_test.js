@@ -7,7 +7,7 @@ const mkdirp = require("mkdirp");
 const pt = require("@gourmet/promise-tape");
 const GourmetCli = require("@gourmet/gourmet-cli-impl");
 
-const testDir = npath.join(__dirname, "../../../.test/builder-ltc");
+const testDir = npath.join(__dirname, "../../../.gourmet/builder-ltc/src");
 
 function _build() {
   const cli = new GourmetCli();
@@ -21,7 +21,7 @@ function _build() {
   });
 }
 
-test("create .test directory", t => {
+test("create src directory", t => {
   mkdirp.sync(testDir);
   t.end();
 });
@@ -46,9 +46,9 @@ test("build and verify", pt(async t => {
 
   t.equal(c.length, 2, "Only two files should be changed");
   t.deepEqual(oldFiles[c[0]].modules, [], "First file should be runtime");
-  t.deepEqual(oldFiles[c[1]].modules.map(id => newModules[id]), ["../../.test/builder-ltc/message.js"], "Second file should be message.js");
+  t.deepEqual(oldFiles[c[1]].modules.map(id => newModules[id]), ["../../.gourmet/builder-ltc/src/message.js"], "Second file should be message.js");
 
   t.equal(d.length, 2, "Only two files should be changed");
   t.deepEqual(newFiles[d[0]].modules, [], "First file should be runtime");
-  t.deepEqual(newFiles[d[1]].modules.map(id => oldModules[id]), ["../../.test/builder-ltc/message.js"], "Second file should be message.js");
+  t.deepEqual(newFiles[d[1]].modules.map(id => oldModules[id]), ["../../.gourmet/builder-ltc/src/message.js"], "Second file should be message.js");
 }));
