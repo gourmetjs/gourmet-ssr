@@ -5,7 +5,7 @@
   "scripts": {
     "build": "gourmet build",
     "watch": "node lib/server.js --watch",
-    "test": "gourmet build --verbose 1 && tape test/*_test.js"
+    "test": "gourmet build --verbosity 1 && tape test/*_test.js"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.8.1",
@@ -17,7 +17,6 @@
     "@gourmet/gourmet-cli": "^0.7.1",
     "@gourmet/preset-core": "^0.10.3",
     "@gourmet/promise-tape": "^0.3.0",
-    "@gourmet/puppeteer-args": "^0.4.0",
     "puppeteer": "^1.3.0",
     "tape": "^4.9.0"
   },

@@ -11,6 +11,6 @@
     "@gourmet/serialize-request-error": "^0.2.0",
     "escape-html": "^1.0.3",
     "http-status": "^1.0.1",
-    "strip-ansi": "^4.0.0"
+    "strip-ansi": "^5.0.0"
   }
 }

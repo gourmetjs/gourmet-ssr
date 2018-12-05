@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build": "gourmet build",
-    "build:local": "gourmet build --verbose 1",
-    "build:prod": "gourmet build --verbose 1 --stage prod",
-    "build:file": "gourmet build --verbose 1 --stage file",
-    "build:config": "gourmet build --verbose 1 --stage config",
+    "build:local": "gourmet build --verbosity 1",
+    "build:prod": "gourmet build --verbosity 1 --stage prod",
+    "build:file": "gourmet build --verbosity 1 --stage file",
+    "build:config": "gourmet build --verbosity 1 --stage config",
     "test": "npm run build:local && npm run build:prod && npm run build:file && npm run build:config && tape test/*_test.js"
   },
   "dependencies": {

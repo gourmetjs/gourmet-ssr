@@ -3,11 +3,9 @@
 const test = require("tape");
 const serverArgs = require("@gourmet/server-args");
 const puppeteer = require("puppeteer");
-const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
 const gourmet = require("@gourmet/client-http");
 const GourmetHttpServer = require("@gourmet/http-server");
-const getConsole = require("@gourmet/console");
 const run = require("../lib/app");
 
 let gourmetServer, gourmetPort;
@@ -18,8 +16,7 @@ test("start back server", pt(() => {
     workDir: __dirname + "/..",
     outputDir: "../../.gourmet/react-hello",
     debug: process.env.NODE_ENV !== "production",
-    port: 0,
-    console: getConsole({minLevel: "error", name: "gourmet:net"})
+    port: 0
   }));
   gourmetServer.start();
   return gourmetServer.ready().then(port => {
@@ -41,7 +38,10 @@ test("start front server", t => {
 });
 
 test("run puppeteer", pt(async t => {
-  const browser = await puppeteer.launch(testArgs);
+  const browser = await puppeteer.launch({
+    headless: process.env.TEST_HEADLESS === "0" ? false : true,
+    slowMo: parseInt(process.env.TEST_SLOWMO || 0, 10)
+  });
   const page = await browser.newPage();
 
   await page.goto(`http://localhost:${port}/`);

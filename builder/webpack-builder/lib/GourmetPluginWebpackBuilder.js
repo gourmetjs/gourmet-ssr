@@ -6,7 +6,7 @@ const fs = require("fs");
 const util = require("util");
 const crypto = require("crypto");
 const mkdirp = require("mkdirp");
-const getConsole = require("@gourmet/console");
+const con = require("@gourmet/console")();
 const prefixLines = require("@gourmet/prefix-lines");
 const promiseProtect = require("@gourmet/promise-protect");
 const moduleDir = require("@gourmet/module-dir");
@@ -17,6 +17,14 @@ const error = require("@gourmet/error");
 const b62 = require("@gourmet/base-x")("base62");
 const GourmetWebpackBuildInstance = require("./GourmetWebpackBuildInstance");
 const defaultConfig = require("./defaultConfig");
+
+con.addFormatter((props, text) => {
+  if (props.target) {
+    const color = props.target === "server" ? con.colors.yellow : con.colors.magenta;
+    text = prefixLines(color(`${props.target}>`) + " ", text);
+  }
+  return text;
+});
 
 const INVALID_STAGE_TYPES = {
   message: "'builder.stageTypes' configuration must be an object or a function",
@@ -60,20 +68,6 @@ class GourmetPluginWebpackBuilder {
   constructor(options, context) {
     this._assets = {};
     context.builder = this;
-
-    // TODO: implement separate consoles for client and server
-    const con = getConsole();
-    getConsole.install({
-      writeToConsole(opts, text) {
-        const target = opts.target || this.target;
-        if (target) {
-          const color = target === "server" ? con.colors.yellow : con.colors.magenta;
-          text = prefixLines(color(`${target}>`) + " ", text);
-        }
-        con.writeToConsole(opts, text);
-      }
-    });
-
     this.moduleDir = moduleDir;
   }
 

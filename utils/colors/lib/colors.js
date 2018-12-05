@@ -76,12 +76,41 @@ function _off(name) {
   return name.startsWith("bg") ? off.bg : off.color;
 }
 
+const RANDOM_COLORS = [
+  31, // red
+  32, // green
+  33, // yellow
+  //34, // blue
+  35, // magenta
+  36, // cyan
+  91, // brightRed
+  92, // brightGreen
+  93, // brightYellow
+  94, // brightBlue
+  95, // brightMagenta
+  96  // brightCyan
+];
+
+// Pick a random color based on hash value of the text.
+function _pick(text) {
+  // https://github.com/visionmedia/debug/blob/22f993216dcdcee07eb0601ea71a917e4925a30a/src/common.js#L46
+  let hash = 0;
+
+  for (let idx = 0; idx < text.length; idx++) {
+    hash  = ((hash << 5) - hash) + text.charCodeAt(idx);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return _escape(RANDOM_COLORS[Math.abs(hash) % RANDOM_COLORS.length]);
+}
+
 const colors = Object.keys(code).reduce((obj, name) => {
   obj[name] = str => code[name] + str + _off(name);
   return obj;
 }, {});
 
 colors.escape = _escape;
+colors.pick = _pick;
 colors.code = code;
 colors.off = off;
 
@@ -91,6 +120,7 @@ const disabled = Object.keys(code).reduce((obj, name) => {
 }, {});
 
 disabled.escape = () => "";
+disabled.pick = () => "";
 disabled.code = _null(code);
 disabled.off = _null(off);
 

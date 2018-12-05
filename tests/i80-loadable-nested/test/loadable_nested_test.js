@@ -3,7 +3,6 @@
 const test = require("tape");
 const got = require("got");
 const puppeteer = require("puppeteer");
-const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
 const run = require("../lib/app");
 
@@ -77,7 +76,10 @@ test("run puppeteer", pt(async t => {
     t.equal(a2, "[M] Component B-- '[M]' should be added when this component is mounted in DOM");
   }
 
-  const browser = await puppeteer.launch(testArgs);
+  const browser = await puppeteer.launch({
+    headless: process.env.TEST_HEADLESS === "0" ? false : true,
+    slowMo: parseInt(process.env.TEST_SLOWMO || 0, 10)
+  });
   const page = await browser.newPage();
 
   await page.goto(`http://localhost:${port}/`);

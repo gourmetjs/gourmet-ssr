@@ -2,31 +2,16 @@
 
 const cluster = require("cluster");
 const os = require("os");
-const parseArgs = require("@gourmet/parse-args");
-const getConsole = require("@gourmet/console");
-const detect = require("@gourmet/console-env");
+const con = require("@gourmet/console")();
 
-let con;
-
-const COLORS = [
-  31, // red
-  32, // green
-  33, // yellow
-  //34, // blue
-  36, // cyan
-  91, // brightRed
-  92, // brightGreen
-  93, // brightYellow
-  94, // brightBlue
-  95, // brightMagenta
-  96  // brightCyan
-];
+con.addFormatter((props, text) => {
+  const color = con.colors.pick(cluster.isMaster ? "0" : "" + process.pid);
+  return `${color}[${process.pid}]${con.colors.off.reset} ${text}`;
+});
 
 class GourmetServerLauncher {
   constructor(options, ServerClass) {
     this.options = options;
-
-    this.initConsole();
 
     con.debug("options:", this.options);
 
@@ -34,40 +19,6 @@ class GourmetServerLauncher {
       this.ServerClass = ServerClass;
     else
       this.ServerClass = require("./GourmetHttpServer");
-  }
-
-  initConsole() {
-    function _colVal(text) {
-      if (cluster.isMaster)
-        return 35; // magenta
-
-      // https://github.com/visionmedia/debug/blob/22f993216dcdcee07eb0601ea71a917e4925a30a/src/common.js#L46
-
-      let hash = 0;
-
-      for (let idx = 0; idx < text.length; idx++) {
-        hash  = ((hash << 5) - hash) + text.charCodeAt(idx);
-        hash |= 0; // Convert to 32bit integer
-      }
-
-      return COLORS[Math.abs(hash) % COLORS.length];
-    }
-
-    function _color(text) {
-      return con.colors.escape(_colVal(text)) + text + con.colors.off.reset;
-    }
-
-    const base = getConsole();
-
-    getConsole.install(detect({
-      useColors: parseArgs.bool(this.options.colors, parseArgs.undef),
-      minLevel: parseArgs.verbosity([this.options.verbose, this.options.v]),
-      write(opts, text) {
-        base.write(opts, `${_color("[" + process.pid + "]")} ${text}`);
-      }
-    }));
-
-    con = getConsole("gourmet:net");
   }
 
   forkWorkers(count) {
@@ -82,7 +33,7 @@ class GourmetServerLauncher {
   }
 
   getCount() {
-    return parseArgs.number(this.options.count, os.cpus().length);
+    return parseInt(this.options.count || os.cpus().length, 10);
   }
 
   runMaster() {

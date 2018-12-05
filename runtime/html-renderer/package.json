@@ -6,7 +6,6 @@
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/console": "^0.2.0",
     "@gourmet/escape-script": "^0.2.0",
     "@gourmet/get-exported": "^0.3.0",
     "@gourmet/is-stream": "^0.2.0",

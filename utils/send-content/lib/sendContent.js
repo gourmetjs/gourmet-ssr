@@ -1,6 +1,6 @@
 "use strict";
 
-const con = require("@gourmet/console")("gourmet:net");
+const con = require("@gourmet/console")();
 const isPlainObject = require("@gourmet/is-plain-object");
 const isStream = require("@gourmet/is-stream");
 const inspectError = require("@gourmet/inspect-error");

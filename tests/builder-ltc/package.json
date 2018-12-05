@@ -6,7 +6,7 @@
     "build": "gourmet build",
     "start": "node lib/server.js",
     "watch": "node lib/server.js --watch",
-    "test": "tape test/*_test.js"
+    "test": "tape test/*_test.js --verbosity 1"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.8.1",

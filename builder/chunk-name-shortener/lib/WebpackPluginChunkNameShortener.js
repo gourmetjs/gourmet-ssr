@@ -3,9 +3,8 @@
 const NAME = "WebpackPluginChunckNameShortener";
 
 module.exports = class WebpackPluginChunckNameShortener {
-  constructor({hashNames, console}) {
+  constructor({hashNames}) {
     this.hashNames = hashNames;
-    this.console = console;
   }
 
   apply(compiler) {

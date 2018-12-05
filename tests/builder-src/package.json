@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "gourmet build && gourmet build --stage test",
-    "test": "gourmet build --verbose 1 && gourmet build --verbose 1 --stage test && tape test/*_test.js"
+    "test": "gourmet build --verbosity 1 && gourmet build --verbosity 1 --stage test && tape test/*_test.js"
   },
   "dependencies": {
     "@gourmet/client-lib": "^0.8.1",

@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const serverArgs = require("@gourmet/server-args");
 const gourmet = require("@gourmet/client-lib");
 
-module.exports = function(def, errorOptions) {
+module.exports = function(def) {
   const args = serverArgs(Object.assign({
     workDir: __dirname + "/..",
     outputDir: "../../.gourmet/render-error",
@@ -30,7 +30,7 @@ module.exports = function(def, errorOptions) {
     res.serve("init_error");
   });
 
-  app.use(gourmet.errorMiddleware(errorOptions));
+  app.use(gourmet.errorMiddleware());
 
   app.server = app.listen(args.port, () => {
     if (args.debug)

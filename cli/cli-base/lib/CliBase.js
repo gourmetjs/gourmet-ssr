@@ -4,8 +4,6 @@ const npath = require("path");
 const minimist = require("minimist");
 const camelcaseKeys = require("camelcase-keys");
 const getConsole = require("@gourmet/console");
-const installMemConsole = require("@gourmet/console-mem");
-const parseArgs = require("@gourmet/parse-args");
 const promiseMain = require("@gourmet/promise-main");
 const promiseProtect = require("@gourmet/promise-protect");
 const error = require("@gourmet/error");
@@ -72,7 +70,7 @@ class CliBase {
     promiseMain(
       this.runCommand(argv).catch(err => {
         if (err instanceof HandledError) {
-          const con = (this.context && this.context.console) || getConsole("gourmet:cli");
+          const con = (this.context && this.context.console) || getConsole();
           con.error(con.colors.brightRed(">>>"));
           con.error(con.colors.brightRed(">>> " + err.message));
           con.error(con.colors.brightRed(">>>"));
@@ -97,17 +95,12 @@ class CliBase {
   }
 
   init(argv) {
-    installMemConsole({
-      useColors: parseArgs.bool(argv.colors, parseArgs.undef),
-      minLevel: parseArgs.verbosity([argv.verbose, argv.v])
-    });
-
     this.context = {
       cli: this,
       argv,
       command: this.getCommand(argv),
       workDir: this.getWorkDir(argv),
-      console: getConsole("gourmet:cli")
+      console: getConsole()
     };
 
     this.context.plugins = new PluginManager(this.context);

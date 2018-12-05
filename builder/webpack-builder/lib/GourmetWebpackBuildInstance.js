@@ -2,7 +2,7 @@
 
 const util = require("util");
 const npath = require("path");
-const getConsole = require("@gourmet/console");
+const con = require("@gourmet/console")();
 const error = require("@gourmet/error");
 const HandledError = require("@gourmet/error/HandledError");
 const isPlainObject = require("@gourmet/is-plain-object");
@@ -68,8 +68,8 @@ class GourmetWebpackBuildInstance {
   constructor(context) {
     this.target = context.target;
     this.webpack = {};
-    this.console = getConsole({
-      name: "gourmet:builder",
+    this.console = con.create({
+      tag: "gourmet:builder",
       target: context.target
     });
   }
@@ -90,7 +90,7 @@ class GourmetWebpackBuildInstance {
     }).then(config => {
       const con = context.console;
       con.debug(con.colors.brightYellow(`>>> Config for ${context.target}:`));
-      con.print({level: "debug", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
+      con.print({level: "debug", indent: 2}, util.inspect(config, {colors: con.options.colors, depth: 20}));
       this.config = context.config = config;
       return context.plugins.runAsync("build:init", context);
     });
@@ -104,7 +104,7 @@ class GourmetWebpackBuildInstance {
       const con = this.console;
 
       con.debug(con.colors.brightYellow(`>>> Webpack config for ${context.target}:`));
-      con.print({level: "debug", indent: 2}, util.inspect(config, {colors: con.useColors, depth: 20}));
+      con.print({level: "debug", indent: 2}, util.inspect(config, {colors: con.options.colors, depth: 20}));
 
       if (context.watch)
         return;
@@ -155,10 +155,10 @@ class GourmetWebpackBuildInstance {
   }
 
   printResult(context) {
-    const debug = this.console.enabled({level: "debug"});
+    const debug = this.console.enabled("debug");
     const argv = context.argv;
     const options = {
-      colors: this.console.useColors,
+      colors: this.console.options.colors,
       warnings: true,
       errors: true,
       errorDetails: debug || argv.errorDetails,
@@ -471,8 +471,7 @@ class GourmetWebpackBuildInstance {
         name: "@gourmet/webpack-plugin-chunk-name-shortener",
         plugin: WebpackPluginChunkNameShortener,
         options: {
-          hashNames: context.builder.shortenerHash,
-          console: context.console
+          hashNames: context.builder.shortenerHash
         }
       });
     }

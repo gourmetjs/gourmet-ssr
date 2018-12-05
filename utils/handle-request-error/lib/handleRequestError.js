@@ -3,7 +3,7 @@
 const HttpStatus = require("http-status");
 const stripAnsi = require("strip-ansi");
 const escapeHtml = require("escape-html");
-const getConsole = require("@gourmet/console");
+const con = require("@gourmet/console")();
 const merge = require("@gourmet/merge");
 const serializeRequestError = require("@gourmet/serialize-request-error");
 const inspectError = require("@gourmet/inspect-error");
@@ -87,8 +87,6 @@ function handleRequestError(err, req, res, options) {
 
   options = options ? merge({}, handleRequestError.defaultOptions, options) : handleRequestError.defaultOptions;
 
-  const con = options.console;
-
   try {
     _handle();
   } catch (e) {
@@ -99,7 +97,6 @@ function handleRequestError(err, req, res, options) {
 }
 
 handleRequestError.defaultOptions = {
-  console: getConsole("gourmet:net"),
   desc: "Error in serving a request",
   hideMessage: false,
   debug: true,

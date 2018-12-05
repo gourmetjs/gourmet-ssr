@@ -6,7 +6,6 @@
   "dependencies": {
     "@gourmet/client-lib": "^0.8.1",
     "@gourmet/is-stream": "^0.2.0",
-    "@gourmet/parse-args": "^0.4.0",
     "@gourmet/stream-to-string": "^0.2.0"
   }
 }

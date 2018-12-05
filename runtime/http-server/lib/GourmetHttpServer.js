@@ -1,6 +1,6 @@
 "use strict";
 
-let con;
+const con = require("@gourmet/console")();
 
 class GourmetHttpServer {
   constructor(options) {
@@ -10,12 +10,6 @@ class GourmetHttpServer {
       port: 3939,
       static: true
     }, options);
-    con = this.initConsole();
-  }
-
-  initConsole() {
-    const getConsole = require("@gourmet/console");
-    return this.options.console || getConsole("gourmet:net");
   }
 
   start() {
@@ -130,7 +124,6 @@ class GourmetHttpServer {
 
   getErrorHandlerOptions() {
     return {
-      console: con,
       debug: this.options.debug,
       requestProps: ["url", "method", "headers", "gourmet"]
     };

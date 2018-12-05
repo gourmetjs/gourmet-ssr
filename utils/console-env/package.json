@@ -1,6 +1,0 @@
-{
-  "name": "@gourmet/console-env",
-  "version": "0.2.0",
-  "description": "Detects console options from the environment",
-  "main": "lib/detect.js"
-}

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "gourmet build",
-    "test": "gourmet build --verbose 1 && tape test/*_test.js"
+    "test": "gourmet build --verbosity 1 && gourmet build --verbosity 1 --stage entry && tape test/*_test.js"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^0.7.1",

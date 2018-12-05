@@ -3,7 +3,6 @@
 const fs = require("fs");
 const test = require("tape");
 const puppeteer = require("puppeteer");
-const testArgs = require("@gourmet/puppeteer-args");
 const pt = require("@gourmet/promise-tape");
 const run = require("../lib/app");
 
@@ -114,7 +113,10 @@ test("check `manifest.client.files` output", t => {
 });
 
 test("run puppeteer", pt(async t => {
-  const browser = await puppeteer.launch(testArgs);
+  const browser = await puppeteer.launch({
+    headless: process.env.TEST_HEADLESS === "0" ? false : true,
+    slowMo: parseInt(process.env.TEST_SLOWMO || 0, 10)
+  });
   const page = await browser.newPage();
 
   await page.goto(`http://localhost:${port}/`);
