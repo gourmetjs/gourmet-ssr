@@ -1,11 +1,11 @@
 {
   "name": "@gourmet/gourmet-cli",
-  "version": "0.7.1",
+  "version": "1.0.0",
   "description": "Gourmet command line interface",
   "bin": {
     "gourmet": "bin/gourmet-cli.js"
   },
   "dependencies": {
-    "@gourmet/gourmet-cli-impl": "^0.7.1"
+    "@gourmet/gourmet-cli-impl": "^1.0.0"
   }
 }

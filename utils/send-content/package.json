@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/send-content",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "main": "lib/sendContent.js",
   "dependencies": {
-    "@gourmet/console": "^0.2.0",
+    "@gourmet/console": "^1.0.0",
     "@gourmet/inspect-error": "^0.2.0",
     "@gourmet/is-plain-object": "^0.2.0",
     "@gourmet/is-stream": "^0.2.0",

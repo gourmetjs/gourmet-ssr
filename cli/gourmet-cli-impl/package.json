@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/gourmet-cli-impl",
-  "version": "0.7.1",
+  "version": "1.0.0",
   "description": "Gourmet command line interface implementation",
   "main": "lib/GourmetCli.js",
   "dependencies": {
-    "@gourmet/cli-base": "^0.7.1",
+    "@gourmet/cli-base": "^1.0.0",
     "@gourmet/error": "^0.3.1",
     "@gourmet/plain-merge": "^0.3.0",
     "@gourmet/promise-deep-prop": "^0.3.1",

@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/group-react-i80",
   "description": "Gourmet Group containing react-i80 related packages",
-  "version": "0.3.1",
+  "version": "1.0.0",
   "main": "lib/GourmetGroupReactI80.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
     "@gourmet/plugin-react-i80": "^0.4.0",
-    "@gourmet/react-i80": "^0.6.1"
+    "@gourmet/react-i80": "^1.0.0"
   }
 }

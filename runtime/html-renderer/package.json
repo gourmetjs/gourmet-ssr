@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/html-renderer",
-  "version": "0.9.1",
+  "version": "1.0.0",
   "main": "gmsrc/getHtmlClientRenderer.js",
   "scripts": {
     "test": "tape test/*_test.js"
