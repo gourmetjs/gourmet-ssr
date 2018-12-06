@@ -12,13 +12,13 @@ const outputDir = npath.join(__dirname, "../../../.gourmet/babel-polyfill");
 // 
 // <<<FROM-HERE>>>__webpack_require__(/*! core-js/modules/es6.promise */ "../../node_modules/core-js/modules/es6.promise.js");
 // 
-// module.exports = function promiseProtect(handler) {<<<TO-HERE>>>
-//   return new Promise(function (resolve, reject) {
-//     try {
+// module.exports = function main() {<<<TO-HERE>>>
+//   return Promise.resolve("<div>Hello, world!</div>");
+// };
 
 test("Verify `polyfill: \"usage\"`", t => {
   const content = fs.readFileSync(npath.join(outputDir, "local/client/main.js"), "utf8");
-  const check = /__webpack_require__\([/*! \w.-]+"[./\w]+core-js\/modules\/es6\.promise\.js"\);\s+module\.exports = function promiseProtect\(handler\) {/.test(content);
+  const check = /__webpack_require__\([/*! \w.-]+"[./\w]+core-js\/modules\/es6\.promise\.js"\);\s+module\.exports = function main\(\) {/.test(content);
 
   t.ok(check, "'usage' mode should inject polyfills at the place of references");
 

@@ -2,7 +2,8 @@
 
 module.exports = {
   builder: {
-    outputDir: "../../.gourmet/babel-polyfill"
+    outputDir: "../../.gourmet/babel-polyfill",
+    granularity: 0
   },
 
   babel: {

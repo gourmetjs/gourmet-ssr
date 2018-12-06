@@ -1,5 +1,5 @@
 "use strict";
 
-module.exports = () => {
-  return "<div>Hello, world!</div>";
+module.exports = function main() {
+  return Promise.resolve("<div>Hello, world!</div>");
 };
