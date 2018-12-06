@@ -479,50 +479,30 @@ class GourmetPluginWebpackBuilder {
 GourmetPluginWebpackBuilder.meta = {
   commands: {
     build: {
-      help: "Build the Gourmet project",
-      options: {
-        stage: {
-          help: "Specify the stage (e.g. '--stage prod')",
-          alias: "s"
-        },
-        debug: {
-          help: "Enable debug mode ('--no-debug' to disable)"
-        },
-        minify: {
-          help: "Minify asset content ('--no-minify' to disable)"
-        },
-        sourceMap: {
-          help: "Generate source map ('--no-source-map' to disable)"
-        },
-        granularity: {
-          help: "Set bundling granularity (0: off, 1: coarse - HTTP/1, 2: fine - HTTP/2"
-        },
-        shortenNames: {
-          help: "Make output file names short using truncated hash digests"
-        },
-        contentHash: {
-          help: "Generate content hash based asset names to support long-term caching"
-        },
-        hashLength: {
-          help: "Length of hash digest of asset names"
-        },
-        config: {
-          help: "Arbitrary config value ('--config.builder.staticPrefix /ss/' becomes `{builder:{staticPrefix:\"/ss\"}'"
-        },
-        colors: {
-          help: "Use colors in console output (default: auto)"
-        },
-        verbose: {
-          alias: "v",
-          help: "Set verbosity level (0-5, default: 3)"
-        },
-        ignoreCompileErrors: {
-          help: "Ignore compilation errors and continue"
-        },
-        saveWebpackStats: {
-          help: "Save Webpack's stats.json file"
-        }
-      }
+      description: "Build a Gourmet SSR Project",
+      help: [
+        "  --work-dir,          Set working directory (default: CWD)",
+        "    --dir, -d <d>",
+        "  --output-dir <d>     Set output directory (default: '.gourmet')",
+        "  --stage, -s <s>      Set stage (default: 'local')",
+        "  --config <x.y.x>     Arbitrary config value ('--config.builder.staticPrefix /ss/' becomes",
+        "                       `{builder:{staticPrefix:\"/ss\"}'",
+        "  --colors             Use ANSI colors in console output (default: auto detect)",
+        "  --verbosity,         Set the verbosity level (off|error|warn|log*|info|debug|0-5)",
+        "    --verbose, -v <n>",
+        "  --ignore-compile-errors",
+        "                       Ignore compilation errors and continue",
+        "  --save-webpack-stats Save Webpack's stats.json file",
+        "  --error-details      Same as `webpack --display-error-details`",
+        "  --display-modules    Same as `webpack --display-modules`",
+        "  --debug              Enable debug mode",
+        "  --minify             Minify output",
+        "  --source-map         Enable source map",
+        "  --granularity <n>    Set bundling granularity (0: off, 1: coarse - HTTP/1, 2: fine - HTTP/2",
+        "  --shorten-names      Make output file names short using truncated hash digests",
+        "  --content-hash       Generate content hash based asset names to support long-term caching",
+        "  --hash-length        Length of hash digest of asset names"
+      ].join("\n")
     }
   },
 

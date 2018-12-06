@@ -54,13 +54,13 @@ class PluginManager {
 
       // {...schema, name, plugin, meta}
       finalize: item => {
-        let pluginDir, PluginClass;
+        let pluginPath, PluginClass;
 
         if (typeof item.plugin === "string" || item.plugin === undefined) {
-          const {dir, klass} = this._loadPlugin(item.plugin || item.name, baseDir);
+          const {path, klass} = this._loadPlugin(item.plugin || item.name, baseDir);
           if (typeof klass !== "function")
             throw error(INVALID_EXPORTED_PLUGIN, {name: item.name});
-          pluginDir = dir;
+          pluginPath = path;
           PluginClass = klass;
         } else if (typeof item.plugin === "function") {
           PluginClass = item.plugin;
@@ -70,10 +70,12 @@ class PluginManager {
 
         const meta = PluginClass.meta || {};
 
-        if (meta.subplugins)
-          this.load(meta.subplugins, pluginDir || baseDir, item.name, indent + 1);
+        if (meta.subplugins) {
+          const dir = pluginPath ? npath.dirname(pluginPath) : baseDir;
+          this.load(meta.subplugins, dir, item.name, indent + 1);
+        }
 
-        item = merge(omit(meta.schema, "name") || {}, item);
+        item = merge(omit(meta.schema, "name") || {}, item, {path: pluginPath});
 
         const plugin = new PluginClass(item.options, this._context);
 
@@ -161,8 +163,7 @@ class PluginManager {
   _loadPlugin(name, baseDir) {
     const path = resolve.sync(name, {basedir: baseDir});
     const klass = require(path);
-    const dir = npath.dirname(path);
-    return {dir, klass};
+    return {path, klass};
   }
 
   _getEventHandlers(eventName) {

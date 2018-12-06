@@ -17,14 +17,20 @@ const CONFIG_FILE_NOT_FOUND = {
 };
 
 class GourmetCli extends CliBase {
+  constructor(options) {
+    super(Object.assign({
+      execName: "gourmet",
+      execPackage: require.resolve("../package.json")
+    }, options));
+  }
+
   init(argv) {
     return promiseProtect(() => {
       super.init(argv);
     }).then(() => {
       return this._loadConfig();
     }).then(() => {
-      if (this.context.vars)
-        return this._loadUserPlugins();
+      return this._loadUserPlugins();
     });
   }
 
@@ -33,7 +39,7 @@ class GourmetCli extends CliBase {
 
     if (!context.configObject) {
       const info = this.findCommandInfo(context.command);
-      if (!info || info.requiresConfig !== false) {
+      if (info.requiresConfig !== false) {
         const path = this._getConfigPath();
         throw error(CONFIG_FILE_NOT_FOUND, {path});
       }

@@ -22,7 +22,7 @@ const helpMessage = [
   "  --siloed            Set the default 'siloed' option (default: '--no-siloed')",
   "  --context.x.y       Set the arbitrary rendering context value (result: '{x: {y: true}}')",
   "  --colors            Use ANSI colors in console output (default: auto detect)",
-  "  --verbose, -v <n>   Set the verbosity level (debug|info|log*|warn|error|0-5)",
+  "  --verbosity, -v <n> Set the verbosity level (off|error|warn|log*|info|debug|0-5)",
   "  --log-format <s>    Set the Morgan log format (dev*|combined|common|short|tiny|off)",
   "  --no-debug          Do not show details in error response (default: '--debug')",
   "  --watch             Run in watch mode (count is ignored and set to 1)"
