@@ -18,14 +18,20 @@ export default class MainPage extends Component {
         <div className="card">
           <div className="card-header">
             <ul className="nav nav-tabs card-header-tabs">
-              <li className="nav-item" onMouseOver={() => HomeView.routeLoadable.preload()}>
-                <Link className="nav-link" to={HomeView}/>
+              <li className="nav-item">
+                <Link className="nav-link" to={HomeView} autoPreload={true}>
+                  Home
+                </Link>
               </li>
-              <li className="nav-item" onMouseOver={() => MessagesView.routeLoadable.preload()}>
-                <Link className="nav-link" to={MessagesView}/>
+              <li className="nav-item">
+                <Link className="nav-link" to={MessagesView} autoPreload="hover">
+                  Messages
+                </Link>
               </li>
-              <li className="nav-item" onMouseOver={() => ProfileView.routeLoadable.preload()}>
-                <Link className="nav-link" to={ProfileView}/>
+              <li className="nav-item">
+                <Link className="nav-link" to={ProfileView} autoPreload={true}>
+                  Profile
+                </Link>
               </li>
             </ul>
           </div>

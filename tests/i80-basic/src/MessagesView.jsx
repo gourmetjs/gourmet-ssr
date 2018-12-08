@@ -1,9 +1,5 @@
 import React from "react";
 
-export default class MessagesView extends React.Component {
-  static routeDisplayName = "Messages";
-
-  render() {
-    return <h1>{this.props.label} {this.props.activeRoute.getDisplayName()}</h1>;
-  }
+export default function MessagesView(props) {
+  return <h1>{props.label} Messages</h1>;
 }

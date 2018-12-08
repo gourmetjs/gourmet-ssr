@@ -32,5 +32,6 @@ function i80(routes, options) {
 
 i80.ActiveRoute = ActiveRoute;
 i80.Link = Link;
+i80.getUrl = (...args) => Router.get().getUrl(...args);
 
 module.exports = i80;

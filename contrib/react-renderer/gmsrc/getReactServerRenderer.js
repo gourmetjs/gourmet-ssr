@@ -69,9 +69,13 @@ module.exports = function getReactServerRenderer(Base) {
           return React.createElement(page, props);
       }).then(element => {
         if (element)
-          return wrapWithContext(gmctx, element);
+          return wrapWithContext(this, gmctx, element);
         return element;
       });
+    }
+
+    makeRootProps(gmctx) {  // eslint-disable-line
+      return {id: "__gourmet_react__"};
     }
 
     // This must be synchronous.

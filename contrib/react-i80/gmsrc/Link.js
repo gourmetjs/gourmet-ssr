@@ -12,6 +12,7 @@ const Router = require("./Router");
 // search: string ("?a=1&b=2")
 // hash: string ("#hash")
 // activeClassName: string
+// autoPreload: true, false, "hover" (default is "hover")
 module.exports = class Link extends React.Component {
   render() {
     return (
@@ -26,6 +27,7 @@ module.exports = class Link extends React.Component {
     const activeRoute = gmctx.i80 && gmctx.i80.activeRoute;
     let props = this.props;
     let href, isActive, route;
+    let omo;
 
     if (typeof props.to === "string") {
       const url = parseHref(props.to);
@@ -33,21 +35,32 @@ module.exports = class Link extends React.Component {
       href = props.to;
       isActive = (url.path === (activeRoute && activeRoute.url.path));
     } else if (typeof props.to === "function") {
-      route = router.searchByComponent(gmctx, props.to, props.params, props.search, props.hash);
+      const component = props.to;
+      route = router.searchByComponent(gmctx, component, props.params, props.search, props.hash);
       href = route ? route.makeHref() : "/";
-      isActive = activeRoute && activeRoute.getComponent() === props.to;
+      isActive = activeRoute && activeRoute.getComponent() === component;
+      const loadable = component.routeLoadable;
+      if (!gmctx.isServer && typeof loadable === "function" && typeof loadable.preload === "function") {
+        if (props.autoPreload === undefined || props.autoPreload === "hover")
+          omo = () => loadable.preload();
+        else if (props.autoPreload)
+          loadable.preload();
+      }
     } else {
       throw Error("'to' must be a string or a route component");
     }
 
     const className = this._getClassName(props.className, isActive);
 
-    props = omit(props, ["to", "params", "search", "hash", "className"]);
+    props = omit(props, ["to", "params", "search", "hash", "className", "autoPreload"]);
 
     if (className)
       props.className = className;
 
     props.href = href;
+
+    if (omo && !props.onMouseOver)
+      props.onMouseOver = omo;
 
     if (typeof this.props.children === "function") {
       // Call a custom render function given as a child.
@@ -56,7 +69,7 @@ module.exports = class Link extends React.Component {
     } else {
       return (
         <a {...props}>
-          {this.props.children || (route ? route.getDisplayName() : "Route not found")}
+          {this.props.children}
         </a>
       );
     }

@@ -12,6 +12,7 @@ module.exports = function(Base) {
       const router = Router.get(true);
       if (router)
         router.setRenderer(this);
+      this.handleClick = this.handleClick.bind(this);
     }
 
     createContext(...args) {
@@ -41,6 +42,17 @@ module.exports = function(Base) {
       }
     }
 
+    makeRootProps(gmctx) {
+      const props = super.makeRootProps(gmctx);
+      const router = Router.get(true);
+      if (router) {
+        const options = router.options;
+        if (options.captureClick === undefined || options.captureClick)
+          props.onClick = this.handleClick;
+      }
+      return props;
+    }
+
     makeRouteProps(gmctx, directProps) {
       const route = gmctx.i80.activeRoute;
       const url = route.url;
@@ -51,6 +63,33 @@ module.exports = function(Base) {
         gmctx.routeProps,
         directProps
       );
+    }
+
+    handleClick(e) {
+      if (e.defaultPrevented ||
+          e.metaKey || e.altKey || e.ctrlKey || e.shiftKey ||
+          e.button !== 0)
+        return;
+
+      let elem = e.target;
+
+      // Since a click could originate from a descendant of the `<a>` tag,
+      // search through the tree upward to find the closest `<a>` tag.
+      while (elem && elem.nodeName !== "A") {
+        elem = elem.parentNode;
+      }
+
+      if (!elem ||
+          (elem.target && elem.target !== "_self") ||
+          elem.download)
+        return;
+
+      const href = elem.getAttribute("href");
+
+      if (href)
+        Router.get().goToUrl(href);
+
+      e.preventDefault();
     }
   };
 };

@@ -19,13 +19,19 @@ export default class MainPage extends Component {
           <div className="card-header">
             <ul className="nav nav-tabs card-header-tabs">
               <li className="nav-item">
-                <Link className="nav-link" to={HomeView}/>
+                <Link className="nav-link" to={HomeView}>
+                  Home
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={MessagesView}/>
+                <Link className="nav-link" to={MessagesView} onClick={e => this.handleClick(e)}>
+                  Messages
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={ProfileView}/>
+                <Link className="nav-link" to={ProfileView}>
+                  Profile
+                </Link>
               </li>
             </ul>
           </div>
@@ -35,5 +41,11 @@ export default class MainPage extends Component {
         </div>
       </PageBase>
     );
+  }
+
+  // To see if `onClick` of a component works as expected with `react-i80`
+  handleClick(e) {
+    e.preventDefault();
+    i80.goToUrl(i80.getUrl(MessagesView));
   }
 }

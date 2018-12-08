@@ -6,90 +6,13 @@ const Router = require("./Router");
 const ActiveRoute = require("./ActiveRoute");
 const Link = require("./Link");
 
-function _error(mesg) {
-  if (typeof mesg === "string")
-    console.error("[@gourmet/react-i80]", mesg);
-  else
-    console.error(mesg);
-}
-
-// Relative path is not supported
-function goToUrl(href, pushState=true) {
-  function _load(href) {
-    window.location = href; // initiate a new page request
-  }
-
-  const router = Router.get();
-  const renderer = router.renderer;
-
-  if (renderer) {
-    const loc = window.location;
-    const url = parseHref(href);
-    let origin = url.origin;
-
-    if (origin && origin.startsWith("//"))
-      origin = loc.protocol + origin;
-
-    if (!origin || origin === loc.origin) {
-      renderer.render({
-        i80: {
-          switchToHref: href,
-          didSwitchToHref() {
-            if (pushState)
-              window.history.pushState({}, "", href);
-          },
-          routeNotFound() {
-            _load(href);
-          }
-        }
-      });
-    } else {
-      _load(href);
-    }
-  } else {
-    _error(`Renderer is not initialized, loading the URL instead: ${href}`);
-    _load(href);
-  }
-}
-
 class ClientRouter extends Router {
   setRenderer(renderer) {
     this.renderer = renderer;
 
     window.addEventListener("popstate", () => {
-      goToUrl(window.location.href, false);
+      this.goToUrl(window.location.href, false);
     });
-
-    const options = this.options;
-
-    if (options.captureClick === undefined || options.captureClick) {
-      document.addEventListener("click", function(evt) {
-        if (evt.defaultPrevented ||
-            evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey ||
-            evt.button !== 0)
-          return;
-
-        let elem = evt.target;
-
-        // Since a click could originate from a descendant of the `<a>` tag,
-        // search through the tree upward to find the closest `<a>` tag.
-        while (elem && elem.nodeName !== "A") {
-          elem = elem.parentNode;
-        }
-
-        if (!elem ||
-            (elem.target && elem.target !== "_self") ||
-            elem.download)
-          return;
-
-        const href = elem.getAttribute("href");
-
-        if (href)
-          goToUrl(href);
-
-        evt.preventDefault();
-      });
-    }
   }
 
   getTargetHref(gmctx) {
@@ -116,6 +39,45 @@ class ClientRouter extends Router {
         gmctx.routeProps = props;
     });
   }
+
+  // Relative path is not supported
+  goToUrl(href, pushState=true) {
+    function _load(href) {
+      window.location = href; // initiate a new page request
+    }
+
+    const renderer = this.renderer;
+
+    if (renderer) {
+      const loc = window.location;
+      const url = parseHref(href);
+      let origin = url.origin;
+
+      if (origin && origin.startsWith("//"))
+        origin = loc.protocol + origin;
+
+      if (!origin || origin === loc.origin) {
+        renderer.render({
+          i80: {
+            switchToHref: href,
+            didSwitchToHref() {
+              if (pushState)
+                window.history.pushState({}, "", href);
+            },
+            routeNotFound() {
+              _load(href);
+            }
+          }
+        });
+      } else {
+        _load(href);
+      }
+    } else {
+      console.error(`[@gourmet/react-i80] Renderer is not initialized, loading the URL instead: ${href}`);
+      _load(href);
+    }
+  }
+
 }
 
 // - basePath: Default is `"/"`.
@@ -128,6 +90,7 @@ function i80(routes, options) {
 
 i80.ActiveRoute = ActiveRoute;
 i80.Link = Link;
-i80.goToUrl = goToUrl;
+i80.getUrl = (...args) => Router.get().getUrl(...args);
+i80.goToUrl = (...args) => Router.get().goToUrl(...args);
 
 module.exports = i80;

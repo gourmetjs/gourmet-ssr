@@ -19,13 +19,19 @@ export default class MainPage extends Component {
           <div className="card-header">
             <ul className="nav nav-tabs card-header-tabs">
               <li className="nav-item">
-                <Link className="nav-link" to={HomeView}/>
+                <Link className="nav-link" to={HomeView}>
+                  Home
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={MessagesView}/>
+                <Link className="nav-link" to={MessagesView}>
+                  Messages
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={ProfileView}/>
+                <Link className="nav-link" to={ProfileView} autoPreload={false}>
+                  Profile
+                </Link>
               </li>
             </ul>
           </div>

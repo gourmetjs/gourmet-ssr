@@ -2,8 +2,6 @@ import React from "react";
 import loadable from "@gourmet/react-loadable";
 
 export default class MessagesView extends React.Component {
-  static routeDisplayName = "Messages";
-
   static routeLoadable = loadable({
     loader: () => import(/* webpackChunkName: "messages" */ "./MessagesPanel")
   });

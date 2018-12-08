@@ -25,11 +25,6 @@ module.exports = class BoundRoute {
     return this._type;
   }
 
-  getDisplayName() {
-    const type = this.getComponent();
-    return type.routeDisplayName || type.displayName || type.name || "Unnamed Route";
-  }
-
   getHandlers() {
     return this.getComponent().routeHandlers;
   }

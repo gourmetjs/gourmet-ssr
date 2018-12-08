@@ -1,5 +1,5 @@
 import React from "react";
 
 export default function ProfilePanel(props) {
-  return <h1>{props.label} {props.activeRoute.getDisplayName()}</h1>;
+  return <h1>{props.label} Profile</h1>;
 }

@@ -13,7 +13,7 @@ function _prepare(routes, parentOptions) {
   const caseSensitive = routes.caseSensitive === undefined ? parentOptions.caseSensitive : routes.caseSensitive;
   const strictSlash = routes.strictSlash === undefined ? parentOptions.strictSlash : routes.strictSlash;
   return routes.map(item => {
-    if (!Array.isArray)
+    if (!Array.isArray(item))
       throw Error("Route definition must be an array of shape: [pattern, reverse?, component]");
 
     const pattern = item[0];
@@ -23,7 +23,7 @@ function _prepare(routes, parentOptions) {
       reverse = item[1];
       type = item[2];
       if (typeof reverse !== "function")
-        throw Error("Second element must be a reverse function in route definition");
+        throw Error("Second element of route definition must be a reverse function");
     } else {
       type = item[1];
     }
@@ -200,6 +200,13 @@ module.exports = class Router {
     }
 
     return _find(this._routes, [() => this.options.basePath || "/"]);
+  }
+
+  getUrl(component, extras={}, quiet) {
+    const route = this.searchByComponent(null, component, extras.params, extras.search, extras.hash);
+    if (!route && !quiet)
+      throw Error("The component is not registered as a route");
+    return route ? route.makeHref() : "/";
   }
 
   static create(routes, options) {
