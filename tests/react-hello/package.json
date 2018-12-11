@@ -16,8 +16,8 @@
     "@gourmet/server-args": "^0.6.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3"
+    "react": "16.6.1 || ^16.6.4",
+    "react-dom": "16.6.1 || ^16.6.4"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.0.0",

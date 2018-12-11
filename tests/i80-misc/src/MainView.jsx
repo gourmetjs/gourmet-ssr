@@ -1,26 +1,31 @@
 import React, {Component} from "react";
 import {Link} from "@gourmet/react-i80";
-import ItemView from "./ItemView";
-import {loginRequired, LogoutView} from "./account";
+import {loginRequired} from "./account";
 
 export default class MainView extends Component {
   static routeHandlers = [loginRequired];
 
   render() {
+    const {search} = this.props;
     return (
       <>
         <div>
-          <Link to={ItemView} params={{itemName: "james"}} search="?logged-in">
+          <Link id="james" to="item" params={{itemName: "james"}} search={search}>
             james
           </Link>
         </div>
         <div>
-          <Link to={ItemView} params={{itemName: "jane"}} search="?logged-in">
+          <Link id="jane" to="item" params={{itemName: "jane"}} search={search}>
             jane
           </Link>
         </div>
         <div>
-          <Link to={LogoutView}>
+          <Link id="date" to="date" params={{1: 2018, 2: 12, 3: 11}} search={search}>
+            Date
+          </Link>
+        </div>
+        <div>
+          <Link id="logout" to="account.logout">
             Logout
           </Link>
         </div>

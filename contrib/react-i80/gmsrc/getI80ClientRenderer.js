@@ -57,7 +57,7 @@ module.exports = function(Base) {
       const route = gmctx.i80.activeRoute;
       const url = route.url;
       return Object.assign(
-        {gmctx, activeRoute: route, path: url.path, params: route.params},
+        {gmctx, route, path: url.path, params: route.params, search: url.search},
         gmctx.data.clientProps,
         gmctx.data.pageProps,
         gmctx.routeProps,

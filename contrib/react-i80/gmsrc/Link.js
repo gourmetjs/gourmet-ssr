@@ -25,34 +25,37 @@ module.exports = class Link extends React.Component {
   _renderLink(gmctx) {
     const router = Router.get();
     const activeRoute = gmctx.i80 && gmctx.i80.activeRoute;
-    let props = this.props;
-    let href, isActive, route;
-    let omo;
+    let {href, to, params, search, hash, autoPreload, className, children} = this.props;
+    let isActive, route, omo;
 
-    if (typeof props.to === "string") {
-      const url = parseHref(props.to);
+    if (href) {
+      const url = parseHref(href);
       route = router.searchByPath(gmctx, url);
-      href = props.to;
       isActive = (url.path === (activeRoute && activeRoute.url.path));
-    } else if (typeof props.to === "function") {
-      const component = props.to;
-      route = router.searchByComponent(gmctx, component, props.params, props.search, props.hash);
-      href = route ? route.makeHref() : "/";
-      isActive = activeRoute && activeRoute.getComponent() === component;
-      const loadable = component.routeLoadable;
-      if (!gmctx.isServer && typeof loadable === "function" && typeof loadable.preload === "function") {
-        if (props.autoPreload === undefined || props.autoPreload === "hover")
-          omo = () => loadable.preload();
-        else if (props.autoPreload)
-          loadable.preload();
+    } else if (typeof to === "string" || typeof to === "function") {
+      route = router.searchByComponent(gmctx, to, params, search, hash);
+      if (route) {
+        href = route.makeHref();
+        const component = route.getComponent();
+        isActive = activeRoute && activeRoute.getComponent() === component;
+        const loadable = component.routeLoadable;
+        if (!gmctx.isServer && typeof loadable === "function" && typeof loadable.preload === "function") {
+          if (autoPreload === undefined || autoPreload === "hover")
+            omo = () => loadable.preload();
+          else if (autoPreload)
+            loadable.preload();
+        }
+      } else {
+        href = "/";
+        isActive = false;
       }
     } else {
-      throw Error("'to' must be a string or a route component");
+      throw Error("You must specify either `href` or 'to'");
     }
 
-    const className = this._getClassName(props.className, isActive);
+    className = this._getClassName(className, isActive);
 
-    props = omit(props, ["to", "params", "search", "hash", "className", "autoPreload"]);
+    const props = omit(this.props, ["href", "to", "params", "search", "hash", "autoPreload", "className", "children"]);
 
     if (className)
       props.className = className;
@@ -62,16 +65,12 @@ module.exports = class Link extends React.Component {
     if (omo && !props.onMouseOver)
       props.onMouseOver = omo;
 
-    if (typeof this.props.children === "function") {
+    if (typeof children === "function") {
       // Call a custom render function given as a child.
       // `props` has all props that are supposed to be handed over to '<a>'.
-      return this.props.children.call(null, props, route, isActive);
+      return children.call(null, props, route, isActive);
     } else {
-      return (
-        <a {...props}>
-          {this.props.children}
-        </a>
-      );
+      return <a {...props}>{children}</a>;
     }
   }
 

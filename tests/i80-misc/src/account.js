@@ -3,7 +3,7 @@ import i80, {Link} from "@gourmet/react-i80";
 
 export function LoginView() {
   return (
-    <Link to="/?logged-in">
+    <Link id="login" href="/?logged-in">
       Login
     </Link>
   );
@@ -14,7 +14,7 @@ export function LogoutView() {
     <div>
       You are logged out
       <div>
-        <Link to="/?logged-in">
+        <Link id="login_again" to="main" search="?logged-in">
           Login again
         </Link>
       </div>
@@ -31,5 +31,5 @@ export function loginRequired({gmctx, url}) {
 
 export const routes = [
   ["/login", LoginView],
-  ["/logout", LogoutView]
+  ["/logout", LogoutView, {name: "account.logout"}]
 ];

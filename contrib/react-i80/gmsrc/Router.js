@@ -14,22 +14,14 @@ function _prepare(routes, parentOptions) {
   const strictSlash = routes.strictSlash === undefined ? parentOptions.strictSlash : routes.strictSlash;
   return routes.map(item => {
     if (!Array.isArray(item))
-      throw Error("Route definition must be an array of shape: [pattern, reverse?, component]");
+      throw Error("Route definition must be an array of shape: [pattern, component, options?]");
 
-    const pattern = item[0];
-    let re, reverse, type, keys;
+    const [pattern, type, opts={}] = item;
+    let reverse = opts.reverse;
+    let re, keys;
 
-    if (item.length === 3) {
-      reverse = item[1];
-      type = item[2];
-      if (typeof reverse !== "function")
-        throw Error("Second element of route definition must be a reverse function");
-    } else {
-      type = item[1];
-    }
-
-    if (typeof type !== "function" && Array.isArray(type))
-      throw Error("Last element must be a React Component or an array of child routes in route definition");
+    if (typeof type !== "function" && !Array.isArray(type))
+      throw Error("Second element must be a React Component or an array of child routes in route definition");
 
     if (typeof pattern === "string") {
       keys = [];
@@ -45,7 +37,7 @@ function _prepare(routes, parentOptions) {
     if (Array.isArray(type)) {
       return {re, keys, reverse, routes: _prepare(type, {caseSensitive, strictSlash})};
     } else {
-      return {re, keys, reverse, type};
+      return {re, keys, name: opts.name, reverse, type};
     }
   });
 }
@@ -143,6 +135,10 @@ module.exports = class Router {
           if (value)
             params[info.name] = value;
         });
+      } else {
+        for (let idx = 1; idx < m.length; idx++) {
+          params[idx] = m[idx];
+        }
       }
       return params;
     }
@@ -173,6 +169,7 @@ module.exports = class Router {
     return _find(this._routes, unprefixPath(url.path, this.options.basePath || "/"), {});
   }
 
+  // `type` can be a string representing the name of the route.
   searchByComponent(gmctx, type, params, search, hash) {
     function _find(routes, reverses) {
       for (let idx = 0; idx < routes.length; idx++) {
@@ -183,8 +180,9 @@ module.exports = class Router {
           route = _find(def.routes, reverses);
           if (route)
             return route;
-        } else if (def.type === type) {
-          route = new BoundRoute(gmctx, type, params);
+        } else if ((typeof type === "string" && def.name && def.name === type) ||
+            (typeof type === "function" && def.type === type)) {
+          route = new BoundRoute(gmctx, def.type, params);
           route.reverse = () => {
             return _join(reverses.concat(def.reverse).map(r => {
               if (!r)

@@ -5,14 +5,15 @@
   "scripts": {
     "build": "gourmet build",
     "watch": "node lib/server.js --watch",
-    "xtest": "npm run test:local && npm run test:prod && npm run test:ltc",
-    "test:local": "gourmet build --verbosity 1 && tape test/*_test.js",
-    "test:prod": "gourmet build --verbosity 1 --stage prod && tape test/*_test.js --stage prod",
-    "test:ltc": "gourmet build --verbosity 1 --stage ltc && tape test/*_test.js --stage ltc"
+    "test": "npm run test:local && npm run test:prod && npm run test:ltc",
+    "test:local": "gourmet build -v 1 && tape test/*_test.js -v 0",
+    "test:prod": "gourmet build -v 1 --stage prod && tape test/*_test.js --stage prod -v 0",
+    "test:ltc": "gourmet build -v 1 --stage ltc && tape test/*_test.js --stage ltc -v 0"
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.0.0",
     "@gourmet/server-args": "^0.6.0",
+    "@gourmet/console": "^1.0.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
@@ -22,8 +23,8 @@
     "@gourmet/promise-tape": "^0.3.0",
     "got": "^8.3.1",
     "puppeteer": "^1.3.0",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
+    "react": "16.6.1 || ^16.6.4",
+    "react-dom": "16.6.1 || ^16.6.4",
     "tape": "^4.9.0"
   }
 }
