@@ -9,11 +9,7 @@ const run = require("../lib/app");
 let app, port;
 
 test("start server", t => {
-  app = run({
-    workDir: __dirname + "/..",
-    port: 0,
-    debug: true
-  });
+  app = run({port: 0});
   app.server.on("listening", () => {
     port = app.server.address().port;
     t.end();

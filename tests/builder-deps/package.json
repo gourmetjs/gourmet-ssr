@@ -6,13 +6,14 @@
     "build": "gourmet build",
     "watch": "node lib/server.js --watch --ignore-compile-errors",
     "test": "npm run test:local && npm run test:prod && npm run test:ltc",
-    "test:local": "gourmet build --verbosity 1 --ignore-compile-errors && tape test/*_test.js",
-    "test:prod": "gourmet build --verbosity 1 --stage prod --ignore-compile-errors && tape test/*_test.js --stage prod",
-    "test:ltc": "gourmet build --verbosity 1 --stage ltc --ignore-compile-errors && tape test/*_test.js --stage ltc"
+    "test:local": "gourmet build --verbosity 1 --ignore-compile-errors && tape test/*_test.js --verbosity 1",
+    "test:prod": "gourmet build --verbosity 1 --stage prod --ignore-compile-errors && tape test/*_test.js --stage prod --verbosity 1",
+    "test:ltc": "gourmet build --verbosity 1 --stage ltc --ignore-compile-errors && tape test/*_test.js --stage ltc --verbosity 1"
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.0.0",
     "@gourmet/server-args": "^0.6.0",
+    "@gourmet/console": "^1.0.0",
     "classnames": "^2.2.6",
     "express": "^4.16.3",
     "mkdirp": "^0.5.1",

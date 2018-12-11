@@ -9,10 +9,7 @@ const run = require("../lib/app");
 let app, port;
 
 test("start server", t => {
-  app = run({
-    port: 0,
-    debug: false
-  });
+  app = run({port: 0, debug: false});
   app.server.on("listening", () => {
     port = app.server.address().port;
     t.end();

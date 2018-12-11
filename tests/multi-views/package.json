@@ -6,9 +6,9 @@
     "start": "node lib/server.js",
     "build": "gourmet build",
     "test": "npm run test:local && npm run test:prod && npm run test:ltc",
-    "test:local": "gourmet build -v 1 && tape test/*_test.js -v 1",
-    "test:prod": "gourmet build --v 1 --stage prod && tape test/*_test.js --stage prod -v 1",
-    "test:ltc": "gourmet build --v 1 --stage ltc && tape test/*_test.js --stage ltc -v 1"
+    "test:local": "gourmet build --verbosity 1 && tape test/*_test.js --verbosity 1",
+    "test:prod": "gourmet build --verbosity 1 --stage prod && tape test/*_test.js --stage prod --verbosity 1",
+    "test:ltc": "gourmet build --verbosity 1 --stage ltc && tape test/*_test.js --stage ltc --verbosity 1"
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.0.0",

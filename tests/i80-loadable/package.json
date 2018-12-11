@@ -7,13 +7,14 @@
     "start": "node lib/server.js",
     "build": "gourmet build",
     "test": "npm run test:local && npm run test:prod && npm run test:ltc",
-    "test:local": "gourmet build --verbosity 1 && tape test/*_test.js",
-    "test:prod": "gourmet build --verbosity 1 --stage prod && tape test/*_test.js --stage prod",
-    "test:ltc": "gourmet build --verbosity 1 --stage ltc --save-webpack-stats && tape test/*_test.js --stage ltc"
+    "test:local": "gourmet build --verbosity 1 && tape test/*_test.js --verbosity 1",
+    "test:prod": "gourmet build --verbosity 1 --stage prod && tape test/*_test.js --stage prod --verbosity 1",
+    "test:ltc": "gourmet build --verbosity 1 --stage ltc --save-webpack-stats && tape test/*_test.js --stage ltc --verbosity 1"
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.0.0",
     "@gourmet/server-args": "^0.6.0",
+    "@gourmet/console": "^1.0.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },

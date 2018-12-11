@@ -14,7 +14,6 @@ function _build() {
   return cli.runCommand({
     stage: "ltc",
     workDir: npath.join(__dirname, ".."),
-    verbose: "error",
     _: ["build"]
   }).then(context => {
     return context.builder.manifest;

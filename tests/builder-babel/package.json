@@ -5,11 +5,12 @@
   "scripts": {
     "build": "gourmet build",
     "watch": "node lib/server.js --watch",
-    "test": "gourmet build --verbosity 1 && tape test/*_test.js"
+    "test": "gourmet build --verbosity 1 && tape test/*_test.js --verbosity 1"
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.0.0",
     "@gourmet/server-args": "^0.6.0",
+    "@gourmet/console": "^1.0.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },

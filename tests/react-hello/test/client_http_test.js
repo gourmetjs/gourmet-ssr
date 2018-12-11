@@ -15,7 +15,6 @@ test("start back server", pt(() => {
   gourmetServer = new GourmetHttpServer(serverArgs({
     workDir: __dirname + "/..",
     outputDir: "../../.gourmet/react-hello",
-    debug: process.env.NODE_ENV !== "production",
     port: 0
   }));
   gourmetServer.start();
@@ -27,9 +26,7 @@ test("start back server", pt(() => {
 test("start front server", t => {
   app = run({
     serverUrl: `http://localhost:${gourmetPort}`,
-    logFormat: "off",
-    port: 0,
-    debug: false
+    port: 0
   }, gourmet);
   app.server.on("listening", () => {
     port = app.server.address().port;

@@ -3,16 +3,16 @@
 const express = require("express");
 const morgan = require("morgan");
 const serverArgs = require("@gourmet/server-args");
+const con = require("@gourmet/console")();
 
 module.exports = function(def, gourmet) {
   const args = serverArgs(Object.assign({
     workDir: __dirname + "/..",
-    outputDir: "../../.gourmet/react-hello",
-    debug: process.env.NODE_ENV !== "production"
+    outputDir: "../../.gourmet/react-hello"
   }, def));
   const app = express();
 
-  if (args.debug)
+  if (con.enabled("log"))
     app.use(morgan("dev"));
 
   app.use(gourmet.middleware(args));
@@ -28,8 +28,7 @@ module.exports = function(def, gourmet) {
   app.use(gourmet.errorMiddleware());
 
   app.server = app.listen(args.port, () => {
-    if (args.debug)
-      console.log(`Server is listening on port ${args.port}...`);
+    con.log(`Server is listening on port ${args.port}...`);
   });
 
   return app;
