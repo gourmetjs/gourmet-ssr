@@ -2,7 +2,6 @@
 
 const React = require("react");
 const GourmetContext = require("@gourmet/react-context-gmctx");
-const omit = require("@gourmet/omit");
 const parseHref = require("@gourmet/parse-href");
 const cx = require("classnames");
 const Router = require("./Router");
@@ -25,7 +24,7 @@ module.exports = class Link extends React.Component {
   _renderLink(gmctx) {
     const router = Router.get();
     const activeRoute = gmctx.i80 && gmctx.i80.activeRoute;
-    let {href, to, params, search, hash, autoPreload, className, children} = this.props;
+    let {href, to, params, search, hash, autoPreload, replace, className, children, ...props} = this.props;
     let isActive, route, omo;
 
     if (href) {
@@ -55,8 +54,6 @@ module.exports = class Link extends React.Component {
 
     className = this._getClassName(className, isActive);
 
-    const props = omit(this.props, ["href", "to", "params", "search", "hash", "autoPreload", "className", "children"]);
-
     if (className)
       props.className = className;
 
@@ -64,6 +61,9 @@ module.exports = class Link extends React.Component {
 
     if (omo && !props.onMouseOver)
       props.onMouseOver = omo;
+
+    if (replace)
+      props["data-replace"] = true;
 
     if (typeof children === "function") {
       // Call a custom render function given as a child.

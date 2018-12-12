@@ -4,7 +4,6 @@
   "browser": "gmsrc/index.client.js",
   "main": "gmsrc/index.server.js",
   "dependencies": {
-    "@gourmet/omit": "^0.2.0",
     "@gourmet/parse-href": "^1.0.0",
     "@gourmet/promise-protect": "^0.2.0",
     "@gourmet/unprefix-path": "^0.2.0",

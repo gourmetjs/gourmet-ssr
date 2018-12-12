@@ -40,8 +40,9 @@ class ClientRouter extends Router {
     });
   }
 
-  // Relative path is not supported
-  goToUrl(href, pushState=true) {
+  // - Relative path is not supported.
+  // - `history`: true, false, or "replace"
+  goToUrl(href, history=true) {
     function _load(href) {
       window.location = href; // initiate a new page request
     }
@@ -61,8 +62,10 @@ class ClientRouter extends Router {
           i80: {
             switchToHref: href,
             didSwitchToHref() {
-              if (pushState)
+              if (history === true)
                 window.history.pushState({}, "", href);
+              else if (history === "replace")
+                window.history.replaceState({}, "", href);
             },
             routeNotFound() {
               _load(href);

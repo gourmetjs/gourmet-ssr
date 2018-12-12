@@ -86,8 +86,10 @@ module.exports = function(Base) {
 
       const href = elem.getAttribute("href");
 
-      if (href)
-        Router.get().goToUrl(href);
+      if (href) {
+        const replace = elem.getAttribute("data-replace");
+        Router.get().goToUrl(href, replace ? "replace" : true);
+      }
 
       e.preventDefault();
     }
