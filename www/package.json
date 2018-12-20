@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "dependencies": {
+    "gatsby": "^2.0.53",
+    "gatsby-plugin-react-helmet": "^3.0.4",
+    "gatsby-source-filesystem": "^2.0.12",
+    "gatsby-transformer-remark": "^2.1.17",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-helmet": "^5.2.0"
+  },
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "start": "gatsby serve"
+  }
+}
