@@ -1,12 +1,16 @@
 {
   "private": true,
   "dependencies": {
+    "emotion": "^9.2.12",
+    "emotion-server": "^9.2.12",
     "gatsby": "^2.0.53",
+    "gatsby-plugin-emotion": "^2.0.7",
     "gatsby-plugin-react-helmet": "^3.0.4",
     "gatsby-source-filesystem": "^2.0.12",
     "gatsby-transformer-remark": "^2.1.17",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
+    "react-emotion": "^9.2.12",
     "react-helmet": "^5.2.0"
   },
   "scripts": {
