@@ -1,18 +1,19 @@
-import React, {PureComponent} from "react";
+import React, {Component} from "react";
+import Collapse from "./Collapse";
+import cx from "classnames";
 
-export default class Navbar extends PureComponent {
+export default class BrandPage extends Component {
+  state = {isOpen: true};
+
   render() {
-    const {brand, href, tagLine} = this.props;
+    const {className, brand, href, tagLine} = this.props;
     return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
+      <nav className={cx("navbar", className)}>
         <div className="container">
           {brand && <a className="navbar-brand" href={href}>{brand}</a>}
-          {tagLine && <span class="navbar-tagline hidden-sm">JavaScript</span>}
-          <button className="navbar-toggler" type="button">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-
-          <div className="collapse navbar-collapse">
+          {tagLine && <span className="navbar-tagline hidden-sm">{tagLine}</span>}
+          {this.renderToggler()}
+          <Collapse className="navbar-collapse" isOpen={this.state.isOpen}>
             <ul className="navbar-nav mr-auto">
             <li className="nav-item">
                 <a className="nav-link" href="/docs">Getting started</a>
@@ -28,9 +29,25 @@ export default class Navbar extends PureComponent {
               <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
               <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
-          </div>
+          </Collapse>
         </div>
       </nav>
     );
+  }
+
+  renderToggler() {
+    return (
+      <button
+        className={cx("navbar-toggler", {collapsed: this.state.isOpen})}
+        type="button"
+        onClick={this.handleToggle}
+      >
+        <span className="navbar-toggler-icon"/>
+      </button>
+    );
+  }
+
+  handleToggle = () => {
+    this.setState({isOpen: !this.state.isOpen});
   }
 }

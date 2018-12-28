@@ -1,0 +1,21 @@
+body {
+	background-color: #fff;
+  padding-top: 8rem;
+}
+
+.navbar {
+  box-sizing: content-box;
+  padding-top: 3rem;
+  padding-bottom: 0;
+  min-height: 5rem;
+}
+
+.navbar.navbar-light {
+  background: #fff;
+}
+
+.navbar.scrolled {
+  padding-top: 0;
+  transition: padding 0.4s ease;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
