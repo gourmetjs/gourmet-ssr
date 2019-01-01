@@ -1,21 +1,37 @@
 body {
-	background-color: #fff;
-  padding-top: 8rem;
+  padding-top: 130px;
 }
 
 .navbar {
   box-sizing: content-box;
-  padding-top: 3rem;
+  padding-top: 50px;
   padding-bottom: 0;
-  min-height: 5rem;
+  min-height: 80px;
 }
 
 .navbar.navbar-light {
   background: #fff;
 }
 
+.navbar .navbar-brand {
+  height: 80px;
+  line-height: 50px;
+  padding: 15px 0;
+}
+
+.navbar .navbar-nav > li > a {
+  text-transform: uppercase;
+}
+
 .navbar.scrolled {
   padding-top: 0;
-  transition: padding 0.4s ease;
+  transition: padding 0.35s ease;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+
+@media (max-width:767px) {
+  .navbar {
+    padding-top: 0;
+  }
 }

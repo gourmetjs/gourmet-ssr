@@ -1,7 +1,6 @@
 {
   "private": true,
   "dependencies": {
-    "bootstrap": "^4.2.1",
     "classnames": "^2.2.6",
     "emotion": "^9.2.12",
     "emotion-server": "^9.2.12",

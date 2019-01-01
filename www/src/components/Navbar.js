@@ -3,7 +3,7 @@ import Collapse from "./Collapse";
 import cx from "classnames";
 
 export default class BrandPage extends Component {
-  state = {isOpen: true};
+  state = {isOpen: false};
 
   render() {
     const {className, brand, href, tagLine} = this.props;
@@ -11,11 +11,10 @@ export default class BrandPage extends Component {
       <nav className={cx("navbar", className)}>
         <div className="container">
           {brand && <a className="navbar-brand" href={href}>{brand}</a>}
-          {tagLine && <span className="navbar-tagline hidden-sm">{tagLine}</span>}
           {this.renderToggler()}
           <Collapse className="navbar-collapse" isOpen={this.state.isOpen}>
-            <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item">
                 <a className="nav-link" href="/docs">Getting started</a>
               </li>
               <li className="nav-item">

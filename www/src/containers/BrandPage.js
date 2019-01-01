@@ -2,7 +2,8 @@ import React, {Component} from "react";
 import Helmet from "react-helmet";
 import cx from "classnames";
 import Navbar from "../components/Navbar";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "../../theme/bootstrap.min.css";
+import logo from "../images/gourmet-ssr.svg";
 import "./BrandPage.css";
 
 export default class BrandPage extends Component {
@@ -23,13 +24,12 @@ export default class BrandPage extends Component {
     return (
       <>
         <Helmet>
-          <title>Gourmet</title>
+          <title>Gourmet SSR | A JavaScript server-side rendering engine for professionals</title>
         </Helmet>
         <Navbar
-          className={cx("fixed-top navbar-light navbar-expand-lg", {scrolled: this.state.isScrolled})}
-          brand="Gourmet"
-          href="/"
-          tagLine="SSR"/>
+          className={cx("fixed-top navbar-light navbar-expand-md", {scrolled: this.state.isScrolled})}
+          brand={<img src={logo} height="24" alt="Gourmet SSR Logo"/>}
+          href="/"/>
         <div className="container">
           {children}
         </div>

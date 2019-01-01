@@ -95,8 +95,6 @@ export default function IndexPage() {
       Hello, world!<br/>
       Hello, world!<br/>
       Hello, world!<br/>
-      Hello, world!<br/>
-      Hello, world!<br/>
     </BrandPage>
   );
 }
