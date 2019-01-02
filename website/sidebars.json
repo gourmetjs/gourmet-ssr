@@ -1,0 +1,17 @@
+{
+  "docs": {
+    "Introduction": [
+      "getting-started",
+      "tutorial"
+    ],
+    "Guides": [
+      "guides"
+    ],
+    "Reference": [
+      "reference"
+    ]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}
