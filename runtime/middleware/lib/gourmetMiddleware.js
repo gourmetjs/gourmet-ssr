@@ -3,6 +3,7 @@
 const merge = require("@gourmet/merge");
 const handleRequestError = require("@gourmet/handle-request-error");
 const GourmetWatchMiddleware = require("@gourmet/watch-middleware");
+const resolveDirs = require("@gourmet/resolve-dirs");
 
 module.exports = function factory(gourmet, baseOptions) {
   return {
@@ -20,7 +21,7 @@ module.exports = function factory(gourmet, baseOptions) {
 
       if (staticMiddleware === "local") {
         if (!clientDir)
-          throw Error("`clientDir` is required when `staticMiddleware` is \"local\"");
+          clientDir = resolveDirs(options).clientDir;
         if (options.watch)
           handlers.push(require("./watch")(gourmet, options));
         handlers.push(require("./static")(gourmet, options));

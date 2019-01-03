@@ -7,6 +7,7 @@ const StorageFs = require("@gourmet/storage-fs");
 const RendererSandbox = require("@gourmet/renderer-sandbox");
 const getExported = require("@gourmet/get-exported");
 const middlewareFactory = require("@gourmet/middleware");
+const resolveDirs = require("@gourmet/resolve-dirs");
 
 const _defaultStorage = new StorageFs();
 
@@ -60,7 +61,7 @@ function clientLib(baseOptions) {
     const {storage, serverDir, page, siloed} = options;
 
     if (!serverDir)
-      throw Error("'serverDir' is required");
+      serverDir = resolveDirs(options).serverDir;
 
     const context = Object.assign({page, siloed}, options.context);
 

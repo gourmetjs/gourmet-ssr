@@ -1,0 +1,6 @@
+{
+  "name": "@gourmet/resolve-dirs",
+  "version": "0.1.0",
+  "description": "Resolves runtime directories from options object",
+  "main": "gmsrc/resolveDirs.js"
+}

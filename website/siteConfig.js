@@ -22,8 +22,8 @@ const users = [
 
 const siteConfig = {
   title: "Gourmet SSR", // Title for your website.
-  tagline: "A JavsScript server-side rendering engine for professionals",
-  url: "https://ssr.gourmetjs.ortg", // Your website URL
+  tagline: "A Server-Side Rendering Engine for Professionals.",
+  url: "https://ssr.gourmetjs.org", // Your website URL
   baseUrl: "/", // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: "https://facebook.github.io",
@@ -50,14 +50,14 @@ const siteConfig = {
   users,
 
   /* path to images for header/footer */
-  headerIcon: "img/docusaurus.svg",
+  headerIcon: "img/gourmet-ssr.svg",
   footerIcon: "img/docusaurus.svg",
   favicon: "img/favicon.png",
 
   /* Colors for website */
   colors: {
-    primaryColor: "#2E8555",
-    secondaryColor: "#205C3B",
+    primaryColor: "#0366d6",
+    secondaryColor: "#044289",
   },
 
   /* Custom fonts for website */

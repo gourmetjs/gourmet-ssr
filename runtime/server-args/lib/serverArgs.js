@@ -1,8 +1,8 @@
 "use strict";
 
-const npath = require("path");
 const merge = require("@gourmet/merge");
 const cliArgs = require("@gourmet/cli-args");
+const resolveDirs = require("@gourmet/resolve-dirs");
 
 module.exports = function serverArgs(def, argv, options) {
   def = Object.assign({
@@ -25,10 +25,5 @@ module.exports = function serverArgs(def, argv, options) {
 
   const args = cliArgs(def, argv, options);
 
-  args.workDir = npath.resolve(process.cwd(), args.workDir || "");
-  args.outputDir = npath.resolve(args.workDir, args.outputDir || ".gourmet");
-  args.serverDir = npath.resolve(args.outputDir, args.serverDir || `${args.stage}/server`);
-  args.clientDir = npath.resolve(args.outputDir, args.clientDir || `${args.stage}/client`);
-
-  return args;
+  return resolveDirs(args, args);
 };

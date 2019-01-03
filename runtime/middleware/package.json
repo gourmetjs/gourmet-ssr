@@ -8,6 +8,7 @@
     "@gourmet/merge": "^0.7.0",
     "@gourmet/send-content": "^1.0.0",
     "@gourmet/watch-middleware": "^1.0.0",
-    "@gourmet/web-proxy": "^1.0.0"
+    "@gourmet/web-proxy": "^1.0.0",
+    "@gourmet/resolve-dirs": "^0.1.0"
   }
 }

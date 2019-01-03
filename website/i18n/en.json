@@ -3,7 +3,7 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A JavsScript server-side rendering engine for professionals",
+    "tagline": "A Server-Side Rendering Engine for Professionals.",
     "docs": {
       "getting-started": {
         "title": "Getting Started"

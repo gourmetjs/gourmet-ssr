@@ -29,15 +29,9 @@ class HomeSplash extends React.Component {
       </div>
     );
 
-    const Logo = props => (
-      <div className="projectLogo">
-        <img src={props.img_src} alt="Project Logo" />
-      </div>
-    );
-
     const ProjectTitle = () => (
       <h2 className="projectTitle">
-        {siteConfig.title}
+        <img className="logo" src={`${baseUrl}img/gourmet-ssr-dark.svg`} alt={siteConfig.title}/>
         <small>{siteConfig.tagline}</small>
       </h2>
     );
@@ -52,7 +46,7 @@ class HomeSplash extends React.Component {
 
     const Button = props => (
       <div className="pluginWrapper buttonWrapper">
-        <a className="button" href={props.href} target={props.target}>
+        <a className="button large" href={props.href} target={props.target}>
           {props.children}
         </a>
       </div>
@@ -60,13 +54,10 @@ class HomeSplash extends React.Component {
 
     return (
       <SplashContainer>
-        <Logo img_src={`${baseUrl}img/docusaurus.svg`} />
         <div className="inner">
-          <ProjectTitle siteConfig={siteConfig} />
+          <ProjectTitle siteConfig={siteConfig}/>
           <PromoSection>
-            <Button href="#try">Try It Out</Button>
-            <Button href={docUrl("doc1.html")}>Example Link</Button>
-            <Button href={docUrl("doc2.html")}>Example Link 2</Button>
+            <Button href={docUrl("getting-started.html")}>GET STARTED</Button>
           </PromoSection>
         </div>
       </SplashContainer>
@@ -142,21 +133,28 @@ class Index extends React.Component {
     );
 
     const Features = () => (
-      <Block layout="fourColumn">
-        {[
-          {
-            content: "This is the content of my feature",
-            image: `${baseUrl}img/docusaurus.svg`,
-            imageAlign: "top",
-            title: "Feature One",
-          },
-          {
-            content: "The content of my second feature",
-            image: `${baseUrl}img/docusaurus.svg`,
-            imageAlign: "top",
-            title: "Feature Two",
-          },
-        ]}
+      <Block layout="fourColumn" background="light">
+        {[{
+          content: "This is the content of my feature",
+          image: `${baseUrl}img/chip.svg`,
+          imageAlign: "top",
+          title: "Library, not Framework",
+        }, {
+          content: "The content of my second feature",
+          image: `${baseUrl}img/rocket.svg`,
+          imageAlign: "top",
+          title: "Production Focused",
+        }, {
+          content: "The content of my second feature",
+          image: `${baseUrl}img/developer.svg`,
+          imageAlign: "top",
+          title: "Human Friendly Configuration",
+        }, {
+          content: "The content of my second feature",
+          image: `${baseUrl}img/mixer.svg`,
+          imageAlign: "top",
+          title: "Flexible",
+        }]}
       </Block>
     );
 

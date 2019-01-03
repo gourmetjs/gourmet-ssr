@@ -1,9 +1,47 @@
 /* your custom css */
 
+.fixedHeaderContainer header img.logo {
+  height: 20px;
+}
+
+.homeContainer .projectTitle img.logo {
+  height: 42px;
+}
+
+.fixedHeaderContainer header h2.headerTitleWithLogo {
+  display: none
+}
+
+.navigationSlider .slidingNav ul.nav-site a {
+  color: #fff;
+  font-weight: 400;
+}
+
+.button.large {
+  font-size: 20px;
+  padding: .7em 2em;
+}
+
+.mainContainer .blockImage {
+  max-width: 100px;
+}
+
+.lightBackground {
+  background: #f1f8ff;
+}
+
 @media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
 }
 
 @media only screen and (min-width: 1024px) {
+  .homeContainer .homeWrapper {
+    padding-top: 7em;
+    padding-bottom: 1em;
+  }
+
+  .homeContainer .projectTitle > small {
+    margin: 1.5em 0;
+  }
 }
 
 @media only screen and (max-width: 1023px) {
