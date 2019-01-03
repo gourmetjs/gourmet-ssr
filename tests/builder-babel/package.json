@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-babel",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -8,7 +8,7 @@
     "test": "gourmet build --verbosity 1 && tape test/*_test.js --verbosity 1"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.1.0",
+    "@gourmet/client-lib": "^1.1.1",
     "@gourmet/console": "^1.0.0",
     "@gourmet/server-args": "^1.1.0",
     "express": "^4.16.3",

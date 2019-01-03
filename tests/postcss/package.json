@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-postcss",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -11,7 +11,7 @@
     "test": "npm run build:local && npm run build:prod && npm run build:file && npm run build:config && tape test/*_test.js --verbosity 1"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.1.0",
+    "@gourmet/client-lib": "^1.1.1",
     "@gourmet/console": "^1.0.0",
     "@gourmet/server-args": "^1.1.0",
     "express": "^4.16.3",
