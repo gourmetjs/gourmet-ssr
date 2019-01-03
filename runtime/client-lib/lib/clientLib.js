@@ -58,7 +58,7 @@ function clientLib(baseOptions) {
 
     options = options ? merge({}, gourmet.baseOptions, options) : gourmet.baseOptions;
 
-    const {storage, serverDir, page, siloed} = options;
+    let {storage, serverDir, page, siloed} = options;
 
     if (!serverDir)
       serverDir = resolveDirs(options).serverDir;

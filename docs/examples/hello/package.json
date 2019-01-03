@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^1.1.0",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.0.0",
+    "@gourmet/preset-react": "^1.1.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
+  }
+}

@@ -18,7 +18,7 @@ test("start server", t => {
 
 test("check server rendered content", pt(async t => {
   try {
-    const res = await got(`http://localhost:${port}/server-error`, {retries: 0});
+    await got(`http://localhost:${port}/server-error`, {retries: 0});
     // From v16.7.0, React closes the socket gracefully on a server exception instead of destroying it
     // abruptly as in previous versions. This results in a partial, broken HTML marked as a successful
     // HTTP 200 transction.

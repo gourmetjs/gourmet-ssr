@@ -15,7 +15,7 @@ module.exports = function factory(gourmet, baseOptions) {
         serverUrl: null           // when `staticMiddleware` is "proxy"
       }, gourmet.baseOptions, baseOptions, options);
 
-      const {staticMiddleware, clientDir} = options;
+      let {staticMiddleware, clientDir} = options;
 
       const handlers = [];
 
