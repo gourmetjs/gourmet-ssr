@@ -5,7 +5,7 @@
     "start": "node lib/server.js"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.1.0",
+    "@gourmet/client-lib": "^1.1.1",
     "express": "^4.16.4"
   },
   "devDependencies": {
