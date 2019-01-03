@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/server-args",
-  "version": "0.6.0",
+  "version": "1.1.0",
   "main": "lib/serverArgs.js",
   "dependencies": {
     "@gourmet/cli-args": "^0.2.0",
     "@gourmet/merge": "^0.7.0",
-    "@gourmet/resolve-dirs": "^0.1.0"
+    "@gourmet/resolve-dirs": "^1.1.0"
   }
 }

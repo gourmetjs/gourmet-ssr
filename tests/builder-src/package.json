@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/test-builder-src",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "build": "gourmet build && gourmet build --stage test",
     "test": "gourmet build --verbosity 1 && gourmet build --verbosity 1 --stage test && tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.0.0",
-    "@gourmet/server-args": "^0.6.0",
+    "@gourmet/client-lib": "^1.1.0",
+    "@gourmet/server-args": "^1.1.0",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },

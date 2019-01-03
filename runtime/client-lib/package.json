@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/client-lib",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "lib/clientLib.js",
   "dependencies": {
     "@gourmet/get-exported": "^0.3.0",
     "@gourmet/merge": "^0.7.0",
-    "@gourmet/middleware": "^1.0.0",
+    "@gourmet/middleware": "^1.1.0",
     "@gourmet/promise-protect": "^0.2.0",
     "@gourmet/renderer-sandbox": "^0.5.0",
-    "@gourmet/storage-fs": "^0.3.0",
-    "@gourmet/resolve-dirs": "^0.1.0"
+    "@gourmet/resolve-dirs": "^1.1.0",
+    "@gourmet/storage-fs": "^0.3.0"
   }
 }
