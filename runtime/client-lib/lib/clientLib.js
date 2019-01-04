@@ -58,11 +58,8 @@ function clientLib(baseOptions) {
 
     options = options ? merge({}, gourmet.baseOptions, options) : gourmet.baseOptions;
 
-    let {storage, serverDir, page, siloed} = options;
-
-    if (!serverDir)
-      serverDir = resolveDirs(options).serverDir;
-
+    const {storage, page, siloed} = options;
+    const serverDir = resolveDirs(options).serverDir;
     const context = Object.assign({page, siloed}, options.context);
 
     const key = _getCacheKey();
@@ -112,7 +109,7 @@ function clientLib(baseOptions) {
 
   gourmet.baseOptions = merge({
     storage: _defaultStorage,
-    serverDir: null,
+    serverDir: null,  // can be derived from `stage`, `workDir`, `outputDir`
     page: "main",
     siloed: false,
     staticMiddleware: "local"

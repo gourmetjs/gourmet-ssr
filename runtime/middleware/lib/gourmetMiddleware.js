@@ -3,29 +3,24 @@
 const merge = require("@gourmet/merge");
 const handleRequestError = require("@gourmet/handle-request-error");
 const GourmetWatchMiddleware = require("@gourmet/watch-middleware");
-const resolveDirs = require("@gourmet/resolve-dirs");
 
 module.exports = function factory(gourmet, baseOptions) {
   return {
     middleware(options) {
       gourmet.baseOptions = options = merge({
         staticMiddleware: false,  // "local", "proxy", "off" or falsy
-        clientDir: null,          // when `staticMiddleware` is "local"
+        clientDir: null,          // when `staticMiddleware` is "local" (can be derived from `stage`, `workDir`, `outputDir`)
         staticPrefix: "/s/",      // when `staticMiddleware` is "local" or "proxy"
         serverUrl: null           // when `staticMiddleware` is "proxy"
       }, gourmet.baseOptions, baseOptions, options);
 
-      let {staticMiddleware, clientDir} = options;
-
       const handlers = [];
 
-      if (staticMiddleware === "local") {
-        if (!clientDir)
-          clientDir = resolveDirs(options).clientDir;
+      if (options.staticMiddleware === "local") {
         if (options.watch)
           handlers.push(require("./watch")(gourmet, options));
         handlers.push(require("./static")(gourmet, options));
-      } else if (staticMiddleware === "proxy") {
+      } else if (options.staticMiddleware === "proxy") {
         handlers.push(require("./proxy")(gourmet, options));
       }
 

@@ -81,8 +81,8 @@ module.exports = {
     installSourceMapSupport: true,
 
     // Additional extensions to attach if extension is not given to `require`.
-    // With `@gourmet/preset-react`: [".js", ".json", ".jsx"]
-    defaultExtensions: [".js", ".json"],
+    // With `@gourmet/preset-react`, ".jsx" is added.
+    defaultExtensions: [".wasm", ".mjs", ".js", ".json"],
 
     // Module alias definitions. Final Webpack's alias definitions are
     // generated from `moduleLinks` and `alias`.

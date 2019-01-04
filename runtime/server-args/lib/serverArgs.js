@@ -6,10 +6,10 @@ const resolveDirs = require("@gourmet/resolve-dirs");
 
 module.exports = function serverArgs(def, argv, options) {
   def = Object.assign({
-    watch: undefined,
+    watch: false,
     stage: "local",
-    workDir: undefined,
-    outputDir: undefined,
+    workDir: "",
+    outputDir: ".gourmet",
     serverDir: undefined,
     clientDir: undefined,
     port: process.env.PORT || 3000,

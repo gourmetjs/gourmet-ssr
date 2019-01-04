@@ -12,7 +12,7 @@ module.exports = {
   pages: {
     main: {
       client: "./src/client.js",
-      server: "./src/server.js"
+      server: "./src/server.mjs"
     },
     admin: {
       client: "./src/admin.js",

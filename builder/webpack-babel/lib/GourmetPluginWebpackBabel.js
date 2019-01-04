@@ -198,7 +198,7 @@ class GourmetPluginWebpackBabel {
   onLoaders(context) {
     return {
       js: {
-        extensions: [".js"],
+        extensions: [".mjs", ".js"],
         select: {
           js_copy: {
             order: 9900,

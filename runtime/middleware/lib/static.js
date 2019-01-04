@@ -1,9 +1,11 @@
 "use strict";
 
 const serveStatic = require("serve-static");
+const resolveDirs = require("@gourmet/resolve-dirs");
 
 module.exports = function(gourmet, options) {
-  const {staticPrefix, clientDir} = options;
+  const {staticPrefix} = options;
+  const clientDir = resolveDirs(options).clientDir;
   const ss = serveStatic(clientDir, {fallthrough: false, index: false, redirect: false});
   return function(req, res, next) {
     if (req.url.indexOf(staticPrefix) === 0) {
