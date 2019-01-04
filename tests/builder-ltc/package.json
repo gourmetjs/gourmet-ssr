@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-ltc",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -9,16 +9,16 @@
     "test": "tape test/*_test.js --verbosity 1"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.1.1",
+    "@gourmet/client-lib": "^1.1.2",
     "@gourmet/console": "^1.0.0",
-    "@gourmet/server-args": "^1.1.0",
+    "@gourmet/server-args": "^1.1.1",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.0.0",
     "@gourmet/gourmet-cli-impl": "^1.0.0",
-    "@gourmet/preset-core": "^1.0.0",
+    "@gourmet/preset-core": "^1.0.1",
     "@gourmet/promise-tape": "^0.3.0",
     "mkdirp": "^0.5.1",
     "tape": "^4.9.0"

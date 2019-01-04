@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-builder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Gourmet Webpack Builder main plugin",
   "keywords": [
     "gourmet-plugin"
