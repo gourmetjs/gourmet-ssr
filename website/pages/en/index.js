@@ -65,6 +65,86 @@ class HomeSplash extends React.Component {
   }
 }
 
+const HOW_IT_WORKS = [[
+`
+> You write the user interface without complicated bootstrapping or boilerplate.
+> It is just a plain tree of React components.
+`, `
+\`\`\`js
+// hello.js
+import React from "react";
+
+export default function Hello({greeting}) {
+  return <div>{greeting}</div>;
+}
+\`\`\`
+`
+], [
+`
+> Configuration is designed to be minimal, but not to the level of "magic".
+> Here, we specify the React component above as a root component of \`main\` page.
+`, `
+\`\`\`js
+// gourmet_config.js
+module.exports = {
+  pages: {
+    main: "./hello.js"
+  }
+};
+\`\`\`
+`
+], [
+`
+> Build
+`, `
+\`\`\`bash
+$ gourmet build
+\`\`\`
+`
+], [
+`
+> Gourmet SSR is just a view library in your server.
+> Here, you render and serve the \`main\` page by calling \`res.serve()\`.
+`, `
+\`\`\`js
+// server.js
+const express = require("express");
+const gourmet = require("@gourmet/client-lib");
+
+const app = express();
+
+app.use(gourmet.middleware());
+
+app.get("/", (req, res) => {
+  res.serve("main", {greeting: "Hello, world!"});
+});
+
+app.listen(3000, () => {
+  console.log("Server is listening on port 3000");
+});
+\`\`\`
+`
+], [
+`
+> Server rendered content
+`, `
+\`\`\`bash
+$ curl http://localhost:3000
+<!doctype html>
+<html lang="en">
+  <head>
+    <script defer src="/s/vendors~main.js"></script>
+    <script defer src="/s/main.js"></script>
+  </head>
+  <body>
+    <div id="__gourmet_content__"><div id="__gourmet_react__"><div>Hello, world!</div></div></div>
+    <script>window.__gourmet_data__={"renderedLoadables":[],"clientProps":{"greeting":"Hello, world!"},"reactClientRender":"hydrate"};</script>
+  </body>
+</html>
+\`\`\`
+`
+]];
+
 class Index extends React.Component {
   render() {
     const {config: siteConfig, language = ""} = this.props;
@@ -83,55 +163,6 @@ class Index extends React.Component {
       </Container>
     );
 
-    const FeatureCallout = () => (
-      <div
-        className="productShowcaseSection paddingBottom"
-        style={{textAlign: "center"}}>
-        <h2>Feature Callout</h2>
-        <MarkdownBlock>These are features of this project</MarkdownBlock>
-      </div>
-    );
-
-    const TryOut = () => (
-      <Block id="try">
-        {[
-          {
-            content: "Talk about trying this out",
-            image: `${baseUrl}img/docusaurus.svg`,
-            imageAlign: "left",
-            title: "Try it Out",
-          },
-        ]}
-      </Block>
-    );
-
-    const Description = () => (
-      <Block background="dark">
-        {[
-          {
-            content:
-              "This is another description of how this project is useful",
-            image: `${baseUrl}img/docusaurus.svg`,
-            imageAlign: "right",
-            title: "Description",
-          },
-        ]}
-      </Block>
-    );
-
-    const LearnHow = () => (
-      <Block background="light">
-        {[
-          {
-            content: "Talk about learning how to use this",
-            image: `${baseUrl}img/docusaurus.svg`,
-            imageAlign: "right",
-            title: "Learn How",
-          },
-        ]}
-      </Block>
-    );
-
     const Features = () => (
       <Block layout="fourColumn" background="light">
         {[{
@@ -143,14 +174,14 @@ class Index extends React.Component {
           content: "The content of my second feature",
           image: `${baseUrl}img/rocket.svg`,
           imageAlign: "top",
-          title: "Production Focused",
+          title: "Production First",
         }, {
           content: "The content of my second feature",
           image: `${baseUrl}img/developer.svg`,
           imageAlign: "top",
-          title: "Human Friendly Configuration",
+          title: "Human Friendly",
         }, {
-          content: "The content of my second feature",
+          content: "View-layer & server architecture agnostic. Vue, Angular, Lambda, Django",
           image: `${baseUrl}img/mixer.svg`,
           imageAlign: "top",
           title: "Flexible",
@@ -158,45 +189,28 @@ class Index extends React.Component {
       </Block>
     );
 
-    const Showcase = () => {
-      if ((siteConfig.users || []).length === 0) {
-        return null;
-      }
-
-      const showcase = siteConfig.users
-        .filter(user => user.pinned)
-        .map(user => (
-          <a href={user.infoLink} key={user.infoLink}>
-            <img src={user.image} alt={user.caption} title={user.caption} />
-          </a>
-        ));
-
-      const pageUrl = page => baseUrl + (language ? `${language}/` : "") + page;
-
-      return (
-        <div className="productShowcaseSection paddingBottom">
-          <h2>Who is Using This?</h2>
-          <p>This project is used by all these people</p>
-          <div className="logos">{showcase}</div>
-          <div className="more-users">
-            <a className="button" href={pageUrl("users.html")}>
-              More {siteConfig.title} Users
-            </a>
+    const HowItWorks = () => (
+      <Container
+        padding={["bottom", "top"]}>
+        {HOW_IT_WORKS.map(([desc, code], idx) => (
+          <div className="gridBlock" key={idx}>
+            <div className="blockElement descByGridBlock">
+              <MarkdownBlock>{desc}</MarkdownBlock>
+            </div>
+            <div className="blockElement codeByGridBlock">
+              <MarkdownBlock>{code}</MarkdownBlock>
+            </div>
           </div>
-        </div>
-      );
-    };
+        ))}
+      </Container>
+    );
 
     return (
       <div>
-        <HomeSplash siteConfig={siteConfig} language={language} />
+        <HomeSplash siteConfig={siteConfig} language={language}/>
         <div className="mainContainer">
-          <Features />
-          <FeatureCallout />
-          <LearnHow />
-          <TryOut />
-          <Description />
-          <Showcase />
+          <Features/>
+          <HowItWorks/>
         </div>
       </div>
     );

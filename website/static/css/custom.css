@@ -30,6 +30,14 @@
   background: #f1f8ff;
 }
 
+.gridBlock .descByGridBlock {
+  flex: 1 0 26%;
+}
+
+.gridBlock .codeByGridBlock {
+  flex: 1 0 53.33%
+}
+
 @media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
 }
 
