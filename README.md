@@ -110,3 +110,10 @@ module.exports = {
 
 - IE 11 is supported.
 - Transpilation and polyfill are automatically enabled based on the value of `builder.runtime` & `babel.polyfill`.
+
+## Troubleshooting
+
+### `Module not found: Error: Can't resolve 'core-js/...'`
+
+This is a Bable issue. Add `core-js@2` to your `devDependencies` like `"core-js": "2"`.
+See Babel documentation](https://babeljs.io/docs/en/babel-preset-env#usebuiltins) for more details.
