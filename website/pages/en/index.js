@@ -82,7 +82,7 @@ export default function Hello({greeting}) {
 ], [
 `
 > Configuration is designed to be minimal, but not to the level of "magic".
-> Here, we specify the React component above as a root component of \`main\` page.
+> Here, we specify the above React component as a root component of \`main\` page.
 `, `
 \`\`\`js
 // gourmet_config.js
@@ -95,16 +95,33 @@ module.exports = {
 `
 ], [
 `
-> Build
+> To use the user interface in your app, you have to go through the build process first.
+>
+> Gourmet SSR uses Webpack and Babel under the hood to build your user interface.
+>
+> It generates two sets of bundles - one for the server and the other for the browser.
+> They have passed through different compilation pipelines tailered to the target environments.
 `, `
-\`\`\`bash
+\`\`\`text
 $ gourmet build
+server>
+server> >>> Building 'local' stage for 'server' target...
+server>
+server> Hash: 67lUupnSCkvx5QS2PfiMN5B5M2d
+server> Version: webpack 4.28.3
+...
+client>
+client> >>> Building 'local' stage for 'client' target...
+client>
+client> Hash: 2X8CXpO82qOEnWcj6UiIi6eg5gv
+client> Version: webpack 4.28.3
+...
 \`\`\`
 `
 ], [
 `
 > Gourmet SSR is just a view library in your server.
-> Here, you render and serve the \`main\` page by calling \`res.serve()\`.
+> This is how you render and serve the \`main\` page.
 `, `
 \`\`\`js
 // server.js
@@ -126,7 +143,11 @@ app.listen(3000, () => {
 `
 ], [
 `
-> Server rendered content
+> The content is rendered on the server-side and rehydrated on the client-side.
+> Required assets are also linked statically.
+>
+> The HTML output has all elements it needs to render the initial user interface - greate for SEO and user experience.
+> 
 `, `
 \`\`\`bash
 $ curl http://localhost:3000
@@ -166,22 +187,26 @@ class Index extends React.Component {
     const Features = () => (
       <Block layout="fourColumn" background="light">
         {[{
-          content: "This is the content of my feature",
+          content: "Gourmet SSR is designed to be used as a view library in your existing project.<br/>" +
+                   "We worked very hard to make Gourmet SSR unobtrusive.",
           image: `${baseUrl}img/chip.svg`,
           imageAlign: "top",
           title: "Library, not Framework",
         }, {
-          content: "The content of my second feature",
+          content: "Small footprint at runtime, chunked transfer, long-term cache support, HTTP/2 optimized bundling and many more - " +
+                   "Production is always number one priority of Gourmet SSR.",
           image: `${baseUrl}img/rocket.svg`,
           imageAlign: "top",
           title: "Production First",
         }, {
-          content: "The content of my second feature",
+          content: "Developers are humans too.<br/>" +
+                   "When we added a new feature, the first thing we considered was how to make it easy to understand and use - just like we do for the consumer products.",
           image: `${baseUrl}img/developer.svg`,
           imageAlign: "top",
           title: "Human Friendly",
         }, {
-          content: "View-layer & server architecture agnostic. Vue, Angular, Lambda, Django",
+          content: "Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda. <br/>" +
+                   "Your server can be Django or Rails project. View layer is not limited to React.",
           image: `${baseUrl}img/mixer.svg`,
           imageAlign: "top",
           title: "Flexible",

@@ -26,6 +26,12 @@
   max-width: 100px;
 }
 
+.mainContainer .blockImage img[src$="mixer.svg"] {
+  width: 64px;
+  height: 64px;
+  padding: 16px;
+}
+
 .lightBackground {
   background: #f1f8ff;
 }
@@ -35,7 +41,8 @@
 }
 
 .gridBlock .codeByGridBlock {
-  flex: 1 0 53.33%
+  flex: 1 0 53.33%;
+  min-width: 0;
 }
 
 @media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
