@@ -205,8 +205,8 @@ class Index extends React.Component {
           imageAlign: "top",
           title: "Human Friendly",
         }, {
-          content: "Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda. <br/>" +
-                   "Your server can be Django or Rails project. View layer is not limited to React.",
+          content: "Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda function. <br/>" +
+                   "Your server can be written Django or Rails. View layer is not limited to React.",
           image: `${baseUrl}img/mixer.svg`,
           imageAlign: "top",
           title: "Flexible",
