@@ -85,7 +85,7 @@ We found this convention very useful, but you can use whatever directory structu
 
 ## Creating a project configuration file
 
-We also need to add a `gourmet_config.js` file at the project root directory which is a build configuration file for a Gourmet SSR project.
+We also need to add a `gourmet_config.js` file which is a build configuration file for a Gourmet SSR project at the project root directory.
 
 **gourmet_config.js**
 ```js
@@ -178,7 +178,7 @@ Open your browser at http://localhost:3000. You will see "Hello, world!" message
 
 Let's inspect the result deeper to see how SSR worked. We use Chrome for this example but other browsers have similar features too.
 
-On Chrome's "Hello, world!" screen, right click and select "View page source" from the popup menu. You will see the HTML page content that server sent as-is before the client-side rehydration happens:
+On Chrome, right click on the screen of "Hello, world!" above and select "View page source" from the popup menu. You will be able to see the original HTML page content that server sent out:
 
 ![Page Source - Hello World](assets/hello-source.png)
 
@@ -201,11 +201,11 @@ After the installtion is completed, press `<F12>` key to access Chrome Developer
 
 If you can see a tree of React components as shown above, this means that the client-side rehydration was succesful and React took over the control of DOM management on the browser.
 
-## What's inside bundles?
+## What's inside the bundles?
 
 Gourmet SSR builds your user interface code and generates two sets of bundles - one for the server and the other for the browser.
 
-Because the server bundles are targeting Node 8 and the client bundles targeting the browser minimum of IE 11, the generated contents are differnt. Let's take a look at the client bundle first.
+Because the server bundles are targeting Node 8 and the client bundles targeting browsers minimum of IE 11, the generated contents are differnt. Let's take a look at the client bundle first.
 
 **.gourmet/local/client/main.js**
 ```js
@@ -242,6 +242,10 @@ function Hello({
 // ...
 ```
 
-Because Node 8 supports destructuring natively, 
+Because Node 8 supports destructuring natively, the server bundle uses the original source code's destructuring syntax `Hello({greeting})` intact.
+
+The difference is small here but once you use more complicated ES6 features such as classes and iterators, the difference becomes more significant.
+
+## That's it!
 
 Congraturations! You finished the Getting Started guide and ready to learn more details about Gourmet SSR.
