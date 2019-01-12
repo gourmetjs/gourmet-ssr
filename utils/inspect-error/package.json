@@ -1,8 +1,8 @@
 {
   "name": "@gourmet/inspect-error",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "gmsrc/inspectError.js",
   "dependencies": {
-    "@gourmet/serialize-error": "^0.2.0"
+    "@gourmet/serialize-error": "^0.3.0"
   }
 }

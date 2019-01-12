@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/prefix-lines",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Inserts a prefix at each line of a text string",
   "main": "gmsrc/prefixLines.js"
 }

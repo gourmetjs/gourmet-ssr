@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/promise-map",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Promise aware version of JavaScript's `Array.prototype.map`",
   "main": "gmsrc/promiseMap.js",
   "dependencies": {
-    "@gourmet/promise-repeat": "^0.2.0",
-    "@gourmet/promise-sync": "^0.2.0"
+    "@gourmet/promise-repeat": "^0.3.0",
+    "@gourmet/promise-sync": "^0.3.0"
   }
 }

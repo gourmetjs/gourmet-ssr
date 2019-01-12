@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/promise-main",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Handles the top main promise of a console app",
   "main": "gmsrc/promiseMain.js"
 }

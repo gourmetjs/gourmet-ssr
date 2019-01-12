@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/react-i80",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "browser": "gmsrc/index.client.js",
   "main": "gmsrc/index.server.js",
   "dependencies": {
-    "@gourmet/parse-href": "^1.0.0",
-    "@gourmet/promise-protect": "^0.2.0",
-    "@gourmet/unprefix-path": "^0.2.0",
+    "@gourmet/parse-href": "^1.1.0",
+    "@gourmet/promise-protect": "^0.3.0",
+    "@gourmet/unprefix-path": "^0.3.0",
     "classnames": "^2.2.6",
     "encodeurl": "^1.0.2",
     "escape-html": "^1.0.3",

@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/middleware",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "main": "lib/gourmetMiddleware.js",
   "dependencies": {
-    "@gourmet/get-req-args": "^0.3.0",
-    "@gourmet/handle-request-error": "^1.0.0",
-    "@gourmet/merge": "^0.7.0",
+    "@gourmet/get-req-args": "^0.4.0",
+    "@gourmet/handle-request-error": "^1.1.0",
+    "@gourmet/merge": "^0.8.0",
     "@gourmet/resolve-dirs": "^1.1.0",
-    "@gourmet/send-content": "^1.0.0",
-    "@gourmet/watch-middleware": "^1.0.0",
-    "@gourmet/web-proxy": "^1.0.0"
+    "@gourmet/send-content": "^1.1.0",
+    "@gourmet/watch-middleware": "^1.1.0",
+    "@gourmet/web-proxy": "^1.1.0"
   }
 }

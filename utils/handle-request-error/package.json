@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/handle-request-error",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "gmsrc/handleRequestError.js",
   "dependencies": {
-    "@gourmet/console": "^1.0.0",
-    "@gourmet/inspect-error": "^0.2.0",
-    "@gourmet/merge": "^0.7.0",
-    "@gourmet/resolve-template": "^0.2.0",
-    "@gourmet/send-content": "^1.0.0",
-    "@gourmet/serialize-request-error": "^0.2.0",
+    "@gourmet/console": "^1.1.0",
+    "@gourmet/inspect-error": "^0.3.0",
+    "@gourmet/merge": "^0.8.0",
+    "@gourmet/resolve-template": "^0.3.0",
+    "@gourmet/send-content": "^1.1.0",
+    "@gourmet/serialize-request-error": "^0.3.0",
     "escape-html": "^1.0.3",
     "http-status": "^1.0.1",
     "strip-ansi": "^5.0.0"

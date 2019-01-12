@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/hash-names",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "gmsrc/HashNames.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/base-x": "^0.2.0"
+    "@gourmet/base-x": "^0.3.0"
   },
   "devDependencies": {
     "tape": "^4.9.0"

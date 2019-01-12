@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/escape-script",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Escape JavaScript content to be embedded in HTML",
   "main": "gmsrc/escapeScript.js"
 }

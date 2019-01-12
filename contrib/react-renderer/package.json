@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/react-renderer",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "gmsrc/getReactClientRenderer.js",
   "dependencies": {
     "@gourmet/loadable-registrar": "^0.3.1",
-    "@gourmet/promise-protect": "^0.2.0"
+    "@gourmet/promise-protect": "^0.3.0"
   },
   "peerDependencies": {
     "@gourmet/react-context-gmctx": "*",
