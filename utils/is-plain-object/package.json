@@ -1,5 +1,5 @@
 {
   "name": "@gourmet/is-plain-object",
   "version": "0.2.0",
-  "main": "lib/isPlainObject.js"
+  "main": "gmsrc/isPlainObject.js"
 }

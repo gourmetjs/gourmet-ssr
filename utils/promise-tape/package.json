@@ -2,5 +2,5 @@
   "name": "@gourmet/promise-tape",
   "version": "0.3.0",
   "description": "A simple wrapper converting a promise returning function to test handler for 'tape'",
-  "main": "lib/promiseTape.js"
+  "main": "gmsrc/promiseTape.js"
 }

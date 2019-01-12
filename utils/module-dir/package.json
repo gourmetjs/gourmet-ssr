@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/module-dir",
   "version": "0.2.0",
-  "main": "lib/moduleDir.js",
+  "main": "gmsrc/moduleDir.js",
   "dependencies": {
     "resolve": "^1.6.0"
   }

@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/hash-names",
   "version": "0.3.0",
-  "main": "lib/HashNames.js",
+  "main": "gmsrc/HashNames.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },

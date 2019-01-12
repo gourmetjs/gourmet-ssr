@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/proxy-headers",
   "version": "0.2.0",
-  "main": "lib/ProxyHeaders.js",
+  "main": "gmsrc/ProxyHeaders.js",
   "dependencies": {
     "@gourmet/http-headers": "^0.2.0"
   }

@@ -1,5 +1,5 @@
 {
   "name": "@gourmet/promise-read-file",
   "version": "0.2.0",
-  "main": "lib/promiseReadFile.js"
+  "main": "gmsrc/promiseReadFile.js"
 }

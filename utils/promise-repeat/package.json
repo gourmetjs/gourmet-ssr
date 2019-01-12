@@ -2,7 +2,7 @@
   "name": "@gourmet/promise-repeat",
   "version": "0.2.0",
   "description": "Runs an asynchronous loop in series",
-  "main": "lib/promiseRepeat.js",
+  "main": "gmsrc/promiseRepeat.js",
   "dependencies": {
     "@gourmet/is-promise": "^0.2.0"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/multi-stream",
   "version": "0.2.0",
-  "main": "lib/MultiStream.js",
+  "main": "gmsrc/MultiStream.js",
   "description": "Modified version of `https://github.com/feross/multistream` that uses Node built-in modules only"
 }

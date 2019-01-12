@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/web-proxy",
   "version": "1.0.0",
-  "main": "lib/index.js",
+  "main": "gmsrc/index.js",
   "dependencies": {
     "@gourmet/error": "^0.3.1",
     "@gourmet/get-req-opts": "^0.1.1",

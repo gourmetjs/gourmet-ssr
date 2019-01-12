@@ -1,5 +1,5 @@
 {
   "name": "@gourmet/get-exported",
   "version": "0.3.0",
-  "main": "lib/getExported.js"
+  "main": "gmsrc/getExported.js"
 }

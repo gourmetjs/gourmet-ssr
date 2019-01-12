@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/base-x",
   "version": "0.2.0",
-  "main": "lib/getBaseX.js",
+  "main": "gmsrc/getBaseX.js",
   "dependencies": {
     "base-x": "^3.0.4"
   }

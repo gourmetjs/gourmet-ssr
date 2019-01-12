@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/send-content",
   "version": "1.0.0",
-  "main": "lib/sendContent.js",
+  "main": "gmsrc/sendContent.js",
   "dependencies": {
     "@gourmet/console": "^1.0.0",
     "@gourmet/inspect-error": "^0.2.0",

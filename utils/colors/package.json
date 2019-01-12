@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/colors",
   "version": "1.0.0",
-  "main": "lib/colors.js",
+  "main": "gmsrc/colors.js",
   "scripts": {
     "demo": "node example/demo.js"
   }

@@ -2,7 +2,7 @@
   "name": "@gourmet/storage-fs",
   "version": "0.3.0",
   "description": "File storage interface for 'fs' compatible filesystem",
-  "main": "lib/StorageFs.js",
+  "main": "gmsrc/StorageFs.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },

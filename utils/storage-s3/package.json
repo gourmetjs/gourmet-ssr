@@ -2,7 +2,7 @@
   "name": "@gourmet/storage-s3",
   "version": "0.2.0",
   "description": "File storage interface for AWS S3",
-  "main": "lib/StorageS3.js",
+  "main": "gmsrc/StorageS3.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },

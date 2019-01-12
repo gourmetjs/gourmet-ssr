@@ -1,5 +1,5 @@
 {
   "name": "@gourmet/serialize-error",
   "version": "0.2.0",
-  "main": "lib/serializeError.js"
+  "main": "gmsrc/serializeError.js"
 }

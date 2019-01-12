@@ -1,5 +1,5 @@
 {
   "name": "@gourmet/http-headers",
   "version": "0.2.0",
-  "main": "lib/HttpHeaders.js"
+  "main": "gmsrc/HttpHeaders.js"
 }

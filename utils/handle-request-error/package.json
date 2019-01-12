@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/handle-request-error",
   "version": "1.0.0",
-  "main": "lib/handleRequestError.js",
+  "main": "gmsrc/handleRequestError.js",
   "dependencies": {
     "@gourmet/console": "^1.0.0",
     "@gourmet/inspect-error": "^0.2.0",

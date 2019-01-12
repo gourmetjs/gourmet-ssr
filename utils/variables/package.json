@@ -2,7 +2,7 @@
   "name": "@gourmet/variables",
   "version": "0.4.1",
   "description": "Flexible variable resolution engine that can be extended by pluggable variable sources",
-  "main": "lib/Variables.js",
+  "main": "gmsrc/Variables.js",
   "scripts": {
     "test": "tape test/*_test.js",
     "debug": "node --inspect-brk test/vars_test.js"

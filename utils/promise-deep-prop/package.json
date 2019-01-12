@@ -2,7 +2,7 @@
   "name": "@gourmet/promise-deep-prop",
   "version": "0.3.1",
   "description": "Gets a deep property value while resolving promises",
-  "main": "lib/promiseDeepProp.js",
+  "main": "gmsrc/promiseDeepProp.js",
   "dependencies": {
     "@gourmet/error": "^0.3.1",
     "@gourmet/is-plain-object": "^0.2.0",

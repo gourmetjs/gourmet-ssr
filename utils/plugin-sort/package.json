@@ -2,7 +2,7 @@
   "name": "@gourmet/plugin-sort",
   "description": "A general purpose library for human friendly plugin ordering",
   "version": "0.7.0",
-  "main": "lib/index.js",
+  "main": "gmsrc/index.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },

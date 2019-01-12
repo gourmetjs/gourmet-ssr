@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/parse-href",
   "version": "1.0.0",
-  "main": "lib/parseHref.js",
+  "main": "gmsrc/parseHref.js",
   "scripts": {
     "test": "tape test/*_test.js"
   }
