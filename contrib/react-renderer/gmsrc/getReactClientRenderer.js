@@ -2,9 +2,9 @@
 
 const React = require("react");
 const ReactDOM = require("react-dom");
+const GourmetContext = require("@gourmet/react-context-gmctx");
 const registrar = require("@gourmet/loadable-registrar");
 const promiseProtect = require("@gourmet/promise-protect");
-const wrapWithContext = require("./wrapWithContext");
 
 // ** Client control flow **
 // 1. Browser calls `renderer.render()`.
@@ -38,7 +38,7 @@ module.exports = function getReactClientRenderer(Base) {
           return React.createElement(page, props);
       }).then(element => {
         if (element)
-          return wrapWithContext(this, gmctx, element);
+          return this.wrapWithContext(gmctx, element);
         return element;
       });
     }
@@ -80,6 +80,16 @@ module.exports = function getReactClientRenderer(Base) {
           throw Error("gmctx.setHead() only accepts React elements or strings");
         }
       });
+    }
+
+    wrapWithContext(gmctx, element) {
+      return (
+        <GourmetContext.Provider value={gmctx}>
+          <div {...this.makeRootProps(gmctx)}>
+            {element}
+          </div>
+        </GourmetContext.Provider>
+      );
     }
   };
 };

@@ -2,9 +2,9 @@
 
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
+const GourmetContext = require("@gourmet/react-context-gmctx");
 const registrar = require("@gourmet/loadable-registrar");
 const promiseProtect = require("@gourmet/promise-protect");
-const wrapWithContext = require("./wrapWithContext");
 
 // ** Server control flow **
 // 1. Client (your code) calls `res.serve("page", {...clientProps}, {other_gmctx_attrs})`
@@ -69,7 +69,7 @@ module.exports = function getReactServerRenderer(Base) {
           return React.createElement(page, props);
       }).then(element => {
         if (element)
-          return wrapWithContext(this, gmctx, element);
+          return this.wrapWithContext(gmctx, element);
         return element;
       });
     }
@@ -159,6 +159,16 @@ module.exports = function getReactServerRenderer(Base) {
         if (head.indexOf(element) === -1)
           head.push(element);
       });
+    }
+
+    wrapWithContext(gmctx, element) {
+      return (
+        <GourmetContext.Provider value={gmctx}>
+          <div {...this.makeRootProps(gmctx)}>
+            {element}
+          </div>
+        </GourmetContext.Provider>
+      );
     }
   };
 };
