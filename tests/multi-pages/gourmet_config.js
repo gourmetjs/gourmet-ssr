@@ -12,5 +12,18 @@ module.exports = {
   pages: {
     main: "./src/MainPage.js",
     dashboard: "./src/DashboardPage.js"
+  },
+
+  config: {
+    html: {
+      headTop: [
+        '<script>window.__allPages=true;</script>'
+      ]
+    },
+    "html:main": {
+      headTop: [
+        '<script>window.__onlyMainPage=true;</script>'
+      ]
+    }
   }
 };

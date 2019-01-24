@@ -75,7 +75,7 @@ class HtmlServerRenderer extends BaseRenderer {
       page,
       manifest,
       data: {}
-    }, {html: config.html}, context || undefined);
+    }, {html: this.collectConfig(config, "html", page)}, context || undefined);
     return gmctx;
   }
 
@@ -250,6 +250,22 @@ class HtmlServerRenderer extends BaseRenderer {
     }, {});
 
     return Object.keys(bundles);
+  }
+
+  // Supported patterns are:
+  //  - Section name only for all pages: "html"
+  //  - For a specific page: "html:main"
+  //  - For multiple pages: "html:main,admin"
+  collectConfig(config, section, page) {
+    const obj = merge({}, config[section]);
+    Object.keys(config).forEach(name => {
+      if (name.startsWith(`${section}:`)) {
+        const names = name.substring(section.length + 1).split(",");
+        if (names.indexOf(page) !== -1)
+          merge(obj, config[name]);
+      }
+    });
+    return obj;
   }
 }
 

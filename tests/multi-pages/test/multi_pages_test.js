@@ -47,6 +47,12 @@ test("run puppeteer", pt(async t => {
 
   t.ok(pre.indexOf('JSON: {"MainPage_getInitialProps":true,"gmctx":"{...}","greeting":"Hello, world!"}') !== -1);
 
+  let config = await page.evaluate(() => {
+    return {allPages: window.__allPages, onlyMainPage: window.__onlyMainPage};
+  });
+
+  t.deepEqual(config, {allPages: true, onlyMainPage: true});
+
   await page.goto(`http://localhost:${port}/dashboard`);
 
   h1 = await page.$eval("h1", h1 => {
@@ -60,6 +66,12 @@ test("run puppeteer", pt(async t => {
   });
 
   t.ok(pre.indexOf('JSON: {"DashboardPage_getInitialProps":true,"DashboardPage_makePageProps":true,"DashboardPage_renderPage":true,"gmctx":"{...}","username":"admin"}') !== -1);
+
+  config = await page.evaluate(() => {
+    return {allPages: window.__allPages, onlyMainPage: window.__onlyMainPage};
+  });
+
+  t.deepEqual(config, {allPages: true});
 
   await browser.close();
 }));
