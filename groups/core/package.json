@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/group-core",
   "description": "Gourmet Group containing core packages for building and running Gourmet SSR projects",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "lib/GourmetGroupCore.js",
   "keywords": [
     "gourmet-plugin"
@@ -12,7 +12,7 @@
     "@gourmet/plugin-source-map-support": "^0.5.1",
     "@gourmet/plugin-webpack-babel": "^1.1.0",
     "@gourmet/plugin-webpack-blob": "^0.4.0",
-    "@gourmet/plugin-webpack-builder": "^1.1.0",
+    "@gourmet/plugin-webpack-builder": "^1.1.1",
     "@gourmet/plugin-webpack-global-css": "^0.10.0",
     "@gourmet/plugin-webpack-html-renderer": "^0.5.0"
   },
