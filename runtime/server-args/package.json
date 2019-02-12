@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/server-args",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "lib/serverArgs.js",
   "dependencies": {
     "@gourmet/cli-args": "^0.2.0",

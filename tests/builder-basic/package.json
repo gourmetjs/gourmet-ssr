@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-basic",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "scripts": {
     "build": "gourmet build --config-path config/gourmet_cfg",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@gourmet/client-lib": "^1.2.0",
     "@gourmet/console": "^1.1.0",
-    "@gourmet/server-args": "^1.2.0",
+    "@gourmet/server-args": "^1.2.1",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },

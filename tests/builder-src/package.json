@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-src",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "scripts": {
     "build": "gourmet build && gourmet build --stage test",
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.2.0",
-    "@gourmet/server-args": "^1.2.0",
+    "@gourmet/server-args": "^1.2.1",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
