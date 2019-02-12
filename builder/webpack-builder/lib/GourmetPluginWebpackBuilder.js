@@ -381,7 +381,7 @@ class GourmetPluginWebpackBuilder {
   _init(context) {
     const argv = context.argv;
 
-    context.stage = argv.stage || argv.s || "local";
+    context.stage = argv.stage || argv.s || process.env.STAGE || "local";
     context.builds = {};
 
     context.vars.getSource("config").addLower(context.vars.prepareValue(defaultConfig));
