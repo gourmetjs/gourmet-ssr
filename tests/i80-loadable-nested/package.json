@@ -20,8 +20,9 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/group-react-emotion": "^1.0.0",
     "@gourmet/group-react-i80": "^1.2.0",
-    "@gourmet/preset-react-emotion": "^1.2.2",
     "@gourmet/promise-tape": "^0.4.0",
     "classnames": "^2.2.6",
     "got": "^8.3.1",
