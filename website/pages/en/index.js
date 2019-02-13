@@ -100,7 +100,7 @@ module.exports = {
 > Gourmet SSR uses Webpack and Babel under the hood to build your user interface.
 >
 > It generates two sets of bundles - one for the server and the other for the browser.
-> They have passed through different compilation pipelines tailered to the target environments.
+> They pass through different compilation pipelines tailered to the target environments.
 `, `
 \`\`\`text
 $ gourmet build
@@ -146,7 +146,7 @@ app.listen(3000, () => {
 > The content is rendered on the server-side and rehydrated on the client-side.
 > Required assets are also linked statically.
 >
-> The HTML output has all elements it needs to render the initial user interface - greate for SEO and user experience.
+> The HTML output has all elements it needs to render the initial user interface - great for SEO and user experience.
 > 
 `, `
 \`\`\`bash

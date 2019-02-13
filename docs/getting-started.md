@@ -57,7 +57,7 @@ $ npm install react react-dom --save-dev
 
 `@gourmet/gourmet-cli` provides a shell command `gourmet` which is a base command line interface that can be extended by installing additional plugins.
 
-`@gourmet/preset-react` is a preset of sub-packages that contains all the plugins and runtime helpers to implement a Gourmet SSR project using React.
+`@gourmet/preset-react` is a preset of sub-packages that contains all the tools and runtime helpers to build a Gourmet SSR project using React.
 
 `react` and `react-dom` are standard React libraries. `@gourmet/preset-react` requires React libraries installed side by side as `peerDependencies`.
 
@@ -98,7 +98,7 @@ module.exports = {
 
 Here, we specify the above React component as a root component of `main` page.
 
-> Did you notice that we didn't specify manually what plugins to use in `gourmet_config.js`? Gourmet SSR will automatically scan dependencies specified in `package.json` and load available plugins/presets.
+> Did you notice that we didn't specify manually what plugins to use in `gourmet_config.js`? Gourmet CLI will automatically scan dependencies specified in `package.json` and load available plugins/presets.
 >
 > As you can see, installing `@gourmet/preset-react` as a dependency is all you need to do to enable React support in your Gourmet SSR project. Of course, you can control this behavior if you need to.
 
@@ -124,7 +124,7 @@ app.listen(3000, () => {
 });
 ```
 
-Before to run your server, you have to install a runtime helper that glues your server together with SSR output. This one needs to go inside `dependencies` because your server depends on it.
+Before to run your server, you have to install the Gourmet SSR Client Library that loads and executes your Gourmet SSR bundles. This one needs to go inside `dependencies` because your server depends on it.
 
 ```bash
 $ npm install @gourmet/client-lib --save
@@ -178,7 +178,7 @@ Open your browser at http://localhost:3000. You will see "Hello, world!" message
 
 Let's inspect the result deeper to see how SSR worked. We use Chrome for this example but other browsers have similar features too.
 
-On Chrome, right click on the screen of "Hello, world!" above and select "View page source" from the popup menu. You will be able to see the original HTML page content that server sent out:
+On Chrome, right click on the screen of "Hello, world!" and select "View page source" from the popup menu. You will be able to see the original HTML page content that server sent out:
 
 ![Page Source - Hello World](assets/hello-source.png)
 
@@ -193,7 +193,7 @@ Using Gourmet SSR, all assets that are required for rendering a page are automat
 
 > Because `<script>` tags in `<head>` are rendered with `defer` attribute, they don't block browser from parsing HTML. `defer` is supported by most browsers including IE 10/11.
 
-Next, let's inspect the client-side rehydration. To do this, you need to install [React Developer Toolss](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) Chrome Extension if you haven't done so already.
+Next, let's inspect the client-side rehydration. To do this, you need to install [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) Chrome Extension if you haven't done so already.
 
 After the installtion is completed, press `<F12>` key to access Chrome Developer Tools and click the React tab.
 
