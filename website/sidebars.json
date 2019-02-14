@@ -1,8 +1,11 @@
 {
   "docs": {
     "Introduction": [
-      "getting-started",
-      "tutorial"
+      "getting-started"
+    ],
+    "Tutorial": [
+      "tutorial-1",
+      "totorial-2"
     ],
     "Guides": [
       "guides"

@@ -2444,8 +2444,11 @@
       "reference": {
         "title": "Reference"
       },
-      "tutorial": {
-        "title": "Tutorial"
+      "tutorial-2": {
+        "title": "Tutorial 2"
+      },
+      "tutorial-1": {
+        "title": "Creating a Basic Structure of the News App"
       }
     },
     "links": {
@@ -2457,6 +2460,7 @@
     },
     "categories": {
       "Introduction": "Introduction",
+      "Tutorial": "Tutorial",
       "Guides": "Guides",
       "Reference": "Reference",
       "First Category": "First Category"
