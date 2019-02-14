@@ -5,7 +5,7 @@ title: Creating a Basic Structure of the News App
 
 ## What we will build
 
-In this tutorial, we will build a news reader application. Starting with a simple app with the dummy user interface, we will add more features as we progress to show you how to build a fullstack application using Gourmet SSR.
+In this tutorial, we will build a news reader application. Starting with a simple server and dummy user interface, we will add more features as we progress to show you how to build a fullstack application using Gourmet SSR.
 
 First, let's take a look at the screenshot of the final app that we are going to build.
 
@@ -97,6 +97,29 @@ module.exports = {
 };
 ```
 
+#### src/containers/PublicPage.js
+
+```js
+import React from "react";
+import i80, {ActiveRoute} from "@gourmet/react-i80";
+import LoginView from "./LoginView";
+import SignupView from "./SignupView";
+
+i80([
+  ["/login", LoginView],
+  ["/signup", SignupView]
+]);
+
+export default function PublicPage() {
+  return (
+    <div>
+      <h1>Public Page</h1>
+      <ActiveRoute/>
+    </div>
+  );
+}
+```
+
 #### src/containers/MainPage.js
 
 ```js
@@ -120,24 +143,29 @@ export default function MainPage() {
 }
 ```
 
-#### src/containers/PublicPage.js
+#### src/containers/LoginView.js
 
 ```js
 import React from "react";
-import i80, {ActiveRoute} from "@gourmet/react-i80";
-import LoginView from "./LoginView";
-import SignupView from "./SignupView";
 
-i80([
-  ["/login", LoginView],
-  ["/signup", SignupView]
-]);
-
-export default function PublicPage() {
+export default function LoginView() {
   return (
     <div>
-      <h1>Public Page</h1>
-      <ActiveRoute/>
+      <p>Login Form</p>
+    </div>
+  );
+}
+```
+
+#### src/containers/SignupView.js
+
+```js
+import React from "react";
+
+export default function SignupView() {
+  return (
+    <div>
+      <p>Signup Form</p>
     </div>
   );
 }
@@ -175,34 +203,6 @@ export default function SavedView() {
 }
 ```
 
-#### src/containers/LoginView.js
-
-```js
-import React from "react";
-
-export default function LoginView() {
-  return (
-    <div>
-      <p>Login Form</p>
-    </div>
-  );
-}
-```
-
-#### src/containers/SignupView.js
-
-```js
-import React from "react";
-
-export default function SignupView() {
-  return (
-    <div>
-      <p>Signup Form</p>
-    </div>
-  );
-}
-```
-
 ## Building and running
 
 Now, install dependencies and run the app.
@@ -228,20 +228,45 @@ You will see screens like these.
 
 React I80 is a tiny routing library specifically designed for Gourmet SSR. Using React I80, you can divide the user interface of your app into more manageable smaller units called views, and associate them with URLs. Also, you can group multiple views into pages.
 
-Switching between views inside the same page happens on the client-side and no round-trip to the server is made. On the other hand, each page is a completely separated HTML endpoint from the other. A transition between pages always happens in a clean, new browser sessions.
+Switching between views inside the same page happens on the client-side and no round-trip to the server is made. On the other hand, each page is a completely separated HTML endpoint from the other. A transition between pages always happens in a clean, new browser session.
 
 Using Gourmet SSR, you are not limited to a single HTML page for your whole app. In fact, splitting your app into multiple pages is an encouraged pattern for the better user experience. At least, you must separate the content for authenticated state from the unauthenticated public content for security. With this in mind, we structured our pages and views as below.
 
 ```text
-PublicPage --+-- LandingView
-             |
-             +-- LoginView
+PublicPage --+-- LoginView
              |
              +-- SignupView
 
 MainPage ----+-- NewsView
              |
              +-- SavedView
+```
+
+Inside `src/containers/PublicPage.js`, routes are defined as follows:
+
+```js
+i80([
+  ["/login", LoginView],
+  ["/signup", SignupView]
+]);
+```
+
+`i80()` is a top-level function exported by `@gourmet/react-i80` to define routes for the page. You must call the function once at the global level to initialize React I80. `i80()` expects an array of arrays containing a URL path and React view component pair.
+
+Inside the page's rendering function, the `<ActiveRoute>` component is used to render a view that matches with the current URL. See below.
+
+```js
+// If the current URL is "/login", the following code:
+<div>
+  <h1>Public Page</h1>
+  <ActiveRoute/>
+</div>
+
+// is effectively the same as:
+<div>
+  <h1>Public Page</h1>
+  <LoginView/>
+</div>
 ```
 
 To use React I80, you should add `@gourmet/group-react-i80` as a dependency in addition to `@gourmet/preset-react`. `@gourmet/group-react-i80` is a group of sub-packages that enables a React I80 support in your project.
@@ -253,22 +278,45 @@ Inside your SSR code, you use `@gourmet/react-i80` to implement your routing log
 >
 > On the other hand, a group is a set of related sub-packages to support an addition functionality, on top of a preset. Internally, groups are used as building blocks of presets too.
 
-In Gourmet SSR, each page is a completely separated HTML endpoint from each other. That is, a transition between pages happens with clean, new browser sessions.
+Now, take a look at the part of server code that renders the pages.
 
-In `gourmet_config.js`, we defined two pages, named "main" and "public". We also defined `MainPage` and `PublicPage` as root components of the corresponding pages.
+```js
+app.get(["/login", "/signup"], (req, res) => {
+  res.serve("public");
+});
 
-In our news app, we structured our pages and views as below.
-
-```text
-MainPage ----+-- NewsView
-             |
-             +-- SavedView
-   
-PublicPage --+-- LoginView
-             |
-             +-- SignupView
+app.get(["/", "/saved"], (req, res) => {
+  res.serve("main");
+});
 ```
 
+As you can see, our Express server serves different pages based on the requested URL path, and React I80 router inside each page further determines the matching view based on the URL path.
+
+## Automatic rebuilding and reloading
+
+Whenever you change your source code, you must stop your server using `Ctrl-C`, rebuild using `npm run build`, and restart using `npm start`. This is very error-prone and tedious task.
+
+Try `node lib/server.js --watch` instead. Now, whenever you change your SSR source code, your SSR source files will be rebuilt, and the browser page will be reloaded to apply the change.
+
+This automatic rebuild feature is enabled through two parts. First, you use `@gourmet/server-args` to parse the standard command line arguments such as `--watch` into an object like `{watch: true}`.
+
+```js
+const serverArgs = require("@gourmet/server-args");
+//...
+const args = serverArgs({workDir: __dirname + "/.."});
+```
+
+`workDir` option to `serverArgs()` specifies the working directory of Gourmet SSR project where `gourmet_config.js` is located.
+
+Next, you hand over the parsed command line object to the middleware.
+
+```js
+app.use(gourmet.middleware(args));
+```
+
+Through this, the Gourmet SSR Client Library knows when `--watch` command line option is given, and enables the watch mode.
+
+Gourmet SSR 
 
 > #### Containers vs components
 >
