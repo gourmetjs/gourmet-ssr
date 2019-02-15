@@ -23,7 +23,7 @@ git checkout step2
 ## Styling using Bootstrap
 
 In this tutorial, we will use Bootstrap for styling our app.
-The simplest way to use Bootstrap in Gourmet SSR project is to use the public CDN version of compiled CSS.
+The simplest way to use Bootstrap in Gourmet SSR project is to use the public CDN version of the compiled CSS.
 Edit the `gourmet_config.js` file as below.
 
 ### gourmet_config.js
@@ -62,7 +62,7 @@ This way, you can eliminate the dependency to the external CDN, and serve Bootst
 
 ### src/containers/PublicPage.js
 
-`PublicPage.js` has been edited slightly to apply Bootstrap's CSS class name `container` to the container `div` and to remove the placeholder message.
+`PublicPage.js` should be edited slightly to apply Bootstrap's CSS class name `container` to the container `div` and to remove the placeholder message.
 
 ```js
 import React from "react";
@@ -86,7 +86,7 @@ export default function PublicPage() {
 
 ### src/containers/LoginView.js
 
-`LoginView.js` is converted to a class based component and got a lot more complicated as below.
+`LoginView` is converted to a class based component to support more features as below.
 
 ```js
 import React, {Component} from "react";
@@ -145,21 +145,227 @@ export default class LoginView extends Component {
 
 You may not be familiar with the [class fields](http://2ality.com/2017/07/class-fields.html) syntax of JavaScript such as `static HEADER = ...` and `usernameRef = ...` above. It is not in the final standard yet, but it is currently at stage 3, which is the last stage of the standardization process, so it is pretty safe to use. Gourmet SSR supports the syntax by default.
 
-We use `CenterBox` to render a centered, shadow-boxed content. It also supports a header and a footer. Inside the `CenterBox`, we use `HorzForm` to render a form that supports an API based submit button.
+We use `CenteredBox` to render a centered, shadow-boxed content. It also supports a header and a footer. Inside the `CenteredBox`, we use `HorzForm` to render a form that supports an API based submit button.
 
 The actual form fields are given as children of `HorzForm`. We use Bootstrap's styling class names to control the layout. See Bootstrap documentation for details.
 
-When user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully resolved with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
+When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully resolved with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
 
-In our example, if POST http request to `/api/login`.
+In our code above, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise was resolved with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
 
-If promise is resolved 
- general components to implement a form based user interface here.
+### src/containers/SignupView.js
 
-## 
-> #### Containers vs components
->
+The signup view is a little longer than the login view because of more fields, but the structure is exactly the same.
 
+```js
+import React, {Component} from "react";
+import i80 from "@gourmet/react-i80";
+import CenteredBox from "../components/CenteredBox";
+import HorzForm from "../components/HorzForm";
+import * as httpApi from "../utils/httpApi";
+
+export default class SignupView extends Component {
+  static HEADER = (<h3>Create an account</h3>);
+  static FOOTER = (<p>Already have an account? <a href="/login">Log in instead.</a></p>);
+
+  nameRef = React.createRef();
+  usernameRef = React.createRef();
+  passwordRef = React.createRef();
+  verifyRef = React.createRef();
+
+  render() {
+    return (
+      <CenteredBox header={SignupView.HEADER} footer={SignupView.FOOTER}>
+        <HorzForm onSubmit={() => this.onSubmit()}>
+          <div className="form-group row">
+            <label htmlFor="name" className="col-sm-3 col-form-label">Name:</label>
+            <div className="col-sm-9">
+              <input type="text" className="form-control" id="name" name="name"
+                placeholder="Your name" ref={this.nameRef} required
+              />
+            </div>
+          </div>
+          <div className="form-group row">
+            <label htmlFor="username" className="col-sm-3 col-form-label">Username:</label>
+            <div className="col-sm-9">
+              <input type="text" className="form-control" id="username" name="username"
+                placeholder="Username, not email" ref={this.usernameRef}
+                required pattern="[A-Za-z0-9._-]{2,20}"
+                title="Only letters, numbers, dots, dashes and underscores / min 2 characters"
+              />
+            </div>
+          </div>
+          <div className="form-group row">
+            <label htmlFor="password" className="col-sm-3 col-form-label">Password:</label>
+            <div className="col-sm-9">
+              <input type="password" className="form-control" id="password" name="password"
+                placeholder="Password" ref={this.passwordRef} required/>
+            </div>
+          </div>
+          <div className="form-group row">
+            <label htmlFor="verify" className="col-sm-3 col-form-label">Verify:</label>
+            <div className="col-sm-9">
+              <input type="password" className="form-control" id="verify" name="verify"
+                placeholder="Type in password again" ref={this.verifyRef} required/>
+            </div>
+          </div>
+          <div className="form-group row">
+            <div className="offset-sm-3 col-sm-9">
+              <button type="submit" className="btn btn-primary">
+                Create an account
+              </button>
+            </div>
+          </div>
+        </HorzForm>
+      </CenteredBox>
+    );
+  }
+
+  onSubmit() {
+    const name = this.nameRef.current.value.trim();
+    const username = this.usernameRef.current.value.toLowerCase().trim();
+    const password = this.passwordRef.current.value.trim();
+    const verify = this.verifyRef.current.value.trim();
+
+    if (password !== verify)
+      throw Error("Two passwords don't match");
+
+    return httpApi.post("/api/signup", {name, username, password}).then(() => {
+      i80.goToUrl("/");
+    });
+  }
+}
+```
+
+## New components
+
+### src/components/CenteredBox.js
+
+We use the inline style in this component to customize the look. This is a pattern that we found very effective: use a CSS framework such as Bootstrap as the base stylesheet globally, and do additional per-component customization using the inline style, or other CSS-in-JS libraries such as Emotion, which we will show you in the following chapter.
+
+Key point here is to keep the customization as minimal as possible. Because browsers are designed to work best with global CSS stylesheets, minimizing JavaScript based ad-hoc styling will save you from many unexpected issues down the line.
+
+```js
+import React from "react";
+
+export default function CenteredBox({width="25em", header, footer, children}) {
+  return (
+    <div style={{width, margin: "2em auto"}}>
+      <div style={{textAlign: "center"}}>
+        {header}
+      </div>
+      <div style={{
+        margin: "2em 0",
+        border: "1px solid #ddd",
+        boxShadow: "2px 2px 8px 1px rgba(0, 0, 0, 0.2)"
+      }}>
+        {children}
+      </div>
+      <div className="text-muted">
+        {footer}
+      </div>
+    </div>
+  );
+}
+```
+
+### src/components/HorzForm.js
+
+This is the actual implementation of `HorzForm` component. Please see the explanation of `LoginView.js` above for details about the `onSubmit` handler.
+
+```js
+import React, {Component} from "react";
+
+export default class HorzForm extends Component {
+  state = {
+    isPending: false,
+    lastError: null
+  };
+
+  componentDidMount() {
+    // In our case, maintaining `_isMounted` flag is the best way to handle a case
+    // that this component is unmounted by user's `onSubmit` handler.
+    // Usually, it is considered as an antipattern: https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  render() {
+    const {children} = this.props;
+    const {isPending, lastError} = this.state;
+    return (
+      <>
+        <form onSubmit={e => this.onSubmit(e)} style={{margin: "1.5em 2em 0.5em 2em"}}>
+          <fieldset disabled={isPending}>
+            {lastError && (
+              <div className="form-group row">
+                <div className="alert alert-danger" style={{width: "100%"}}>{lastError}</div>
+              </div>
+            )}
+            {children}
+          </fieldset>
+        </form>
+        {isPending && (
+          <div className="progress" style={{height: "8px", opacity: "0.65"}}>
+            <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: "100%"}}/>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  onSubmit(e) {
+    const {onSubmit} = this.props;
+
+    e.preventDefault();
+
+    if (this.state.isPending)
+      return;
+
+    this.setState({isPending: true});
+
+    Promise.resolve().then(() => {
+      return onSubmit();
+    }).then(clear => {
+      if (clear && this._isMounted) {
+        this.setState({
+          isPending: false,
+          lastError: null
+        });
+      }
+    }).catch(err => {
+      if (this._isMounted) {
+        this.setState({
+          isPending: false,
+          lastError: err.message || err.toString()
+        });
+      }
+    });
+  }
+}
+```
+
+## Containers vs components
+
+`CenteredBox` and `HorzForm` are general components that are located inside `src/components`, while pages and views were put inside `src/containers`.
+In this tutorial, we follow a simple but powerful pattern that divides components into two categories: containers and components. Our criteria is as follows.
+
+Containers:
+- are aware of the application's specific configuration.
+- provide "glue" work such as invoking server APIs.
+- are usually not reusable in other apps.
+
+Components:
+- are general components that are reusable in other apps.
+- get data to render from the parent as props.
+- delegate "glue" logic to the parent through event handler props.
+
+See [this article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) for more details about this pattern. In the article, the author uses "container components" and "presentational components". We call them simply "containers" and "components", but the idea is almost the same.
+
+By following this pattern, and decoupling your components from application specifics, your code will get cleaner and the reusability will increase.
 
 ### Data access API
 
