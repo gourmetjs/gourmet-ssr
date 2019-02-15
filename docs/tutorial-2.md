@@ -461,7 +461,7 @@ export function post(url, body) {
 
 ## Running and testing
 
-Now you are done with all the source code modifications for this step. Build and run your app using `npm run dev`. Open your browser, go to `http://localhost:3000/login`, enter arbitrary username and password (`foo` / `1234`), and click the `Log in` button. You should see the browser get redirected to `/`, and the following message in the terminal where you are running the server.
+Now you are done with all the source code modifications for this step. Build and run your app using `npm run dev`. Open your browser, go to `http://localhost:3000/login`, enter arbitrary username and password (e.g. `foo` / `1234`), and click the `Log in` button. You should see the browser get redirected to `/`, and the following message in the terminal where you are running the server.
 
 ```text
 /api/login { username: 'foo', password: '1234' }
