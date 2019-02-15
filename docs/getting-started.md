@@ -34,7 +34,7 @@ app.listen(3000, () => {
 
 Now install `express` and run the server.
 
-```bash
+```text
 $ npm install express --save
 $ npm start
 Server is listening on port 3000
@@ -50,7 +50,7 @@ Now, we will add the Server-Side Rendering (SSR) feature using Gourmet SSR to ou
 
 Install additional packages we need as below:
 
-```bash
+```text
 $ npm install @gourmet/gourmet-cli @gourmet/preset-react --save-dev
 $ npm install react react-dom --save-dev
 ```
@@ -126,7 +126,7 @@ app.listen(3000, () => {
 
 Before to run your server, you have to install the Gourmet SSR Client Library that loads and executes your Gourmet SSR bundles. This one needs to go inside `dependencies` because your server depends on it.
 
-```bash
+```text
 $ npm install @gourmet/client-lib --save
 ```
 

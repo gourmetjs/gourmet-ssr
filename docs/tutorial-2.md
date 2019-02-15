@@ -14,7 +14,7 @@ The final result would look like the following.
 
 You can get the final source files of this step from the GitHub repo as below:
 
-```sh
+```text
 git clone https://github.com/gourmetjs/news-ssr
 cd news-ssr
 git checkout step2
@@ -47,7 +47,7 @@ module.exports = {
 
 Alternatively, you can install the `bootstrap` package and import the compiled CSS file at the pages you want to use as below.
 
-```sh
+```text
 npm install bootstrap --save-dev
 ```
 
@@ -149,15 +149,15 @@ We use `CenteredBox` to render a centered, shadow-boxed content. It also support
 
 The actual form fields are given as children of `HorzForm`. We use Bootstrap's styling class names to control the layout. See Bootstrap documentation for details.
 
-When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully resolved with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
+When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully resolved with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction on the form. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
 
-In our code above, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise was resolved with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
+In our code above, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise will be resolved with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
 
 ### src/containers/SignupView.js
 
 The signup view is a little longer than the login view because of more fields, but the structure is exactly the same.
 
-```js
+```jsx
 import React, {Component} from "react";
 import i80 from "@gourmet/react-i80";
 import CenteredBox from "../components/CenteredBox";
@@ -241,9 +241,9 @@ export default class SignupView extends Component {
 
 ### src/components/CenteredBox.js
 
-We use the inline style in this component to customize the look. This is a pattern that we found very effective: use a CSS framework such as Bootstrap as the base stylesheet globally, and do additional per-component customization using the inline style, or other CSS-in-JS libraries such as Emotion, which we will show you in the following chapter.
+We use the inline style in this component to customize the look. This is a pattern that we found very effective: use a CSS framework such as Bootstrap as the base stylesheet globally, and do the additional per component customization using the inline style, or other CSS-in-JS libraries such as Emotion, which we will show you in the following steps.
 
-Key point here is to keep the customization as minimal as possible. Because browsers are designed to work best with global CSS stylesheets, minimizing JavaScript based ad-hoc styling will save you from many unexpected issues down the line.
+Key point here is to utilize the global stylesheet whenever possible, and keep the per component styling as minimal as possible. Because browsers are designed to work best with global CSS stylesheets, minimizing JavaScript based ad-hoc styling will save you from many unexpected issues down the line.
 
 ```js
 import React from "react";
@@ -354,29 +354,115 @@ export default class HorzForm extends Component {
 In this tutorial, we follow a simple but powerful pattern that divides components into two categories: containers and components. Our criteria is as follows.
 
 Containers:
-- are aware of the application's specific configuration.
+- are aware of the application specific configuration.
 - provide "glue" work such as invoking server APIs.
 - are usually not reusable in other apps.
 
 Components:
-- are general components that are reusable in other apps.
-- get data to render from the parent as props.
+- are building blocks that are reusable in other apps.
+- usually get the data to render from the parent as props.
 - delegate "glue" logic to the parent through event handler props.
 
 See [this article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) for more details about this pattern. In the article, the author uses "container components" and "presentational components". We call them simply "containers" and "components", but the idea is almost the same.
 
 By following this pattern, and decoupling your components from application specifics, your code will get cleaner and the reusability will increase.
 
-### Data access API
+## Other minor changes
 
-### Adding authentication
+### lib/server.js
 
-### Fetching data
+We should modify the server to add dummy APIs for testing.
 
-### Using CSS
+```js
+"use strict";
 
-### Debugging the app
+const express = require("express");
+const gourmet = require("@gourmet/client-lib");
+const serverArgs = require("@gourmet/server-args");
+const bodyParser = require("body-parser");
 
-### Deploying the production build on AWS using Elastic Beanstalk
+const args = serverArgs({workDir: __dirname + "/.."});
+const app = express();
 
-### Polyfill and browser support
+app.use(bodyParser.json());
+app.use(gourmet.middleware(args));
+
+app.post("/api/signup", (req, res) => {
+  console.log("/api/signup", req.body);
+  res.json({});
+});
+
+app.post("/api/login", (req, res) => {
+  console.log("/api/login", req.body);
+  res.json({});
+});
+
+app.get(["/login", "/signup"], (req, res) => {
+  res.serve("public");
+});
+
+app.get(["/", "/saved"], (req, res) => {
+  res.serve("main");
+});
+
+app.use(gourmet.errorMiddleware());
+
+app.listen(args.port, () => {
+  console.log(`Server is listening on port ${args.port}`);
+});
+```
+
+Because we use a new package `body-parser` to parse the JSON payload from the client, we need to install it.
+
+```text
+npm install body-parser --save
+```
+
+### src/utils/httpApi.js
+
+This is a small helper to send HTTP GET or POST request to the server, using the [standard](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) `fetch()` method. It takes care of the JSON encoding/decoding of the payload, and the error response formatted by `gourmet.errorMiddleware()`.
+
+```js
+export function send(url, options) {
+  return fetch(url, options).then(res => {
+    return res.json().then(data =>{
+      if (res.status !== 200) {
+        const obj = data.error || {};
+        const err = new Error(obj.message || res.statusText);
+        err.code = obj.code;
+        err.statusCode = obj.statusCode || res.status;
+        err.detail = obj.detail;
+        throw err;
+      }
+      return data;
+    });
+  });
+}
+
+export function get(url) {
+  return send(url, {
+    headers: {
+      "accept": "application/json"
+    }
+  });
+}
+
+export function post(url, body) {
+  return send(url, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "accept": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+}
+```
+
+## Running and testing
+
+Now you are done with all the source code modifications for this step. Build and run your app using `npm run dev`. Open your browser, go to `http://localhost:3000/login`, enter arbitrary username and password (`foo` / `1234`), and click the `Log in` button. You should see the browser get redirected to `/`, and the following message in the terminal where you are running the server.
+
+```text
+/api/login { username: 'foo', password: '1234' }
+```

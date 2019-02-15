@@ -149,7 +149,7 @@ app.listen(3000, () => {
 > The HTML output has all elements it needs to render the initial user interface - great for SEO and user experience.
 > 
 `, `
-\`\`\`bash
+\`\`\`html
 $ curl http://localhost:3000
 <!doctype html>
 <html lang="en">

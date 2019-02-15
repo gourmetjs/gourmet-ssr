@@ -25,7 +25,7 @@ This app works as follows:
 
 Create a new directory named `news-ssr`, and inside, create files as below. Alternatively, you can get these files from the GitHub repo if you want.
 
-```sh
+```text
 git clone https://github.com/gourmetjs/news-ssr
 cd news-ssr
 git checkout step1
@@ -207,7 +207,7 @@ export default function SavedView() {
 
 Now, install dependencies and run the app.
 
-```sh
+```text
 npm install
 npm run build
 npm start
@@ -327,7 +327,7 @@ If you run the script, `modemon` will start your server by launching `lib/server
 
 Now, keep the following command running in the background while you are working on the source code to get quick feedback.
 
-```sh
+```text
 npm run dev
 ```
 

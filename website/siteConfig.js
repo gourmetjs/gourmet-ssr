@@ -89,9 +89,14 @@ const siteConfig = {
     "/js/code-block-buttons.js"
   ],
 
+/*
+  // Apparently, Docusaurus automatically scans the CSS files in `static/css` and embed them in `main.css`.
+  // If we specify CSS files here, they will end up being duplicated.
   stylesheets: [
+    "/css/prism-custom.css",
     "/css/code-block-buttons.css"
   ],
+*/
 
   // On page navigation for the current documentation page.
   onPageNav: "separate",
@@ -111,6 +116,8 @@ const siteConfig = {
   // You may provide arbitrary config keys to be used as needed by your
   // template. For example, if you need your repo"s URL...
   //   repoUrl: "https://github.com/facebook/test-site",
+
+  usePrism: true
 };
 
 module.exports = siteConfig;
