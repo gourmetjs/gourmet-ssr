@@ -1,6 +1,6 @@
 ---
 id: tutorial-1
-title: Creating a Basic Structure of the News App
+title: Tutorial: Intro
 ---
 
 ## What we will build
@@ -28,10 +28,10 @@ Create a new directory named `news-ssr`, and inside, create files as below. Alte
 ```sh
 git clone https://github.com/gourmetjs/news-ssr
 cd news-ssr
-git checkout step-1a
+git checkout step1
 ```
 
-#### package.json
+### package.json
 
 ```json
 {
@@ -57,7 +57,7 @@ git checkout step-1a
 }
 ```
 
-#### lib/server.js
+### lib/server.js
 
 ```js
 "use strict";
@@ -86,7 +86,7 @@ app.listen(args.port, () => {
 });
 ```
 
-#### gourmet_config.js
+### gourmet_config.js
 
 ```js
 module.exports = {
@@ -97,7 +97,7 @@ module.exports = {
 };
 ```
 
-#### src/containers/PublicPage.js
+### src/containers/PublicPage.js
 
 ```js
 import React from "react";
@@ -120,7 +120,7 @@ export default function PublicPage() {
 }
 ```
 
-#### src/containers/MainPage.js
+### src/containers/MainPage.js
 
 ```js
 import React from "react";
@@ -143,7 +143,7 @@ export default function MainPage() {
 }
 ```
 
-#### src/containers/LoginView.js
+### src/containers/LoginView.js
 
 ```js
 import React from "react";
@@ -157,7 +157,7 @@ export default function LoginView() {
 }
 ```
 
-#### src/containers/SignupView.js
+### src/containers/SignupView.js
 
 ```js
 import React from "react";
@@ -171,7 +171,7 @@ export default function SignupView() {
 }
 ```
 
-#### src/containers/NewsView.js
+### src/containers/NewsView.js
 
 ```js
 import React from "react";
@@ -187,7 +187,7 @@ export default function NewsView() {
 }
 ```
 
-#### src/containers/SavedView.js
+### src/containers/SavedView.js
 
 ```js
 import React from "react";
@@ -226,7 +226,9 @@ You will see screens like these.
 
 ## Routing using React I80
 
-React I80 is a tiny routing library specifically designed for Gourmet SSR. Using React I80, you can divide the user interface of your app into more manageable smaller units called views, and associate them with URLs. Also, you can group multiple views into pages.
+React I80 is a tiny, isomorphic routing library specifically designed for Gourmet SSR. Using React I80, you can divide the user interface of your app into more manageable smaller units called views, and associate them with URLs. Also, you can group multiple views into pages.
+
+### Pages and Views
 
 Switching between views inside the same page happens on the client-side and no round-trip to the server is made. On the other hand, each page is a completely separated HTML endpoint from the other. A transition between pages always happens in a clean, new browser session.
 
@@ -242,43 +244,7 @@ MainPage ----+-- NewsView
              +-- SavedView
 ```
 
-Inside `src/containers/PublicPage.js`, routes are defined as follows:
-
-```js
-i80([
-  ["/login", LoginView],
-  ["/signup", SignupView]
-]);
-```
-
-`i80()` is a top-level function exported by `@gourmet/react-i80` to define routes for the page. You must call the function once at the global level to initialize React I80. `i80()` expects an array of arrays containing a URL path and React view component pair.
-
-Inside the page's rendering function, the `<ActiveRoute>` component is used to render a view that matches with the current URL. See below.
-
-```js
-// If the current URL is "/login", the following code:
-<div>
-  <h1>Public Page</h1>
-  <ActiveRoute/>
-</div>
-
-// is effectively the same as:
-<div>
-  <h1>Public Page</h1>
-  <LoginView/>
-</div>
-```
-
-To use React I80, you should add `@gourmet/group-react-i80` as a dependency in addition to `@gourmet/preset-react`. `@gourmet/group-react-i80` is a group of sub-packages that enables a React I80 support in your project.
-
-Inside your SSR code, you use `@gourmet/react-i80` to implement your routing logic. `@gourmet/react-i80` is a main package that exposes user APIs. It comes as a sub-package in `@gourmet/group-react-i80`, so you don't need to include it as a dependency. Just import it inside your SSR code and Gourmet Builder will resolve it to the sub-package inside `@gourmet/group-react-i80`.
-
-> #### Preset vs group
-> In Gourmet SSR, a preset is a complete set of sub-packages that defines the target environment of your Gourmet SSR project. Presets are mutually exclusive, so your app must use only one preset in your app. (e.g. React vs Vue)
->
-> On the other hand, a group is a set of related sub-packages to support an addition functionality, on top of a preset. Internally, groups are used as building blocks of presets too.
-
-Now, take a look at the part of server code that renders the pages.
+First, the server is responsible for routing requests to the corresponding pages based on URLs.
 
 ```js
 app.get(["/login", "/signup"], (req, res) => {
@@ -290,15 +256,50 @@ app.get(["/", "/saved"], (req, res) => {
 });
 ```
 
-As you can see, our Express server serves different pages based on the requested URL path, and React I80 router inside each page further determines the matching view based on the URL path.
+And then, inside each page, you define routes for the page using the top-level `i80()` function, exported by `@gourmet/react-i80`. For example, the public page defines its routes as below:
+
+```js
+import i80, {ActiveRoute} from "@gourmet/react-i80";
+//...
+i80([
+  ["/login", LoginView],
+  ["/signup", SignupView]
+]);
+```
+
+You must call `i80()` function just once at the global level to initialize React I80. `i80()` expects an array of arrays containing a pair of URL path and React view component.
+
+Inside the page's rendering function, the `ActiveRoute` component is used to render a view that matches with the current URL.
+
+```js
+export default function PublicPage() {
+  return (
+    <div>
+      <h1>Public Page</h1>
+      <ActiveRoute/>
+    </div>
+  );
+}
+```
+
+### About the package dependency
+
+To use React I80 in your project, you must add `@gourmet/group-react-i80` as a dependency in addition to `@gourmet/preset-react`. `@gourmet/group-react-i80` is a group of sub-packages that enables a React I80 support in your project.
+
+Inside your SSR code, you use `@gourmet/react-i80` to implement your routing logic as shown above. `@gourmet/react-i80` is a main package that exposes user APIs. It comes as a sub-package in `@gourmet/group-react-i80`, so you don't need to add it as a dependency in your `package.json`. Just import it inside your SSR code and Gourmet Builder will resolve it to the sub-package inside `@gourmet/group-react-i80`.
+
+> #### Preset vs group
+> In Gourmet SSR, a preset is a complete set of sub-packages that defines the target environment of your Gourmet SSR project. Presets are mutually exclusive, so your app must use only one preset in your app. (e.g. React vs Vue)
+>
+> On the other hand, a group is a set of related sub-packages to support an addition functionality, on top of a preset. Internally, groups are used as building blocks of presets too.
 
 ## Automatic rebuilding and reloading
 
-Whenever you change your source code, you must stop your server using `Ctrl-C`, rebuild using `npm run build`, and restart using `npm start`. This is very error-prone and tedious task.
+Whenever you change your source code, you must stop your server using `Ctrl-C`, rebuild using `npm run build`, and restart using `npm start`. This is a very error-prone and tedious task.
 
-Try `node lib/server.js --watch` instead. Now, whenever you change your SSR source code, your SSR source files will be rebuilt, and the browser page will be reloaded to apply the change.
+Try `node lib/server.js --watch` instead. Now, whenever you change your SSR related source code, it will be rebuilt, and the browser page will be reloaded to apply the change.
 
-This automatic rebuild feature is enabled through two parts. First, you use `@gourmet/server-args` to parse the standard command line arguments such as `--watch` into an object like `{watch: true}`.
+This automatic rebuild feature is enabled through two parts. First, you use `@gourmet/server-args` to parse the standard command line options such as `--watch` into an arguments object like `{watch: true}`.
 
 ```js
 const serverArgs = require("@gourmet/server-args");
@@ -306,50 +307,39 @@ const serverArgs = require("@gourmet/server-args");
 const args = serverArgs({workDir: __dirname + "/.."});
 ```
 
-`workDir` option to `serverArgs()` specifies the working directory of Gourmet SSR project where `gourmet_config.js` is located.
+`workDir` option to `serverArgs()` specifies the working directory of Gourmet SSR project where `gourmet_config.js` is located. Gourmet SSR needs to know the directory to locate the build output directory `.gourmet`.
 
-Next, you hand over the parsed command line object to the middleware.
+Next, you hand over the parsed arguments object to the middleware.
 
 ```js
 app.use(gourmet.middleware(args));
 ```
 
-Through this, the Gourmet SSR Client Library knows when `--watch` command line option is given, and enables the watch mode.
+Through this, Gourmet SSR knows when `--watch` command line option is given, and enables the watch mode.
 
-Gourmet SSR 
+One missing part here is the rebuild of the server code. The `--watch` option monitors SSR related code only. If you change your server code, you still need to manually stop and restart. That is where `nodemon` can be helpful. In `package.json`, we have `dev` script defined as below:
 
-> #### Containers vs components
->
+```text
+"dev": "nodemon --ignore src lib/server.js -- --watch"
+```
 
-> #### Why another routing library?
-> We could certainly use routing libraries already exist out there such as React Router.
+If you run the script, `modemon` will start your server by launching `lib/server.js` with `--watch` option, and it will restart your sever whenever it detects changes in `*.js` files. However, it excludes `src` directory from monitoring because the files inside it will be monitored and rebuilt separately by Gourmet SSR.
 
-## Auto-rebuild using `--watch`
+Now, keep the following command running in the background while you are working on the source code to get quick feedback.
 
+```sh
+npm run dev
+```
 
+> #### What about hot module reloading?
+> Currently, Gourmet SSR doesn't support the hot module reloading (HMR), because our experimental implementation with `react-hot-loader` didn't give us enough confidence that it works stable for every scenario. Perhaps, we may want to give it another try when React itself becomes more [HMR friendly](https://twitter.com/dan_abramov/status/1055707267037749249).
 
+## More on the server implementation helpers
 
-### Pages and Views
+### `serverArgs()`
 
+`--watch` is not the only option that `@gourmet/server-args` supports. In our server code above, we use `args.port` to get the port number to listen to. It will be derived from `--port` command line option, `PORT` environment variable, or default value of `3000`, in the order of priority. See [this](#LATER) for more details.
 
- using React I80
+### `gourmet.errorMiddleware()`
 
-
-
-### Data access API
-
-### Adding authentication
-
-### Fetching data
-
-### Using React I80 for a routing
-
-### Using CSS
-
-### Debugging the app
-
-### Adding watch mode
-
-### Deploying the production build on AWS using Elastic Beanstalk
-
-### Polyfill and browser support
+`gourmet.errorMiddleware()` returns an error handling middleware (a Connect/Express compatible middleware with four arguments `(err, req, res, next)`). You should install it as the last error handler in your middleware chain. In addition to the customizable error page rendering, it will also take care of Gourmet SSR specific tasks such as embedding `--watch` support runtime in error pages, and sending out JSON error responses (i.e. `{error: {...}}`) to JSON requests. See [this](#LATER) for more details.
