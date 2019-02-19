@@ -145,13 +145,13 @@ export default class LoginView extends Component {
 
 You may not be familiar with the [class fields](http://2ality.com/2017/07/class-fields.html) syntax of JavaScript such as `static HEADER = ...` and `usernameRef = ...` above. It is not in the final standard yet, but it is currently at stage 3, which is the last stage of the standardization process, so it is pretty safe to use. Gourmet SSR supports the syntax by default.
 
-We use `CenteredBox` to render a centered, shadow-boxed content. It also supports a header and a footer. Inside the `CenteredBox`, we use `HorzForm` to render a form that supports an API based submit button.
+We use `CenteredBox` to wrap our content inside a centered, shadowed box. It also supports a header and a footer. Inside the `CenteredBox`, we use `HorzForm` to render a form that supports an API based submit button. `CenteredBox` and `HorzForm` are general components that will will show you shortly.
 
-The actual form fields are given as children of `HorzForm`. We use Bootstrap's styling class names to control the layout. See Bootstrap documentation for details.
+The actual form fields are given as children of `HorzForm`. We use Bootstrap's styling class names to control the layout. See Bootstrap [documentation](https://getbootstrap.com/docs/4.3/components/forms/) for details.
 
 When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully resolved with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction on the form. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
 
-In our code above, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise will be resolved with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
+In our code above, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using React I80's `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise will be resolved with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
 
 ### src/containers/SignupView.js
 
@@ -350,8 +350,7 @@ export default class HorzForm extends Component {
 
 ## Containers vs components
 
-`CenteredBox` and `HorzForm` are general components that are located inside `src/components`, while pages and views were put inside `src/containers`.
-In this tutorial, we follow a simple but powerful pattern that divides components into two categories: containers and components. Our criteria is as follows.
+`CenteredBox` and `HorzForm` are general components that are located inside `src/components`, while pages and views were put inside `src/containers`. In this tutorial, we follow a simple but powerful pattern that divides components into two categories: containers and components. Our criteria is as follows.
 
 Containers:
 - are aware of the application specific configuration.
@@ -412,6 +411,8 @@ app.listen(args.port, () => {
 });
 ```
 
+### package.json
+
 Because we use a new package `body-parser` to parse the JSON payload from the client, we need to install it.
 
 ```text
@@ -461,7 +462,11 @@ export function post(url, body) {
 
 ## Running and testing
 
-Now you are done with all the source code modifications for this step. Build and run your app using `npm run dev`. Open your browser, go to `http://localhost:3000/login`, enter arbitrary username and password (e.g. `foo` / `1234`), and click the `Log in` button. You should see the browser get redirected to `/`, and the following message in the terminal where you are running the server.
+Now you are done with all the source code modifications for this step. Build and run your app using `npm run dev`.
+
+Open your browser, go to `http://localhost:3000/login`, enter arbitrary username and password (e.g. `foo` / `1234`), and click the `Log in` button.
+
+You should see the browser get redirected to `/`, and the following message in the terminal where you are running the server.
 
 ```text
 /api/login { username: 'foo', password: '1234' }
