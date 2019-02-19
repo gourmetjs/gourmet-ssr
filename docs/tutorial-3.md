@@ -1,11 +1,11 @@
 ---
 id: tutorial-3
-title: Adding Authentication
+title: Implementing Authentication
 ---
 
 ## What we will add in this step
 
-We will add the actual authentication functionality to our server. On the client side, there will not be much modification other than adding the common header containing `Log out` button to `MainPage` as shown below.
+We will add the actual authentication functionality to our server. On the user interface side, there will not be much modification other than adding the common header containing `Log out` button to `MainPage` as shown below.
 
 
 ![Header with Logout button](assets/tutorial-header.png)
@@ -61,9 +61,7 @@ Instead of using the raw SQL or fully-abstract ORM, we chose [Knex](https://knex
 
 ```
 
-We added two scripts `migrate` and `migrate:rollback` to use Knex's migration commands as described below.
-
-We also added the following packages as dependencies:
+We added the following new packages as dependencies:
 
 - `@gourmet/error`: A helper for constructing Error objects.
 - `knex`: Knex core
@@ -73,11 +71,13 @@ We also added the following packages as dependencies:
 - `connect-session-knex`: Knex backed session store
 - `bcrypt`: Node.js binding of bcrypt, a popular password hashing library written in C.
 
+We also added two scripts `migrate` and `migrate:rollback` to use Knex's migration commands as described below.
+
 ### migrations/0000_create_users.js
 
-Knex provides a structured way to maintain the history of your SQL schema modifications (e.g. `CREATE TABLE` or `ALTER TABLE`) through a feature called migrations. Migrations help you implement your schema modifications incrementally in backward compatible way, which is important in production environment - you can't simply delete the whole database and restart with a different schema.
+Knex provides a structured way to maintain the history of your SQL schema modifications (e.g. `CREATE TABLE`, `ALTER TABLE`, ...etc) through a feature called migrations. Migrations help you implement your schema modifications incrementally in backward compatible way, which is important in production environment - you can't simply delete the whole database and restart with a different schema.
 
-You put your migration files under `migrations` directory of your project's root. Each migration file is a JavaScript file exporting `up()` and `down()` functions. This is our migration file to create `users` table.
+You put your migration files under `migrations` directory of your project's root. Each migration file is a JavaScript file exporting `up()` and `down()` functions. This is our migration file to create the `users` table.
 
 ```js
 
@@ -97,9 +97,9 @@ exports.down = async function(knex) {
 
 See Knex [documentation](https://knexjs.org/#Schema) for details about the schema API.
 
-When you run `npm run migrate` command, `up()` function of each migration file will be invoked, in the lexicographical order of filenames - that's why the filename starts with digits. Knex internally maintains a separate database table (`knex_migrations`) to keep track of the applied migrations and skips already applied ones. So, `npm run migrate` command is safe to run many times.
+When you run `npm run migrate` command, which, in turn, runs `knex migrate:latest`, `up()` function of each migration file will be invoked, in the lexicographical order of filenames - that's why the filename starts with digits. Knex internally maintains a separate database table (`knex_migrations`) to keep track of the applied migrations and skips already applied ones. So, `npm run migrate` command is safe to run many times.
 
-`down()` is a reverse function of `up()` to rollback the schema modification, invoked by `npm run migrate:rolleback` command.
+`down()` is a reverse function of `up()` that rolls back the schema modification, invoked by `npm run migrate:rolleback` command.
 
 ### knexfile.js
 
@@ -137,7 +137,7 @@ Our `knexfile.js` exports a different configuration object based on the stage. I
 
 You can specify the stage using `STAGE` environment variable or `--stage` command line option. `@gourmet/server-args` will take care of these and return an object like `{stage: "local"}` for you.
 
-## Server code
+## Changes for server
 
 ### lib/server.js
 
@@ -208,11 +208,21 @@ app.listen(args.port, () => {
 });
 ```
 
-We use `express-session` middleware and `connect-session-knex` store to maintain users' session data. 
+We use [`express-session`](https://github.com/expressjs/session) middleware and [`connect-session-knex`](https://github.com/llambda/connect-session-knex) store to maintain users' session data, based on the browser's session cookie. See both packages' documentation for details about the cookie-based session management.
+
+We replaced dummy APIs in `/api/signup` and `/api/login` from the previous step with the actual implementation, using the account management helper functions exported by `account.js` module. We also added a new API `/api/logout`.
+
+Finally, we protected the routes in `MainPage` with `account.loginRequired` function so that only logged-in users can access those routes. Also, the currently logged-in user's information object is handed over to the SSR renderer (page and view) via `user` prop.
+
+> Note on `connect-session-knex`
+>
+> Currently, `connect-session-knex` creates a table for saving its session data if the table doesn't exist when initialized. Also, it cleans up expired session records periodically using the repeated `setTimeout`. For our tutorial, this is OK. In real production, however, this might cause performance issues or race conditions in a distributed multi-server setup.
+>
+> Also, it appears that `connect-session-knex` is not actively maintained. Be cautious when you use this package in your production environment.
 
 ### lib/knex.js
 
-This small module is used to share a singleton of Knex instance throughout our server code. We use `knexfile.js` here to centralize Knex configuration at one place.
+This small module is used to share a singleton of Knex instance throughout our server code. We also use `knexfile.js` here to centralize Knex configuration at one place.
 
 ```js
 "use strict";
@@ -221,6 +231,8 @@ module.exports = require("knex")(require("../knexfile.js"));
 ```
 
 ### lib/account.js
+
+This is a module that provides the account management helpers. Inside, we use `@gourmet/error` to construct error objects in more standardized way, centered around [`error.code`](https://nodejs.org/api/errors.html#errors_error_code) property. The purpose of this abstraction is to free the consumers of `account.js` module from dealing with raw errors generated by underlying SQL drivers.
 
 ```js
 "use strict";
@@ -356,3 +368,62 @@ exports.login = login;
 exports.loginRequired = loginRequired;
 exports.protectApi = protectApi;
 ```
+
+`loginRequired` and `protectApi` are both used to protect your routes from unauthenticated accesses. They are provided in the form of Express route handlers so that you can easily place them in front of your route handlers as shown in `server.js`.
+
+The difference between two is an error handling. `loginRequired` is for protecting the browser HTML endpoints and will redirect to the login page if the request is not authenticated, where as `protectApi` is for protecting APIs and will respond with the `ACCESS_DENIED` error. `protectApi` is currently not used, but we will need it soon in the next step.
+
+## Changes for user interface
+
+### src/containers/MainPage.js
+
+In Gourmet SSR, page components and React I80's view components receive the initial properties that you provided to `res.serve()` on the server. Using this method, we render the currently logged-in user's name here.
+
+```js
+import React from "react";
+import i80, {ActiveRoute} from "@gourmet/react-i80";
+import * as httpApi from "../utils/httpApi";
+import NewsView from "./NewsView";
+import SavedView from "./SavedView";
+
+i80([
+  ["/", NewsView],
+  ["/saved", SavedView]
+]);
+
+export default function MainPage({user}) {
+  return (
+    <div className="container" style={{padding: "2em 0"}}>
+      <div className="border-bottom mb-3 pb-2 text-right">
+        Hello {user.name}!
+        <button
+          type="button"
+          className="btn btn-outline-secondary btn-sm ml-3"
+          onClick={() => {
+            httpApi.post("/api/logout").then(() => {
+              i80.goToUrl("/login");
+            }).catch(err => {
+              console.error(err);
+            });
+          }}
+        >
+          Log out
+        </button>
+      </div>
+      <ActiveRoute/>
+    </div>
+  );
+}
+```
+
+## Running and testing
+
+Let's install newly added dependencies first, and then run the migrations to update the database schema, and finally build and run your app as usual.
+
+```text
+npm install
+npm run migrate
+npm run dev
+```
+
+Play with the app to verify the signup, login, and logout are all working correctly. Also, try to access `/` and `/saved` without a login to verify those routes are protected properly.

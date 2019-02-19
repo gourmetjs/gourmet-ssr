@@ -5,7 +5,7 @@ title: Tutorial: Intro
 
 ## What we will build
 
-In this tutorial, we will build a news reader application. Starting with a simple server and dummy user interface, we will add more features as we progress to show you how to build a fullstack application using Gourmet SSR.
+In this tutorial, we will build a news reader app. Starting with a simple server and dummy user interface, we will add more features as we progress to show you how to build a fullstack application using Gourmet SSR.
 
 First, let's take a look at the screenshot of the final app that we are going to build.
 
@@ -13,17 +13,21 @@ First, let's take a look at the screenshot of the final app that we are going to
 
 This app works as follows:
 
-- A user must login to the app to access this main screen.
-- The main screen has two panes that you can switch between using tabs.
+- A user must log in to the app to access this main screen.
+- The main screen has two panes that you can switch using tabs.
 - The "Latest News Headlines" pane displays a list of news articles fetched from `newsapi.org`.
 - The "Saved Articles" pane displays bookmarked news articles.
 - Bookmarks are saved per user account.
 - If there are more articles than displayed in the current pane, there will be a `Load more` button at the bottom of the list. If clicked, 10 more items are fetched and appended to the list.
 - A user can log out by clicking `Log out` button at the top right corner of the screen.
 
+> This tutorial assumes that you have read the [Getting Started](/getting-started) guide, and you already know key concepts described in it. If you haven't, please read it first and come back.
+
 ## Creating project files
 
-Create a new directory named `news-ssr`, and inside, create files as below. Alternatively, you can get these files from the GitHub repo if you want.
+Create a new directory named `news-ssr`, and inside, create files as you follow this tutorial.
+
+Alternatively, you can get these files from the GitHub repo if you want.
 
 ```text
 git clone https://github.com/gourmetjs/news-ssr
