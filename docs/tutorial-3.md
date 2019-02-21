@@ -377,12 +377,12 @@ The difference between two is an error handling. `loginRequired` is for protecti
 
 ### src/containers/MainPage.js
 
-In Gourmet SSR, page components and React I80's view components receive the initial properties that you provided to `res.serve()` on the server. Using this method, we render the currently logged-in user's name here.
+In Gourmet SSR, page components and React I80's view components receive the initial properties that you provided to `res.serve()` on the server. Using this mechanism, we render the currently logged-in user's name here.
 
 ```js
 import React from "react";
 import i80, {ActiveRoute} from "@gourmet/react-i80";
-import * as httpApi from "../utils/httpApi";
+import httpApi from "../utils/httpApi";
 import NewsView from "./NewsView";
 import SavedView from "./SavedView";
 
@@ -400,7 +400,10 @@ export default function MainPage({user}) {
           type="button"
           className="btn btn-outline-secondary btn-sm ml-3"
           onClick={() => {
-            httpApi.post("/api/logout").then(() => {
+            httpApi("/api/logout", {
+              method: "POST",
+              body: {}
+            }).then(() => {
               i80.goToUrl("/login");
             }).catch(err => {
               console.error(err);

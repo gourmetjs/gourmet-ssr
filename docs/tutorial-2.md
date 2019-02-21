@@ -58,6 +58,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 This way, you can eliminate the dependency to the external CDN, and serve Bootstrap from your own server together with other local assets which can be more efficient based on your deployment setup. However, for our tutorial, the public CDN works perfectly well.
 
+> If you import a CSS file in Gourmet SSR, it is statically linked to the HTML page as an external asset via a `<link rel="stylesheet">` tag.
+> All asset references inside it (`url`, `@import`, ...etc) will be processed as well.
+
 ## Revised page and views
 
 ### src/containers/PublicPage.js
@@ -91,9 +94,9 @@ export default function PublicPage() {
 ```js
 import React, {Component} from "react";
 import i80 from "@gourmet/react-i80";
+import httpApi from "../utils/httpApi";
 import CenteredBox from "../components/CenteredBox";
 import HorzForm from "../components/HorzForm";
-import * as httpApi from "../utils/httpApi";
 
 export default class LoginView extends Component {
   static HEADER = (<h3>Log in to NewsApp</h3>);
@@ -136,7 +139,10 @@ export default class LoginView extends Component {
     const username = this.usernameRef.current.value.toLowerCase().trim();
     const password = this.passwordRef.current.value.trim();
 
-    return httpApi.post("/api/login", {username, password}).then(() => {
+    return httpApi("/api/login", {
+      method: "POST",
+      body: {username, password}
+    }).then(() => {
       i80.goToUrl("/");
     });
   }
@@ -160,9 +166,9 @@ The signup view is a little longer than the login view because of more fields, b
 ```jsx
 import React, {Component} from "react";
 import i80 from "@gourmet/react-i80";
+import httpApi from "../utils/httpApi";
 import CenteredBox from "../components/CenteredBox";
 import HorzForm from "../components/HorzForm";
-import * as httpApi from "../utils/httpApi";
 
 export default class SignupView extends Component {
   static HEADER = (<h3>Create an account</h3>);
@@ -230,7 +236,10 @@ export default class SignupView extends Component {
     if (password !== verify)
       throw Error("Two passwords don't match");
 
-    return httpApi.post("/api/signup", {name, username, password}).then(() => {
+    return httpApi("/api/signup", {
+      method: "POST",
+      body: {name, username, password}
+    }).then(() => {
       i80.goToUrl("/");
     });
   }
@@ -283,9 +292,6 @@ export default class HorzForm extends Component {
   };
 
   componentDidMount() {
-    // In our case, maintaining `_isMounted` flag is the best way to handle a case
-    // that this component is unmounted by user's `onSubmit` handler.
-    // Usually, it is considered as an antipattern: https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
     this._isMounted = true;
   }
 
@@ -347,6 +353,11 @@ export default class HorzForm extends Component {
   }
 }
 ```
+
+> You might think maintaining a flag `_isMounted` to avoid calling `setState()` for the unmounted component is an antipattern according to the React [documentation](https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html).
+>
+> However, it is the best way to handle a case that `HorzForm` component gets unmounted by user's `onSubmit` handler.
+> Unlike the example in the React documentation, this is a legitimate use case that doesn't result in a memory leak.
 
 ## Containers vs components
 
@@ -413,18 +424,50 @@ app.listen(args.port, () => {
 
 ### package.json
 
-Because we use a new package `body-parser` to parse the JSON payload from the client, we need to install it.
+Because we use a new package `body-parser` to parse the JSON payload from the client, we need to add it.
 
-```text
-npm install body-parser --save
+```json
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "@gourmet/server-args": "^1.2.1",
+    "@gourmet/client-lib": "^1.2.0",
+    "body-parser": "^1.18.3"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/group-react-i80": "^1.2.0",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "nodemon": "^1.18.10"
+  }
+}
 ```
 
 ### src/utils/httpApi.js
 
-This is a small helper to send HTTP GET or POST request to the server, using the [standard](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) `fetch()` method. It takes care of the JSON encoding/decoding of the payload, and the error response formatted by `gourmet.errorMiddleware()`.
+This is a small helper to send HTTP requests to the server, using the [standard](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) `fetch()` method. It takes care of the JSON encoding/decoding of the payload, and the error response formatted by `gourmet.errorMiddleware()`.
 
 ```js
-export function send(url, options) {
+export default function httpApi(url, options) {
+  options = Object.assign({
+    headers: {},
+    credentials: "same-origin"
+  }, options);
+  options.headers.accept = "application/json";
+
+  if (options.body) {
+    options.body = JSON.stringify(options.body);
+    options.headers["content-type"] = "application/json";
+  }
+
   return fetch(url, options).then(res => {
     return res.json().then(data =>{
       if (res.status !== 200) {
@@ -439,30 +482,16 @@ export function send(url, options) {
     });
   });
 }
-
-export function get(url) {
-  return send(url, {
-    headers: {
-      "accept": "application/json"
-    }
-  });
-}
-
-export function post(url, body) {
-  return send(url, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "accept": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-}
 ```
 
 ## Running and testing
 
-Now you are done with all the source code modifications for this step. Build and run your app using `npm run dev`.
+Now you are done with all the source code modifications for this step. Build and run your app as below.
+
+```text
+npm install
+npm run dev
+```
 
 Open your browser, go to `http://localhost:3000/login`, enter arbitrary username and password (e.g. `foo` / `1234`), and click the `Log in` button.
 
