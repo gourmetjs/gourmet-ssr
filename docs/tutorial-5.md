@@ -16,7 +16,7 @@ Because your SSR code for rendering the user interface can run on both sides of 
 1. When you render the initial content on the server-side, initiated by `res.serve()`.
 2. When you update the DOM on the client side, usually initiated by the user's action such as clicking a button.
 
-To make your life easier, it is best to make your data fetching code "isomorphic" as well. To support this, we encourage the following architecture as best practice.
+To make your life easier, it is best to make your data fetching code "isomorphic" as well. To support this, we recommend the following architecture as a best practice.
 
 - Implement all your data access as public APIs, and make them accessible equally from server and client.
 - Inside your SSR code, fetch data by invoking the APIs.
@@ -26,7 +26,7 @@ Because your API's signatures are the same regardless of where your code is runn
 - [`fetch`](https://fetch.spec.whatwg.org/) - You can use `fetch` as a global function just like you do in the modern browser. Under the hood, Gourmet SSR uses [`node-fetch`](https://github.com/bitinn/node-fetch) to simulate the browser API.
 - [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) - You can use `XMLHttpRequest` as a global object. We recommend `fetch`, but `XMLHttpRequest` is also provided for the case that you might need to use the legacy codebase. `XMLHttpRequest` in Gourmet SSR is based on [`node-XMLHttpRequest`](https://github.com/driverdan/node-XMLHttpRequest) with the local file access and the synchronous operation removed.
 
-### `static getInitialProps()`
+### `getInitialProps()`
 
 In addition to the basic transport layer, Gourmet SSR also provides a higher level assistance for the isomorphic data fetching.
 When the rendering happens on the server-side, Gourmet SSR looks for a static function `getInitialProps()` in your page component. If it is defined, the static function gets called before the rendering begins. If it returns a promise, Gourmet SSR will wait for the promise to be resolved.
@@ -49,15 +49,15 @@ One last important issue regarding the isomorphic data fetching is the authentic
 2. The user visits `/` to get the HTML page containing the latest news articles.
 3. The server receives the request and verifies the session cookie.
 4. The server calls `res.serve("main")` to render the page.
-5. Gourmet SSR calls the static `getInitialProps()` function of the page/view component.
+5. Gourmet SSR calls the static `getInitialProps()` function of the view component `NewsView`.
 6. The `getInitialProps()` function sends a HTTP GET request to the server API `/api/news` to fetch the latest news articles.
 7. The server API `/api/news` verifies the session cookie, and sends back the news articles.
-8. Gourmet SSR continues to render the initial content with the result of `getInitialProps()`.
+8. Gourmet SSR starts to render the initial content with the result of `getInitialProps()`.
 9. The server-rendered HTML page is sent back to the browser.
 10. The user clicks `Load more` button to fetch more articles.
 11. The browser sends a HTTP GET request to the server API `/api/news` to fetch more articles.
 12. The server API `/api/news` verifies the session cookie, and sends back the news articles.
-13. The browser appends new articles to the DOM.
+13. The browser appends the fetched articles to the DOM.
 
 Without a special care, the request will fail at #7, because the request is generated on the server-side, via the isomorphic `fetch` method provided by Gourmet SSR. Unlike the browser, the server-side `fetch` can't attach the session cookie to the request automatically. It always generates clean, cookie-less requests by default. There are possibly many solutions to this problem. A few examples are:
 
@@ -66,15 +66,15 @@ Without a special care, the request will fail at #7, because the request is gene
 - Allow server-side API requests only from legitimate IP addresses.
 - Use a global-super-power token for server-side API requests. You must keep this token secret.
 
-We use method #1 for this tutorial. It is simple, and at least, as secure as the cookie based authentication itself which is widely used for many decades.
+We use method #1 for this tutorial. It is simple, and at least, as secure as the cookie based authentication method itself, which is widely used for many decades.
 
 ## Changes for containers
 
 ### src/containers/NewsView.js
 
-`NewsView` now becomes a class-based component to define `getInitialProps()` as a static function. `getInitialProps()` receives an argument `gmctx`, which is an object that contains the context information about the current rendering request of Gourmet SSR. We need it to extract the session cookie from the original client request (#3 in the flow). We will explain more on `gmctx` later.
+`NewsView` now becomes a class-based component to define `getInitialProps()` as a static function. `getInitialProps()` receives an argument `gmctx`, which is an object that contains the context information about the current rendering request of Gourmet SSR. We need it to extract the session cookie from the original client request (#3 in the flow above). We will explain more on `gmctx` later.
 
-Because `NewsView` and `SavedView` are almost the same, we factored the actual implementation out to `ArticlesPane` to share.
+Because `NewsView` and `SavedView` are almost the same, we factored the actual implementation out to `ArticlesPane`.
 
 ```js
 import React, {Component} from "react";
@@ -114,14 +114,9 @@ export default class SavedView extends Component {
 
 ### src/containers/ArticlesPane.js
 
-?? Emotion as a separate section? ??
+React components in this step, including `ArticlesPane` here, use Emotion for styling. See the Emotion section below for more details about Emotion support in Gourmet SSR.
 
-Here, we use [`Emotion`](https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/) for styling. Gourmet SSR provides a seamless integration with Emotion, including the auto-enabling of `babel-plugin-emotion`, and the stream-based server rendering via `renderStylesToNodeStream()`.
-
-> Currently, Gourmet SSR supports Emotion v9. We are aware of the release of v10.
-> It appears that v10 is a drastic departure from the previous version with many breaking changes in the user-facing API.
-> We didn't spend enough time to evaluate the benefit of changes yet.
-> Stay tuned!
+`ArticlesPane` is a container component that provides most glue logic through event handlers (`loadMore`, `saveArticle`, and `unsaveArticle`), between a view component (`NewsView` or `SavedView`) as a parent, and presentational components (`Articles`, `ErrorBanner`, and `LoadButton`) as children.
 
 ```js
 import React, {Component} from "react";
@@ -266,4 +261,74 @@ export default class ArticlesPane extends Component {
 }
 ```
 
+## HTTP Requests from SSR code
+
+### Gourmet Context: `gmctx`
+
+When you call `res.serve()` to render a HTML page using Gourmet SSR, a new context object with the information about the rendering request is created internally. By convention, we call the context object `gmctx`.
+
+There are many ways to get `gmctx`. It is given to page and view components as a prop. It is also given to `getInitialProps()` as the only argument. It is also possible to get `gmctx` through [React Context](https://reactjs.org/docs/context.html) inside a rendering tree using `@gourmet/react-context-gmctx` module.
+
+A few useful properties of `gmctx` are as follows:
+
+| Property          | On server  | On client | Description            |
+|-------------------|------------|-----------|------------------------|
+| isServer          | true       | false     |                        |
+| isClient          | false      | true      |                        |
+| reqArgs.url       | /foo?a=1   | N/A       | path + query string    |
+| reqArgs.method    | GET        | N/A       |                        |
+| reqArgs.headers   | {...}      | N/A       | lower-cased            |
+| reqArgs.encrypted | false      | N/A       | `req.socket.encrypted` |
+
+### src/utils/httpApi.js
+
+```js
+import selfUrl from "@gourmet/self-url";
+
+export default function httpApi(url, options, gmctx) {
+  options = Object.assign({
+    headers: {},
+    credentials: "same-origin"
+  }, options);
+  options.headers.accept = "application/json";
+
+  if (gmctx && gmctx.isServer) {
+    // `/api/news` => `https://myserver.example.com/api/news`
+    url = selfUrl(gmctx, url);
+
+    // copy the "cookie" header from the original request
+    options.headers.cookie = gmctx.reqArgs.headers.cookie;
+  }
+
+  if (options.body) {
+    options.body = JSON.stringify(options.body);
+    options.headers["content-type"] = "application/json";
+  }
+
+  return fetch(url, options).then(res => {
+    return res.json().then(data =>{
+      if (res.status !== 200) {
+        const obj = data.error || {};
+        const err = new Error(obj.message || res.statusText);
+        err.code = obj.code;
+        err.statusCode = obj.statusCode || res.status;
+        err.detail = obj.detail;
+        throw err;
+      }
+      return data;
+    });
+  });
+}
+```
+
 ## Gourmet Context: `gmctx`
+
+
+?? Emotion as a separate section? ??
+
+Here, we use [`Emotion`](https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/) for styling. Gourmet SSR provides a seamless integration with Emotion, including the auto-enabling of `babel-plugin-emotion`, and the stream-based server rendering via `renderStylesToNodeStream()`.
+
+> Currently, Gourmet SSR supports Emotion v9. We are aware of the release of v10.
+> It appears that v10 is a drastic departure from the previous version with many breaking changes in the user-facing API.
+> We didn't spend enough time to evaluate the benefit of changes yet.
+> Stay tuned!

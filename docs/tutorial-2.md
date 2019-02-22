@@ -151,7 +151,7 @@ export default class LoginView extends Component {
 
 You may not be familiar with the [class fields](http://2ality.com/2017/07/class-fields.html) syntax of JavaScript such as `static HEADER = ...` and `usernameRef = ...` above. It is not in the final standard yet, but it is currently at stage 3, which is the last stage of the standardization process, so it is pretty safe to use. Gourmet SSR supports the syntax by default.
 
-We use `CenteredBox` to wrap our content inside a centered, shadowed box. It also supports a header and a footer. Inside the `CenteredBox`, we use `HorzForm` to render a form that supports an API based submit button. `CenteredBox` and `HorzForm` are general components that will will show you shortly.
+We use `CenteredBox` to wrap our content inside a centered, shadowed box. It also supports a header and a footer. Inside the `CenteredBox`, we use `HorzForm` to render a form that supports an API based submit button. `CenteredBox` and `HorzForm` are presentational components that we will show you shortly.
 
 The actual form fields are given as children of `HorzForm`. We use Bootstrap's styling class names to control the layout. See Bootstrap [documentation](https://getbootstrap.com/docs/4.3/components/forms/) for details.
 
@@ -359,23 +359,23 @@ export default class HorzForm extends Component {
 > However, it is the best way to handle a case that `HorzForm` component gets unmounted by user's `onSubmit` handler.
 > Unlike the example in the React documentation, this is a legitimate use case that doesn't result in a memory leak.
 
-## Containers vs components
+## Container components vs presentational components
 
-`CenteredBox` and `HorzForm` are general components that are located inside `src/components`, while pages and views were put inside `src/containers`. In this tutorial, we follow a simple but powerful pattern that divides components into two categories: containers and components. Our criteria is as follows.
+`CenteredBox` and `HorzForm` are presentational components that are located inside `src/components`, while pages and views were put inside `src/containers`. In this tutorial, we follow a simple but powerful pattern that divides components into two categories: container components and presentational components. Our criteria is as follows.
 
-Containers:
+Container components:
+- are concerned with how things work.
 - are aware of the application specific configuration.
 - provide "glue" work such as invoking server APIs.
 - are usually not reusable in other apps.
 
-Components:
+Presentational components:
+- are concerned with how things look.
 - are building blocks that are reusable in other apps.
 - usually get the data to render from the parent as props.
 - delegate "glue" logic to the parent through event handler props.
 
-See [this article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) for more details about this pattern. In the article, the author uses "container components" and "presentational components". We call them simply "containers" and "components", but the idea is almost the same.
-
-By following this pattern, and decoupling your components from application specifics, your code will get cleaner and the reusability will increase.
+See [this article](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) for more details. By following this pattern, and decoupling your presentational components from application specifics, your code will get cleaner and the reusability will increase.
 
 ## Other minor changes
 
