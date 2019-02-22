@@ -142,14 +142,13 @@ exports.save = save;
 exports.unsave = unsave;
 ```
 
-`getNews()` is a function that fetches the latest news articles from News API, and converts them to the internal format. We use `node-fetch` module to generate HTTP requests from Node.js to News API. Each article will get an unique ID which is an MD5 hex digest of the article's URL.
+`getNews()` is a function that fetches the latest news articles from News API, and converts them to the internal format. We use `node-fetch` module to generate HTTP requests from our server to News API. We generate an unique ID for each article, which is an MD5 hex digest of the article's URL.
 
-`getSaved()` is a function that fetches the saved articles (bookmarks) from the database. `save()` and `unsave()` are also bookmark management functions.
-
+`getSaved()` is a function that fetches the saved articles (bookmarks) from the database. `save()` and `unsave()` are functions for saving and deleting the saved articles.
 
 ### lib/server.js
 
-We add four more API routes (`GET /api/news`, `GET /api/saved`, `POST /api/saved`, `DELETE /api/saved/{id}`), implemented using helpers from `news.js`, to our server.
+We add four more API routes (`GET /api/news`, `GET /api/saved`, `POST /api/saved`, `DELETE /api/saved/{id}`) to our server. They are implemented using helpers from `news.js`.
 
 ```js
 "use strict";
@@ -310,11 +309,23 @@ Each bookmark has the following fields:
 
 ## Running and testing
 
-As we added a new dependency and a migration file, you need to run the following to test.
+As we added a new dependency and a migration file, you need to run the following once.
 
 ```text
 npm install
 npm run migrate
+```
+
+You must provide an API key for News API in `NEWS_API_KEY` environment variable to run your server as below. (Be sure to replace the example hex string with your own API key.)
+
+```text
+NEWS_API_KEY=0123456789abcdef0123456789abcdef npm run dev
+```
+
+For Windows, run the following instead.
+
+```text
+set NEWS_API_KEY=0123456789abcdef0123456789abcdef
 npm run dev
 ```
 
@@ -322,4 +333,4 @@ Open your browser, and log in to the app. Enter `http://localhost:3000/api/news`
 
 ![JSON encoded news articles](assets/tutorial-news-json.png)
 
-Be sure to test the API in your browser after a successful login, because our news related APIs are protected by `account.projectApi`, which requires an authenticated session cookie.
+> It is important to test the API in your browser after a successful login, because our news related APIs are protected by `account.projectApi`, which requires an authenticated session cookie.
