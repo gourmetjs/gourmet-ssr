@@ -155,9 +155,9 @@ We use `CenteredBox` to wrap our content inside a centered, shadowed box. It als
 
 The actual form fields are given as children of `HorzForm`. We use Bootstrap's styling class names to control the layout. See Bootstrap [documentation](https://getbootstrap.com/docs/4.3/components/forms/) for details.
 
-When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully resolved with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction on the form. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
+When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully fulfilled with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction on the form. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
 
-In our code above, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using React I80's `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise will be resolved with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
+In our code above, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using React I80's `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise will be fulfilled with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
 
 ### src/containers/SignupView.js
 
@@ -250,7 +250,7 @@ export default class SignupView extends Component {
 
 ### src/components/CenteredBox.js
 
-We use the inline style in this component to customize the look. This is a pattern that we found very effective: use a CSS framework such as Bootstrap as the base stylesheet globally, and do the additional per component customization using the inline style, or other CSS-in-JS libraries such as Emotion, which we will show you in the following steps.
+We use the inline style in this component to customize the look. This is a pattern that we found very effective: use a CSS framework such as Bootstrap as a base stylesheet globally, and do the additional, per component customization using the inline style, or other CSS-in-JS libraries such as Emotion, which we will show you in the following steps.
 
 Key point here is to utilize the global stylesheet whenever possible, and keep the per component styling as minimal as possible. Because browsers are designed to work best with global CSS stylesheets, minimizing JavaScript based ad-hoc styling will save you from many unexpected issues down the line.
 
