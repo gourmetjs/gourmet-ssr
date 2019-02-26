@@ -20,43 +20,6 @@ git checkout step3
 
 ## Editing / creating source files
 
-### package.json
-
-```json
-{
-  "private": true,
-  "scripts": {
-    "build": "gourmet build",
-    "start": "node lib/server.js",
-    "dev": "nodemon --ignore src lib/server.js -- --watch",
-    "migrate": "knex migrate:latest",
-    "migrate:rollback": "knex migrate:rollback"
-  },
-  "dependencies": {
-    "express": "^4.16.4",
-    "@gourmet/server-args": "^1.2.1",
-    "@gourmet/client-lib": "^1.2.0",
-    "body-parser": "^1.18.3",
-    "@gourmet/error": "^0.3.1",
-    "knex": "^0.16.3",
-    "pg": "^7.8.0",
-    "sqlite3": "^4.0.6",
-    "express-session": "^1.15.6",
-    "connect-session-knex": "^1.4.0",
-    "bcrypt": "^3.0.4"
-  },
-  "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
-    "@gourmet/preset-react": "^1.2.2",
-    "@gourmet/group-react-i80": "^1.2.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "nodemon": "^1.18.10"
-  }
-}
-
-```
-
 ### knexfile.js _(new)_
 
 ```js
@@ -358,6 +321,43 @@ export default function MainPage({user}) {
     </div>
   );
 }
+```
+
+### package.json
+
+```json
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch",
+    "migrate": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "@gourmet/server-args": "^1.2.1",
+    "@gourmet/client-lib": "^1.2.0",
+    "body-parser": "^1.18.3",
+    "@gourmet/error": "^0.3.1",
+    "knex": "^0.16.3",
+    "pg": "^7.8.0",
+    "sqlite3": "^4.0.6",
+    "express-session": "^1.15.6",
+    "connect-session-knex": "^1.4.0",
+    "bcrypt": "^3.0.4"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/group-react-i80": "^1.2.0",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "nodemon": "^1.18.10"
+  }
+}
+
 ```
 
 ## Database access using Knex

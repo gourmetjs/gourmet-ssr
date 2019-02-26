@@ -22,25 +22,6 @@ git checkout step2
 
 ## Editing / creating source files
 
-### gourmet_config.js
-
-```js
-module.exports = {
-  pages: {
-    public: "./src/containers/PublicPage",
-    main: "./src/containers/MainPage"
-  },
-
-  config: {
-    html: {
-      headTop: [
-        '<link href="//stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">'
-      ]
-    }
-  }
-};
-```
-
 ### lib/server.js
 
 ```js
@@ -80,33 +61,6 @@ app.use(gourmet.errorMiddleware());
 app.listen(args.port, () => {
   console.log(`Server is listening on port ${args.port}`);
 });
-```
-
-### package.json
-
-```json
-{
-  "private": true,
-  "scripts": {
-    "build": "gourmet build",
-    "start": "node lib/server.js",
-    "dev": "nodemon --ignore src lib/server.js -- --watch"
-  },
-  "dependencies": {
-    "express": "^4.16.4",
-    "@gourmet/server-args": "^1.2.1",
-    "@gourmet/client-lib": "^1.2.0",
-    "body-parser": "^1.18.3"
-  },
-  "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
-    "@gourmet/preset-react": "^1.2.2",
-    "@gourmet/group-react-i80": "^1.2.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "nodemon": "^1.18.10"
-  }
-}
 ```
 
 ### src/containers/PublicPage.js _(new)_
@@ -404,6 +358,52 @@ export default function httpApi(url, options) {
       return data;
     });
   });
+}
+```
+
+### gourmet_config.js
+
+```js
+module.exports = {
+  pages: {
+    public: "./src/containers/PublicPage",
+    main: "./src/containers/MainPage"
+  },
+
+  config: {
+    html: {
+      headTop: [
+        '<link href="//stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">'
+      ]
+    }
+  }
+};
+```
+
+### package.json
+
+```json
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "@gourmet/server-args": "^1.2.1",
+    "@gourmet/client-lib": "^1.2.0",
+    "body-parser": "^1.18.3"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/group-react-i80": "^1.2.0",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "nodemon": "^1.18.10"
+  }
 }
 ```
 

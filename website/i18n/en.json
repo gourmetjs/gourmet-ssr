@@ -275,6 +275,18 @@
       "examples/hello/node_modules/@babel/types/README": {
         "title": "examples/hello/node_modules/@babel/types/README"
       },
+      "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map-support/LICENSE": {
+        "title": "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map-support/LICENSE"
+      },
+      "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map-support/README": {
+        "title": "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map-support/README"
+      },
+      "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map/CHANGELOG": {
+        "title": "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map/CHANGELOG"
+      },
+      "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map/README": {
+        "title": "examples/hello/node_modules/@gourmet/plugin-source-map-support/node_modules/source-map/README"
+      },
       "examples/hello/node_modules/@gourmet/promise-create-write-stream/README": {
         "title": "examples/hello/node_modules/@gourmet/promise-create-write-stream/README"
       },
@@ -2110,18 +2122,6 @@
       },
       "examples/hello/node_modules/source-map-resolve/readme": {
         "title": "examples/hello/node_modules/source-map-resolve/readme"
-      },
-      "examples/hello/node_modules/source-map-support/LICENSE": {
-        "title": "examples/hello/node_modules/source-map-support/LICENSE"
-      },
-      "examples/hello/node_modules/source-map-support/node_modules/source-map/CHANGELOG": {
-        "title": "examples/hello/node_modules/source-map-support/node_modules/source-map/CHANGELOG"
-      },
-      "examples/hello/node_modules/source-map-support/node_modules/source-map/README": {
-        "title": "examples/hello/node_modules/source-map-support/node_modules/source-map/README"
-      },
-      "examples/hello/node_modules/source-map-support/README": {
-        "title": "examples/hello/node_modules/source-map-support/README"
       },
       "examples/hello/node_modules/source-map-url/changelog": {
         "title": "examples/hello/node_modules/source-map-url/changelog"

@@ -5,7 +5,85 @@ title: Finalizing the User Interface
 
 ## What we will add in this step
 
-We will add the user interface for browsing news articles, backed by server APIs we added in the previous step. This will finalize the app for our tutorial, because the next step will be all about deploying the final app in the production environment.
+We will add the user interface for browsing news articles, backed by server APIs we added in the previous step. This will finalize the app for our tutorial. The next step will be all about deploying the final app in the production environment.
+
+## Editing / creating source files
+
+### gourmet_config.js
+
+We used [Font Awesome](https://fontawesome.com/) for rendering icons. Let's use the public CDN version of the compiled CSS.
+
+```js
+module.exports = {
+  pages: {
+    public: "./src/containers/PublicPage",
+    main: "./src/containers/MainPage"
+  },
+
+  config: {
+    html: {
+      headTop: [
+        '<link href="//stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">'
+      ]
+    },
+    "html:main": {
+      headTop: [
+        '<link href="//use.fontawesome.com/releases/v5.0.12/css/all.css" rel="stylesheet" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">'
+      ]
+    }
+  }
+};
+```
+
+Because we use the icons in the main page only, we added `:main`. By doing this, links to both Bootstrap and Font Awesome CSS will be inserted to `main` page, but only a Boottsrap CSS link will be inserted to `public` page.
+
+### package.json
+
+```json
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch",
+    "migrate": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "@gourmet/server-args": "^1.2.1",
+    "@gourmet/client-lib": "^1.2.0",
+    "body-parser": "^1.18.3",
+    "@gourmet/error": "^0.3.1",
+    "knex": "^0.16.3",
+    "pg": "^7.8.0",
+    "sqlite3": "^4.0.6",
+    "express-session": "^1.15.6",
+    "connect-session-knex": "^1.4.0",
+    "bcrypt": "^3.0.4",
+    "node-fetch": "^2.3.0"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/group-react-i80": "^1.2.0",
+    "@gourmet/group-react-emotion": "^1.1.0",
+    "@gourmet/self-url": "^1.1.0",
+    "classnames": "^2.2.6",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "nodemon": "^1.18.10"
+  }
+}
+```
+
+We added the following new packages to `devDependencies`.
+
+- `@gourmet/group-react-emotion`: A group of sub-packages to support React Emotion in Gourmet SSR.
+- `@gourmet/self-url`: A relative to absolute URL converter for `httpApi()`.
+- `classnames`: A helper `cx` function to manipulate `className` prop.
+
+
 
 ## Fetching data for SSR
 

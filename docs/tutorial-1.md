@@ -35,32 +35,6 @@ cd news-ssr
 git checkout step1
 ```
 
-### package.json
-
-```json
-{
-  "private": true,
-  "scripts": {
-    "build": "gourmet build",
-    "start": "node lib/server.js",
-    "dev": "nodemon --ignore src lib/server.js -- --watch"
-  },
-  "dependencies": {
-    "express": "^4.16.4",
-    "@gourmet/server-args": "^1.2.1",
-    "@gourmet/client-lib": "^1.2.0"
-  },
-  "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
-    "@gourmet/preset-react": "^1.2.2",
-    "@gourmet/group-react-i80": "^1.2.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "nodemon": "^1.18.10"
-  }
-}
-```
-
 ### lib/server.js
 
 ```js
@@ -88,17 +62,6 @@ app.use(gourmet.errorMiddleware());
 app.listen(args.port, () => {
   console.log(`Server is listening on port ${args.port}`);
 });
-```
-
-### gourmet_config.js
-
-```js
-module.exports = {
-  pages: {
-    public: "./src/containers/PublicPage",
-    main: "./src/containers/MainPage"
-  }
-};
 ```
 
 ### src/containers/PublicPage.js
@@ -204,6 +167,43 @@ export default function SavedView() {
       <p>Saved article #3</p>
     </div>
   );
+}
+```
+
+### gourmet_config.js
+
+```js
+module.exports = {
+  pages: {
+    public: "./src/containers/PublicPage",
+    main: "./src/containers/MainPage"
+  }
+};
+```
+
+### package.json
+
+```json
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "@gourmet/server-args": "^1.2.1",
+    "@gourmet/client-lib": "^1.2.0"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/group-react-i80": "^1.2.0",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "nodemon": "^1.18.10"
+  }
 }
 ```
 
