@@ -617,7 +617,7 @@ module.exports = {
 
 ### Best practice
 
-Because your SSR code for rendering the user interface can run on both sides of target environment - server and browser, there are two cases in the data fetching.
+Because your SSR code for rendering the user interface can run on both sides of the target environment - server and browser, there are two cases in the data fetching.
 
 1. When you render the initial content on the server-side, initiated by `res.serve()`.
 2. When you update the DOM on the client side, usually initiated by the user's action such as clicking a button.
@@ -637,7 +637,7 @@ Because your API signatures are the same regardless of where your code is runnin
 In addition to the basic transport layer, Gourmet SSR also provides a higher level assistance for the isomorphic data fetching.
 When the rendering happens on the server-side, Gourmet SSR looks for a static function `getInitialProps()` in your page component. If it is defined, the static function gets called before the rendering begins. If it returns a promise, Gourmet SSR will wait for the promise to be resolved.
 
-`getInitialProps()` is supposed to return an object, or a promise to be fulfilled with an object. The properties of the object will be handed over to the the page component as React props.
+`getInitialProps()` is supposed to return an object, or a promise to be fulfilled with an object. The properties of the object will be handed over to the page component as React props.
 
 The initial properties returned by the page component's `getInitialProps()` will be serialized as a JSON object and transferred to the client. That is, the page component's `getInitialProps()` will be executed on the server-side only.
 
@@ -672,7 +672,7 @@ Without a special care, the request will fail at #7, because the request is gene
 - Allow server-side API requests only from a predefined set of IP addresses.
 - Use a global-super-power token for server-side API requests. You must keep this token secret.
 
-We use method #1 for this tutorial. It is simple, and at least, as secure as the cookie based authentication method itself, which is widely used for many decades.
+We use method #1 for this tutorial. It is simple, and at least, as secure as the cookie-based authentication method itself, which is widely used for many decades.
 
 ### Converting a relative path to an absolute path
 
@@ -728,7 +728,7 @@ export default function httpApi(url, options, gmctx) {
 
 ## Emotion Support in Gourmet SSR
 
-We use [`Emotion`](https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/) for styling components in this step. Gourmet SSR provides a seamless integration with Emotion, including the auto-enabling of `babel-plugin-emotion`, and the stream-based server rendering via `renderStylesToNodeStream()`.
+We use [`Emotion`](https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/) for styling components in this step. Gourmet SSR provides seamless integration with Emotion, including the auto-enabling of `babel-plugin-emotion`, and the stream-based server rendering via `renderStylesToNodeStream()`.
 
 As we explained in [Adding Real UI and Styling](/docs/tutorial-2) step, we recommend a pattern that uses a CSS framework such as Bootstrap as a base stylesheet globally, and do the additional, per-component customization using the inline style or Emotion.
 
@@ -798,7 +798,7 @@ A static function `fetchInitialArticles()` is used as a helper to implement the 
 
 ### `TabbedPanes`
 
-This component implements the tabbed panes using Bootstrap's [card with nav](https://getbootstrap.com/docs/4.0/components/card/#navigation). `MainPage` uses this to implement the tabbed UI.
+This component implements the tabbed panes using Bootstrap's [card with nav](https://getbootstrap.com/docs/4.0/components/card/#navigation). `MainPage` uses this to provide the tabbed UI.
 
 ### `ErrorBanner`
 
@@ -833,4 +833,4 @@ npm run dev
 
 Don't forget to replace the example hex string with your own News API key.
 
-Now that you have completed the user interface and back-end API, you should be able to use all features as we planned in the beginning of this tutorial. Congratulations!
+Now that you have completed the user interface and back-end API, you should be able to use all features as we planned at the beginning of this tutorial. Congratulations!
