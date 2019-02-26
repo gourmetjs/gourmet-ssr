@@ -18,11 +18,7 @@ cd news-ssr
 git checkout step3
 ```
 
-## Database access using Knex
-
-We will use SQL database as a back-end storage for user authentication - maintaining usernames & password hashes, logged-in sessions, ...etc.
-
-Instead of using the raw SQL or fully-abstract ORM, we chose [Knex](https://knexjs.org/) as a [thin-layer](https://blog.logrocket.com/why-you-should-avoid-orms-with-examples-in-node-js-e0baab73fa5) to support multiple dialects of SQL engines. For this tutorial, we will use SQLite for local development, and PostreSQL for production deployment.
+## Editing / creating source files
 
 ### package.json
 
@@ -61,49 +57,7 @@ Instead of using the raw SQL or fully-abstract ORM, we chose [Knex](https://knex
 
 ```
 
-We added the following new packages as dependencies:
-
-- `@gourmet/error`: A helper for constructing Error objects.
-- `knex`: Knex core
-- `sqlite3`: SQLite client
-- `pg`: PostgreSQL client
-- `express-session`: Session middleware for Express
-- `connect-session-knex`: Knex backed session store
-- `bcrypt`: Node.js binding of bcrypt, a popular password hashing library written in C.
-
-We also added two scripts `migrate` and `migrate:rollback` to use Knex's migration commands as described below.
-
-### migrations/0000_create_users.js
-
-Knex provides a structured way to maintain the history of your SQL schema modifications (e.g. `CREATE TABLE`, `ALTER TABLE`, ...etc) through a feature called migrations. Migrations help you implement your schema modifications incrementally in backward compatible way, which is important in production environment - you can't simply delete the whole database and restart with a different schema.
-
-You put your migration files under `migrations` directory of your project's root. Each migration file is a JavaScript file exporting `up()` and `down()` functions. This is our migration file to create the `users` table.
-
-```js
-
-exports.up = async function(knex) {
-  await knex.schema.createTable("users", table => {
-    table.increments("id");
-    table.string("username").notNullable().unique();
-    table.string("password");
-    table.string("name");
-  });
-};
-
-exports.down = async function(knex) {
-  await knex.schema.dropTable("users");
-};
-```
-
-See Knex [documentation](https://knexjs.org/#Schema) for details about the schema API.
-
-When you run `npm run migrate` command, which, in turn, runs `knex migrate:latest`, `up()` function of each migration file will be invoked, in the lexicographical order of filenames - that's why the filename starts with digits. Knex internally maintains a separate database table (`knex_migrations`) to keep track of the applied migrations and skips already applied ones. So, `npm run migrate` command is safe to run many times.
-
-`down()` is a reverse function of `up()` that rolls back the schema modification, invoked by `npm run migrate:rolleback` command.
-
-### knexfile.js
-
-To execute migration commands, Knex CLI needs to know how to connect to the SQL database server. `knexfile.js` is a configuration file for that.
+### knexfile.js _(new)_
 
 ```js
 "use strict";
@@ -133,11 +87,22 @@ if (args.stage === "local") {
 module.exports = knexConfig;
 ```
 
-Our `knexfile.js` exports a different configuration object based on the stage. If the stage is `local` which is the default value in Gourmet SSR, SQLite database file `.news-ssr.sqlite3` is used. Otherwise, PostgreSQL is used with a connection string specified in `PG_CONNECTION_STRING` environment variable.
+### migrations/0000_create_users.js _(new)_
 
-You can specify the stage using `STAGE` environment variable or `--stage` command line option. `@gourmet/server-args` will take care of these and return an object like `{stage: "local"}` for you.
+```js
+exports.up = async function(knex) {
+  await knex.schema.createTable("users", table => {
+    table.increments("id");
+    table.string("username").notNullable().unique();
+    table.string("password");
+    table.string("name");
+  });
+};
 
-## Changes for server
+exports.down = async function(knex) {
+  await knex.schema.dropTable("users");
+};
+```
 
 ### lib/server.js
 
@@ -208,31 +173,7 @@ app.listen(args.port, () => {
 });
 ```
 
-We use [`express-session`](https://github.com/expressjs/session) middleware and [`connect-session-knex`](https://github.com/llambda/connect-session-knex) store to maintain users' session data, based on the browser's session cookie. See both packages' documentation for details about the cookie-based session management.
-
-We replaced dummy APIs in `/api/signup` and `/api/login` from the previous step with the actual implementation, using the account management helper functions exported by `account.js` module. We also added a new API `/api/logout`.
-
-Finally, we protected the routes in `MainPage` with `account.loginRequired` function so that only logged-in users can access those routes. Also, the currently logged-in user's information object is handed over to the SSR renderer (page and view) via `user` prop.
-
-> Note on `connect-session-knex`
->
-> Currently, `connect-session-knex` creates a table for saving its session data if the table doesn't exist when initialized. Also, it cleans up expired session records periodically using the repeated `setTimeout`. For our tutorial, this is OK. In real production, however, this might cause performance issues or race conditions in a distributed multi-server setup.
->
-> Also, it appears that `connect-session-knex` is not actively maintained. Be cautious when you use this package in your production environment.
-
-### lib/knex.js
-
-This small module is used to share a singleton of Knex instance throughout our server code. We also use `knexfile.js` here to centralize Knex configuration at one place.
-
-```js
-"use strict";
-
-module.exports = require("knex")(require("../knexfile.js"));
-```
-
-### lib/account.js
-
-This is a module that provides the account management helpers. Inside, we use `@gourmet/error` to construct error objects in more standardized way, centered around [`error.code`](https://nodejs.org/api/errors.html#errors_error_code) property. The purpose of this abstraction is to free the consumers of `account.js` module from dealing with raw errors generated by underlying SQL drivers.
+### lib/account.js _(new)_
 
 ```js
 "use strict";
@@ -369,15 +310,15 @@ exports.loginRequired = loginRequired;
 exports.protectApi = protectApi;
 ```
 
-`loginRequired` and `protectApi` are both used to protect your routes from unauthenticated accesses. They are provided in the form of Express route handlers so that you can easily place them in front of your route handlers as shown in `server.js`.
+### lib/knex.js _(new)_
 
-The difference between two is an error handling. `loginRequired` is for protecting the browser HTML endpoints and will redirect to the login page if the request is not authenticated, where as `protectApi` is for protecting APIs and will respond with the `ACCESS_DENIED` error. `protectApi` is currently not used, but we will need it soon in the next step.
+```js
+"use strict";
 
-## Changes for user interface
+module.exports = require("knex")(require("../knexfile.js"));
+```
 
 ### src/containers/MainPage.js
-
-In Gourmet SSR, page components and React I80's view components receive the initial properties that you provided to `res.serve()` on the server. Using this mechanism, we render the currently logged-in user's name here.
 
 ```js
 import React from "react";
@@ -419,7 +360,97 @@ export default function MainPage({user}) {
 }
 ```
 
+## Database access using Knex
+
+### Introduction
+
+We used the SQL database as back-end storage for user authentication - maintaining usernames & password hashes, logged-in sessions, ...etc.
+
+Instead of using the raw SQL or fully-abstract ORM, we chose [Knex](https://knexjs.org/) as a [thin-layer](https://blog.logrocket.com/why-you-should-avoid-orms-with-examples-in-node-js-e0baab73fa5) to support multiple dialects of SQL engines. For this tutorial, we used SQLite for local development, and PostreSQL for production deployment.
+
+### Migrations basic
+
+Knex provides a structured way to maintain the history of your SQL schema modifications (e.g. `CREATE TABLE`, `ALTER TABLE`, ...etc) through a feature called migrations. Migrations help you implement your schema modifications incrementally in a backward compatible way, which is important in production environment - you can't just delete the whole database and restart with a different schema.
+
+You put your migration files under `migrations` directory of your project's root. Each migration file is a JavaScript file exporting `up()` and `down()` functions. See `migrations/0000_create_users.js` file for a real example. It is responsible for creating the `users` table. See Knex [documentation](https://knexjs.org/#Schema) for details about the schema API.
+
+When you run `npm run migrate` command, which, in turn, runs `knex migrate:latest`, `up()` function of each migration file will be invoked, in the lexicographical order of filenames - that's why the filename starts with digits. Knex internally maintains a separate database table (`knex_migrations`) to keep track of the applied migrations and skips already applied ones. So, `npm run migrate` command is safe to run many times.
+
+`down()` is a reverse function of `up()` that rolls back the schema modification, invoked by `npm run migrate:rolleback` command.
+
+### Knex configuration file: `knexfile.js`
+
+To execute migration commands, Knex CLI needs to know how to connect to the SQL database server. `knexfile.js` is a configuration file for that.
+
+Our `knexfile.js` exports a different configuration object based on the stage. If the stage is `local` which is the default value in Gourmet SSR, an SQLite database file `.news-ssr.sqlite3` is used. Otherwise, PostgreSQL is used with a connection string specified in `PG_CONNECTION_STRING` environment variable.
+
+You can specify the stage using `STAGE` environment variable or `--stage` command line option. `@gourmet/server-args` will take care of these and return an object like `{stage: "local"}` for you.
+
+In addition to `knexfile.js`, we use `lib/knex.js` to share a singleton of Knex instance throughout our server code. `lib/knex.js` is implemented using `knexfile.js` to centralize Knex configuration at one place.
+
+## Session management with `express-session`
+
+We use [`express-session`](https://github.com/expressjs/session) middleware and [`connect-session-knex`](https://github.com/llambda/connect-session-knex) store to maintain users' session data, based on the browser's session cookie. See both packages' documentation for details about the cookie-based session management.
+
+> #### Note on `connect-session-knex`
+>
+> Currently, `connect-session-knex` creates a table for saving its session data if the table doesn't exist when initialized. Also, it cleans up expired session records periodically using the repeated `setTimeout`. For our tutorial, this is OK. In real production, however, this might cause performance issues or race conditions in a distributed multi-server setup.
+>
+> Also, it appears that `connect-session-knex` is not actively maintained. Be cautious when you use this package in your production environment.
+
+## Protecting server routes from unauthenticated accesses
+
+We added `lib/account.js` module to provide the account management helpers, and our server `lib/server.js` is modified to replaced dummy APIs in `/api/signup` and `/api/login` with the actual implementation using these helpers.
+
+Among the helpers, `loginRequired` and `protectApi` are both used to protect your routes from unauthenticated accesses. They are provided in the form of Express route handlers so that you can easily place them in front of your route handlers as shown in `server.js`.
+
+The difference between two is the error handling. `loginRequired` is for protecting the browser HTML endpoints and will redirect to the login page if the request is not authenticated, whereas `protectApi` is for protecting APIs and will respond with the `ACCESS_DENIED` error.
+
+We used `loginRequired` to protects all routes in `MainPage`, because they are private to logged in users. `protectApi` is currently not used, but we will need it soon in the next step.
+
+## Using `@gourmet/error`
+
+Inside `account.js` module, we use `@gourmet/error` to construct error objects in a more standardized way, centered around [`error.code`](https://nodejs.org/api/errors.html#errors_error_code) property. The purpose of this abstraction is to free the consumers of `account.js` module from dealing with raw errors generated by underlying SQL drivers.
+
+## Using the client props
+
+Inside `MainPage`, we need the profile information of currently logged-in user to render the greeting message `Hello {user.name}!`. In our server, this information is available in `req.user`, loaded by `loginRequired`. You can pass it as a second parameter of `res.serve()` to hand it over to the SSR renderer.
+
+```js
+// lib/server.js
+// ...
+app.get(["/", "/saved"], account.loginRequired, (req, res) => {
+  res.serve("main", {user: req.user});
+});
+```
+
+In Gourmet SSR, page and view components receive the client props that you provided to `res.serve()` as props. Using this mechanism, you can easily hand over the information from your server to SSR code.
+
+```js
+// src/containers/MainPage.js
+export default function MainPage({user}) {
+  //...
+  <div className="border-bottom mb-3 pb-2 text-right">
+    Hello {user.name}!
+    //...
+  </div>
+  //...
+}
+```
+
 ## Running and testing
+
+In this step, we added the following new packages as dependencies:
+
+- `@gourmet/error`: A helper for constructing Error objects.
+- `knex`: A SQL query builder.
+- `sqlite3`: SQLite database client.
+- `pg`: PostgreSQL database client.
+- `express-session`: A session middleware for Express.
+- `connect-session-knex`: A session store backed by SQL via Knex.
+- `bcrypt`: A popular and secure password hashing library.
+
+We also added two scripts `migrate` and `migrate:rollback` to `package.json` to use Knex's migration commands.
 
 Let's install newly added dependencies first, and then run the migrations to update the database schema, and finally build and run your app as usual.
 
@@ -429,4 +460,4 @@ npm run migrate
 npm run dev
 ```
 
-Play with the app to verify the signup, login, and logout are all working correctly. Also, try to access `/` and `/saved` without a login to verify those routes are protected properly.
+Play with the app to verify the signup, login, and logout are all working correctly. Also, try to access `/` and `/saved` without login to verify those routes are protected properly.

@@ -132,7 +132,7 @@ $ npm install @gourmet/client-lib --save
 
 The middleware created by `gourmet.middleware()` adds `serve()` method to `res` object.
 
-`res.serve(pageName, initialProps)` renders the content of page specified by `pageName`, with the initial props in `initialProps`, and then sends the result to the client. `initialProps` must be a JSON serializable object because it is transferred to the client for rehydration.
+`res.serve(pageName, clientProps)` renders the content of page specified by `pageName`, with the props in `clientProps`, and then sends the result to the client. `clientProps` must be a JSON serializable object because it is transferred to the client for rehydration.
 
 By default, Gourmet SSR uses `ReactDOMServer.renderToNodeStream()` and `res.serve()` starts to send out the content of stream immediately to achieve the best [Time to First Byte](https://en.wikipedia.org/wiki/Time_to_first_byte) performance.
 
@@ -182,7 +182,7 @@ On Chrome, right click on the screen of "Hello, world!" and select "View page so
 
 ![Page Source - Hello World](assets/hello-source.png)
 
-The content you rendered through `Hello` component is embedded inside `<div id="__gourmet_react__">` as children. Also, the initial props you gave to `res.serve()` ended up here as a JSON object inside `<script>` block.
+The content you rendered through `Hello` component is embedded inside `<div id="__gourmet_react__">` as children. Also, the `clientProps` you gave to `res.serve()` ended up here as a JSON object inside `<script>` block.
 
 Another important feature of Gourmet SSR is statically rendered asset tags such as `<script>` in `<head>` section as shown here.
 

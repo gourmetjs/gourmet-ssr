@@ -7,42 +7,140 @@ title: Adding News API
 
 In this step, we will add new APIs to our server for fetching news articles and managing bookmarks.
 
-## Using News API
+## Editing / creating source files
 
-To implement our news fetching API, we need a news provider. We will use [News API](https://newsapi.org/) for that. News API is an easy-to-use API service that crawls and indexes news articles from over 30,000 news sources and blogs around the world.
-
-To use News API, the first thing you need to do is getting an [API key](https://newsapi.org/register). You need your own API key to run examples in this step.
-
-To get a sense of how news articles fetched from News API look like, see the example below.
+### package.json
 
 ```json
 {
-  "status": "ok",
-  "totalResults": 19995,
-  "articles": [
-    {
-      "source": {
-        "id": "cnn",
-        "name": "CNN"
-      },
-      "author": "Analysis by Chris Cillizza, CNN Editor-at-large",
-      "title": "What if the Mueller report changes nothing?",
-      "description": "Thanks to CNN reporting, we now know that Attorney General Bill Barr is...",
-      "url": "https://www.cnn.com/2019/02/20/politics/robert-mueller-russia-investigation-findings/index.html",
-      "urlToImage": "https://cdn.cnn.com/cnnnext/dam/assets/180831102830-04-robert-mueller-lead-image-super-tease.jpg",
-      "publishedAt": "2019-02-21T00:33:49Z",
-      "content": "THE POINT -- NOW ON YOUTUBE! \r\nIn each episode of his weekly YouTube show, ..."
-    },
-    ...
-  ]
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch",
+    "migrate": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "@gourmet/server-args": "^1.2.1",
+    "@gourmet/client-lib": "^1.2.0",
+    "body-parser": "^1.18.3",
+    "@gourmet/error": "^0.3.1",
+    "knex": "^0.16.3",
+    "pg": "^7.8.0",
+    "sqlite3": "^4.0.6",
+    "express-session": "^1.15.6",
+    "connect-session-knex": "^1.4.0",
+    "bcrypt": "^3.0.4",
+    "node-fetch": "^2.3.0"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/group-react-i80": "^1.2.0",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "nodemon": "^1.18.10"
+  }
 }
 ```
 
-## Source code changes
+### lib/server.js
 
-### lib/news.js
+```js
+"use strict";
 
-This is a new module that provides helper functions for fetching news and managing bookmarks.
+const express = require("express");
+const gourmet = require("@gourmet/client-lib");
+const serverArgs = require("@gourmet/server-args");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const KnexSessionStore = require("connect-session-knex")(session);
+const knex = require("./knex");
+const account = require("./account");
+const news = require("./news");
+
+const SESSION_COOKIE_NAME = "session_id";
+
+const args = serverArgs({workDir: __dirname + "/.."});
+const app = express();
+
+app.use(session({
+  name: SESSION_COOKIE_NAME,
+  cookie: {
+    maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
+  },
+  secret: "uWduZ4lSD8hwIIISBq650RZFjY8uIWds5Z6u7hjJ",
+  resave: false,
+  saveUninitialized: false,
+  store: new KnexSessionStore({knex})
+}));
+
+app.use(bodyParser.json());
+app.use(gourmet.middleware(args));
+
+app.post("/api/signup", (req, res, next) => {
+  account.createUser(req.body).then(user => {
+    account.login(req, user);
+    res.json({user});
+  }).catch(next);
+});
+
+app.post("/api/login", (req, res, next) => {
+  account.verifyPassword(req.body).then(user => {
+    account.login(req, user);
+    res.json({user});
+  }).catch(next);
+});
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie(SESSION_COOKIE_NAME);
+    res.json({});
+  });
+});
+
+app.get("/api/news", account.protectApi, (req, res, next) => {
+  news.getNews(req.user.id, req.query.page).then(data => {
+    res.json(data);
+  }).catch(next);
+});
+
+app.get("/api/saved", account.protectApi, (req, res, next) => {
+  news.getSaved(req.user.id, req.query.page).then(data => {
+    res.json(data);
+  }).catch(next);
+});
+
+app.post("/api/saved", account.protectApi, (req, res, next) => {
+  news.save(req.user.id, req.body.article).then(data => {
+    res.json(data);
+  }).catch(next);
+});
+
+app.delete("/api/saved/:id", account.protectApi, (req, res, next) => {
+  news.unsave(req.user.id, req.params.id).then(data => {
+    res.json(data);
+  }).catch(next);
+});
+
+app.get(["/login", "/signup"], (req, res) => {
+  res.serve("public");
+});
+
+app.get(["/", "/saved"], account.loginRequired, (req, res) => {
+  res.serve("main", {user: req.user});
+});
+
+app.use(gourmet.errorMiddleware());
+
+app.listen(args.port, () => {
+  console.log(`Server is listening on port ${args.port}`);
+});
+```
+
+### lib/news.js _(new)_
 
 ```js
 "use strict";
@@ -142,109 +240,7 @@ exports.save = save;
 exports.unsave = unsave;
 ```
 
-`getNews()` is a function that fetches the latest news articles from News API, and converts them to the internal format. We use `node-fetch` module to generate HTTP requests from our server to News API. We generate an unique ID for each article, which is an MD5 hex digest of the article's URL.
-
-`getSaved()` is a function that fetches the saved articles (bookmarks) from the database. `save()` and `unsave()` are functions for saving and deleting the saved articles.
-
-### lib/server.js
-
-We add four more API routes (`GET /api/news`, `GET /api/saved`, `POST /api/saved`, `DELETE /api/saved/{id}`) to our server. They are implemented using helpers from `news.js`.
-
-```js
-"use strict";
-
-const express = require("express");
-const gourmet = require("@gourmet/client-lib");
-const serverArgs = require("@gourmet/server-args");
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const KnexSessionStore = require("connect-session-knex")(session);
-const knex = require("./knex");
-const account = require("./account");
-const news = require("./news");
-
-const SESSION_COOKIE_NAME = "session_id";
-
-const args = serverArgs({workDir: __dirname + "/.."});
-const app = express();
-
-app.use(session({
-  name: SESSION_COOKIE_NAME,
-  cookie: {
-    maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
-  },
-  secret: "uWduZ4lSD8hwIIISBq650RZFjY8uIWds5Z6u7hjJ",
-  resave: false,
-  saveUninitialized: false,
-  store: new KnexSessionStore({knex})
-}));
-
-app.use(bodyParser.json());
-app.use(gourmet.middleware(args));
-
-app.post("/api/signup", (req, res, next) => {
-  account.createUser(req.body).then(user => {
-    account.login(req, user);
-    res.json({user});
-  }).catch(next);
-});
-
-app.post("/api/login", (req, res, next) => {
-  account.verifyPassword(req.body).then(user => {
-    account.login(req, user);
-    res.json({user});
-  }).catch(next);
-});
-
-app.post("/api/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.clearCookie(SESSION_COOKIE_NAME);
-    res.json({});
-  });
-});
-
-app.get("/api/news", account.protectApi, (req, res, next) => {
-  news.getNews(req.user.id, req.query.page).then(data => {
-    res.json(data);
-  }).catch(next);
-});
-
-app.get("/api/saved", account.protectApi, (req, res, next) => {
-  news.getSaved(req.user.id, req.query.page).then(data => {
-    res.json(data);
-  }).catch(next);
-});
-
-app.post("/api/saved", account.protectApi, (req, res, next) => {
-  news.save(req.user.id, req.body.article).then(data => {
-    res.json(data);
-  }).catch(next);
-});
-
-app.delete("/api/saved/:id", account.protectApi, (req, res, next) => {
-  news.unsave(req.user.id, req.params.id).then(data => {
-    res.json(data);
-  }).catch(next);
-});
-
-app.get(["/login", "/signup"], (req, res) => {
-  res.serve("public");
-});
-
-app.get(["/", "/saved"], account.loginRequired, (req, res) => {
-  res.serve("main", {user: req.user});
-});
-
-app.use(gourmet.errorMiddleware());
-
-app.listen(args.port, () => {
-  console.log(`Server is listening on port ${args.port}`);
-});
-```
-
-### migrations/0001_create_saved.js
-
-We need to add a new table for bookmarks.
+### migrations/0001_create_saved.js _(new)_
 
 ```js
 exports.up = async function(knex) {
@@ -262,52 +258,62 @@ exports.down = async function(knex) {
 };
 ```
 
-Each bookmark has the following fields:
+## Using News API
+
+To implement our news fetching API, we need a news provider. We depend on [News API](https://newsapi.org/) for that. News API is an easy-to-use API service that crawls and indexes news articles from over 30,000 news sources and blogs around the world.
+
+To use News API, the first thing you need to do is getting an [API key](https://newsapi.org/register). You need your own API key to run examples in this step.
+
+To get a sense of how news articles fetched from News API look like, see the example below.
+
+```json
+{
+  "status": "ok",
+  "totalResults": 19995,
+  "articles": [
+    {
+      "source": {
+        "id": "cnn",
+        "name": "CNN"
+      },
+      "author": "Analysis by Chris Cillizza, CNN Editor-at-large",
+      "title": "What if the Mueller report changes nothing?",
+      "description": "Thanks to CNN reporting, we now know that Attorney General Bill Barr is...",
+      "url": "https://www.cnn.com/2019/02/20/politics/robert-mueller-russia-investigation-findings/index.html",
+      "urlToImage": "https://cdn.cnn.com/cnnnext/dam/assets/180831102830-04-robert-mueller-lead-image-super-tease.jpg",
+      "publishedAt": "2019-02-21T00:33:49Z",
+      "content": "THE POINT -- NOW ON YOUTUBE! \r\nIn each episode of his weekly YouTube show, ..."
+    },
+    ...
+  ]
+}
+```
+
+## New database table: `saved`
+
+We added a migration file to create a new database table for saving bookmarks.
+
+Each row in `saved` table has the following columns:
 
 - `userId`: the owner of the saved article (integer row ID of the account)
 - `articleId`: the article ID (hex string)
 - `article`: the stringified JSON object of the article
 
-### package.json
+## Adding server APIs
 
-`node-fetch` is added as a dependency.
+We added four more API routes (`GET /api/news`, `GET /api/saved`, `POST /api/saved`, `DELETE /api/saved/{id}`) to our server. They are implemented using helpers from `news.js`.
 
-```json
-{
-  "private": true,
-  "scripts": {
-    "build": "gourmet build",
-    "start": "node lib/server.js",
-    "dev": "nodemon --ignore src lib/server.js -- --watch",
-    "migrate": "knex migrate:latest",
-    "migrate:rollback": "knex migrate:rollback"
-  },
-  "dependencies": {
-    "express": "^4.16.4",
-    "@gourmet/server-args": "^1.2.1",
-    "@gourmet/client-lib": "^1.2.0",
-    "body-parser": "^1.18.3",
-    "@gourmet/error": "^0.3.1",
-    "knex": "^0.16.3",
-    "pg": "^7.8.0",
-    "sqlite3": "^4.0.6",
-    "express-session": "^1.15.6",
-    "connect-session-knex": "^1.4.0",
-    "bcrypt": "^3.0.4",
-    "node-fetch": "^2.3.0"
-  },
-  "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
-    "@gourmet/preset-react": "^1.2.2",
-    "@gourmet/group-react-i80": "^1.2.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "nodemon": "^1.18.10"
-  }
-}
-```
+The `news.js` module provides helper functions for fetching news and managing bookmarks. Inside, `getNews()` is a function that fetches the latest news articles from News API, and converts them to the internal format. We use `node-fetch` module to make AJAX requests from our server to News API.
+
+While converting, we generate a unique ID for each article, which is an MD5 hex digest of the article's URL.
+
+`getSaved()` is a function that fetches the saved articles (bookmarks) from the database. `save()` and `unsave()` are functions for saving and deleting the saved articles.
 
 ## Running and testing
+
+In this step, we added the following new package as a dependency:
+
+- `node-fetch`: A light-weight module that brings `window.fetch` to Node.js
 
 As we added a new dependency and a migration file, you need to run the following once.
 
@@ -333,4 +339,4 @@ Open your browser, and log in to the app. Enter `http://localhost:3000/api/news`
 
 ![JSON encoded news articles](assets/tutorial-news-json.png)
 
-> It is important to test the API in your browser after a successful login, because our news related APIs are protected by `account.projectApi`, which requires an authenticated session cookie.
+> It is important to test the API in your browser after successful login, because our news related APIs are protected by `account.projectApi`, which requires an authenticated session cookie.
