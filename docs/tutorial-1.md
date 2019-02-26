@@ -291,7 +291,7 @@ export default function PublicPage() {
 
 ### About the package dependency
 
-To use React I80 in your project, you must add `@gourmet/group-react-i80` as a dependency in addition to `@gourmet/preset-react`. `@gourmet/group-react-i80` is a group of sub-packages that enables a React I80 support in your project.
+To use React I80 in your project, you must add the package `@gourmet/group-react-i80` as a dependency in addition to `@gourmet/preset-react`. `@gourmet/group-react-i80` is a group of sub-packages that enables a React I80 support in your project.
 
 Inside your SSR code, you use `@gourmet/react-i80` to implement your routing logic as shown above. `@gourmet/react-i80` is the main package that exposes user APIs. It comes as a sub-package in `@gourmet/group-react-i80`, so you don't need to add it as a dependency in your `package.json`. Just import it inside your SSR code and Gourmet Builder will resolve it to the sub-package inside `@gourmet/group-react-i80`.
 
