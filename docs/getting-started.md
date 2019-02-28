@@ -104,7 +104,7 @@ Here, we specify the above React component as a root component of `main` page.
 
 ## Integrating your server with SSR
 
-As a last step, modify your server code to use Gourmet SSR to render the user interface.
+Modify your server code to use Gourmet SSR to render the user interface.
 
 **lib/server.js**
 ```js
@@ -124,7 +124,7 @@ app.listen(3000, () => {
 });
 ```
 
-Before to run your server, you have to install the Gourmet SSR Client Library that loads and executes your Gourmet SSR bundles. This one needs to go inside `dependencies` because your server depends on it.
+Don't forget to install the Gourmet SSR Client Library that loads and executes your Gourmet SSR bundles. This one needs to go inside `dependencies` because your server depends on it.
 
 ```text
 $ npm install @gourmet/client-lib --save
@@ -132,11 +132,13 @@ $ npm install @gourmet/client-lib --save
 
 The middleware created by `gourmet.middleware()` adds `serve()` method to `res` object.
 
-`res.serve(pageName, clientProps)` renders the content of page specified by `pageName`, with the props in `clientProps`, and then sends the result to the client. `clientProps` must be a JSON serializable object because it is transferred to the client for rehydration.
+`res.serve(pageName, clientProps)` renders the content of page specified by `pageName`, with the props in `clientProps`, and then sends the result to the browser. `clientProps` must be a JSON serializable object because it is transferred to the client for rehydration.
 
 By default, Gourmet SSR uses `ReactDOMServer.renderToNodeStream()` and `res.serve()` starts to send out the content of stream immediately to achieve the best [Time to First Byte](https://en.wikipedia.org/wiki/Time_to_first_byte) performance.
 
 ## Build and run
+
+Before to run your server, you have to build the SSR bundles first. Gourmet SSR uses Webpack and Babel under the hood to compile your SSR code.
 
 Add the `build` script to `package.json`.
 

@@ -63,7 +63,7 @@ app.listen(args.port, () => {
 });
 ```
 
-### src/containers/PublicPage.js _(new)_
+### src/containers/PublicPage.js
 
 ```js
 import React from "react";
@@ -85,7 +85,7 @@ export default function PublicPage() {
 }
 ```
 
-### src/containers/LoginView.js _(new)_
+### src/containers/LoginView.js
 
 ```js
 import React, {Component} from "react";
@@ -145,7 +145,7 @@ export default class LoginView extends Component {
 }
 ```
 
-### src/containers/SignupView.js _(new)_
+### src/containers/SignupView.js
 
 ```jsx
 import React, {Component} from "react";
@@ -426,6 +426,22 @@ The actual form fields are given as children of `HorzForm`. We used Bootstrap's 
 
 When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully fulfilled with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction on the form. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
 
+```js
+// src/containers/LoginView.js
+// ...
+onSubmit() {
+  const username = this.usernameRef.current.value.toLowerCase().trim();
+  const password = this.passwordRef.current.value.trim();
+
+  return httpApi("/api/login", {
+    method: "POST",
+    body: {username, password}
+  }).then(() => {
+    i80.goToUrl("/");
+  });
+}
+```
+
 In our code, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using React I80's `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise will be fulfilled with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
 
 `SignupView` is a little longer than `LoginView` because of more fields, but the structure is exactly the same.
@@ -446,7 +462,7 @@ app.post("/api/login", (req, res) => {
 });
 ```
 
-## Default behavior of `fetch()` with cookies
+## `httpApi()` and cookies
 
 `httpApi()` is a small helper function to invoke server APIs from the SSR code, using the [standard](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) `fetch()` method.
 
@@ -458,7 +474,7 @@ In addition to this, `httpApi()` also takes care of the JSON encoding/decoding o
 
 In `HorzForm` component, we are maintaining a flag `_isMounted` to avoid calling `setState()` for the unmounted component. This is an antipattern according to the React [documentation](https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html).
 
-However, we are dealing with a different pattern here. It is used to handle a case that `HorzForm` component gets unmounted by user's `onSubmit` handler. Unlike the example in the React documentation, this is a legitimate use case that doesn't result in a memory leak.
+However, we are dealing with a different case here. It is used to handle a case that `HorzForm` component gets unmounted by user's `onSubmit` handler. Unlike the example in the React documentation, this is a legitimate use case that doesn't result in a memory leak.
 
 ## Styling using Bootstrap
 
@@ -480,7 +496,7 @@ module.exports = {
 };
 ```
 
-### Alternative way: import CSS
+### Alternative way: importing CSS
 
 Alternatively, you can install the `bootstrap` package and import the compiled CSS file at the pages you want to use as below.
 
@@ -493,10 +509,10 @@ npm install bootstrap --save-dev
 import "bootstrap/dist/css/bootstrap.min.css";
 ```
 
-If you import a CSS file in Gourmet SSR, it is statically linked to the HTML page as an external asset via a `<link rel="stylesheet">` tag.
+If you import a CSS file in Gourmet SSR, an individual CSS asset is generated, and it is referenced statically from the hosting HTML page as an external asset via a `<link rel="stylesheet">` tag.
 All asset references inside it (`url`, `@import`, ...etc) will be processed as well.
 
-This way, you can eliminate the dependency to the external CDN, and serve Bootstrap from your own server together with other local assets which can be more efficient based on your deployment setup. However, for our tutorial, the public CDN works perfectly well.
+This way, you can eliminate the dependency to the third party CDN, and serve Bootstrap from your own server together with other local assets which can be more efficient based on your deployment setup. However, for our tutorial, the public CDN works perfectly well.
 
 ### Using the global stylesheet with minimal per-component customization
 

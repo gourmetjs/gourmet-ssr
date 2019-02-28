@@ -627,23 +627,23 @@ To make your life easier, it is best to make your data fetching code "isomorphic
 - Implement all your data access as APIs, and make them accessible equally from server and client.
 - Inside your SSR code, fetch data by invoking the APIs.
 
-Because your API signatures are the same regardless of where your code is running, your data fetching code becomes isomorphic. Now only issue that we need to care about is the transport layer. Gourmet SSR provides the following two browser compatible methods inside the server-side VM sandbox.
+Because your API signatures are the same regardless of where your code is running, your data fetching code becomes isomorphic. Now the only issue that we need to care about is the transport layer. Gourmet SSR provides the following two browser compatible methods inside the server-side VM sandbox.
 
 - [`fetch`](https://fetch.spec.whatwg.org/) - You can use `fetch` as a global function just like you do in the browser. Under the hood, Gourmet SSR uses [`node-fetch`](https://github.com/bitinn/node-fetch) to simulate the browser API.
 - [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) - You can use `XMLHttpRequest` as a global object. We recommend `fetch`, but `XMLHttpRequest` is also provided for the case that you might need to use the legacy codebase. `XMLHttpRequest` in Gourmet SSR is based on [`node-XMLHttpRequest`](https://github.com/driverdan/node-XMLHttpRequest) with the local file access and the synchronous operation removed.
 
 ### `getInitialProps()`
 
-In addition to the basic transport layer, Gourmet SSR also provides a higher level assistance for the isomorphic data fetching.
+In addition to the basic transport layer, Gourmet SSR also provides higher level assistance for the isomorphic data fetching.
 When the rendering happens on the server-side, Gourmet SSR looks for a static function `getInitialProps()` in your page component. If it is defined, the static function gets called before the rendering begins. If it returns a promise, Gourmet SSR will wait for the promise to be resolved.
 
 `getInitialProps()` is supposed to return an object, or a promise to be fulfilled with an object. The properties of the object will be handed over to the page component as React props.
 
-The initial properties returned by the page component's `getInitialProps()` will be serialized as a JSON object and transferred to the client. That is, the page component's `getInitialProps()` will be executed on the server-side only.
+The props returned by a page component's `getInitialProps()` will be serialized as a JSON object and transferred to the client. That is, a page component's `getInitialProps()` will be executed on the server-side only.
 
-The view component (React I80's matching route component) also supports `getInitialProps()`. If defined, the result object is handed over to the view component as properties, in addition to the page component's result of `getInitialProps()`, in case it is defined as well.
+A view component (React I80's matching route component) also supports `getInitialProps()`. If defined, the result object is handed over to the view component as properties, in addition to the page component's result of `getInitialProps()`, in case it is defined as well.
 
-One subtlety of view component's `getInitialProps()` is that, because views can be switched on the client side, it can be executed on the client as well. The initial content rendered on the server will contain a serialized result of the view component's `getInitialProps()`, so it will not be executed on the client side like the page component. However, if a view switch occurs on the client, the newly activated view's `getInitialProps()` will be executed on the browser.
+One subtlety of view component's `getInitialProps()` is that, because views can be switched on the client side, it can be executed on the client as well. The initial content rendered on the server will contain a serialized result of the initial view component's `getInitialProps()`, so it will not be executed on the client side just like a page component. However, if a view switch occurs on the client, the newly activated view's `getInitialProps()` will be executed on the browser.
 
 > The idea of the asynchronous data fetching via a static function of a component, named `getInitialProps()`, got popular by [Next.js](https://nextjs.org/learn/basics/fetching-data-for-pages). We appreciate their work for the inspiration.
 
@@ -651,14 +651,14 @@ One subtlety of view component's `getInitialProps()` is that, because views can 
 
 One important issue regarding the isomorphic data fetching is the authentication. Let's take a look at the flow of interaction between client and server in our news app.
 
-1. A user logs in to our app. Now, a session cookie is saved in the user's browser.
+1. A user logs in to our app. Now, a session cookie is saved in user's browser.
 2. The user visits `/` to get the HTML page containing the latest news articles.
 3. The server receives the request and verifies the session cookie.
 4. The server calls `res.serve("main")` to render the page.
 5. Gourmet SSR calls the static `getInitialProps()` function of the view component `NewsView`.
 6. The `getInitialProps()` function sends a HTTP GET request to the server API `/api/news` to fetch the latest news articles.
 7. The server API `/api/news` verifies the session cookie, and sends back the news articles.
-8. Gourmet SSR starts to render the initial content with the result of `getInitialProps()`.
+8. Gourmet SSR renders the initial content with the result of `getInitialProps()`.
 9. The server-rendered HTML page is sent back to the browser.
 10. The user clicks `Load more` button to fetch more articles.
 11. The browser sends a HTTP GET request to the server API `/api/news` to fetch more articles.
@@ -734,10 +734,7 @@ As we explained in [Adding Real UI and Styling](/docs/tutorial-2) step, we recom
 
 The choice between the inline style and Emotion are largely based on your preference, but there might be some performance implications based on usage. If a component is instantiated many times in the same page, using Emotion will probably result in better performance because instances of the component will have the same `className` prop, and browser can reuse the same set of CSS declarations for all instances. On the other hand, inline styles must be processed individually per each instance.
 
-To use Emotion in your Gourmet SSR project, you must add the package `@gourmet/group-react-emotion` as a dependency in addition to `@gourmet/preset-react`. `@gourmet/group-react-emotion` is a group of sub-packages that includes the following, so you don't need to add them individually in your `package.json`. Just import them when needed inside your SSR code, and Gourmet Builder will resolve them to the corresponding sub-packages inside `@gourmet/group-react-emotion`.
-
-- `emotion`
-- `react-emotion`
+To use Emotion in your Gourmet SSR project, you must add the package `@gourmet/group-react-emotion` as a dependency. Once you do this, you can import `emotion` and `react-emotion` inside your SSR code without adding them individually. Gourmet Builder will resolve them to the corresponding sub-packages inside `@gourmet/group-react-emotion`.
 
 > Currently, Gourmet SSR supports Emotion v9. We are aware of the release of v10.
 > It appears that v10 is a drastic departure from the previous version with many breaking changes in the user-facing API.
@@ -763,7 +760,7 @@ module.exports = {
 };
 ```
 
-Because we used the icons in the main page only, we appended a specifier `:main` to the `html` section name to make this configuration setting applied only to the `main` page. By doing this, links to both Bootstrap and Font Awesome CSS will be inserted to `main` page, but only a Boottsrap CSS link will be inserted to `public` page.
+Because we used the icons in the main page only, we appended a specifier `:main` to the `html` section name to make this configuration setting applied only to the `main` page. By doing this, links to both Bootstrap and Font Awesome CSS will be inserted to `main` page, but only a Bootstrap CSS link will be inserted to `public` page.
 
 ## React I80's `Link` component
 
@@ -788,7 +785,7 @@ const tabs = [
 
 `Link` supports additional features such as adding `active` to `className` if the currently active route matches with the target URL `href`, and replacing (instead of pushing) the top element of navigation history when visited, if the boolean prop `replace` is true. 
 
-## How component work together
+## How components work together
 
 ### `ArticlesPane`
 

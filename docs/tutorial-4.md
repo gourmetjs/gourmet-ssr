@@ -5,7 +5,7 @@ title: Adding News API
 
 ## What we will add in this step
 
-In this step, we will add new APIs to our server for fetching news articles and managing bookmarks.
+In this step, we will add more APIs to our server for fetching news articles and managing bookmarks.
 
 ## Edited / added source files
 

@@ -95,31 +95,6 @@ module.exports = {
 `
 ], [
 `
-> To use the user interface in your app, you have to go through the build process first.
->
-> Gourmet SSR uses Webpack and Babel under the hood to build your user interface.
->
-> It generates two sets of bundles - one for the server and the other for the browser.
-> They pass through different compilation pipelines tailered to the target environments.
-`, `
-\`\`\`text
-$ gourmet build
-server>
-server> >>> Building 'local' stage for 'server' target...
-server>
-server> Hash: 67lUupnSCkvx5QS2PfiMN5B5M2d
-server> Version: webpack 4.28.3
-...
-client>
-client> >>> Building 'local' stage for 'client' target...
-client>
-client> Hash: 2X8CXpO82qOEnWcj6UiIi6eg5gv
-client> Version: webpack 4.28.3
-...
-\`\`\`
-`
-], [
-`
 > Gourmet SSR is just a view library in your server.
 > This is how you render and serve the \`main\` page.
 `, `
