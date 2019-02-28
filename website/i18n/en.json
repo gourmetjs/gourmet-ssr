@@ -2458,6 +2458,9 @@
       },
       "tutorial-5": {
         "title": "Finalizing the User Interface"
+      },
+      "tutorial-6": {
+        "title": "Deploying the Production Build"
       }
     },
     "links": {

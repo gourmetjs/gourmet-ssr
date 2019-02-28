@@ -7,7 +7,7 @@ title: Adding News API
 
 In this step, we will add new APIs to our server for fetching news articles and managing bookmarks.
 
-## Editing / creating source files
+## Edited / added source files
 
 ### migrations/0001_create_saved.js _(new)_
 

@@ -7,7 +7,7 @@ title: Finalizing the User Interface
 
 We will add the user interface for browsing news articles, backed by server APIs we added in the previous step. This will finalize the app for our tutorial. The next step will be all about deploying the final app in the production environment.
 
-## Editing / creating source files
+## Edited / added source files
 
 ### src/containers/NewsView.js
 

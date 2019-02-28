@@ -18,7 +18,7 @@ cd news-ssr
 git checkout step3
 ```
 
-## Editing / creating source files
+## Edited / added source files
 
 ### knexfile.js _(new)_
 

@@ -20,7 +20,7 @@ cd news-ssr
 git checkout step2
 ```
 
-## Editing / creating source files
+## Edited / added source files
 
 ### lib/server.js
 
