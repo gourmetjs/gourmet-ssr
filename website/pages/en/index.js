@@ -193,7 +193,7 @@ class Index extends React.Component {
           imageAlign: "top",
           title: "Library, not Framework",
         }, {
-          content: "Small footprint at runtime, chunked transfer, long-term cache support, HTTP/2 optimized bundling and many more - " +
+          content: "Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and many more - " +
                    "Production is always number one priority of Gourmet SSR.",
           image: `${baseUrl}img/rocket.svg`,
           imageAlign: "top",

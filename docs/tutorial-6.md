@@ -9,15 +9,15 @@ As a final step of this tutorial, we will deploy our production build to a Linux
 
 Because the main focus of this step is to show you the essence of building and deploying Gourmet SSR project in production environment, we will configure a single server manually to run everything on it.
 
-In a real production though, you would need to consider more general deployment-related issues such as distributed architecture, security, and DevOps workflow.
+In a real production though, you would need to consider other general issues such as distributed architecture, security, and DevOps workflow.
 
-## Launching the EC2 instance
+## Launching the AWS EC2 instance
 
 Launch an EC2 instance in your preferred region via AWS console. Be sure to choose "Amazon Linux 2 AMI / 64-bit (x86)" as an AMI type. We recommend `t2.micro` or `t3.micro` for the instance type.
 
 For the Security Group, you should open port 22 and 80 to any source IP (`0.0.0.0/0`).
 
-At the final stage of the launch, be sure to choose your key pair so that you can SSH to the server.
+At the final stage of the launch, be sure to choose your key pair so that you can SSH to the EC2 instance.
 
 When the EC2 instance is up, connect to it via a SSH client. You will log in as `ec2-user` which is the default EC2 user account.
 
@@ -79,7 +79,7 @@ sudo -u nodejs mkdir -p /var/app/news-ssr
 
 ### Working directory
 
-We will clone the GitHub repo of this app into the working directory at `~/work/news-ssr`. The working directory is needed to build the production output. In your real production setup, this process would be performed in a separate build machine as a part of CI workflow.
+We will clone the GitHub repo of the News App into the working directory at `~/work/news-ssr`. The working directory is needed to build the production output. In your real production setup, this process would be performed in a separate build machine as a part of CI workflow.
 
 ```text
 mkdir ~/work
@@ -104,7 +104,7 @@ sudo cp deploy/news-ssr.service /lib/systemd/system
 These will install our two custom services to [systemd](https://en.wikipedia.org/wiki/Systemd) directory.
 
 - `port-redirect.service`: redirect all traffic from port 80 to 3080
-- `news-ssr.service`: run the production server at `/var/app/news-ssr/lib/server.js`.
+- `news-ssr.service`: run the production app at `/var/app/news-ssr/lib/server.js`.
 
 Before proceed, edit the `news-ssr.service` file to chage the value of `NEWS_API_KEY`.
 
@@ -129,7 +129,7 @@ sudo systemctl enable news-ssr
 
 ### Starting the services
 
-So far, our system setup is completed, but the app is not running yet. Run the following commands.
+At this point, our system setup is completed but the app is not running yet. Run the following commands.
 
 ```text
 npm run deploy
@@ -137,7 +137,7 @@ sudo systemctl start port-redirect
 sudo systemctl start news-ssr
 ```
 
-Now, our production app is running, serving requests received on port 80 - the standard HTTP port. Open your browser and visit the IP address of your EC2 instance. You should see the familiar login screen of our news app.
+Finally, our production app is running, serving requests received on port 80 - the standard HTTP port. Open your browser and visit the IP address of your EC2 instance. You should see the familiar login screen of our news app.
 
 ## Ongoing maintenance
 
@@ -153,9 +153,9 @@ The `deploy` script automates most of the update process.
 
 Please note that the server will be down during the update. You should implement the distributed architecture at higher level to deploy updates without disruption (e.g. the rolling update with a load balancer).
 
-### Accessing console log
+### Accessing log
 
-If something goes wrong, looking at the console log can be helpful. You can use the following command for that.
+If something goes wrong, looking at the console output of your app can be helpful. You can use the following command for that.
 
 ```text
 journalctl -u news-ssr
@@ -235,7 +235,7 @@ sudo -u nodejs npm install --prefix /var/app/news-ssr --production
 sudo systemctl start news-ssr     # restart the server
 ```
 
-## More details about the deployment
+## More about the deployment
 
 ### Port redirection
 
@@ -249,8 +249,8 @@ The `deploy.sh` script will do the following.
 
 1. Set the environment variable `PG_CONNECTION_STRING` to run the migrations.
 2. Build the production output with `STAGE=prod npm run build`.
-3. Remove the directory `.gourmet/prod/info` and files inside it. They are intermediate files that are not needed at runtime.
-4. Run Knex migrations with `npm run migrate`.
+3. Remove the directory `.gourmet/prod/info`. It contains intermediate files that are not needed at runtime.
+4. Run Knex migrations with `STAGE=prod npm run migrate`.
 5. Stop the production app.
 6. Delete all files inside the production directory at `/var/app/news-ssr`.
 7. Copy files needed at runtime from the working directory to the production directory.
@@ -261,19 +261,20 @@ The `deploy.sh` script will do the following.
 
 The `deploy` script copies only a minimal set of files that are required to run the production app.
 
-- `package.json`
-- `package-lock.json`
-- `knexfile.js`
 - `lib/*`
+- `knexfile.js`
 - `.gourmet/prod/server/*`
 - `.gourmet/prod/client/*`
+- `package.json`
+- `package-lock.json`
 
-In addition to these, packages specified in `dependencies` are freshly installed under `node_modules`. Note that packages in `devDependencies` are not installed in production mode.
+In addition to these, packages specified in `package.json:dependencies` are freshly installed under `node_modules`. Note that packages in `package.json:devDependencies` are not installed in production mode (`npm install --production`).
 
 The files in `.gourmet/prod/server/*` are for the server-side rendering. Each page has a corresponding bundle file containing all modules that the page requires.
 
-The files in `.gourmet/prod/client/*` are for the client-side rendering. By default, Gourmet SSR applies "fine" level of granularity of bundling for the production build. It generates multiple smaller bundles compared to the traditional bundling practice which prefers one (or a few) big bundle.
+The files in `.gourmet/prod/client/*` are for the client-side rendering. By default, Gourmet SSR applies "fine" level of granularity of bundling to the production build. It generates multiple smaller bundles compared to the traditional bundling practice which prefers one (or a few) big bundle.
 
-With each bundle containing only related modules, this bundling algorithm will increase browser's cache performance in [HTTP/2 environment](https://medium.com/@asyncmax/the-right-way-to-bundle-your-assets-for-faster-sites-over-http-2-437c37efe3ff).
+With each small bundle containing only related modules, this bundling algorithm will greatly increase browser's cache performance while taking advantage of multiplexing in [HTTP/2 environment](https://medium.com/@asyncmax/the-right-way-to-bundle-your-assets-for-faster-sites-over-http-2-437c37efe3ff).
 
-Also, the filenames of the bundles are shortened to minimize the size of host HTML document, containing references to them.
+Also, as another example of how important the production is to Gourmet SSR, the filenames of the bundles are shortened like `3hGAh9aZ.js` to minimize the size of the host HTML document. By default, the filenames are derived from the source paths, but you can enable a content hash based naming for [long-term caching](https://developers.google.com/web/fundamentals/performance/webpack/use-long-term-caching).
+
