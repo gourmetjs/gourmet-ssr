@@ -74,7 +74,8 @@ sudo groupadd nodejs -g 494
 sudo adduser nodejs -d /tmp -g nodejs -u 496 -s /sbin/no-login -M
 
 # create app directory
-sudo -u nodejs mkdir -p /var/app/news-ssr
+sudo mkdir -p /var/app/news-ssr
+sudo chown nodejs:nodejs /var/app/news-ssr
 ```
 
 ### Working directory
