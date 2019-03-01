@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Getting Started · Gourmet SSR</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;h2&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;creating-a-simple-express-server&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#creating-a-simple-express-server&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Creating a simple Express server&lt;/h2&gt;
+"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Getting Started · Gourmet SSR"/><meta property="og:type" content="website"/><meta property="og:url" content="https://gourmetjs.github.io/gourmet-ssr/gourmet-ssr/index.html"/><meta property="og:description" content="&lt;h2&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;creating-a-simple-express-server&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#creating-a-simple-express-server&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Creating a simple Express server&lt;/h2&gt;
+"/><meta property="og:image" content="https://gourmetjs.github.io/gourmet-ssr/gourmet-ssr/img/docusaurus.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://gourmetjs.github.io/gourmet-ssr/gourmet-ssr/img/docusaurus.png"/><link rel="shortcut icon" href="/gourmet-ssr/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script><script type="text/javascript" src="/js/code-block-buttons.js"></script><link rel="stylesheet" href="/gourmet-ssr/css/prism.css"/><link rel="stylesheet" href="/gourmet-ssr/css/main.css"/></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/gourmet-ssr/"><img class="logo" src="/gourmet-ssr/img/gourmet-ssr.svg" alt="Gourmet SSR"/><h2 class="headerTitleWithLogo">Gourmet SSR</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive siteNavItemActive"><a href="/gourmet-ssr/docs/getting-started" target="_self">Getting Started</a></li><li class="siteNavGroupActive"><a href="/gourmet-ssr/docs/tutorial-1" target="_self">Tutorial</a></li><li class="siteNavGroupActive"><a href="/gourmet-ssr/docs/guides" target="_self">Docs</a></li><li class=""><a href="https://github.com/gourmetjs/gourmet-ssr" target="_self">GitHub</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Introduction</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul><li class="navListItem navListItemActive"><a class="navItem" href="/gourmet-ssr/docs/getting-started">Getting Started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Tutorial</h3><ul><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-1">Tutorial: Intro</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-2">Adding Real UI and Styling</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-3">Implementing Authentication</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-4">Adding News API</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-5">Finalizing the User Interface</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-6">Deploying the Production Build</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Guides</h3><ul><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/guides">Guides</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Reference</h3><ul><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/reference">Reference</a></li></ul></div></div></section></div><script>
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/gourmetjs/gourmet-ssr/blob/master/docs/getting-started.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 class="postHeaderTitle">Getting Started</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="creating-a-simple-express-server"></a><a href="#creating-a-simple-express-server" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Creating a simple Express server</h2>
+<p>First, let's write a simple Express server without Gourmet SSR.</p>
+<p><strong>package.json</strong></p>
+<pre><code class="hljs css language-json"><span class="token punctuation">{</span>
+  <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"start"</span><span class="token operator">:</span> <span class="token string">"node lib/server.js"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>lib/server.js</strong></p>
+<pre><code class="hljs css language-js"><span class="token keyword">const</span> express <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"express"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">"/"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">"Hello, world!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"Server is listening on port 3000..."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Now install <code>express</code> and run the server.</p>
+<pre><code class="hljs css language-text">$ npm install express --save
+$ npm start
+Server is listening on port 3000
+</code></pre>
+<p>Open your browser at <a href="http://localhost:3000">http://localhost:3000</a> and you will see the &quot;Hello, world!&quot; message.</p>
+<p>Great, you are ready to explore Gourmet SSR now. Stop the server by pressing <code>Ctrl-C</code> and continue.</p>
+<h2><a class="anchor" aria-hidden="true" id="installing-gourmet-ssr"></a><a href="#installing-gourmet-ssr" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Installing Gourmet SSR</h2>
+<p>Now, we will add the Server-Side Rendering (SSR) feature using Gourmet SSR to our Express server.</p>
+<p>Install additional packages we need as below:</p>
+<pre><code class="hljs css language-text">$ npm install @gourmet/gourmet-cli @gourmet/preset-react --save-dev
+$ npm install react react-dom --save-dev
+</code></pre>
+<p><code>@gourmet/gourmet-cli</code> provides a shell command <code>gourmet</code> which is a base command line interface that can be extended by installing additional plugins.</p>
+<p><code>@gourmet/preset-react</code> is a preset of sub-packages that contains all the tools and runtime helpers to build a Gourmet SSR project using React.</p>
+<p><code>react</code> and <code>react-dom</code> are standard React libraries. <code>@gourmet/preset-react</code> requires React libraries installed side by side as <code>peerDependencies</code>.</p>
+<p>These packages are needed to build bundles, and once a Gourmet SSR project gets built, runtime helpers are embedded inside the bundles. That's why we can specify them as <code>devDependencies</code>. We don't need them ready under <code>node_modules</code> when the server is running. A simple rule to remember is:</p>
+<ol>
+<li>Packages that your server code needs go to <code>dependencies</code>.</li>
+<li>Packages that your SSR code needs go to <code>devDependencies</code>.</li>
+</ol>
+<h2><a class="anchor" aria-hidden="true" id="creating-a-page-root-component"></a><a href="#creating-a-page-root-component" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Creating a page root component</h2>
+<p>Create a React component responsible for rendering the user interface.</p>
+<p><strong>src/hello.js</strong></p>
+<pre><code class="hljs css language-jsx"><span class="token keyword">import</span> React <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">Hello</span><span class="token punctuation">(</span><span class="token punctuation">{</span>greeting<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">></span></span><span class="token punctuation">{</span>greeting<span class="token punctuation">}</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>By convention, we put all user interface code for SSR under <code>src</code> directory. They are &quot;source&quot; files to be compiled and bundled by Gourmet SSR whereas files under <code>lib</code> directory are executed directly by Node without any preprocessing.</p>
+<p>We found this convention very useful, but you can use whatever directory structure you like.</p>
+<h2><a class="anchor" aria-hidden="true" id="creating-a-project-configuration-file"></a><a href="#creating-a-project-configuration-file" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Creating a project configuration file</h2>
+<p>We also need to add a <code>gourmet_config.js</code> file which is a build configuration file for a Gourmet SSR project at the project root directory.</p>
+<p><strong>gourmet_config.js</strong></p>
+<pre><code class="hljs css language-js">module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  pages<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    main<span class="token punctuation">:</span> <span class="token string">"./src/hello.js"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Here, we specify the above React component as a root component of <code>main</code> page.</p>
+<blockquote>
+<p>Did you notice that we didn't specify manually what plugins to use in <code>gourmet_config.js</code>? Gourmet CLI will automatically scan dependencies specified in <code>package.json</code> and load available plugins/presets.</p>
+<p>As you can see, installing <code>@gourmet/preset-react</code> as a dependency is all you need to do to enable React support in your Gourmet SSR project. Of course, you can control this behavior if you need to.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="integrating-your-server-with-ssr"></a><a href="#integrating-your-server-with-ssr" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Integrating your server with SSR</h2>
+<p>Modify your server code to use Gourmet SSR to render the user interface.</p>
+<p><strong>lib/server.js</strong></p>
+<pre><code class="hljs css language-js"><span class="token keyword">const</span> express <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"express"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> gourmet <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"@gourmet/client-lib"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>gourmet<span class="token punctuation">.</span><span class="token function">middleware</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">"/"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  res<span class="token punctuation">.</span><span class="token function">serve</span><span class="token punctuation">(</span><span class="token string">"main"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>greeting<span class="token punctuation">:</span> <span class="token string">"Hello, world!"</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"Server is listening on port 3000"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Don't forget to install the Gourmet SSR Client Library that loads and executes your Gourmet SSR bundles. This one needs to go inside <code>dependencies</code> because your server depends on it.</p>
+<pre><code class="hljs css language-text">$ npm install @gourmet/client-lib --save
+</code></pre>
+<p>The middleware created by <code>gourmet.middleware()</code> adds <code>serve()</code> method to <code>res</code> object.</p>
+<p><code>res.serve(pageName, clientProps)</code> renders the content of page specified by <code>pageName</code>, with the props in <code>clientProps</code>, and then sends the result to the browser. <code>clientProps</code> must be a JSON serializable object because it is transferred to the client for rehydration.</p>
+<p>By default, Gourmet SSR uses <code>ReactDOMServer.renderToNodeStream()</code> and <code>res.serve()</code> starts to send out the content of stream immediately to achieve the best <a href="https://en.wikipedia.org/wiki/Time_to_first_byte">Time to First Byte</a> performance.</p>
+<h2><a class="anchor" aria-hidden="true" id="build-and-run"></a><a href="#build-and-run" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Build and run</h2>
+<p>Before to run your server, you have to build the SSR bundles first. Gourmet SSR uses Webpack and Babel under the hood to compile your SSR code.</p>
+<p>Add the <code>build</code> script to <code>package.json</code>.</p>
+<p><strong>package.json</strong></p>
+<pre><code class="hljs css language-json"><span class="token punctuation">{</span>
+  ...
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"build"</span><span class="token operator">:</span> <span class="token string">"gourmet build"</span><span class="token punctuation">,</span>
+    <span class="token property">"start"</span><span class="token operator">:</span> <span class="token string">"node lib/server.js"</span>
+  <span class="token punctuation">}</span>
+  ...
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Run the build command and start the server again.</p>
+<pre><code class="hljs css language-text">$ npm run build
+server>
+server> >>> Building 'local' stage for 'server' target...
+server>
+server> Hash: 67lUupnSCkvx5QS2PfiMN5B5M2d
+server> Version: webpack 4.28.3
+...
+client>
+client> >>> Building 'local' stage for 'client' target...
+client>
+client> Hash: 2X8CXpO82qOEnWcj6UiIi6eg5gv
+client> Version: webpack 4.28.3
+...
+$ npm start
+Server is listening on port 3000
+</code></pre>
+<p>Open your browser at <a href="http://localhost:3000">http://localhost:3000</a>. You will see &quot;Hello, world!&quot; message again, but this time it is rendered using a React component on the server-side, and rehydrated on the client-side.</p>
+<h2><a class="anchor" aria-hidden="true" id="anatomy-of-ssr"></a><a href="#anatomy-of-ssr" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Anatomy of SSR</h2>
+<p>Let's inspect the result deeper to see how SSR worked. We use Chrome for this example but other browsers have similar features too.</p>
+<p>On Chrome, right click on the screen of &quot;Hello, world!&quot; and select &quot;View page source&quot; from the popup menu. You will be able to see the original HTML page content that server sent out:</p>
+<p><img src="/gourmet-ssr/docs/assets/hello-source.png" alt="Page Source - Hello World"></p>
+<p>The content you rendered through <code>Hello</code> component is embedded inside <code>&lt;div id=&quot;__gourmet_react__&quot;&gt;</code> as children. Also, the <code>clientProps</code> you gave to <code>res.serve()</code> ended up here as a JSON object inside <code>&lt;script&gt;</code> block.</p>
+<p>Another important feature of Gourmet SSR is statically rendered asset tags such as <code>&lt;script&gt;</code> in <code>&lt;head&gt;</code> section as shown here.</p>
+<p>Using Gourmet SSR, all assets that are required for rendering a page are automatically linked statically. No client-side dynamic asset loading is involved. This is very important to prevent the rendering of incomplete state such as <a href="https://en.wikipedia.org/wiki/Flash_of_unstyled_content">Flash of Unstyled Content</a>.</p>
+<p>This also allows the browser to start downloading assets as early as possible while parsing the HTML. Combined with HTTP/2 push, this can maximize the page loading performance.</p>
+<blockquote>
+<p>Because <code>&lt;script&gt;</code> tags in <code>&lt;head&gt;</code> are rendered with <code>defer</code> attribute, they don't block browser from parsing HTML. <code>defer</code> is supported by most browsers including IE 10/11.</p>
+</blockquote>
+<p>Next, let's inspect the client-side rehydration. To do this, you need to install <a href="https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en">React Developer Tools</a> Chrome Extension if you haven't done so already.</p>
+<p>After the installtion is completed, press <code>&lt;F12&gt;</code> key to access Chrome Developer Tools and click the React tab.</p>
+<p><img src="/gourmet-ssr/docs/assets/hello-react.png" alt="React Developer Tools - Hello World"></p>
+<p>If you can see a tree of React components as shown above, this means that the client-side rehydration was succesful and React took over the control of DOM management on the browser.</p>
+<h2><a class="anchor" aria-hidden="true" id="what-s-inside-the-bundles"></a><a href="#what-s-inside-the-bundles" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>What's inside the bundles?</h2>
+<p>Gourmet SSR builds your user interface code and generates two sets of bundles - one for the server and the other for the browser.</p>
+<p>Because the server bundles are targeting Node 8 and the client bundles targeting browsers minimum of IE 11, the generated contents are differnt. Let's take a look at the client bundle first.</p>
+<p><strong>.gourmet/local/client/main.js</strong></p>
+<pre><code class="hljs css language-js"><span class="token comment">// ... Webpack runtime ...</span>
+<span class="token keyword">function</span> <span class="token function">Hello</span><span class="token punctuation">(</span>_ref<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> greeting <span class="token operator">=</span> _ref<span class="token punctuation">.</span>greeting<span class="token punctuation">;</span>
+  <span class="token keyword">return</span> react__WEBPACK_IMPORTED_MODULE_0___default<span class="token punctuation">.</span>a<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">"div"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    __source<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      fileName<span class="token punctuation">:</span> _jsxFileName<span class="token punctuation">,</span>
+      lineNumber<span class="token punctuation">:</span> <span class="token number">4</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    __self<span class="token punctuation">:</span> <span class="token keyword">this</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> greeting<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// ...</span>
+</code></pre>
+<p>Compare it with the server bundle.</p>
+<p><strong>.gourmet/local/server/main.js</strong></p>
+<pre><code class="hljs css language-js"><span class="token comment">// ... Webpack runtime and all vendor modules ...</span>
+<span class="token keyword">function</span> <span class="token function">Hello</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  greeting
+<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> react__WEBPACK_IMPORTED_MODULE_0___default<span class="token punctuation">.</span>a<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">"div"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    __source<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      fileName<span class="token punctuation">:</span> _jsxFileName<span class="token punctuation">,</span>
+      lineNumber<span class="token punctuation">:</span> <span class="token number">4</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    __self<span class="token punctuation">:</span> <span class="token keyword">this</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> greeting<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// ...</span>
+</code></pre>
+<p>Because Node 8 supports destructuring natively, the server bundle uses the original source code's destructuring syntax <code>Hello({greeting})</code> intact.</p>
+<p>The difference is small here but once you use more complicated ES6 features such as classes and iterators, the difference becomes more significant.</p>
+<h2><a class="anchor" aria-hidden="true" id="that-s-it"></a><a href="#that-s-it" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>That's it!</h2>
+<p>Congraturations! You finished the Getting Started guide and ready to learn more details about Gourmet SSR.</p>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2/28/2019</em></div><div class="docs-prevnext"><a class="docs-next button" href="/gourmet-ssr/docs/tutorial-1"><span>Tutorial: Intro</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#creating-a-simple-express-server">Creating a simple Express server</a></li><li><a href="#installing-gourmet-ssr">Installing Gourmet SSR</a></li><li><a href="#creating-a-page-root-component">Creating a page root component</a></li><li><a href="#creating-a-project-configuration-file">Creating a project configuration file</a></li><li><a href="#integrating-your-server-with-ssr">Integrating your server with SSR</a></li><li><a href="#build-and-run">Build and run</a></li><li><a href="#anatomy-of-ssr">Anatomy of SSR</a></li><li><a href="#what-s-inside-the-bundles">What's inside the bundles?</a></li><li><a href="#that-s-it">That's it!</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/gourmet-ssr/" class="nav-home"><img src="/gourmet-ssr/img/gourmet-ssr.svg" alt="Gourmet SSR"/></a><div><section class="copyright">Copyright © 2019 Gourmet Tech Inc.</section></div></section></footer></div></body></html>

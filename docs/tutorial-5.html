@@ -1,0 +1,768 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Finalizing the User Interface · Gourmet SSR</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;h2&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;what-we-will-add-in-this-step&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#what-we-will-add-in-this-step&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;What we will add in this step&lt;/h2&gt;
+"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Finalizing the User Interface · Gourmet SSR"/><meta property="og:type" content="website"/><meta property="og:url" content="https://gourmetjs.github.io/gourmet-ssr/gourmet-ssr/index.html"/><meta property="og:description" content="&lt;h2&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;what-we-will-add-in-this-step&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#what-we-will-add-in-this-step&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;What we will add in this step&lt;/h2&gt;
+"/><meta property="og:image" content="https://gourmetjs.github.io/gourmet-ssr/gourmet-ssr/img/docusaurus.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://gourmetjs.github.io/gourmet-ssr/gourmet-ssr/img/docusaurus.png"/><link rel="shortcut icon" href="/gourmet-ssr/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script><script type="text/javascript" src="/js/code-block-buttons.js"></script><link rel="stylesheet" href="/gourmet-ssr/css/prism.css"/><link rel="stylesheet" href="/gourmet-ssr/css/main.css"/></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/gourmet-ssr/"><img class="logo" src="/gourmet-ssr/img/gourmet-ssr.svg" alt="Gourmet SSR"/><h2 class="headerTitleWithLogo">Gourmet SSR</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/gourmet-ssr/docs/getting-started" target="_self">Getting Started</a></li><li class="siteNavGroupActive"><a href="/gourmet-ssr/docs/tutorial-1" target="_self">Tutorial</a></li><li class="siteNavGroupActive"><a href="/gourmet-ssr/docs/guides" target="_self">Docs</a></li><li class=""><a href="https://github.com/gourmetjs/gourmet-ssr" target="_self">GitHub</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Tutorial</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/getting-started">Getting Started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Tutorial</h3><ul><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-1">Tutorial: Intro</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-2">Adding Real UI and Styling</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-3">Implementing Authentication</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-4">Adding News API</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/gourmet-ssr/docs/tutorial-5">Finalizing the User Interface</a></li><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/tutorial-6">Deploying the Production Build</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Guides</h3><ul><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/guides">Guides</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Reference</h3><ul><li class="navListItem"><a class="navItem" href="/gourmet-ssr/docs/reference">Reference</a></li></ul></div></div></section></div><script>
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/gourmetjs/gourmet-ssr/blob/master/docs/tutorial-5.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 class="postHeaderTitle">Finalizing the User Interface</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="what-we-will-add-in-this-step"></a><a href="#what-we-will-add-in-this-step" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>What we will add in this step</h2>
+<p>We will add the user interface for browsing news articles, backed by server APIs we added in the previous step. This will finalize the app for our tutorial. The next step will be all about deploying the final app in the production environment.</p>
+<h2><a class="anchor" aria-hidden="true" id="edited-added-source-files"></a><a href="#edited-added-source-files" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Edited / added source files</h2>
+<h3><a class="anchor" aria-hidden="true" id="src-containers-newsviewjs"></a><a href="#src-containers-newsviewjs" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/containers/NewsView.js</h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">{</span>Component<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> ArticlesPane <span class="token keyword">from</span> <span class="token string">"./ArticlesPane"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">NewsView</span> <span class="token keyword">extends</span> <span class="token class-name">Component</span> <span class="token punctuation">{</span>
+  <span class="token keyword">static</span> <span class="token function">getInitialProps</span><span class="token punctuation">(</span>gmctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> ArticlesPane<span class="token punctuation">.</span><span class="token function">fetchInitialArticles</span><span class="token punctuation">(</span><span class="token string">"news"</span><span class="token punctuation">,</span> gmctx<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">(</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ArticlesPane</span> <span class="token attr-name">source</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>news<span class="token punctuation">"</span></span> <span class="token spread"><span class="token punctuation">{</span><span class="token punctuation">...</span><span class="token attr-value">this</span><span class="token punctuation">.</span><span class="token attr-value">props</span><span class="token punctuation">}</span></span><span class="token punctuation">/></span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-containers-savedviewjs"></a><a href="#src-containers-savedviewjs" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/containers/SavedView.js</h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">{</span>Component<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> ArticlesPane <span class="token keyword">from</span> <span class="token string">"./ArticlesPane"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">SavedView</span> <span class="token keyword">extends</span> <span class="token class-name">Component</span> <span class="token punctuation">{</span>
+  <span class="token keyword">static</span> <span class="token function">getInitialProps</span><span class="token punctuation">(</span>gmctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> ArticlesPane<span class="token punctuation">.</span><span class="token function">fetchInitialArticles</span><span class="token punctuation">(</span><span class="token string">"saved"</span><span class="token punctuation">,</span> gmctx<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">(</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ArticlesPane</span> <span class="token attr-name">source</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>saved<span class="token punctuation">"</span></span> <span class="token spread"><span class="token punctuation">{</span><span class="token punctuation">...</span><span class="token attr-value">this</span><span class="token punctuation">.</span><span class="token attr-value">props</span><span class="token punctuation">}</span></span><span class="token punctuation">/></span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-containers-articlespanejs-new"></a><a href="#src-containers-articlespanejs-new" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/containers/ArticlesPane.js <em>(new)</em></h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">{</span>Component<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span>css<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"emotion"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> httpApi <span class="token keyword">from</span> <span class="token string">"../utils/httpApi"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Articles <span class="token keyword">from</span> <span class="token string">"../components/Articles"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> LoadButton <span class="token keyword">from</span> <span class="token string">"../components/LoadButton"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> ErrorBanner <span class="token keyword">from</span> <span class="token string">"../components/ErrorBanner"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssFooter <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  padding: 1em 0;
+  text-align: center;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssEmpty <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  color: #ccc;
+  font-size: 300%;
+  padding: 4em 1em;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssError <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  position: fixed;
+  width: 25em;
+  left: 2em;
+  top: 1em;
+  z-index: 100;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">Empty</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>cssEmpty<span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>fas fa-exclamation-circle<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+      <span class="token entity" title="&nbsp;">&amp;nbsp;</span>
+      This list is empty
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">ArticlesPane</span> <span class="token keyword">extends</span> <span class="token class-name">Component</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span>props<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> <span class="token punctuation">{</span>
+      articles<span class="token punctuation">:</span> props<span class="token punctuation">.</span>articles<span class="token punctuation">,</span>
+      hasMore<span class="token punctuation">:</span> props<span class="token punctuation">.</span>hasMore<span class="token punctuation">,</span>
+      page<span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+      lastError<span class="token punctuation">:</span> <span class="token keyword">null</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// source = "news" or "saved"</span>
+  <span class="token keyword">static</span> <span class="token function">fetchInitialArticles</span><span class="token punctuation">(</span>source<span class="token punctuation">,</span> gmctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">httpApi</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`/api/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>source<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">,</span> <span class="token punctuation">{</span>method<span class="token punctuation">:</span> <span class="token string">"GET"</span><span class="token punctuation">}</span><span class="token punctuation">,</span> gmctx<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span>articles<span class="token punctuation">,</span> hasMore<span class="token punctuation">,</span> lastError<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">(</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span></span><span class="token punctuation">></span></span>
+        <span class="token punctuation">{</span>lastError <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ErrorBanner</span>
+            <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>cssError<span class="token punctuation">}</span></span>
+            <span class="token attr-name">error</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>lastError<span class="token punctuation">}</span></span>
+            <span class="token attr-name">onClose</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">clearError</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span></span>
+          <span class="token punctuation">/></span></span>
+        <span class="token punctuation">)</span><span class="token punctuation">}</span>
+        <span class="token punctuation">{</span>articles <span class="token operator">&amp;&amp;</span> articles<span class="token punctuation">.</span>length <span class="token operator">?</span> <span class="token punctuation">(</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Articles</span>
+            <span class="token attr-name">articles</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>articles<span class="token punctuation">}</span></span>
+            <span class="token attr-name">saveArticle</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article <span class="token operator">=></span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">saveArticle</span><span class="token punctuation">(</span>article<span class="token punctuation">)</span><span class="token punctuation">}</span></span>
+            <span class="token attr-name">unsaveArticle</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>id <span class="token operator">=></span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">unsaveArticle</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">}</span></span>
+          <span class="token punctuation">/></span></span>
+        <span class="token punctuation">)</span> <span class="token punctuation">:</span> <span class="token punctuation">(</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Empty</span><span class="token punctuation">/></span></span>
+        <span class="token punctuation">)</span><span class="token punctuation">}</span>
+        <span class="token punctuation">{</span>hasMore <span class="token operator">?</span> <span class="token punctuation">(</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>cssFooter<span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>LoadButton</span> <span class="token attr-name">label</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>Load more<span class="token punctuation">"</span></span> <span class="token attr-name">onLoad</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">loadMore</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token punctuation">/></span></span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+        <span class="token punctuation">)</span> <span class="token punctuation">:</span> <span class="token keyword">null</span><span class="token punctuation">}</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span></span><span class="token punctuation">></span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">loadMore</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span>source<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>props<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span>page<span class="token punctuation">,</span> articles<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> <span class="token function">httpApi</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`/api/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>source<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">?page=</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>page <span class="token operator">+</span> <span class="token number">1</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span>data <span class="token operator">=></span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        articles<span class="token punctuation">:</span> articles<span class="token punctuation">.</span><span class="token function">concat</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>articles<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        hasMore<span class="token punctuation">:</span> data<span class="token punctuation">.</span>hasMore<span class="token punctuation">,</span>
+        page<span class="token punctuation">:</span> page <span class="token operator">+</span> <span class="token number">1</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token keyword">catch</span><span class="token punctuation">(</span>err <span class="token operator">=></span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>lastError<span class="token punctuation">:</span> err<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">throw</span> err<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">saveArticle</span><span class="token punctuation">(</span>article<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">httpApi</span><span class="token punctuation">(</span><span class="token string">"/api/saved"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      method<span class="token punctuation">:</span> <span class="token string">"POST"</span><span class="token punctuation">,</span>
+      body<span class="token punctuation">:</span> <span class="token punctuation">{</span>article<span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> articles <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>articles<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>a <span class="token operator">=></span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">.</span>id <span class="token operator">===</span> article<span class="token punctuation">.</span>id<span class="token punctuation">)</span>
+          <span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token operator">...</span>a<span class="token punctuation">,</span> saved<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+        <span class="token keyword">else</span>
+          <span class="token keyword">return</span> a<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>articles<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token keyword">catch</span><span class="token punctuation">(</span>err <span class="token operator">=></span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>lastError<span class="token punctuation">:</span> err<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  
+  <span class="token function">unsaveArticle</span><span class="token punctuation">(</span>articleId<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">httpApi</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`/api/saved/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>articleId<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">,</span> <span class="token punctuation">{</span>method<span class="token punctuation">:</span> <span class="token string">"DELETE"</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> <span class="token punctuation">{</span>source<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>props<span class="token punctuation">;</span>
+      <span class="token keyword">let</span> articles<span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>source <span class="token operator">===</span> <span class="token string">"news"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        articles <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>articles<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>a <span class="token operator">=></span> <span class="token punctuation">{</span>
+          <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">.</span>id <span class="token operator">===</span> articleId<span class="token punctuation">)</span>
+            <span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token operator">...</span>a<span class="token punctuation">,</span> saved<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+          <span class="token keyword">else</span>
+            <span class="token keyword">return</span> a<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        articles <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>articles<span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span>a <span class="token operator">=></span> <span class="token punctuation">{</span>
+          <span class="token keyword">return</span> a<span class="token punctuation">.</span>id <span class="token operator">!==</span> articleId<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>articles<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token keyword">catch</span><span class="token punctuation">(</span>err <span class="token operator">=></span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>lastError<span class="token punctuation">:</span> err<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">clearError</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>lastError<span class="token punctuation">:</span> <span class="token keyword">null</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-containers-mainpagejs"></a><a href="#src-containers-mainpagejs" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/containers/MainPage.js</h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> i80<span class="token punctuation">,</span> <span class="token punctuation">{</span>ActiveRoute<span class="token punctuation">,</span> Link<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@gourmet/react-i80"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> httpApi <span class="token keyword">from</span> <span class="token string">"../utils/httpApi"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> TabbedPanes <span class="token keyword">from</span> <span class="token string">"../components/TabbedPanes"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> NewsView <span class="token keyword">from</span> <span class="token string">"./NewsView"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> SavedView <span class="token keyword">from</span> <span class="token string">"./SavedView"</span><span class="token punctuation">;</span>
+
+<span class="token function">i80</span><span class="token punctuation">(</span><span class="token punctuation">[</span>
+  <span class="token punctuation">[</span><span class="token string">"/"</span><span class="token punctuation">,</span> NewsView<span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token punctuation">[</span><span class="token string">"/saved"</span><span class="token punctuation">,</span> SavedView<span class="token punctuation">]</span>
+<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">MainPage</span><span class="token punctuation">(</span><span class="token punctuation">{</span>user<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> tabs <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Link</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav-link<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/<span class="token punctuation">"</span></span> <span class="token attr-name">replace</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>far fa-newspaper<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+      <span class="token entity" title="&nbsp;">&amp;nbsp;</span>
+      Latest News Headlines
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>Link</span><span class="token punctuation">></span></span><span class="token punctuation">,</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Link</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav-link<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/saved<span class="token punctuation">"</span></span> <span class="token attr-name">replace</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>far fa-bookmark<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+      <span class="token entity" title="&nbsp;">&amp;nbsp;</span>
+      Saved Articles
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>Link</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>container<span class="token punctuation">"</span></span> <span class="token attr-name">style</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">{</span>padding<span class="token punctuation">:</span> <span class="token string">"2em 0"</span><span class="token punctuation">}</span><span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>border-bottom mb-3 pb-2 text-right<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        Hello <span class="token punctuation">{</span>user<span class="token punctuation">.</span>name<span class="token punctuation">}</span><span class="token operator">!</span>
+        <span class="token operator">&lt;</span>button
+          type<span class="token operator">=</span><span class="token string">"button"</span>
+          className<span class="token operator">=</span><span class="token string">"btn btn-outline-secondary btn-sm ml-3"</span>
+          onClick<span class="token operator">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+            <span class="token function">httpApi</span><span class="token punctuation">(</span><span class="token string">"/api/logout"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+              method<span class="token punctuation">:</span> <span class="token string">"POST"</span><span class="token punctuation">,</span>
+              body<span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+              i80<span class="token punctuation">.</span><span class="token function">goToUrl</span><span class="token punctuation">(</span><span class="token string">"/login"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token keyword">catch</span><span class="token punctuation">(</span>err <span class="token operator">=></span> <span class="token punctuation">{</span>
+              console<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">}</span>
+        <span class="token operator">></span>
+          Log out
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>TabbedPanes</span> <span class="token attr-name">tabs</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>tabs<span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ActiveRoute</span><span class="token punctuation">/></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>TabbedPanes</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>text-muted mt-3<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token operator">*</span> News data <span class="token keyword">from</span> https<span class="token punctuation">:</span><span class="token operator">/</span><span class="token operator">/</span>newsapi<span class="token punctuation">.</span>org
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-components-tabbedpanesjs-new"></a><a href="#src-components-tabbedpanesjs-new" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/components/TabbedPanes.js <em>(new)</em></h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">TabbedPanes</span><span class="token punctuation">(</span><span class="token punctuation">{</span>tabs<span class="token punctuation">,</span> children<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>card<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>card-header<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav nav-tabs card-header-tabs<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+          <span class="token punctuation">{</span>tabs<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token punctuation">(</span>content<span class="token punctuation">,</span> idx<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">(</span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav-item<span class="token punctuation">"</span></span> <span class="token attr-name">key</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>idx<span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+              <span class="token punctuation">{</span>content<span class="token punctuation">}</span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span>
+          <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">}</span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>card-body<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token punctuation">{</span>children<span class="token punctuation">}</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-components-errorbannerjs-new"></a><a href="#src-components-errorbannerjs-new" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/components/ErrorBanner.js <em>(new)</em></h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">{</span>Component<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> cx <span class="token keyword">from</span> <span class="token string">"classnames"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">ErrorBanner</span> <span class="token keyword">extends</span> <span class="token class-name">Component</span> <span class="token punctuation">{</span>
+  <span class="token function">componentDidMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>_timerId <span class="token operator">=</span> <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>props<span class="token punctuation">.</span><span class="token function">onClose</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>_timerId <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">15000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">componentWillUnmount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>_timerId<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">clearTimeout</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>_timerId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>_timerId <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span>className<span class="token punctuation">,</span> error<span class="token punctuation">,</span> onClose<span class="token punctuation">,</span> <span class="token operator">...</span>props<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>props<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">(</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span>
+        <span class="token spread"><span class="token punctuation">{</span><span class="token punctuation">...</span><span class="token attr-value">props</span><span class="token punctuation">}</span></span>
+        <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token function">cx</span><span class="token punctuation">(</span><span class="token string">"alert alert-danger alert-dismissible"</span><span class="token punctuation">,</span> className<span class="token punctuation">)</span><span class="token punctuation">}</span></span>
+        <span class="token attr-name">onClick</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>onClose<span class="token punctuation">}</span></span>
+      <span class="token punctuation">></span></span>
+        <span class="token punctuation">{</span>error<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>button<span class="token punctuation">"</span></span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>close<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span><span class="token punctuation">></span></span><span class="token entity" title="&times;">&amp;times;</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-components-loadbuttonjs-new"></a><a href="#src-components-loadbuttonjs-new" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/components/LoadButton.js <em>(new)</em></h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">{</span>Component<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> cx <span class="token keyword">from</span> <span class="token string">"classnames"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span>css<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"emotion"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssButton <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  min-width: 15em;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">LoadButton</span> <span class="token keyword">extends</span> <span class="token class-name">Component</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span>props<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> <span class="token punctuation">{</span>
+      isLoading<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+      lastError<span class="token punctuation">:</span> <span class="token keyword">null</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">componentDidMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>_isMounted <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">componentWillUnmount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>_isMounted <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">(</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span>
+        <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>button<span class="token punctuation">"</span></span>
+        <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token function">cx</span><span class="token punctuation">(</span>
+          <span class="token string">"btn btn-sm"</span><span class="token punctuation">,</span>
+          <span class="token punctuation">{</span><span class="token string">"btn-outline-primary"</span><span class="token punctuation">:</span> <span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>lastError<span class="token punctuation">}</span><span class="token punctuation">,</span>
+          <span class="token punctuation">{</span><span class="token string">"btn-outline-danger"</span><span class="token punctuation">:</span> <span class="token operator">!</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>lastError<span class="token punctuation">}</span><span class="token punctuation">,</span>
+          cssButton<span class="token punctuation">,</span>
+          <span class="token keyword">this</span><span class="token punctuation">.</span>props<span class="token punctuation">.</span>className
+        <span class="token punctuation">)</span><span class="token punctuation">}</span></span>
+        <span class="token attr-name">disabled</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>isLoading<span class="token punctuation">}</span></span>
+        <span class="token attr-name">onClick</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">_onClick</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span></span>
+        <span class="token attr-name">title</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>lastError <span class="token operator">?</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>lastError<span class="token punctuation">.</span>message <span class="token punctuation">:</span> <span class="token string">""</span><span class="token punctuation">}</span></span>
+      <span class="token punctuation">></span></span>
+        <span class="token punctuation">{</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>lastError <span class="token operator">?</span> <span class="token punctuation">(</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span><span class="token punctuation">></span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>fas fa-exclamation-triangle<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+            <span class="token entity" title="&nbsp;">&amp;nbsp;</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">></span></span>
+        <span class="token punctuation">)</span> <span class="token punctuation">:</span> <span class="token keyword">null</span><span class="token punctuation">}</span>
+        <span class="token punctuation">{</span><span class="token keyword">this</span><span class="token punctuation">.</span>props<span class="token punctuation">.</span>label<span class="token punctuation">}</span>
+        <span class="token punctuation">{</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>isLoading <span class="token operator">?</span> <span class="token punctuation">(</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span><span class="token punctuation">></span></span>
+            <span class="token operator">...</span>
+            <span class="token entity" title="&nbsp;">&amp;nbsp;</span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>fas fa-sync fa-spin<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">></span></span>
+        <span class="token punctuation">)</span> <span class="token punctuation">:</span> <span class="token keyword">null</span><span class="token punctuation">}</span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">_onClick</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>isLoading<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>isLoading<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> lastError<span class="token punctuation">:</span> <span class="token keyword">null</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>props<span class="token punctuation">.</span><span class="token function">onLoad</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>_isMounted<span class="token punctuation">)</span>
+          <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>isLoading<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span> lastError<span class="token punctuation">:</span> <span class="token keyword">null</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token keyword">catch</span><span class="token punctuation">(</span>err <span class="token operator">=></span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>_isMounted<span class="token punctuation">)</span>
+          <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">{</span>isLoading<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span> lastError<span class="token punctuation">:</span> err<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-components-articlesjs-new"></a><a href="#src-components-articlesjs-new" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/components/Articles.js <em>(new)</em></h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Article <span class="token keyword">from</span> <span class="token string">"./Article"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">Articles</span><span class="token punctuation">(</span><span class="token punctuation">{</span>articles<span class="token punctuation">,</span> saveArticle<span class="token punctuation">,</span> unsaveArticle<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">></span></span>
+      <span class="token punctuation">{</span>articles<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>article <span class="token operator">=></span> <span class="token punctuation">(</span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Article</span>
+          <span class="token attr-name">article</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article<span class="token punctuation">}</span></span>
+          <span class="token attr-name">saveArticle</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>saveArticle<span class="token punctuation">}</span></span>
+          <span class="token attr-name">unsaveArticle</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>unsaveArticle<span class="token punctuation">}</span></span>
+          <span class="token attr-name">key</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article<span class="token punctuation">.</span>id<span class="token punctuation">}</span></span>
+        <span class="token punctuation">/></span></span>
+      <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">}</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-components-articlejs-new"></a><a href="#src-components-articlejs-new" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/components/Article.js <em>(new)</em></h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span>css<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"emotion"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> BookmarkButton <span class="token keyword">from</span> <span class="token string">"./BookmarkButton"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssArticle <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  position: relative;
+  padding: 24px 16px;
+  border-bottom: 1px solid #dee2e6;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssImage <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  max-width: 256px;
+  max-height: 256px;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssSource <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  margin-top: 6px;
+  font-size: 85%;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssTitle <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  margin: 0 14px 10px 0;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssBookmark <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  position: absolute;
+  top: 24px;
+  right: 0;
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">Article</span><span class="token punctuation">(</span><span class="token punctuation">{</span>article<span class="token punctuation">,</span> saveArticle<span class="token punctuation">,</span> unsaveArticle<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> publishedAt <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span>article<span class="token punctuation">.</span>publishedAt<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toLocaleString</span><span class="token punctuation">(</span><span class="token string">"en-US"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token string">"media "</span> <span class="token operator">+</span> cssArticle<span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article<span class="token punctuation">.</span>url<span class="token punctuation">}</span></span> <span class="token attr-name">target</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>_blank<span class="token punctuation">"</span></span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>noopener noreferrer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token template-string"><span class="token string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>cssImage<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> img-thumbnail mr-3`</span></span><span class="token punctuation">}</span></span> <span class="token attr-name">src</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article<span class="token punctuation">.</span>image<span class="token punctuation">}</span></span><span class="token punctuation">/></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>media-body<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h5</span> <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>cssTitle<span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article<span class="token punctuation">.</span>url<span class="token punctuation">}</span></span> <span class="token attr-name">target</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>_blank<span class="token punctuation">"</span></span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>noopener noreferrer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            <span class="token punctuation">{</span>article<span class="token punctuation">.</span>title<span class="token punctuation">}</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h5</span><span class="token punctuation">></span></span>
+        <span class="token punctuation">{</span>article<span class="token punctuation">.</span>description<span class="token punctuation">}</span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>cssSource<span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article<span class="token punctuation">.</span>url<span class="token punctuation">}</span></span> <span class="token attr-name">target</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>_blank<span class="token punctuation">"</span></span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>noopener noreferrer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            <span class="token punctuation">{</span>article<span class="token punctuation">.</span>source<span class="token punctuation">}</span> <span class="token operator">-</span> <span class="token punctuation">{</span>publishedAt<span class="token punctuation">}</span>
+          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>BookmarkButton</span>
+        <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>cssBookmark<span class="token punctuation">}</span></span>
+        <span class="token attr-name">saved</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>article<span class="token punctuation">.</span>saved<span class="token punctuation">}</span></span>
+        <span class="token attr-name">onClick</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+          <span class="token keyword">if</span> <span class="token punctuation">(</span>article<span class="token punctuation">.</span>saved<span class="token punctuation">)</span>
+            <span class="token function">unsaveArticle</span><span class="token punctuation">(</span>article<span class="token punctuation">.</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token keyword">else</span>
+            <span class="token function">saveArticle</span><span class="token punctuation">(</span>article<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">}</span></span>
+      <span class="token punctuation">/></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-components-bookmarkbuttonjs-new"></a><a href="#src-components-bookmarkbuttonjs-new" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/components/BookmarkButton.js <em>(new)</em></h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> React <span class="token keyword">from</span> <span class="token string">"react"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> cx <span class="token keyword">from</span> <span class="token string">"classnames"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span>css<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"emotion"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> cssBookmark <span class="token operator">=</span> css<span class="token template-string"><span class="token string">`
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+  &amp;:hover {
+    color: #888;
+  }
+`</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">BookmarkButton</span><span class="token punctuation">(</span><span class="token punctuation">{</span>saved<span class="token punctuation">,</span> <span class="token operator">...</span>props<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token spread"><span class="token punctuation">{</span><span class="token punctuation">...</span><span class="token attr-value">props</span><span class="token punctuation">}</span></span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token function">cx</span><span class="token punctuation">(</span>saved <span class="token operator">?</span> <span class="token string">"fas"</span> <span class="token punctuation">:</span> <span class="token string">"far"</span><span class="token punctuation">,</span> <span class="token string">"fa-bookmark"</span><span class="token punctuation">,</span> cssBookmark<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token punctuation">/></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="src-utils-httpapijs"></a><a href="#src-utils-httpapijs" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>src/utils/httpApi.js</h3>
+<pre><code class="hljs css language-js"><span class="token keyword">import</span> selfUrl <span class="token keyword">from</span> <span class="token string">"@gourmet/self-url"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">httpApi</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> options<span class="token punctuation">,</span> gmctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  options <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">assign</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    headers<span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+    credentials<span class="token punctuation">:</span> <span class="token string">"same-origin"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  options<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>accept <span class="token operator">=</span> <span class="token string">"application/json"</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>gmctx <span class="token operator">&amp;&amp;</span> gmctx<span class="token punctuation">.</span>isServer<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// `/api/news` => `https://myserver.example.com/api/news`</span>
+    url <span class="token operator">=</span> <span class="token function">selfUrl</span><span class="token punctuation">(</span>gmctx<span class="token punctuation">,</span> url<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// copy the "cookie" header from the original request</span>
+    options<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>cookie <span class="token operator">=</span> gmctx<span class="token punctuation">.</span>reqArgs<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>cookie<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>options<span class="token punctuation">.</span>body<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    options<span class="token punctuation">.</span>body <span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>body<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    options<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">"content-type"</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"application/json"</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">return</span> <span class="token function">fetch</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span>res <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span>data <span class="token operator">=></span><span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>res<span class="token punctuation">.</span>status <span class="token operator">!==</span> <span class="token number">200</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> obj <span class="token operator">=</span> data<span class="token punctuation">.</span>error <span class="token operator">||</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> err <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Error</span><span class="token punctuation">(</span>obj<span class="token punctuation">.</span>message <span class="token operator">||</span> res<span class="token punctuation">.</span>statusText<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        err<span class="token punctuation">.</span>code <span class="token operator">=</span> obj<span class="token punctuation">.</span>code<span class="token punctuation">;</span>
+        err<span class="token punctuation">.</span>statusCode <span class="token operator">=</span> obj<span class="token punctuation">.</span>statusCode <span class="token operator">||</span> res<span class="token punctuation">.</span>status<span class="token punctuation">;</span>
+        err<span class="token punctuation">.</span>detail <span class="token operator">=</span> obj<span class="token punctuation">.</span>detail<span class="token punctuation">;</span>
+        <span class="token keyword">throw</span> err<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">return</span> data<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="gourmet-configjs"></a><a href="#gourmet-configjs" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>gourmet_config.js</h3>
+<pre><code class="hljs css language-js">module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  pages<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span><span class="token punctuation">:</span> <span class="token string">"./src/containers/PublicPage"</span><span class="token punctuation">,</span>
+    main<span class="token punctuation">:</span> <span class="token string">"./src/containers/MainPage"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  config<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    html<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      headTop<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token string">'&lt;link href="//stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">'</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token string">"html:main"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      headTop<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token string">'&lt;link href="//use.fontawesome.com/releases/v5.0.12/css/all.css" rel="stylesheet" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">'</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="packagejson"></a><a href="#packagejson" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>package.json</h3>
+<pre><code class="hljs css language-json"><span class="token punctuation">{</span>
+  <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"build"</span><span class="token operator">:</span> <span class="token string">"gourmet build"</span><span class="token punctuation">,</span>
+    <span class="token property">"start"</span><span class="token operator">:</span> <span class="token string">"node lib/server.js"</span><span class="token punctuation">,</span>
+    <span class="token property">"dev"</span><span class="token operator">:</span> <span class="token string">"nodemon --ignore src lib/server.js -- --watch"</span><span class="token punctuation">,</span>
+    <span class="token property">"migrate"</span><span class="token operator">:</span> <span class="token string">"knex migrate:latest"</span><span class="token punctuation">,</span>
+    <span class="token property">"migrate:rollback"</span><span class="token operator">:</span> <span class="token string">"knex migrate:rollback"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"dependencies"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"express"</span><span class="token operator">:</span> <span class="token string">"^4.16.4"</span><span class="token punctuation">,</span>
+    <span class="token property">"@gourmet/server-args"</span><span class="token operator">:</span> <span class="token string">"^1.2.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"@gourmet/client-lib"</span><span class="token operator">:</span> <span class="token string">"^1.2.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"body-parser"</span><span class="token operator">:</span> <span class="token string">"^1.18.3"</span><span class="token punctuation">,</span>
+    <span class="token property">"@gourmet/error"</span><span class="token operator">:</span> <span class="token string">"^0.3.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"knex"</span><span class="token operator">:</span> <span class="token string">"^0.16.3"</span><span class="token punctuation">,</span>
+    <span class="token property">"pg"</span><span class="token operator">:</span> <span class="token string">"^7.8.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"sqlite3"</span><span class="token operator">:</span> <span class="token string">"^4.0.6"</span><span class="token punctuation">,</span>
+    <span class="token property">"express-session"</span><span class="token operator">:</span> <span class="token string">"^1.15.6"</span><span class="token punctuation">,</span>
+    <span class="token property">"connect-session-knex"</span><span class="token operator">:</span> <span class="token string">"^1.4.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"bcrypt"</span><span class="token operator">:</span> <span class="token string">"^3.0.4"</span><span class="token punctuation">,</span>
+    <span class="token property">"node-fetch"</span><span class="token operator">:</span> <span class="token string">"^2.3.0"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"devDependencies"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"@gourmet/gourmet-cli"</span><span class="token operator">:</span> <span class="token string">"^1.1.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"@gourmet/preset-react"</span><span class="token operator">:</span> <span class="token string">"^1.2.2"</span><span class="token punctuation">,</span>
+    <span class="token property">"@gourmet/group-react-i80"</span><span class="token operator">:</span> <span class="token string">"^1.2.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"@gourmet/group-react-emotion"</span><span class="token operator">:</span> <span class="token string">"^1.1.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"@gourmet/self-url"</span><span class="token operator">:</span> <span class="token string">"^1.1.0"</span><span class="token punctuation">,</span>
+    <span class="token property">"classnames"</span><span class="token operator">:</span> <span class="token string">"^2.2.6"</span><span class="token punctuation">,</span>
+    <span class="token property">"react"</span><span class="token operator">:</span> <span class="token string">"^16.8.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"react-dom"</span><span class="token operator">:</span> <span class="token string">"^16.8.1"</span><span class="token punctuation">,</span>
+    <span class="token property">"nodemon"</span><span class="token operator">:</span> <span class="token string">"^1.18.10"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="fetching-data-for-ssr"></a><a href="#fetching-data-for-ssr" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Fetching data for SSR</h2>
+<h3><a class="anchor" aria-hidden="true" id="best-practice"></a><a href="#best-practice" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Best practice</h3>
+<p>Because your SSR code for rendering the user interface can run on both sides of the target environment - server and browser, there are two cases in the data fetching.</p>
+<ol>
+<li>When you render the initial content on the server-side, initiated by <code>res.serve()</code>.</li>
+<li>When you update the DOM on the client side, usually initiated by the user's action such as clicking a button.</li>
+</ol>
+<p>To make your life easier, it is best to make your data fetching code &quot;isomorphic&quot; as well. To support this, we recommend the following architecture as a best practice.</p>
+<ul>
+<li>Implement all your data access as APIs, and make them accessible equally from server and client.</li>
+<li>Inside your SSR code, fetch data by invoking the APIs.</li>
+</ul>
+<p>Because your API signatures are the same regardless of where your code is running, your data fetching code becomes isomorphic. Now the only issue that we need to care about is the transport layer. Gourmet SSR provides the following two browser compatible methods inside the server-side VM sandbox.</p>
+<ul>
+<li><a href="https://fetch.spec.whatwg.org/"><code>fetch</code></a> - You can use <code>fetch</code> as a global function just like you do in the browser. Under the hood, Gourmet SSR uses <a href="https://github.com/bitinn/node-fetch"><code>node-fetch</code></a> to simulate the browser API.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest"><code>XMLHttpRequest</code></a> - You can use <code>XMLHttpRequest</code> as a global object. We recommend <code>fetch</code>, but <code>XMLHttpRequest</code> is also provided for the case that you might need to use the legacy codebase. <code>XMLHttpRequest</code> in Gourmet SSR is based on <a href="https://github.com/driverdan/node-XMLHttpRequest"><code>node-XMLHttpRequest</code></a> with the local file access and the synchronous operation removed.</li>
+</ul>
+<h3><a class="anchor" aria-hidden="true" id="getinitialprops"></a><a href="#getinitialprops" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>getInitialProps()</code></h3>
+<p>In addition to the basic transport layer, Gourmet SSR also provides higher level assistance for the isomorphic data fetching.
+When the rendering happens on the server-side, Gourmet SSR looks for a static function <code>getInitialProps()</code> in your page component. If it is defined, the static function gets called before the rendering begins. If it returns a promise, Gourmet SSR will wait for the promise to be resolved.</p>
+<p><code>getInitialProps()</code> is supposed to return an object, or a promise to be fulfilled with an object. The properties of the object will be handed over to the page component as React props.</p>
+<p>The props returned by a page component's <code>getInitialProps()</code> will be serialized as a JSON object and transferred to the client. That is, a page component's <code>getInitialProps()</code> will be executed on the server-side only.</p>
+<p>A view component (React I80's matching route component) also supports <code>getInitialProps()</code>. If defined, the result object is handed over to the view component as properties, in addition to the page component's result of <code>getInitialProps()</code>, in case it is defined as well.</p>
+<p>One subtlety of view component's <code>getInitialProps()</code> is that, because views can be switched on the client side, it can be executed on the client as well. The initial content rendered on the server will contain a serialized result of the initial view component's <code>getInitialProps()</code>, so it will not be executed on the client side just like a page component. However, if a view switch occurs on the client, the newly activated view's <code>getInitialProps()</code> will be executed on the browser.</p>
+<blockquote>
+<p>The idea of the asynchronous data fetching via a static function of a component, named <code>getInitialProps()</code>, got popular by <a href="https://nextjs.org/learn/basics/fetching-data-for-pages">Next.js</a>. We appreciate their work for the inspiration.</p>
+</blockquote>
+<h3><a class="anchor" aria-hidden="true" id="authentication"></a><a href="#authentication" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Authentication</h3>
+<p>One important issue regarding the isomorphic data fetching is the authentication. Let's take a look at the flow of interaction between client and server in our news app.</p>
+<ol>
+<li>A user logs in to our app. Now, a session cookie is saved in user's browser.</li>
+<li>The user visits <code>/</code> to get the HTML page containing the latest news articles.</li>
+<li>The server receives the request and verifies the session cookie.</li>
+<li>The server calls <code>res.serve(&quot;main&quot;)</code> to render the page.</li>
+<li>Gourmet SSR calls the static <code>getInitialProps()</code> function of the view component <code>NewsView</code>.</li>
+<li>The <code>getInitialProps()</code> function sends a HTTP GET request to the server API <code>/api/news</code> to fetch the latest news articles.</li>
+<li>The server API <code>/api/news</code> verifies the session cookie, and sends back the news articles.</li>
+<li>Gourmet SSR renders the initial content with the result of <code>getInitialProps()</code>.</li>
+<li>The server-rendered HTML page is sent back to the browser.</li>
+<li>The user clicks <code>Load more</code> button to fetch more articles.</li>
+<li>The browser sends a HTTP GET request to the server API <code>/api/news</code> to fetch more articles.</li>
+<li>The server API <code>/api/news</code> verifies the session cookie, and sends back the news articles.</li>
+<li>The browser appends the fetched articles to the DOM.</li>
+</ol>
+<p>Without a special care, the request will fail at #7, because the request is generated on the server-side, via the isomorphic <code>fetch</code> method provided by Gourmet SSR. Unlike the browser, the server-side <code>fetch</code> can't attach the session cookie to the request automatically. It always generates clean, cookie-less requests by default. There are possibly many solutions to this problem. A few examples are:</p>
+<ul>
+<li>Extract the session cookie from the original request at #3 and attach it to the API request at #6.</li>
+<li>Implement a token-based authentication method for APIs, and use tokens for server-side requests at #6. The server-side request tokens can be short-lived ones derived from the session data at #3, or from the client token if the client session is also using a token-based authentication method such as OAuth.</li>
+<li>Allow server-side API requests only from a predefined set of IP addresses.</li>
+<li>Use a global-super-power token for server-side API requests. You must keep this token secret.</li>
+</ul>
+<p>We use method #1 for this tutorial. It is simple, and at least, as secure as the cookie-based authentication method itself, which is widely used for many decades.</p>
+<h3><a class="anchor" aria-hidden="true" id="converting-a-relative-path-to-an-absolute-path"></a><a href="#converting-a-relative-path-to-an-absolute-path" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Converting a relative path to an absolute path</h3>
+<p>In the browser, you can give a relative URL to <code>fetch</code> like <code>fetch(&quot;/api/news&quot;)</code>. The browser knows the base URL (where the HTML document came) and will send the request to the origin host correctly. However, on the server-side, <code>fetch</code> doesn't know where to send the request if you just give it a relative path. It requires an absolute URL that includes protocol and host.</p>
+<p>Constructing the absolute URL from the request object in Node.js is possible, but surprisingly complicated when proxies are involved. <code>@gourmet/self-url</code> is a helper module that takes care of this conversion for you.</p>
+<h3><a class="anchor" aria-hidden="true" id="gourmet-context-gmctx"></a><a href="#gourmet-context-gmctx" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Gourmet Context: <code>gmctx</code></h3>
+<p>In order to handle all these tasks related to the data fetching in SSR code, we need the context information about the original request such as URL and HTTP headers. That is what <code>gmctx</code> is prepared for.</p>
+<p>When you call <code>res.serve()</code> to render a HTML page using Gourmet SSR, a new context object with the information about the rendering request is created internally. By convention, we call the context object <code>gmctx</code>.</p>
+<p>There are many ways to get <code>gmctx</code>. It is given to the page and view components as a prop. It is given to <code>getInitialProps()</code> as the only argument. It is also possible to get <code>gmctx</code> through <a href="https://reactjs.org/docs/context.html">React Context</a> inside a rendering tree using <code>@gourmet/react-context-gmctx</code> module, which comes as a sub-package inside <code>@gourmet/preset-react</code>.</p>
+<p>A few useful properties of <code>gmctx</code> are as follows:</p>
+<table>
+<thead>
+<tr><th>Property</th><th>On server</th><th>On client</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>isServer</td><td>true</td><td>false</td><td></td></tr>
+<tr><td>isClient</td><td>false</td><td>true</td><td></td></tr>
+<tr><td>reqArgs.url</td><td>/foo?a=1</td><td>N/A</td><td>path + query string</td></tr>
+<tr><td>reqArgs.method</td><td>GET</td><td>N/A</td><td></td></tr>
+<tr><td>reqArgs.headers</td><td>{...}</td><td>N/A</td><td>lower-cased</td></tr>
+</tbody>
+</table>
+<p>Let's take a look at how <code>gmctx</code> is used in real code.</p>
+<pre><code class="hljs css language-js"><span class="token comment">// src/utils/httpApi.js</span>
+<span class="token keyword">import</span> selfUrl <span class="token keyword">from</span> <span class="token string">"@gourmet/self-url"</span><span class="token punctuation">;</span>
+<span class="token comment">// ...</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span> <span class="token function">httpApi</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> options<span class="token punctuation">,</span> gmctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// ...</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>gmctx <span class="token operator">&amp;&amp;</span> gmctx<span class="token punctuation">.</span>isServer<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// `/api/news` => `https://myserver.example.com/api/news`</span>
+    url <span class="token operator">=</span> <span class="token function">selfUrl</span><span class="token punctuation">(</span>gmctx<span class="token punctuation">,</span> url<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// copy the "cookie" header from the original request</span>
+    options<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>cookie <span class="token operator">=</span> gmctx<span class="token punctuation">.</span>reqArgs<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>cookie<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token comment">// ...</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><code>httpApi()</code> receives the <code>gmctx</code> object as the last optional argument, newly added in this step, and use it to do two additional things that are needed only on server-side.</p>
+<ol>
+<li>It converts a relative URL to an absolute URL, using <code>@gourmet/self-url</code> module. The request information in <code>gmctx.reqArgs</code> is used inside.</li>
+<li>It copies cookies from the original client request to the new <code>fetch</code> request to preserve the authenticated session.</li>
+</ol>
+<blockquote>
+<p><strong>What about Apollo?</strong></p>
+<p>We are working on the <a href="https://www.apollographql.com/">Apollo</a> support package as another choice of data fetching method in Gourmet SSR. Stay tuned!</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="emotion-support-in-gourmet-ssr"></a><a href="#emotion-support-in-gourmet-ssr" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Emotion Support in Gourmet SSR</h2>
+<p>We use <a href="https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/"><code>Emotion</code></a> for styling components in this step. Gourmet SSR provides seamless integration with Emotion, including the auto-enabling of <code>babel-plugin-emotion</code>, and the stream-based server rendering via <code>renderStylesToNodeStream()</code>.</p>
+<p>As we explained in <a href="/docs/tutorial-2">Adding Real UI and Styling</a> step, we recommend a pattern that uses a CSS framework such as Bootstrap as a base stylesheet globally, and do the additional, per-component customization using the inline style or Emotion.</p>
+<p>The choice between the inline style and Emotion are largely based on your preference, but there might be some performance implications based on usage. If a component is instantiated many times in the same page, using Emotion will probably result in better performance because instances of the component will have the same <code>className</code> prop, and browser can reuse the same set of CSS declarations for all instances. On the other hand, inline styles must be processed individually per each instance.</p>
+<p>To use Emotion in your Gourmet SSR project, you must add the package <code>@gourmet/group-react-emotion</code> as a dependency. Once you do this, you can import <code>emotion</code> and <code>react-emotion</code> inside your SSR code without adding them individually. Gourmet Builder will resolve them to the corresponding sub-packages inside <code>@gourmet/group-react-emotion</code>.</p>
+<blockquote>
+<p>Currently, Gourmet SSR supports Emotion v9. We are aware of the release of v10.
+It appears that v10 is a drastic departure from the previous version with many breaking changes in the user-facing API.
+We didn't spend enough time to evaluate the benefit of the new changes yet.
+Stay tuned!</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="using-font-awesome"></a><a href="#using-font-awesome" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using Font Awesome</h2>
+<p>We used <a href="https://fontawesome.com/">Font Awesome</a> for rendering icons in this step.</p>
+<pre><code class="hljs css language-js"><span class="token comment">// gourmet_config.js</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token comment">// ...</span>
+  config<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ...</span>
+    <span class="token string">"html:main"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      headTop<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token string">'&lt;link href="//use.fontawesome.com/releases/v5.0.12/css/all.css" rel="stylesheet" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">'</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Because we used the icons in the main page only, we appended a specifier <code>:main</code> to the <code>html</code> section name to make this configuration setting applied only to the <code>main</code> page. By doing this, links to both Bootstrap and Font Awesome CSS will be inserted to <code>main</code> page, but only a Bootstrap CSS link will be inserted to <code>public</code> page.</p>
+<h2><a class="anchor" aria-hidden="true" id="react-i80-s-link-component"></a><a href="#react-i80-s-link-component" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>React I80's <code>Link</code> component</h2>
+<p>We used <code>Link</code> component from <code>@gourmet/react-i80</code> to render anchor tags instead of the plain <code>&lt;a&gt;</code> in <code>MainPage</code> as below.</p>
+<pre><code class="hljs css language-js"><span class="token comment">// src/containers/MainPage.js</span>
+<span class="token comment">// ...</span>
+<span class="token keyword">const</span> tabs <span class="token operator">=</span> <span class="token punctuation">[</span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Link</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav-link<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/<span class="token punctuation">"</span></span> <span class="token attr-name">replace</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>far fa-newspaper<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+    <span class="token entity" title="&nbsp;">&amp;nbsp;</span>
+    Latest News Headlines
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>Link</span><span class="token punctuation">></span></span><span class="token punctuation">,</span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Link</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>nav-link<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/saved<span class="token punctuation">"</span></span> <span class="token attr-name">replace</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>i</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>far fa-bookmark<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+    <span class="token entity" title="&nbsp;">&amp;nbsp;</span>
+    Saved Articles
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>Link</span><span class="token punctuation">></span></span>
+<span class="token punctuation">]</span><span class="token punctuation">;</span>
+</code></pre>
+<p><code>Link</code> supports additional features such as adding <code>active</code> to <code>className</code> if the currently active route matches with the target URL <code>href</code>, and replacing (instead of pushing) the top element of navigation history when visited, if the boolean prop <code>replace</code> is true.</p>
+<h2><a class="anchor" aria-hidden="true" id="how-components-work-together"></a><a href="#how-components-work-together" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>How components work together</h2>
+<h3><a class="anchor" aria-hidden="true" id="articlespane"></a><a href="#articlespane" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>ArticlesPane</code></h3>
+<p><code>ArticlesPane</code> is a container component that does all the heavy lifting, providing most glue logic through event handlers (<code>loadMore</code>, <code>saveArticle</code>, and <code>unsaveArticle</code>), between a view component (<code>NewsView</code> or <code>SavedView</code>) as a parent, and presentational components (<code>Articles</code>, <code>ErrorBanner</code>, and <code>LoadButton</code>) as children.</p>
+<p>A static function <code>fetchInitialArticles()</code> is used as a helper to implement the parent view's <code>onInitialProps()</code> static function. It fetches the initial data using <code>httpApi()</code> function. It is important to hand over <code>gmctx</code> to <code>httpApi()</code> here, because this function can be called on both server and client. On the other hand, other event handlers that call <code>httpApi()</code> omit <code>gmctx</code>, because they are always executed in the browser.</p>
+<h3><a class="anchor" aria-hidden="true" id="tabbedpanes"></a><a href="#tabbedpanes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>TabbedPanes</code></h3>
+<p>This component implements the tabbed panes using Bootstrap's <a href="https://getbootstrap.com/docs/4.0/components/card/#navigation">card with nav</a>. <code>MainPage</code> uses this to provide the tabbed UI.</p>
+<h3><a class="anchor" aria-hidden="true" id="errorbanner"></a><a href="#errorbanner" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>ErrorBanner</code></h3>
+<p>This is a component that renders an auto-disappearing error banner, used by <code>ArticlesPane</code> when <code>httpApi()</code> fails.</p>
+<h3><a class="anchor" aria-hidden="true" id="loadbutton"></a><a href="#loadbutton" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>LoadButton</code></h3>
+<p>This is the <code>Load more</code> button at the end of news articles. It expects <code>onLoad()</code> handler to return a promise, and enters into the pending state until the promise is resolved.</p>
+<h2><a class="anchor" aria-hidden="true" id="running-and-testing"></a><a href="#running-and-testing" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Running and testing</h2>
+<p>In this step, we added the following new packages to <code>devDependencies</code>.</p>
+<ul>
+<li><code>@gourmet/group-react-emotion</code>: A group of sub-packages to support React Emotion in Gourmet SSR.</li>
+<li><code>@gourmet/self-url</code>: A relative to absolute URL converter.</li>
+<li><code>classnames</code>: A helper function(<code>cx</code>) to manipulate <code>className</code> prop.</li>
+</ul>
+<p>Run the following to test.</p>
+<pre><code class="hljs css language-text">npm install
+NEWS_API_KEY=0123456789abcdef0123456789abcdef npm run dev
+</code></pre>
+<p>For Windows, run the following instead.</p>
+<pre><code class="hljs css language-text">set NEWS_API_KEY=0123456789abcdef0123456789abcdef
+npm install
+npm run dev
+</code></pre>
+<p>Don't forget to replace the example hex string with your own News API key.</p>
+<p>Now that you have completed the user interface and back-end API, you should be able to use all features as we planned at the beginning of this tutorial. Congratulations!</p>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2/28/2019</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/gourmet-ssr/docs/tutorial-4"><span class="arrow-prev">← </span><span>Adding News API</span></a><a class="docs-next button" href="/gourmet-ssr/docs/tutorial-6"><span>Deploying the Production Build</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#what-we-will-add-in-this-step">What we will add in this step</a></li><li><a href="#edited-added-source-files">Edited / added source files</a><ul class="toc-headings"><li><a href="#src-containers-newsviewjs">src/containers/NewsView.js</a></li><li><a href="#src-containers-savedviewjs">src/containers/SavedView.js</a></li><li><a href="#src-containers-articlespanejs-new">src/containers/ArticlesPane.js <em>(new)</em></a></li><li><a href="#src-containers-mainpagejs">src/containers/MainPage.js</a></li><li><a href="#src-components-tabbedpanesjs-new">src/components/TabbedPanes.js <em>(new)</em></a></li><li><a href="#src-components-errorbannerjs-new">src/components/ErrorBanner.js <em>(new)</em></a></li><li><a href="#src-components-loadbuttonjs-new">src/components/LoadButton.js <em>(new)</em></a></li><li><a href="#src-components-articlesjs-new">src/components/Articles.js <em>(new)</em></a></li><li><a href="#src-components-articlejs-new">src/components/Article.js <em>(new)</em></a></li><li><a href="#src-components-bookmarkbuttonjs-new">src/components/BookmarkButton.js <em>(new)</em></a></li><li><a href="#src-utils-httpapijs">src/utils/httpApi.js</a></li><li><a href="#gourmet-configjs">gourmet_config.js</a></li><li><a href="#packagejson">package.json</a></li></ul></li><li><a href="#fetching-data-for-ssr">Fetching data for SSR</a><ul class="toc-headings"><li><a href="#best-practice">Best practice</a></li><li><a href="#getinitialprops"><code>getInitialProps()</code></a></li><li><a href="#authentication">Authentication</a></li><li><a href="#converting-a-relative-path-to-an-absolute-path">Converting a relative path to an absolute path</a></li><li><a href="#gourmet-context-gmctx">Gourmet Context: <code>gmctx</code></a></li></ul></li><li><a href="#emotion-support-in-gourmet-ssr">Emotion Support in Gourmet SSR</a></li><li><a href="#using-font-awesome">Using Font Awesome</a></li><li><a href="#react-i80-s-link-component">React I80's <code>Link</code> component</a></li><li><a href="#how-components-work-together">How components work together</a><ul class="toc-headings"><li><a href="#articlespane"><code>ArticlesPane</code></a></li><li><a href="#tabbedpanes"><code>TabbedPanes</code></a></li><li><a href="#errorbanner"><code>ErrorBanner</code></a></li><li><a href="#loadbutton"><code>LoadButton</code></a></li></ul></li><li><a href="#running-and-testing">Running and testing</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/gourmet-ssr/" class="nav-home"><img src="/gourmet-ssr/img/gourmet-ssr.svg" alt="Gourmet SSR"/></a><div><section class="copyright">Copyright © 2019 Gourmet Tech Inc.</section></div></section></footer></div></body></html>
