@@ -93,10 +93,6 @@ const siteConfig = {
   // No .html extensions for paths.
   cleanUrl: true,
 
-  // Open Graph and Twitter card images.
-  ogImage: "img/docusaurus.png",
-  twitterImage: "img/docusaurus.png",
-
   // Show documentation"s last contributor"s name.
   // enableUpdateBy: true,
 
