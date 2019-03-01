@@ -29,7 +29,7 @@ sudo yum update -y
 
 > We assume that you have some basic knowledge about how to launch and manage an EC2 instance via AWS console. Explaining basics about the AWS service is out of scope of this tutorial.
 
-## Installing additional server packages
+## Installing additional Linux packages
 
 ### Node.js
 
