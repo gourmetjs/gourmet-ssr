@@ -89,6 +89,23 @@ $ npm start
 Server is listening on port 3000
 ```
 
+#### Inspect
+
+```html
+$ curl http://localhost:3000
+<!doctype html>
+<html lang="en">
+  <head>
+    <script defer src="/s/vendors~main.js"></script>
+    <script defer src="/s/main.js"></script>
+  </head>
+  <body>
+    <div id="__gourmet_content__"><div id="__gourmet_react__"><div>Hello, world!</div></div></div>
+    <script>window.__gourmet_data__={"renderedLoadables":[],"clientProps":{"greeting":"Hello, world!"},"reactClientRender":"hydrate"};</script>
+  </body>
+</html>
+```
+
 ## Documentation
 
 Learn more about using [Gourmet SSR on the official website](https://ssr.gourmetjs.org).
