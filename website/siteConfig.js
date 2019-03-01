@@ -103,7 +103,11 @@ const siteConfig = {
   // template. For example, if you need your repo"s URL...
   //   repoUrl: "https://github.com/facebook/test-site",
 
-  usePrism: true
+  usePrism: true,
+
+  // Enable Google Analytics
+  gaTrackingId: "UA-78769505-3",
+  gaGtag: true
 };
 
 module.exports = siteConfig;
