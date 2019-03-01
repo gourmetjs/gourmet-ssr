@@ -51,8 +51,7 @@ Now, we will add the Server-Side Rendering (SSR) feature using Gourmet SSR to ou
 Install additional packages we need as below:
 
 ```text
-$ npm install @gourmet/gourmet-cli @gourmet/preset-react --save-dev
-$ npm install react react-dom --save-dev
+$ npm install @gourmet/gourmet-cli @gourmet/preset-react react react-dom --save-dev
 ```
 
 `@gourmet/gourmet-cli` provides a shell command `gourmet` which is a base command line interface that can be extended by installing additional plugins.

@@ -1,119 +1,101 @@
-# Debugging
+# Gourmet SSR
 
-## Debugging server side code
+A Server-Side Rendering Engine for Production
 
-- Run `node --inspect-brk`
-- Chrome://inspect
-- `builder.sourceMap = true` for setting break points on original source
-- If server side code crashes, stack trace at terminal contains original source code information by default (`builder.installSourceMapSupport = false` to turn this off)
+## Introduction
 
-## Debugging client side code
+- **Library, not Framework** - Gourmet SSR is designed to be used as a view library in your existing project. We worked very hard to make Gourmet SSR unobtrusive.
+- **Production First** - Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and many more. Production is always number one priority of Gourmet SSR.
+- **Human Friendly** - Developers are humans too. When we added a new feature, the first thing we considered was how to make it easy to understand and use - just like we do for the consumer products.
+- **Flexible** - Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda function. Your server can be Django or Rails. View layer is not limited to React.
 
-- Typical browser side debugging
+## Quick Overview
 
-# Server side environment
-
-- Full Node environment but bundled
-- SSR source files are compiled and concatenated into a single bundle file per a page.
-- `XMLHttpRequest` & `fetch` are provided as global API.
-- How to include external modules without bundle them?
-
-# Module resolution
-
-## Alias
-
-## Webpack config
-
-- Alias: https://webpack.js.org/configuration/resolve/#resolve-aliasfields
-- Alias Field (package.json / browser): https://webpack.js.org/configuration/resolve/#resolve-aliasfields
-- Externals: https://webpack.js.org/configuration/externals/
-- Node: https://webpack.js.org/configuration/node/
-
-## Modules under `node_modules` are not transpiled by default
-
-- By default, vendor modules from `node_modules` will not be complied and copied as-is for better build performance.
-- However, source files located under one of directories specified in `vendorSourceDirs` will be included in compilation.
- - Default value is `["gourmet-source"]`.
-
-## Controlling modules' linkage using `builder.moduleLinks`
+#### hello.js
 
 ```js
-// gourmet_config.js
+import React from "react";
+
+export default function Hello({greeting}) {
+  return <div>{greeting}</div>;
+}
+```
+
+#### gourmet_config.js
+
+```js
 module.exports = {
-  builder: {
-    moduleLinks: {
-      "react": "client:external",
-      "react-dom/server": "external"
-    }
-  },
   pages: {
-    main: "./src/main.js"
+    main: "./hello.js"
   }
 };
 ```
 
-- "react" will be bundled on client and loaded from `node_modules` on server.
-- "react-dom/server" will be ignored on client and loaded from `node_modules` on server.
+#### server.js
 
 ```js
-// gourmet_config.js
-module.exports = {
-  builder: {
-    moduleLinks: {
-      "domready": "client",
-      "classnames": "server",
-      "mkdirp": "external",
-      "none": false
-    }
-  },
-  pages: {
-    main: "./src/main"
-  }
-};
+const express = require("express");
+const gourmet = require("@gourmet/client-lib");
+
+const app = express();
+
+app.use(gourmet.middleware());
+
+app.get("/", (req, res) => {
+  res.serve("main", {greeting: "Hello, world!"});
+});
+
+app.listen(3000, () => {
+  console.log("Server is listening on port 3000");
+});
 ```
 
-- "domready" will be bundled on client and ignored on server.
-- "classname" will be ignored on client and bundled on server.
-- "mkdirp" will be ignored on client and loaded from `node_modules` on server.
-- "none": will be ignored on both client and server.
+#### package.json
 
-## Long-term caching
-
-- enabled with `builder.contentHash` (CLI option: `--content-hash`)
-- note that `minify` doesn't change the hash
-- hash encoding is always `base62` and collision from case insensitive file system (Windows & Mac) is handled by increasing the truncation length dynamically
-- however, we recommend to use case sensitive file system (Linux) to avoid this issue in the first place
-
-## Customizing bundling
-
-- In addition to `builder.granularity`, you can further customize bundling process using `builder.bundles` as follows.
-
-```js
-// gourmet_config.js
-module.exports = {
-  // ...
-  builder: {
-    bundles: {
-      react: ["react", "react-dom"],
-      components: "./src/components",
-      containers: "./src/containers"
-    }
+```json
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node server.js"
   }
-};
+}
 ```
 
-- This will create a single bundle file containing both `react` and `react-dom` instead of two separate bundles.
-- This will create two bundle files `components` and `containers` containing all files under specified directories.
-- By grouping together tightly related files into a single bundle, you can expect better possibility of cache hit on the browser.
+#### Install
 
-## Polyfill
+```sh
+$ npm install express @gourmet/client-lib --save
+$ npm install @gourmet/gourmet-cli @gourmet/preset-react react react-dom --save-dev
+```
 
-- IE 11 is supported.
-- Transpilation and polyfill are automatically enabled based on the value of `builder.runtime` & `babel.polyfill`.
+#### Build and run
 
-## Troubleshooting
+```text
+$ npm run build
+server>
+server> >>> Building 'local' stage for 'server' target...
+server>
+server> Hash: 67lUupnSCkvx5QS2PfiMN5B5M2d
+server> Version: webpack 4.28.3
+...
+client>
+client> >>> Building 'local' stage for 'client' target...
+client>
+client> Hash: 2X8CXpO82qOEnWcj6UiIi6eg5gv
+client> Version: webpack 4.28.3
+...
+$ npm start
+Server is listening on port 3000
+```
 
-### `Module not found: Error: Can't resolve 'core-js/...'`
+## Documentation
 
-This is a Bable issue. Add `core-js@2` to your `devDependencies` like `"core-js": "2"`.
-See Babel documentation](https://babeljs.io/docs/en/babel-preset-env#usebuiltins) for more details.
+Learn more about using [Gourmet SSR on the official website](https://ssr.gourmetjs.org).
+
+- [Getting Started](https://ssr.gourmetjs.org/docs/getting-started)
+- [Tutorial](https://ssr.gourmetjs.org/docs/tutorial-1)
+
+## License
+
+Gourmet SSR is open source software [licensed as MIT](https://github.com/gourmetjs/gourmet-ssr/blob/master/LICENSE).
