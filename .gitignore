@@ -4,3 +4,4 @@
 .local-chromium
 *.log
 node_modules
+website/build
