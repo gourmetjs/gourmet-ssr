@@ -17,6 +17,9 @@ const siteConfig = {
   //   url: "https://facebook.github.io",
   //   baseUrl: "/test-site/",
 
+  // This will create CNAME file
+  cname: "ssr.gourmetjs.org",
+
   editUrl: "https://github.com/gourmetjs/gourmet-ssr/blob/master/docs/",
 
   // Used for publishing and more
