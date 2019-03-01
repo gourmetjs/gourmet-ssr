@@ -3,7 +3,7 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A Server-Side Rendering Engine for Professionals.",
+    "tagline": "A Server-Side Rendering Engine for Production",
     "docs": {
       "examples/hello/node_modules/@babel/code-frame/README": {
         "title": "examples/hello/node_modules/@babel/code-frame/README"
@@ -2466,9 +2466,8 @@
     "links": {
       "Getting Started": "Getting Started",
       "Tutorial": "Tutorial",
-      "Guides": "Guides",
-      "Reference": "Reference",
-      "Blog": "Blog"
+      "Docs": "Docs",
+      "GitHub": "GitHub"
     },
     "categories": {
       "Introduction": "Introduction",

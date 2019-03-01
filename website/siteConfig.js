@@ -8,26 +8,16 @@
 // See https://docusaurus.io/docs/site-config for all the possible
 // site configuration options.
 
-// List of projects/orgs using your project for the users page.
-const users = [
-  {
-    caption: "User1",
-    // You will need to prepend the image path with your baseUrl
-    // if it is not "/", like: "/test-site/img/docusaurus.svg".
-    image: "/img/docusaurus.svg",
-    infoLink: "https://www.facebook.com",
-    pinned: true,
-  },
-];
-
 const siteConfig = {
   title: "Gourmet SSR", // Title for your website.
-  tagline: "A Server-Side Rendering Engine for Professionals.",
+  tagline: "A Server-Side Rendering Engine for Production",
   url: "https://ssr.gourmetjs.org", // Your website URL
   baseUrl: "/", // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: "https://facebook.github.io",
   //   baseUrl: "/test-site/",
+
+  editUrl: "https://github.com/gourmetjs/gourmet-ssr/blob/master/docs/",
 
   // Used for publishing and more
   projectName: "gourmet-ssr",
@@ -40,18 +30,15 @@ const siteConfig = {
   headerLinks: [
     {doc: "getting-started", label: "Getting Started"},
     {doc: "tutorial-1", label: "Tutorial"},
-    {doc: "guides", label: "Guides"},
-    {doc: "reference", label: "Reference"},
+    {doc: "guides", label: "Docs"},
+    {href: "https://github.com/gourmetjs/gourmet-ssr", label: "GitHub"},
     //{page: "help", label: "Help"},
-    {blog: true, label: "Blog"},
+    //{blog: true, label: "Blog"},
   ],
-
-  // If you have users set above, you add it here:
-  users,
 
   /* path to images for header/footer */
   headerIcon: "img/gourmet-ssr.svg",
-  footerIcon: "img/docusaurus.svg",
+  footerIcon: "img/gourmet-ssr.svg",
   favicon: "img/favicon.png",
 
   /* Colors for website */
@@ -75,7 +62,7 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} Your Name or Your Company Name`,
+  copyright: `Copyright © ${new Date().getFullYear()} Gourmet Tech Inc.`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
