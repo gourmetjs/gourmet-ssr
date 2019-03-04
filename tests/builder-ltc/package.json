@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-builder-ltc",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -18,7 +18,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.0",
     "@gourmet/gourmet-cli-impl": "^1.1.0",
-    "@gourmet/preset-core": "^1.1.2",
+    "@gourmet/preset-core": "^1.1.3",
     "@gourmet/promise-tape": "^0.4.0",
     "mkdirp": "^0.5.1",
     "tape": "^4.9.0"
