@@ -2,7 +2,7 @@
 
 const WEBPACK = "webpack:///";
 
-require("source-map-support").install({
+require("gmint-source-map-support").install({
   environment: "node",
   supportRelativeURL: (file, url) => {
     if (url.startsWith(WEBPACK))

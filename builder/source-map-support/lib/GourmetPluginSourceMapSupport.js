@@ -7,7 +7,7 @@ class GourmetPluginSourceMapSupport {
       return {
         builder: {
           alias: {
-            "source-map-support": moduleDir("source-map-support")
+            "gmint-source-map-support": moduleDir("source-map-support")
           }
         }
       };
