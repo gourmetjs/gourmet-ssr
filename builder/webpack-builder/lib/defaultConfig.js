@@ -64,9 +64,10 @@ module.exports = {
     },
 
     // `runtime` is located here as an independent section from Webpack or Babel
-    // because the format is kinda standardized based on the browserlist and
+    // because the format is kind of standardized based on the browserlist and
     // can be used for other purposes such as CSS compilation.
-    // We set `client` to browserslist's default + `ie 11` for the safety.
+    // We added `ie 11` to the list to make sure it is included even when IE's market
+    // share drops further.
     runtime: {
       client: "> 0.5%, last 2 versions, Firefox ESR, not dead, ie 11",
       server: "node 8.11"
@@ -112,7 +113,10 @@ module.exports = {
     //     "aws-sdk": "external",
     //     "useless-module": false  // or null
     //   }
-    moduleLinks: {}
+    moduleLinks: {},
+
+    // If this is set to true, the `whatwg-fetch` polyfill will be injected as an entry file to all pages.
+    installFetchPolyfill: true
   },
 
   webpack: {

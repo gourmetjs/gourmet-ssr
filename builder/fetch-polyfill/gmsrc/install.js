@@ -1,0 +1,1 @@
+require("gmint-whatwg-fetch");

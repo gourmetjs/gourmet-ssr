@@ -18,6 +18,7 @@ GroupCore.meta = {
     "@gourmet/plugin-webpack-builder",
     "@gourmet/plugin-preserve-injector",
     "@gourmet/plugin-source-map-support",
+    "@gourmet/plugin-fetch-polyfill",
     "@gourmet/plugin-webpack-babel",
     "@gourmet/plugin-webpack-global-css",
     "@gourmet/plugin-webpack-blob",

@@ -10,6 +10,7 @@
     "@gourmet/html-renderer": "^1.1.1",
     "@gourmet/plugin-preserve-injector": "^0.3.0",
     "@gourmet/plugin-source-map-support": "^0.5.1",
+    "@gourmet/plugin-fetch-polyfill": "^1.0.0",
     "@gourmet/plugin-webpack-babel": "^1.1.0",
     "@gourmet/plugin-webpack-blob": "^0.4.0",
     "@gourmet/plugin-webpack-builder": "^1.1.1",
