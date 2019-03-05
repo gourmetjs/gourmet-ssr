@@ -198,7 +198,7 @@ module.exports = {
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.0",
-    "@gourmet/preset-react": "^1.2.2",
+    "@gourmet/preset-react": "^1.2.3",
     "@gourmet/group-react-i80": "^1.2.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
