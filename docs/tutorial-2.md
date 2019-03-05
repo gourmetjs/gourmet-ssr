@@ -473,9 +473,9 @@ app.post("/api/login", (req, res) => {
 
 By default, `fetch()` will send and receive any cookies associated with the target domain. We depend on this behavior to implement authentication in this tutorial. However, one caveat of this default behavior is that, it is a relatively new [change](https://github.com/whatwg/fetch/pull/585) in the specification. Before the change, cookie-less operation was the default. To make the cookie behavior consistent in the old browsers too, `httpApi()` always sets `credentials: "same-origin"` option.
 
-In addition to this, `httpApi()` also takes care of cache busting for IE, encoding/decoding of the JSON payload, and handling of error response formatted by `gourmet.errorMiddleware()`.
+In addition to this, `httpApi()` also takes care of disabling cache for IE, encoding/decoding of the JSON payload, and handling of error response formatted by `gourmet.errorMiddleware()`.
 
-In IE, responses of AJAX GET from the server are saved in browser cache and reused. IE will give you the same data for the same URL every time without touching the server. To avoid this problem, we always set `cache-control: no-cache` and `pragma: no-cache` request headers.
+In IE, responses of AJAX GET from the server are saved in browser cache and reused. IE will give you the same data for the same URL every time without contacting the server. To avoid this problem, we always set `cache-control: no-cache` and `pragma: no-cache` request headers.
 
 ## Maintaining `_isMounted` flag
 
