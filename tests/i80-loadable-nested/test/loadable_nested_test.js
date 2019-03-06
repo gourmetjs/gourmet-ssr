@@ -81,11 +81,11 @@ test("run puppeteer", pt(async t => {
 
   await page.goto(`http://localhost:${port}/`);
 
-  await _verifyLoadables(["fnqne3"]);
+  await _verifyLoadables(["8M6kwUdU"]);
 
   await page.click('a[href="/profile"]');
 
-  await _verifyLoadables(["fnqne3"]);  // click should not initiate a page reload
+  await _verifyLoadables(["8M6kwUdU"]);  // click should not initiate a page reload
 
   await page.waitFor(200);
 
@@ -93,7 +93,7 @@ test("run puppeteer", pt(async t => {
 
   await page.goto(`http://localhost:${port}/profile`);
 
-  await _verifyLoadables(["1msvprz","jagne6","1o5yyn5","ji1xsc"]);
+  await _verifyLoadables(["pXAtNlAE", "yZg60PSe", "zAWqQTgp", "o236Ml7n"]);
 
   await _verifyContent();
 

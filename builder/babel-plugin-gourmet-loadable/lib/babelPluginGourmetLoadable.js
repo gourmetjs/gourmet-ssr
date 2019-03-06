@@ -1,6 +1,13 @@
 "use strict";
 
-const MM3 = require("imurmurhash");
+const crypto = require("crypto");
+const b62 = require("@gourmet/base-x")("base62");
+
+function _hash(data) {
+  const hash = crypto.createHash("sha1");
+  hash.update(data);
+  return b62.encode(hash.digest()).substring(0, 8);
+}
 
 function _warn(state) {
   console.warn(`WARNING: Invalid use of '${state.opts.libraryName}' at ${state.file.opts.filename}`);
@@ -91,9 +98,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
           items.push(":", sig);
         }
 
-        const mm3 = MM3();
-        items.forEach(item => mm3.hash(item));
-        const id = mm3.result().toString(36);
+        const id = _hash(items.join(""));
 
         loader.insertAfter(
           t.objectProperty(
