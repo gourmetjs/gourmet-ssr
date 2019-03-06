@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const test = require("tape");
+const got = require("got");
 const pt = require("@gourmet/promise-tape");
 const puppeteer = require("puppeteer");
 const run = require("../lib/app");
@@ -15,6 +16,36 @@ test("start server", t => {
     t.end();
   });
 });
+
+test("check server rendered content", pt(async t => {
+  let re;
+
+  if (app.args.stage === "local") {
+    re = {
+      home: /<script.*src="\/s\/home\.js"><\/script>/,
+      messages: /<script.*src="\/s\/messages\.js"><\/script>/,
+      profile: /<script.*src="\/s\/profile\.js"><\/script>/
+    };
+  } else if (app.args.stage === "prod") {
+    re = {
+      home: /<script.*src="\/s\/x86vUOIc\.js"><\/script>/,
+      messages: /<script.*src="\/s\/3pSccKy5\.js"><\/script>/,
+      profile: /<script.*src="\/s\/dj7zHVlC\.js"><\/script>/
+    };
+  } else {
+    return;
+  }
+
+  let res = await got(`http://localhost:${port}/`);
+  t.ok(re.home.test(res.body), "home");
+
+  res = await got(`http://localhost:${port}/messages`);
+  t.ok(re.messages.test(res.body), "message");
+
+  res = await got(`http://localhost:${port}/profile`);
+  t.ok(re.profile.test(res.body), "profile");
+}));
+
 
 test("run puppeteer", pt(async t => {
   const args = app.args;

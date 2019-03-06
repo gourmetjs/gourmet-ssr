@@ -3,7 +3,9 @@ import loadable from "@gourmet/react-loadable";
 
 export default class ProfileView extends React.Component {
   static routeLoadable = loadable({
-    loader: () => import(/* webpackChunkName: "profile" */ "./ProfilePanel")
+    loader: function() {
+      return import(/* webpackChunkName: "profile" */ "./ProfilePanel");
+    }
   });
 
   render() {

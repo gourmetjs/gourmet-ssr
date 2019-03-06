@@ -2,6 +2,10 @@
 
 const MM3 = require("imurmurhash");
 
+function _warn(state) {
+  console.warn(`WARNING: Invalid use of '${state.opts.libraryName}' at ${state.file.opts.filename}`);
+}
+
 // Options:
 //  - libraryName: library name to trigger the `modules` population. E.g. "@gourmet/react-loadable"
 //  - modules: whether to populate 'modules' field (default: false)
@@ -19,20 +23,19 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
 
   function _processBinding(bindingName, path, state) {
     const binding = path.scope.getBinding(bindingName);
-    const filePath = state.opts.resolveModule(state.file.opts.filename);
 
     binding.referencePaths.forEach(refPath => {
       const callExpression = refPath.parentPath;
 
       if (!callExpression.isCallExpression())
-        return;
+        return _warn(state);
 
       const args = callExpression.get("arguments");
       if (args.length !== 1) throw callExpression.error;
 
       const options = args[0];
       if (!options.isObjectExpression())
-        return;
+        return _warn(state);
 
       const properties = options.get("properties");
       const propertiesMap = {};
@@ -42,26 +45,42 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         propertiesMap[key.node.name] = property;
       });
 
-      if (!propertiesMap.loader)
-        return;
+      const loader = propertiesMap.loader;
 
-      const loaderMethod = propertiesMap.loader.get("value");
+      if (!loader)
+        return _warn(state);
+
+      let loaderMethod;
+
+      if (loader.isObjectMethod()) {
+        // `loader() {return import("...")}`
+        loaderMethod = loader.get("body");
+      } else if (loader.isObjectProperty()) {
+        // `loader: () => import("...")` or `loader: function() {return import("...")}`
+        loaderMethod = loader.get("value");
+        if (!loaderMethod.isArrowFunctionExpression() && !loaderMethod.isFunctionExpression())
+          return _warn(state);
+      }
+
       const modules = [];
 
       loaderMethod.traverse({
         Import(path) {
           const callExpression = path.parentPath;
-          const moduleName = _evalString(callExpression.get("arguments")[0], "import()");
-          if (moduleName) {
-            const relPath = state.opts.resolveModule(moduleName, state.file.opts.filename);
-            if (relPath)
-              modules.push(relPath);
-          }
+          const moduleName = _evalString(callExpression.get("arguments")[0], "import()", true);
+          const relPath = state.opts.resolveModule(moduleName, state.file.opts.filename);
+          if (relPath)
+            modules.push(relPath);
+          else
+            _warn(state);
         }
       });
 
+      if (!modules.length)
+        _warn(state);
+
       if (!propertiesMap.id) {
-        const items = [filePath];
+        const items = [state.opts.resolveModule(state.file.opts.filename)];
 
         modules.forEach(path => {
           items.push(":", path);
@@ -76,7 +95,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         items.forEach(item => mm3.hash(item));
         const id = mm3.result().toString(36);
 
-        propertiesMap.loader.insertAfter(
+        loader.insertAfter(
           t.objectProperty(
             t.identifier("id"),
             t.stringLiteral(id)
@@ -85,7 +104,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
       }
 
       if (state.opts.modules && !propertiesMap.modules && modules.length) {
-        propertiesMap.loader.insertAfter(
+        loader.insertAfter(
           t.objectProperty(
             t.identifier("modules"),
             t.arrayExpression(modules.map(path => t.stringLiteral(path)))
@@ -112,7 +131,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         const parent = path.parentPath;
 
         if (!parent.isVariableDeclarator())
-          return;
+          return _warn(state);
 
         _processBinding(parent.node.id.name, path, state);
       },
@@ -126,7 +145,7 @@ module.exports = function babelPluginGourmetLoadable({types: t}) {
         });
 
         if (!defaultSpecifier)
-          return;
+          return _warn(state);
 
         _processBinding(defaultSpecifier.node.local.name, path, state);
       }
