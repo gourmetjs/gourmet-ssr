@@ -650,13 +650,13 @@ A view component (React I80's matching route component) also supports `getInitia
 
 One subtlety of view component's `getInitialProps()` is that, because views can be switched on the client side, it can be executed on the client as well. The initial content rendered on the server will contain a serialized result of the initial view component's `getInitialProps()`, so it will not be executed on the client side just like a page component. However, if a view switch occurs on the client, the newly activated view's `getInitialProps()` will be executed on the browser.
 
-> The idea of the asynchronous data fetching via a static function of a component, named `getInitialProps()`, got popular by [Next.js](https://nextjs.org/learn/basics/fetching-data-for-pages). We appreciate their work for the inspiration.
+> The idea of the asynchronous data fetching via a static function of a component, named `getInitialProps()`, was made popular by [Next.js](https://nextjs.org/learn/basics/fetching-data-for-pages). We appreciate their work for the inspiration.
 
 ### Authentication
 
 One important issue regarding the isomorphic data fetching is the authentication. Let's take a look at the flow of interaction between client and server in our news app.
 
-1. A user logs in to our app. Now, a session cookie is saved in user's browser.
+1. A user logs in to our app. Now, a session cookie is saved in the user's browser.
 2. The user visits `/` to get the HTML page containing the latest news articles.
 3. The server receives the request and verifies the session cookie.
 4. The server calls `res.serve("main")` to render the page.
@@ -670,14 +670,14 @@ One important issue regarding the isomorphic data fetching is the authentication
 12. The server API `/api/news` verifies the session cookie, and sends back the news articles.
 13. The browser appends the fetched articles to the DOM.
 
-Without a special care, the request will fail at #7, because the request is generated on the server-side, via the isomorphic `fetch` method provided by Gourmet SSR. Unlike the browser, the server-side `fetch` can't attach the session cookie to the request automatically. It always generates clean, cookie-less requests by default. There are possibly many solutions to this problem. A few examples are:
+Without special care, the request will fail at #7, because the request is generated on the server-side, via the isomorphic `fetch` method provided by Gourmet SSR. Unlike the browser, the server-side `fetch` can't attach the session cookie to the request automatically. It always generates clean, cookie-less requests by default. There are many possible solutions to this problem. A few examples are:
 
 - Extract the session cookie from the original request at #3 and attach it to the API request at #6.
 - Implement a token-based authentication method for APIs, and use tokens for server-side requests at #6. The server-side request tokens can be short-lived ones derived from the session data at #3, or from the client token if the client session is also using a token-based authentication method such as OAuth.
 - Allow server-side API requests only from a predefined set of IP addresses.
 - Use a global-super-power token for server-side API requests. You must keep this token secret.
 
-We use method #1 for this tutorial. It is simple, and at least, as secure as the cookie-based authentication method itself, which is widely used for many decades.
+We use method #1 for this tutorial. It is simple and as secure as the cookie-based authentication method itself, which has been widely used for many decades.
 
 ### Converting a relative path to an absolute path
 
@@ -722,7 +722,7 @@ export default function httpApi(url, options, gmctx) {
 }
 ```
 
-`httpApi()` receives the `gmctx` object as the last optional argument, newly added in this step, and use it to do two additional things that are needed only on server-side.
+`httpApi()` receives the `gmctx` object as the last optional argument, newly added in this step, and uses it to do two additional things that are needed only on server-side.
 
 1. It converts a relative URL to an absolute URL, using `@gourmet/self-url` module. The request information in `gmctx.reqArgs` is used inside.
 2. It copies cookies from the original client request to the new `fetch` request to preserve the authenticated session.
@@ -737,13 +737,13 @@ We use [`Emotion`](https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/) for s
 
 As we explained in [Adding Real UI and Styling](/docs/tutorial-2) step, we recommend a pattern that uses a CSS framework such as Bootstrap as a base stylesheet globally, and do the additional, per-component customization using the inline style or Emotion.
 
-The choice between the inline style and Emotion are largely based on your preference, but there might be some performance implications based on usage. If a component is instantiated many times in the same page, using Emotion will probably result in better performance because instances of the component will have the same `className` prop, and browser can reuse the same set of CSS declarations for all instances. On the other hand, inline styles must be processed individually per each instance.
+The choice between the inline style and Emotion are largely based on your preference, but there might be some performance implications based on usage. If a component is instantiated many times in the same page, using Emotion will probably result in better performance because instances of the component will have the same `className` prop, and the browser can reuse the same set of CSS declarations for all instances. On the other hand, inline styles must be processed individually per each instance.
 
 To use Emotion in your Gourmet SSR project, you must add the package `@gourmet/group-react-emotion` as a dependency. Once you do this, you can import `emotion` and `react-emotion` inside your SSR code without adding them individually. Gourmet Builder will resolve them to the corresponding sub-packages inside `@gourmet/group-react-emotion`.
 
 > Currently, Gourmet SSR supports Emotion v9. We are aware of the release of v10.
 > It appears that v10 is a drastic departure from the previous version with many breaking changes in the user-facing API.
-> We didn't spend enough time to evaluate the benefit of the new changes yet.
+> We haven't spent enough time evaluating the benefits and/or drawbacks of the new changes yet.
 > Stay tuned!
 
 ## Using Font Awesome
@@ -835,4 +835,4 @@ npm run dev
 
 Don't forget to replace the example hex string with your own News API key.
 
-Now that you have completed the user interface and back-end API, you should be able to use all features as we planned at the beginning of this tutorial. Congratulations!
+Now that you have completed the user interface and back-end API, you should be able to use all of the features that we laid out at the beginning of this tutorial. Congratulations!

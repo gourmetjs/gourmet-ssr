@@ -370,7 +370,7 @@ Instead of using the raw SQL or fully-abstract ORM, we chose [Knex](https://knex
 
 ### Migrations basic
 
-Knex provides a structured way to maintain the history of your SQL schema modifications (e.g. `CREATE TABLE`, `ALTER TABLE`, ...etc) through a feature called migrations. Migrations help you implement your schema modifications incrementally in a backward compatible way, which is important in production environment - you can't just delete the whole database and restart with a different schema.
+Knex provides a structured way to maintain the history of your SQL schema modifications (e.g. `CREATE TABLE`, `ALTER TABLE`, ...etc) through a feature called migrations. Migrations helps you implement your schema modifications incrementally in a backward compatible way, which is important in a production environment - you can't just delete the whole database and restart with a different schema.
 
 You put your migration files under `migrations` directory of your project's root. Each migration file is a JavaScript file exporting `up()` and `down()` functions. See `migrations/0000_create_users.js` file for a real example. It is responsible for creating the `users` table. See Knex [documentation](https://knexjs.org/#Schema) for details about the schema API.
 
@@ -404,9 +404,9 @@ We added `account.js` module to provide the account management helpers, and our 
 
 Among the helpers, `loginRequired` and `protectApi` are for protecting your routes from unauthenticated accesses. They are provided in the form of Express route handlers so that you can easily place them in front of your route handlers as shown in `server.js`.
 
-The difference between two is the error handling. `loginRequired` is for protecting the browser HTML endpoints and will redirect to the login page if the request is not authenticated, whereas `protectApi` is for protecting APIs and will respond with the `ACCESS_DENIED` error.
+The difference between the two is the error handling. `loginRequired` is for protecting the browser HTML endpoints and will redirect to the login page if the request is not authenticated, whereas `protectApi` is for protecting APIs and will respond with the `ACCESS_DENIED` error.
 
-We used `loginRequired` to protects all routes in `MainPage`, because they are private to logged in users. `protectApi` is currently not used, but we will need it soon in the next step.
+We used `loginRequired` to protect all routes in `MainPage`, because they are private to logged in users. `protectApi` is currently not used, but we will need it soon in the next step.
 
 ## Using `@gourmet/error`
 
@@ -414,7 +414,7 @@ Inside `account.js` module, we use `@gourmet/error` to construct error objects i
 
 ## Using the client props
 
-Inside `MainPage`, we need the profile information of currently logged-in user to render the greeting message `Hello {user.name}!`. In our server, this information is provided in `req.user` by `loginRequired`. You can pass it as a second parameter of `res.serve()` to hand it over to the SSR renderer.
+Inside `MainPage`, we need the profile information of the currently logged-in user to render the greeting message `Hello {user.name}!`. In our server, this information is provided in `req.user` by `loginRequired`. You can pass it as a second parameter of `res.serve()` to hand it over to the SSR renderer.
 
 ```js
 // lib/server.js

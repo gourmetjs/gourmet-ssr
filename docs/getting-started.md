@@ -131,13 +131,13 @@ $ npm install @gourmet/client-lib --save
 
 The middleware created by `gourmet.middleware()` adds `serve()` method to `res` object.
 
-`res.serve(pageName, clientProps)` renders the content of page specified by `pageName`, with the props in `clientProps`, and then sends the result to the browser. `clientProps` must be a JSON serializable object because it is transferred to the client for rehydration.
+`res.serve(pageName, clientProps)` renders the content of the page specified by `pageName`, with the props in `clientProps`, and then sends the result to the browser. `clientProps` must be a JSON serializable object because it is transferred to the client for rehydration.
 
 By default, Gourmet SSR uses `ReactDOMServer.renderToNodeStream()` and `res.serve()` starts to send out the content of stream immediately to achieve the best [Time to First Byte](https://en.wikipedia.org/wiki/Time_to_first_byte) performance.
 
 ## Build and run
 
-Before to run your server, you have to build the SSR bundles first. Gourmet SSR uses Webpack and Babel under the hood to compile your SSR code.
+Before you can run your server, you have to build the SSR bundles first. Gourmet SSR uses Webpack and Babel under the hood to compile your SSR code.
 
 Add the `build` script to `package.json`.
 
@@ -173,13 +173,13 @@ $ npm start
 Server is listening on port 3000
 ```
 
-Open your browser at http://localhost:3000. You will see "Hello, world!" message again, but this time it is rendered using a React component on the server-side, and rehydrated on the client-side.
+Open your browser at http://localhost:3000. You will see the "Hello, world!" message again, but this time it is rendered using a React component on the server-side, and rehydrated on the client-side.
 
 ## Anatomy of SSR
 
 Let's inspect the result deeper to see how SSR worked. We use Chrome for this example but other browsers have similar features too.
 
-On Chrome, right click on the screen of "Hello, world!" and select "View page source" from the popup menu. You will be able to see the original HTML page content that server sent out:
+On Chrome, right click on the screen of "Hello, world!" and select "View page source" from the popup menu. You will be able to see the original HTML page content that the server sent out:
 
 ![Page Source - Hello World](assets/hello-source.png)
 
@@ -187,12 +187,12 @@ The content you rendered through `Hello` component is embedded inside `<div id="
 
 Another important feature of Gourmet SSR is statically rendered asset tags such as `<script>` in `<head>` section as shown here.
 
-Using Gourmet SSR, all assets that are required for rendering a page are automatically linked statically. No client-side dynamic asset loading is involved. This is very important to prevent the rendering of incomplete state such as [Flash of Unstyled Content](https://en.wikipedia.org/wiki/Flash_of_unstyled_content).
+Using Gourmet SSR, all assets that are required for rendering a page are automatically linked statically. No client-side dynamic asset loading is involved. This is very important to prevent the rendering of incomplete states such as [Flash of Unstyled Content](https://en.wikipedia.org/wiki/Flash_of_unstyled_content).
 
 
  This also allows the browser to start downloading assets as early as possible while parsing the HTML. Combined with HTTP/2 push, this can maximize the page loading performance.
 
-> Because `<script>` tags in `<head>` are rendered with `defer` attribute, they don't block browser from parsing HTML. `defer` is supported by most browsers including IE 10/11.
+> Because `<script>` tags in `<head>` are rendered with `defer` attribute, they don't block the browser from parsing HTML. `defer` is supported by most browsers including IE 10/11.
 
 Next, let's inspect the client-side rehydration. To do this, you need to install [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) Chrome Extension if you haven't done so already.
 
@@ -206,7 +206,7 @@ If you can see a tree of React components as shown above, this means that the cl
 
 Gourmet SSR builds your user interface code and generates two sets of bundles - one for the server and the other for the browser.
 
-Because the server bundles are targeting Node 8 and the client bundles targeting browsers minimum of IE 11, the generated contents are differnt. Let's take a look at the client bundle first.
+Because the server bundles are targeting Node 8 and the client bundles are targeting browsers minimum of IE 11, the generated content of each is different. Let's take a look at the client bundle first.
 
 **.gourmet/local/client/main.js**
 ```js
@@ -249,4 +249,4 @@ The difference is small here but once you use more complicated ES6 features such
 
 ## That's it!
 
-Congraturations! You finished the Getting Started guide and ready to learn more details about Gourmet SSR.
+Congratulations! You finished the Getting Started guide and are ready to learn more details about Gourmet SSR.

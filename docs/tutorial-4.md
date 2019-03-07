@@ -262,9 +262,9 @@ exports.unsave = unsave;
 
 To implement our news fetching API, we need a news provider. We depend on [News API](https://newsapi.org/) for that. News API is an easy-to-use API service that crawls and indexes news articles from over 30,000 news sources and blogs around the world.
 
-To use News API, the first thing you need to do is getting an [API key](https://newsapi.org/register). You need your own API key to run examples in this step.
+To use News API, first you need to get an [API key](https://newsapi.org/register). You'll need your own API key to run examples in this step.
 
-To get a sense of how news articles fetched from News API look like, see the example below.
+To get a sense of how news articles fetched from News API look, see the example below.
 
 ```json
 {

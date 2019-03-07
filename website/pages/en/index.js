@@ -121,7 +121,7 @@ app.listen(3000, () => {
 > The content is rendered on the server-side and rehydrated on the client-side.
 > Required assets are also linked statically.
 >
-> The HTML output has all elements it needs to render the initial user interface - great for SEO and user experience.
+> The HTML output has all the elements it needs to render the initial user interface - which is great for SEO and user experience.
 > 
 `, `
 \`\`\`html
@@ -169,7 +169,7 @@ class Index extends React.Component {
           title: "Library, not Framework",
         }, {
           content: "Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and many more - " +
-                   "Production is always number one priority of Gourmet SSR.",
+                   "Production is always the number one priority of Gourmet SSR.",
           image: `${baseUrl}img/rocket.svg`,
           imageAlign: "top",
           title: "Production First",

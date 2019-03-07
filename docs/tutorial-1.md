@@ -5,29 +5,29 @@ title: Tutorial: Intro
 
 ## What we will build
 
-In this tutorial, we will build a news reader app. Starting with a simple server and dummy user interface in this step, we will add more features as we progress to show you how to build a full-stack application using Gourmet SSR.
+In this tutorial, we will build a news reader app. We'll start with a simple server and dummy user interface, and as we progress we will add more features to show you how to build a full-stack application using Gourmet SSR.
 
-First, let's take a look at the screenshot of the final app that we are going to build.
+First, let's take a look at a screenshot of the final app that we are going to build.
 
 ![Tutorial - News App](assets/tutorial-app.png)
 
 This app works as follows:
 
-- A user must log in to the app to access this main screen.
-- The main screen has two panes that you can switch using tabs.
-- The "Latest News Headlines" pane displays a list of latest news articles fetched from [`newsapi.org`](https://newsapi.org).
+- A user must log in to the app to access the main screen.
+- The main screen has two panes that you can switch between using tabs.
+- The "Latest News Headlines" pane displays a list of the latest news articles fetched from [`newsapi.org`](https://newsapi.org).
 - The "Saved Articles" pane displays bookmarked news articles.
 - Bookmarks are saved per user account.
 - If there are more articles than displayed in the current pane, there will be a `Load more` button at the bottom of the list. If clicked, 10 more items are fetched and appended to the list.
-- A user can log out by clicking `Log out` button at the top right corner of the screen.
+- A user can log out by clicking the `Log out` button at the top right corner of the screen.
 
-> This tutorial assumes that you have read the [Getting Started](/getting-started) guide, and you already know key concepts described in it. If you haven't, please read it first and come back.
+> This tutorial assumes that you have read the [Getting Started](/getting-started) guide, and are familiar with the key concepts described in it. If you haven't, please read it first and circle back.
 
 ## Creating project files
 
-Create a new directory named `news-ssr`, and inside, create files as you follow this tutorial.
+Create a new directory named `news-ssr`. Inside this directly is where you will create files as you follow this tutorial.
 
-Alternatively, you can get these files from the GitHub repo if you want.
+Alternatively, you can get these files from the GitHub repo if you prefer.
 
 ```text
 git clone https://github.com/gourmetjs/news-ssr
@@ -236,7 +236,7 @@ React I80 is a tiny, isomorphic routing library specifically designed for Gourme
 
 Switching between views inside the same page happens on the client-side, and no round-trip to the server is made. On the other hand, each page is a completely separated HTML endpoint from the other. A transition between pages always happens in a clean, new browser session.
 
-Using Gourmet SSR, you are not limited to a single HTML page for your whole app. In fact, splitting your app into multiple pages is an encouraged pattern for better user experience. At least, you must separate the content for the authenticated state from the unauthenticated public content for security. With this in mind, we structured our pages and views as below.
+Using Gourmet SSR, you are not limited to a single HTML page for your whole app. In fact, splitting your app into multiple pages is an encouraged pattern for better user experience. At the least, you must separate the content for the authenticated state from the unauthenticated public content for security reasons. With this in mind, we structured our pages and views as below.
 
 ```text
 PublicPage --+-- LoginView
@@ -273,7 +273,7 @@ i80([
 ]);
 ```
 
-You must call `i80()` function just once at the global level to initialize React I80. `i80()` expects an array of arrays containing a pair of URL path and React view component.
+You must call the `i80()` function just once at the global level to initialize React I80. `i80()` expects an array of arrays containing a pair of elements. Each element within the array consists of a URL path and a React view component.
 
 Inside the page's rendering function, the `ActiveRoute` component is used to render a view that matches the current URL.
 
