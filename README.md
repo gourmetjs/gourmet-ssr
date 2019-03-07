@@ -5,7 +5,7 @@ A Server-Side Rendering Engine for Production
 ## Introduction
 
 - **Library, not Framework** - Gourmet SSR is designed to be used as a view library in your existing project. We worked very hard to make Gourmet SSR unobtrusive.
-- **Production First** - Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and many more. Production is always number one priority of Gourmet SSR.
+- **Production First** - Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and many more. Production is always the number one priority of Gourmet SSR.
 - **Human Friendly** - Developers are humans too. When we added a new feature, the first thing we considered was how to make it easy to understand and use - just like we do for the consumer products.
 - **Flexible** - Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda function. Your server can be Django or Rails. View layer is not limited to React.
 
