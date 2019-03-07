@@ -5,6 +5,7 @@ const fs = require("fs");
 const shell = require("pshell");
 const promiseEach = require("@gourmet/promise-each");
 const promiseMain = require("@gourmet/promise-main");
+const puppeteerEnv = require("./puppeteerEnv");
 
 const NPM_CLIENT = process.env.USE_YARN ? "yarn" : "npm";
 const TARGET_DIR = npath.join(__dirname, "../../../.gourmet-standalone/tests");
@@ -17,7 +18,8 @@ function main() {
 
     await shell(`${NPM_CLIENT} install`, {
       echoCommand: false,
-      cwd: desDir
+      cwd: desDir,
+      env: puppeteerEnv
     });
   });
 }

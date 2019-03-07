@@ -39,7 +39,7 @@ test("check `manifest.client.files` output", t => {
 
     info.modules.forEach(id => {
       const path = modules[id];
-      const m = /\/node_modules\/(@[\w-]+\/[\w-]+|[\w-]+)\//.exec(path);
+      const m = !path.startsWith("@multi:") && /\/node_modules\/(@[\w-]+\/[\w-]+|[\w-]+)\//.exec(path);
 
       if (m) {
         const name = m[1];
