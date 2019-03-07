@@ -14,6 +14,8 @@ let execPath;
 
 if (platform.startsWith("win64-")) {
   execPath = npath.join(chromiumDir, platform, "chrome-win/chrome.exe")
+} else if (platform.startsWith("mac-")) {
+  execPath = npath.join(chromiumDir, platform, "chrome-mac/Chromium.app/Contents/MacOS/Chromium");
 } else {
   throw Error("Uknown platform:", platform);
 }
