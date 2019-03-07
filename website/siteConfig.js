@@ -107,7 +107,13 @@ const siteConfig = {
 
   // Enable Google Analytics
   gaTrackingId: "UA-78769505-3",
-  gaGtag: true
+  gaGtag: true,
+
+  // Enable Algolia DocSearch
+  algolia: {
+    apiKey: "9532e95a0b475b0b83bfd5e5374cfdf0",
+    indexName: "gourmetjs_ssr"
+  }
 };
 
 module.exports = siteConfig;
