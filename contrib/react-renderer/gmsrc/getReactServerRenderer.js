@@ -54,7 +54,7 @@ module.exports = function getReactServerRenderer(Base) {
         registrar.loadAll(),
         this.getInitialProps(gmctx),
         this.getCodeProps(gmctx)
-      ]).then(([cont, dummy, pageProps, codeProps]) => {
+      ]).then(([cont, dummy, pageProps, codeProps]) => { // eslint-disable-line no-unused-vars
         if (pageProps)
           gmctx.pageProps = gmctx.data.pageProps = pageProps;
         if (codeProps)

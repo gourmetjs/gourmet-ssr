@@ -17,12 +17,12 @@ module.exports = {
   config: {
     html: {
       headTop: [
-        '<script>window.__allPages=true;</script>'
+        "<script>window.__allPages=true;</script>"
       ]
     },
     "html:main": {
       headTop: [
-        '<script>window.__onlyMainPage=true;</script>'
+        "<script>window.__onlyMainPage=true;</script>"
       ]
     }
   }

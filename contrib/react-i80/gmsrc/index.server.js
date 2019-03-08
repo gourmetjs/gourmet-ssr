@@ -1,6 +1,5 @@
 "use strict";
 
-const promiseProtect = require("@gourmet/promise-protect");
 const Router = require("./Router");
 const ActiveRoute = require("./ActiveRoute");
 const Link = require("./Link");

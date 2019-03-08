@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {Query, Mutation} from "react-apollo";
 import gql from "graphql-tag";
-import { _ } from "core-js";
 
 const GET_TODOS = gql`
 query GetTodos {

@@ -13,7 +13,7 @@ const platform = items[0];
 let execPath;
 
 if (platform.startsWith("win64-")) {
-  execPath = npath.join(chromiumDir, platform, "chrome-win/chrome.exe")
+  execPath = npath.join(chromiumDir, platform, "chrome-win/chrome.exe");
 } else if (platform.startsWith("mac-")) {
   execPath = npath.join(chromiumDir, platform, "chrome-mac/Chromium.app/Contents/MacOS/Chromium");
 } else {

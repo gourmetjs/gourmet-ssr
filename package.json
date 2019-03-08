@@ -8,7 +8,7 @@
     "clean": "lerna clean",
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test --concurrency=1 --stream",
-    "lint": "eslint . --ext .js,.jsx --ignore-pattern node_modules",
+    "lint": "eslint . --ext .js,.jsx --ignore-pattern node_modules --ignore-pattern website",
     "standalone-test": "node tests/standalone-runner/banner && node tests/standalone-runner/copy-all && node tests/standalone-runner/install-all && node tests/standalone-runner/test-all"
   },
   "devDependencies": {

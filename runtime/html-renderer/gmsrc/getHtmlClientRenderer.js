@@ -56,7 +56,7 @@ class HtmlClientRenderer {
   // Do per-rendering preparation tasks.
   // If this function returns `false` or a promise fulfilled with `false`,
   // `invokeUserRenderer()` is skipped.
-  prepareToRender(gmctx) {
+  prepareToRender(gmctx) { // eslint-disable-line no-unused-vars
   }
 
   // Do the actual rendering and returns an rendered object.
