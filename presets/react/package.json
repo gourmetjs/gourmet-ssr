@@ -1,15 +1,15 @@
 {
   "name": "@gourmet/preset-react",
   "description": "Gourmet Preset containing a whole set of packages for React projects",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "main": "lib/GourmetPresetReact.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
     "@babel/core": "^7.1.2",
-    "@gourmet/group-core": "^1.1.3",
-    "@gourmet/group-react": "^1.2.1",
+    "@gourmet/group-core": "^1.1.4",
+    "@gourmet/group-react": "^1.2.2",
     "webpack": "^4.26.0"
   },
   "peerDependencies": {

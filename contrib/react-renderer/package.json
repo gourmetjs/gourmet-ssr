@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/react-renderer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "gmsrc/getReactClientRenderer.js",
   "dependencies": {
     "@gourmet/loadable-registrar": "^0.3.1",
