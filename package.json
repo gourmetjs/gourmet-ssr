@@ -9,7 +9,8 @@
     "bootstrap": "lerna bootstrap",
     "test": "lerna run test --concurrency=1 --stream",
     "lint": "eslint . --ext .js,.jsx --ignore-pattern node_modules --ignore-pattern website",
-    "standalone-test": "node tests/standalone-runner/banner && node tests/standalone-runner/copy-all && node tests/standalone-runner/install-all && node tests/standalone-runner/test-all"
+    "standalone-test": "node tests/standalone-runner/banner && node tests/standalone-runner/copy-all && node tests/standalone-runner/install-all && node tests/standalone-runner/test-all",
+    "delete-test-tags": "bash -c 'git push origin --delete $(git tag -l '@gourmet/test-*')' && bash -c 'git tag -d $(git tag -l '@gourmet/test-*')'"
   },
   "devDependencies": {
     "eslint": "^5.5.0",
