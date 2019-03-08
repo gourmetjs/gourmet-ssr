@@ -23,7 +23,7 @@ test("check server rendered content", pt(async t => {
 
   res = await got(`http://localhost:${port}/dashboard`);
   t.ok(res.body.indexOf("<h1>Dashboard</h1>") !== -1);
-  t.ok(res.body.indexOf("JSON: {&quot;DashboardPage_getInitialProps&quot;:true,&quot;DashboardPage_makePageProps&quot;:true,&quot;DashboardPage_renderPage&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;username&quot;:&quot;admin&quot;}") !== -1);
+  t.ok(res.body.indexOf("JSON: {&quot;DashboardPage_createPageElement&quot;:true,&quot;DashboardPage_getInitialProps&quot;:true,&quot;DashboardPage_makePageProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;username&quot;:&quot;admin&quot;}") !== -1);
 }));
 
 test("run puppeteer", pt(async t => {
@@ -65,7 +65,7 @@ test("run puppeteer", pt(async t => {
     return pre.innerText;
   });
 
-  t.ok(pre.indexOf('JSON: {"DashboardPage_getInitialProps":true,"DashboardPage_makePageProps":true,"DashboardPage_renderPage":true,"gmctx":"{...}","username":"admin"}') !== -1);
+  t.ok(pre.indexOf('JSON: {"DashboardPage_createPageElement":true,"DashboardPage_getInitialProps":true,"DashboardPage_makePageProps":true,"gmctx":"{...}","username":"admin"}') !== -1);
 
   config = await page.evaluate(() => {
     return {allPages: window.__allPages, onlyMainPage: window.__onlyMainPage};

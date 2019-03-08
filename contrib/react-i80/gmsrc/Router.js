@@ -2,7 +2,6 @@
 
 const React = require("react");
 const p2r = require("path-to-regexp");
-const promiseProtect = require("@gourmet/promise-protect");
 const unprefixPath = require("@gourmet/unprefix-path");
 const parseHref = require("@gourmet/parse-href");
 const BoundRoute = require("./BoundRoute");
@@ -65,28 +64,24 @@ module.exports = class Router {
     });
   }
 
-  setActiveRoute(gmctx, href) {
-    return promiseProtect(() => {
-      const url = parseHref(href);
-      const route = this.findRoute(gmctx, url);
+  resetActiveRoute(gmctx) {
+    const href = this.getTargetHref(gmctx);
+    const url = parseHref(href);
+    const route = this.findRoute(gmctx, url);
 
-      if (!route) {
-        if (gmctx.i80.routeNotFound)
-          gmctx.i80.routeNotFound(gmctx, url);
-        return false;
-      }
+    if (!route) {
+      if (gmctx.i80.routeNotFound)
+        gmctx.i80.routeNotFound(gmctx, url);
+      return false;
+    }
 
-      if (route === true)
-        return false;   // processed by a route handler
+    if (route === true)
+      return false;   // processed by a route handler
 
-      if (gmctx.i80.didSwitchToHref)
-        gmctx.i80.didSwitchToHref(gmctx, url);
+    if (gmctx.i80.didSwitchToHref)
+      gmctx.i80.didSwitchToHref(gmctx, url);
 
-      return this.fetchRouteProps(route).then(() => {
-        gmctx.i80.activeRoute = route;
-        return true;
-      });
-    });
+    gmctx.i80.activeRoute = route;
   }
 
   findRoute(gmctx, url) {
@@ -111,12 +106,7 @@ module.exports = class Router {
 
       if (route) {
         const Component = route.getComponent();
-        let props;
-
-        if (Component.makeRouteProps)
-          props = Component.makeRouteProps(gmctx, directProps);
-        else
-          props = gmctx.renderer.makeRouteProps(gmctx, directProps);
+        const props = gmctx.renderer.makeRouteProps(gmctx, directProps);
         return <Component {...props}/>;
       } else {
         return directProps.notFoundContent || (<div>Cannot find a matching route.</div>);

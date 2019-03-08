@@ -28,16 +28,22 @@ module.exports = function(Base) {
       return gmctx;
     }
 
-    invokeUserRenderer(gmctx) {
+    // This function is responsible for calling `getInitialProps()` of both route and page components.
+    // They are called in parallel so you should not depend on the order of invocation.
+    // However, it is guaranteed that `gmctx.i80.activeRoute` is available to both of `getInitialProps()`.
+    prepareToRender(gmctx) {
       const router = Router.get(true);
       if (router) {
-        const href = router.getTargetHref(gmctx);
-        return router.setActiveRoute(gmctx, href).then(cont => {
-          if (cont)
-            return super.invokeUserRenderer(gmctx);
-        });
+        if (router.resetActiveRoute(gmctx) === false)
+          return false;
+        return Promise.all([
+          super.prepareToRender(gmctx),
+          router.fetchRouteProps(gmctx)
+        ]).then(([cont]) => {
+          return cont;
+        })
       } else {
-        return super.invokeUserRenderer(gmctx);
+        return super.prepareToRender(gmctx);
       }
     }
 

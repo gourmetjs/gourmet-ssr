@@ -20,7 +20,7 @@ const promiseProtect = require("@gourmet/promise-protect");
 //    - gmctx
 //    - {...gmctx.clientProps}
 //    - {...gmctx.pageProps}
-// 4. Renderer calls `renderPage(props)`.
+// 4. Renderer calls `createPageElement(props)`.
 // 5. Renderer copies `gmctx.clientProps` & `gmctx.pageProps` to `gmctx.data.*` to serialize
 //    and pass them to the client for a rehydration.
 module.exports = function getReactServerRenderer(Base) {
@@ -45,28 +45,25 @@ module.exports = function getReactServerRenderer(Base) {
       return gmctx;
     }
 
-    invokeUserRenderer(gmctx) {
-      const page = this.userObject;
-
+    prepareToRender(gmctx) {
       if (gmctx.clientProps)
         gmctx.data.clientProps = gmctx.clientProps;
 
       return Promise.all([
+        super.prepareToRender(gmctx),
         registrar.loadAll(),
-        promiseProtect(() => {
-          if (page.getInitialProps)
-            return page.getInitialProps(gmctx);
-        })
-      ]).then(([, pageProps]) => {
+        this.userObject.getInitialProps && this.userObject.getInitialProps(gmctx)
+      ]).then(([cont, dummy, pageProps]) => {
         if (pageProps)
           gmctx.pageProps = gmctx.data.pageProps = pageProps;
+        return cont;
+      });
+    }
 
-        const props = page.makePageProps ? page.makePageProps(gmctx) : this.makePageProps(gmctx);
-
-        if (page.renderPage)
-          return page.renderPage(props);
-        else
-          return React.createElement(page, props);
+    invokeUserRenderer(gmctx) {
+      return promiseProtect(() => {
+        const props = this.makePageProps(gmctx);
+        return this.createPageElement(gmctx, this.userObject, props);
       }).then(element => {
         if (element)
           return this.wrapWithContext(gmctx, element);
@@ -74,13 +71,14 @@ module.exports = function getReactServerRenderer(Base) {
       });
     }
 
-    makeRootProps(gmctx) {  // eslint-disable-line
-      return {id: "__gourmet_react__"};
-    }
-
     // This must be synchronous.
     makePageProps(gmctx) {
       return Object.assign({gmctx}, gmctx.clientProps, gmctx.pageProps);
+    }
+
+    // This can be asynchronous
+    createPageElement(gmctx, type, props) {
+      return React.createElement(type, props);
     }
 
     renderToMedium(gmctx, element) {
@@ -89,7 +87,7 @@ module.exports = function getReactServerRenderer(Base) {
       if (element) {
         let bodyMain;
 
-        switch (this.options.reactServerRender || "stream") {
+        switch (this.getReactServerRenderOption(gmctx)) {
           case "string":
             bodyMain = ReactDOMServer.renderToString(element);
             gmctx.data.reactClientRender = "hydrate";
@@ -112,6 +110,10 @@ module.exports = function getReactServerRenderer(Base) {
       }
 
       return element;
+    }
+
+    getReactServerRenderOption() {
+      return this.options.reactServerRender || "stream";
     }
 
     getBodyTail(gmctx) {
@@ -169,6 +171,10 @@ module.exports = function getReactServerRenderer(Base) {
           </div>
         </GourmetContext.Provider>
       );
+    }
+
+    makeRootProps(gmctx) {  // eslint-disable-line
+      return {id: "__gourmet_react__"};
     }
   };
 };

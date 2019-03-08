@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "@gourmet/escape-script": "^0.3.0",
-    "@gourmet/get-exported": "^0.4.0",
     "@gourmet/is-stream": "^0.3.0",
     "@gourmet/merge": "^0.8.0",
     "@gourmet/multi-stream": "^0.3.0",

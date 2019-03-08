@@ -519,14 +519,16 @@ class GourmetWebpackBuildInstance {
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
     const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: context.config.builder.defaultExtensions});
     const userModule = relativePath(absPath, infoDir);
-    const iopts = context.config.builder.initOptions;
+    const iopts = context.config.builder.initOptions[context.target];
     const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";
+    const upperTarget = context.target === "server" ? "Server" : "Client";
 
     const content = [
       '"use strict"',
-      `const Renderer = ${_renderer(renderer)};`,
-      `const userObject = require("${userModule}");`,
-      `const r = Renderer.create(userObject${options});`,
+      `let Renderer = ${_renderer(renderer)};`,
+      `const userObject = (m => m.__esModule ? m.default : m)(require("${userModule}"));`,
+      `if (userObject.get${upperTarget}Renderer) Renderer = userObject.get${upperTarget}Renderer(Renderer);`,
+      `const r = new Renderer(userObject${options});`,
       context.target === "server" ? "module.exports = r.getRenderer.bind(r);" : "r.render();"
     ].join("\n");
 

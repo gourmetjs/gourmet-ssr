@@ -7,12 +7,14 @@ const registrar = require("@gourmet/loadable-registrar");
 const promiseProtect = require("@gourmet/promise-protect");
 
 // ** Client control flow **
-// 1. Browser calls `renderer.render()`.
-// 2. Renderer calls `makeProps(gmctx)`. 
+// 1. Browser loads `init.{page}.client.js`.
+// 2. The init function calls `renderer.render()`.
+// 3. Renderer calls `makePageProps(gmctx)`. 
 //    Default implementation returns an object with following props.
 //    - gmctx
-//    - {...gmctx.data.initialProps}
-// 3. Renderer calls `renderPage(props)`.
+//    - {...gmctx.data.clientProps}
+//    - {...gmctx.data.pageProps}
+// 3. Renderer calls `createPageElement(gmctx, type, props)`.
 module.exports = function getReactClientRenderer(Base) {
   if (!Base)
     throw Error("`@gourmet/react-renderer` cannot be the first one in the renderer chain. Check your configuration.");
@@ -20,22 +22,14 @@ module.exports = function getReactClientRenderer(Base) {
   return class ReactClientRenderer extends Base {
     createContext(...args) {
       const gmctx = super.createContext(...args);
-
       gmctx.setHead = this.setHead.bind(this, gmctx);
-
       return gmctx;
     }
 
     invokeUserRenderer(gmctx) {
-      const page = this.userObject;
-
       return promiseProtect(() => {
-        const props = page.makePageProps ? page.makePageProps(gmctx) : this.makePageProps(gmctx);
-
-        if (page.renderPage)
-          return page.renderPage(props);
-        else
-          return React.createElement(page, props);
+        const props = this.makePageProps(gmctx);
+        return this.createPageElement(gmctx, this.userObject, props);
       }).then(element => {
         if (element)
           return this.wrapWithContext(gmctx, element);
@@ -43,13 +37,14 @@ module.exports = function getReactClientRenderer(Base) {
       });
     }
 
-    makeRootProps(gmctx) {  // eslint-disable-line
-      return {id: "__gourmet_react__"};
-    }
-
     // This must be synchronous.
     makePageProps(gmctx) {
       return Object.assign({gmctx}, gmctx.data.clientProps, gmctx.data.pageProps);
+    }
+
+    // This can be asynchronous
+    createPageElement(gmctx, type, props) {
+      return React.createElement(type, props);
     }
 
     renderToDom(gmctx, content, elemId) {
@@ -90,6 +85,10 @@ module.exports = function getReactClientRenderer(Base) {
           </div>
         </GourmetContext.Provider>
       );
+    }
+
+    makeRootProps(gmctx) {  // eslint-disable-line
+      return {id: "__gourmet_react__"};
     }
   };
 };

@@ -5,9 +5,9 @@ const stream = require("stream");
 const MultiStream = require("@gourmet/multi-stream");
 const isStream = require("@gourmet/is-stream");
 const merge = require("@gourmet/merge");
+const promiseProtect = require("@gourmet/promise-protect");
 const resolveTemplate = require("@gourmet/resolve-template");
 const escapeScript = require("@gourmet/escape-script");
-const BaseRenderer = require("./BaseRenderer");
 const pageTemplate = require("./pageTemplate");
 
 const BODY_MAIN_PLACEHOLDER = "{{[__bodyMain__]}}";
@@ -22,32 +22,34 @@ function _bufStream(buf) {
   });
 }
 
-// options: provided by init function (omitted by default unless you override the auto-generated init function)
+// options: provided by init function (from `builder.initOptions.server`)
 //  - html: object / base content of html sections
-//  - pageTemplate: string or compiled function
+//  - pageTemplate: string or compiled function (define your own init function to set the compiled function)
 //  - dataPropertyName: string (default: "__gourmet_data__")
-class HtmlServerRenderer extends BaseRenderer {
-  constructor(render, options) {
-    super(render, options);
+class HtmlServerRenderer {
+  constructor(userObject, options) {
+    this.userObject = userObject;
+    this.options = options || {};
     this._pageTemplate = resolveTemplate(this.options.pageTemplate, pageTemplate);
   }
 
-  // This is a synchronous function
-  renderToMedium(gmctx, content) {
-    return content;
-  }
-
-  // opts: provided by `RendererSandbox`
+  // spec: provided by `RendererSandbox`
   //  - page
   //  - manifest
   // context: provided by clients when requesting the rendering
   //  - reqArgs: {url, method, headers, encrypted}
   //    * see `@gourmet/get-req-args` for the latest info.
   //  - other custom context values
-  getRenderer(opts) {
+  getRenderer(spec) {
     return context => {
-      const gmctx = this.createContext(context, opts);
-      return this.invokeUserRenderer(gmctx).then(content => {
+      let gmctx;
+      return promiseProtect(() => {
+        gmctx = this.createContext(context, spec);
+        return this.prepareToRender(gmctx);
+      }).then(cont => {
+        if (cont !== false)
+          return this.invokeUserRenderer(gmctx);
+      }).then(content => {
         const bodyMain = this.renderToMedium(gmctx, content);
         return this.renderHtml(gmctx, bodyMain);
       });
@@ -77,6 +79,24 @@ class HtmlServerRenderer extends BaseRenderer {
       data: {}
     }, {html: this.collectConfig(config, "html", page)}, context || undefined);
     return gmctx;
+  }
+
+  // Do per-rendering preparation tasks.
+  // If this function returns `false` or a promise fulfilled with `false`,
+  // `invokeUserRenderer()` is skipped.
+  prepareToRender(gmctx) {
+  }
+
+  // Do the actual rendering and returns an rendered object.
+  // Default implementation assumes that the `userObject` is a function.
+  invokeUserRenderer(gmctx) {
+    return this.userObject(gmctx);
+  }
+
+ 
+  // This is a synchronous function
+  renderToMedium(gmctx, content) {
+    return content;
   }
 
   // bodyMain can be one of the following:
@@ -269,7 +289,7 @@ class HtmlServerRenderer extends BaseRenderer {
   }
 }
 
-module.exports = function getHtmlClientRenderer(Base) {
+module.exports = function getHtmlServerRenderer(Base) {
   if (Base)
     throw Error("`@gourmet/html-renderer` must be the first one in the renderer chain. Check your configuration.");
   return HtmlServerRenderer;

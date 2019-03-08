@@ -29,28 +29,22 @@ module.exports = function(Base) {
       return gmctx;
     }
 
-    invokeUserRenderer(gmctx) {
+    // This is the same as the server version. See the comment of it.
+    // The method is redefined here because we simply don't have a mechanism to share it.
+    prepareToRender(gmctx) {
       const router = Router.get(true);
       if (router) {
-        const href = router.getTargetHref(gmctx);
-        return router.setActiveRoute(gmctx, href).then(cont => {
-          if (cont)
-            return super.invokeUserRenderer(gmctx);
+        if (router.resetActiveRoute(gmctx) === false)
+          return false;
+        return Promise.all([
+          super.prepareToRender(gmctx),
+          router.fetchRouteProps(gmctx)
+        ]).then(([cont]) => {
+          return cont;
         });
       } else {
-        return super.invokeUserRenderer(gmctx);
+        return super.prepareToRender(gmctx);
       }
-    }
-
-    makeRootProps(gmctx) {
-      const props = super.makeRootProps(gmctx);
-      const router = Router.get(true);
-      if (router) {
-        const options = router.options;
-        if (options.captureClick === undefined || options.captureClick)
-          props.onClick = this.handleClick;
-      }
-      return props;
     }
 
     makeRouteProps(gmctx, directProps) {
@@ -92,6 +86,17 @@ module.exports = function(Base) {
       }
 
       e.preventDefault();
+    }
+
+    makeRootProps(gmctx) {
+      const props = super.makeRootProps(gmctx);
+      const router = Router.get(true);
+      if (router) {
+        const options = router.options;
+        if (options.captureClick === undefined || options.captureClick)
+          props.onClick = this.handleClick;
+      }
+      return props;
     }
   };
 };

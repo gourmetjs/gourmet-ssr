@@ -24,9 +24,9 @@ module.exports = function getEmotionServerRenderer(Base) {
               output.destroy(err);
           });
         }
+      } else {
+        return element;
       }
-
-      return element;
     }
   };
 };

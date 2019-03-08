@@ -21,9 +21,9 @@ class ClientRouter extends Router {
     return window.location.href;
   }
 
-  fetchRouteProps(route) {
-    const gmctx = route.gmctx;
+  fetchRouteProps(gmctx) {
     return promiseProtect(() => {
+      const route = gmctx.i80.activeRoute;
       // `getInitialProps()` of a route component gets called only when
       // switching routes on the client.
       // Initial route's props are re-hydrated from server provided object.

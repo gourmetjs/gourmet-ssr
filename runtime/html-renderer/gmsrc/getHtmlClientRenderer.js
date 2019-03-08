@@ -1,7 +1,7 @@
 "use strict";
 
+const promiseProtect = require("@gourmet/promise-protect");
 const domready = require("domready");
-const BaseRenderer = require("./BaseRenderer");
 
 // We don't need to wait for `DOMContentLoaded` because all `<script>` tags
 // are rendered with `defer` attribute which postpones the evaluation of
@@ -14,14 +14,27 @@ function _domready() {
   });
 }
 
-// Options
+// options: provided by init function (from `builder.initOptions.client`)
 //  - contentContainerId: string (default: "__gourmet_content__")
 //  - dataPropertyName: string (default: "__gourmet_data__")
 //  - showErrorInDocument: shows the init error in the document (default: true)
-class HtmlClientRenderer extends BaseRenderer {
-  render(context, opts) {
-    const gmctx = this.createContext(context, opts);
-    this.invokeUserRenderer(gmctx).then(content => {
+class HtmlClientRenderer {
+  constructor(userObject, options) {
+    this.userObject = userObject;
+    this.options = options || {};
+  }
+
+  // The init function doesn't use `context` argument. However, it is used by
+  // React I80 to re-render the content when the active route is changed.
+  render(context) {
+    let gmctx;
+    return promiseProtect(() => {
+      gmctx = this.createContext(context);
+      return this.prepareToRender(gmctx);
+    }).then(cont => {
+      if (cont !== false)
+        return this.invokeUserRenderer(gmctx);
+    }).then(content => {
       const elemId = this.options.contentContainerId || "__gourmet_content__";
       return _domready().then(() => {
         return this.renderToDom(gmctx, content, elemId);
@@ -29,18 +42,29 @@ class HtmlClientRenderer extends BaseRenderer {
     }).catch(err => this.handleError(err));
   }
 
-  createContext(context, opts) {  // eslint-disable-line no-unused-vars
+  createContext(context) {
     const prop = this.options.dataPropertyName || "__gourmet_data__";
     const data = window[prop] || {};
-    const gmctx = Object.assign({
+    return Object.assign({
       isServer: false,
       isClient: true,
       renderer: this,
       data
     }, context);
-    return gmctx;
   }
 
+  // Do per-rendering preparation tasks.
+  // If this function returns `false` or a promise fulfilled with `false`,
+  // `invokeUserRenderer()` is skipped.
+  prepareToRender(gmctx) {
+  }
+
+  // Do the actual rendering and returns an rendered object.
+  // Default implementation assumes that the `userObject` is a function.
+  invokeUserRenderer(gmctx) {
+    return this.userObject(gmctx);
+  }
+  
   renderToDom(gmctx, content, elemId) { // eslint-disable-line no-unused-vars
     // Base class does nothing because `content` is an opaque object that only
     // the derived class knows how to render. It should be rendered as children

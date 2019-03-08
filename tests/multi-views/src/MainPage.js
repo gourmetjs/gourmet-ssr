@@ -10,11 +10,10 @@ export default class MainPage extends React.Component {
     ["/dashboard", DashboardView]
   ]);
 
-  // `renderPage(props)` still gets called for `react-i80` environment too.
-  static renderPage(props) {
+  static getInitialProps(gmctx) {   // eslint-disable-line no-unused-vars
     return new Promise(resolve => {
       setTimeout(() => {
-        resolve(<MainPage MainPage_renderPage={true} {...props}/>);
+        resolve({MainPage_getInitialProps: true});
       }, 10);
     });
   }

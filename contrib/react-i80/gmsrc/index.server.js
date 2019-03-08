@@ -10,9 +10,9 @@ class ServerRouter extends Router {
     return gmctx.reqArgs.url;
   }
 
-  fetchRouteProps(route) {
-    const gmctx = route.gmctx;
+  fetchRouteProps(gmctx) {
     return promiseProtect(() => {
+      const route = gmctx.i80.activeRoute;
       const func = route.getComponent().getInitialProps;
       if (typeof func === "function")
         return func(gmctx);
