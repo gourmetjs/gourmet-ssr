@@ -54,6 +54,7 @@ module.exports = function(Base) {
         {gmctx, route, path: url.path, params: route.params, search: url.search},
         gmctx.clientProps,
         gmctx.pageProps,
+        gmctx.codeProps,
         gmctx.routeProps,
         directProps
       );

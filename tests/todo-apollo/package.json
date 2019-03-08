@@ -1,0 +1,35 @@
+{
+  "name": "@gourmet/test-todo-apollo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^1.2.0",
+    "@gourmet/server-args": "^1.2.1",
+    "apollo-datasource": "^0.3.1",
+    "apollo-server-express": "^2.4.8",
+    "express": "^4.16.3",
+    "graphql": "^14.1.1",
+    "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/preset-react": "^1.2.3",
+    "@gourmet/promise-protect": "^0.3.0",
+    "apollo-cache-inmemory": "^1.5.1",
+    "apollo-client": "^2.5.1",
+    "apollo-link": "^1.2.8",
+    "apollo-link-error": "^1.1.7",
+    "apollo-link-http": "^1.5.11",
+    "core-js": "^2.6.5",
+    "graphql-tag": "^2.10.1",
+    "nodemon": "^1.18.10",
+    "react": "16.6.1 || ^16.6.4",
+    "react-apollo": "^2.5.1",
+    "react-dom": "16.6.1 || ^16.6.4"
+  }
+}

@@ -20,6 +20,10 @@ const cssArticle = css`
 `;
 
 export default class NewsApp extends Component {
+  static getInitialProps(gmctx) {
+
+  }
+
   render() {
     return (
       <div className="news-container container">

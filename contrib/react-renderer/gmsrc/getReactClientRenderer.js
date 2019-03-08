@@ -26,6 +26,17 @@ module.exports = function getReactClientRenderer(Base) {
       return gmctx;
     }
 
+    prepareToRender(gmctx) {
+      return Promise.all([
+        super.prepareToRender(gmctx),
+        this.userObject.getCodeProps && this.userObject.getCodeProps(gmctx)
+      ]).then(([cont, codeProps]) => {
+        if (codeProps)
+          gmctx.codeProps = codeProps;
+        return cont;
+      });
+    }
+
     invokeUserRenderer(gmctx) {
       return promiseProtect(() => {
         const props = this.makePageProps(gmctx);
@@ -39,7 +50,7 @@ module.exports = function getReactClientRenderer(Base) {
 
     // This must be synchronous.
     makePageProps(gmctx) {
-      return Object.assign({gmctx}, gmctx.data.clientProps, gmctx.data.pageProps);
+      return Object.assign({gmctx}, gmctx.data.clientProps, gmctx.data.pageProps, gmctx.codeProps);
     }
 
     // This can be asynchronous
