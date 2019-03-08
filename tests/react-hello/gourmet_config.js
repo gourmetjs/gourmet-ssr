@@ -9,7 +9,8 @@ module.exports = {
     contentHash: context => context.stage === "ltc",
 
     initOptions: {
-      dataPropertyName: "__INIT_DATA__"
+      server: {dataPropertyName: "__INIT_DATA__"},
+      client: {dataPropertyName: "__INIT_DATA__"}
     },
 
     moduleLinks: {

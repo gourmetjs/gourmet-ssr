@@ -9,18 +9,6 @@ class ServerRouter extends Router {
   getTargetHref(gmctx) {
     return gmctx.reqArgs.url;
   }
-
-  fetchRouteProps(gmctx) {
-    return promiseProtect(() => {
-      const route = gmctx.i80.activeRoute;
-      const func = route.getComponent().getInitialProps;
-      if (typeof func === "function")
-        return func(gmctx);
-    }).then(props => {
-      if (props)
-        gmctx.routeProps = gmctx.data.routeProps = props;
-    });
-  }
 }
 
 // - basePath: Default is `"/"`.

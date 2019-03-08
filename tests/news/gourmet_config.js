@@ -6,11 +6,19 @@ module.exports = {
       "production": ["prod", "ltc"]
     },
     outputDir: "../../.gourmet/news",
-    contentHash: context => context.stage === "ltc"
+    contentHash: context => context.stage === "ltc",
+    alias: {
+      "__NewsData__$": context => {
+        if (context.target === "server")
+          return "@gourmet/test-news-view/gmsrc/NewsDataServer";
+        else
+          return "@gourmet/test-news-view/gmsrc/NewsDataClient";
+      }
+    }
   },
 
   pages: {
-    main: context => context.target === "server" ? "./src/ServerPage.jsx" : "./src/ClientPage.jsx"
+    main: "./src/NewsApp.jsx"
   },
 
   config: {

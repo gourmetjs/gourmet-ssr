@@ -52,7 +52,7 @@ function getServerRenderer(Base) {
     }
 
     invokeUserRenderer(gmctx) {
-      promiseProtect(() => {
+      return promiseProtect(() => {
         return super.invokeUserRenderer(gmctx);
       }).then(element => {
         element = (
@@ -82,7 +82,7 @@ function getClientRenderer(Base) {
     }
 
     invokeUserRenderer(gmctx) {
-      promiseProtect(() => {
+      return promiseProtect(() => {
         return super.invokeUserRenderer(gmctx);
       }).then(element => {
         return (

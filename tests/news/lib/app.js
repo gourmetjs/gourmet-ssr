@@ -8,7 +8,10 @@ const gourmet = require("@gourmet/client-lib");
 const con = require("@gourmet/console")();
 
 const API_URL = "https://newsapi.org/v2/everything";
-const API_KEY = process.env.NEWS_API_KEY || "154b5ab8953e468eb882083b815c65fb";
+const API_KEY = process.env.NEWS_API_KEY;
+
+if (!API_KEY)
+  throw Error("Set NEWS_API_KEY environment variable to run this test app");
 
 module.exports = function(def) {
   const args = serverArgs(Object.assign({

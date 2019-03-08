@@ -29,7 +29,7 @@ module.exports = function getReactClientRenderer(Base) {
     prepareToRender(gmctx) {
       return Promise.all([
         super.prepareToRender(gmctx),
-        this.userObject.getCodeProps && this.userObject.getCodeProps(gmctx)
+        this.getCodeProps(gmctx)
       ]).then(([cont, codeProps]) => {
         if (codeProps)
           gmctx.codeProps = codeProps;
@@ -46,6 +46,18 @@ module.exports = function getReactClientRenderer(Base) {
           return this.wrapWithContext(gmctx, element);
         return element;
       });
+    }
+
+    // This can be asynchronous
+    getInitialProps(gmctx) {
+      if (this.userObject.getInitialProps)
+        return this.userObject.getInitialProps(gmctx);
+    }
+
+    // This can be asynchronous
+    getCodeProps(gmctx) {
+      if (this.userObject.getCodeProps)
+        return this.userObject.getCodeProps(gmctx);
     }
 
     // This must be synchronous.

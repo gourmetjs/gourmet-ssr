@@ -38,13 +38,22 @@ module.exports = function(Base) {
           return false;
         return Promise.all([
           super.prepareToRender(gmctx),
-          router.fetchRouteProps(gmctx)
-        ]).then(([cont]) => {
+          this.getRouteProps(gmctx)
+        ]).then(([cont, routeProps]) => {
+          if (routeProps)
+            gmctx.routeProps = gmctx.data.routeProps = routeProps;
           return cont;
-        })
+        });
       } else {
         return super.prepareToRender(gmctx);
       }
+    }
+
+    getRouteProps(gmctx) {
+      const route = gmctx.i80.activeRoute;
+      const func = route.getComponent().getInitialProps;
+      if (func)
+        return func(gmctx);
     }
 
     makeRouteProps(gmctx, directProps) {

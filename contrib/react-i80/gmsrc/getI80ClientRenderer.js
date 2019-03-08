@@ -38,12 +38,27 @@ module.exports = function(Base) {
           return false;
         return Promise.all([
           super.prepareToRender(gmctx),
-          router.fetchRouteProps(gmctx)
-        ]).then(([cont]) => {
+          this.getRouteProps(gmctx)
+        ]).then(([cont, routeProps]) => {
+          if (routeProps)
+            gmctx.routeProps = routeProps;
           return cont;
         });
       } else {
         return super.prepareToRender(gmctx);
+      }
+    }
+
+    getRouteProps(gmctx) {
+      const route = gmctx.i80.activeRoute;
+      // `getInitialProps()` of a route component gets called only when switching routes on the client.
+      // Initial route's props are re-hydrated from server provided object.
+      if (gmctx.i80.switchToHref) {
+        const func = route.getComponent().getInitialProps;
+        if (func)
+          return func(gmctx);
+      } else {
+        return gmctx.data.routeProps;
       }
     }
 

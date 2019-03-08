@@ -52,8 +52,8 @@ module.exports = function getReactServerRenderer(Base) {
       return Promise.all([
         super.prepareToRender(gmctx),
         registrar.loadAll(),
-        this.userObject.getInitialProps && this.userObject.getInitialProps(gmctx),
-        this.userObject.getCodeProps && this.userObject.getCodeProps(gmctx)
+        this.getInitialProps(gmctx),
+        this.getCodeProps(gmctx)
       ]).then(([cont, dummy, pageProps, codeProps]) => {
         if (pageProps)
           gmctx.pageProps = gmctx.data.pageProps = pageProps;
@@ -72,6 +72,18 @@ module.exports = function getReactServerRenderer(Base) {
           return this.wrapWithContext(gmctx, element);
         return element;
       });
+    }
+
+    // This can be asynchronous
+    getInitialProps(gmctx) {
+      if (this.userObject.getInitialProps)
+        return this.userObject.getInitialProps(gmctx);
+    }
+
+    // This can be asynchronous
+    getCodeProps(gmctx) {
+      if (this.userObject.getCodeProps)
+        return this.userObject.getCodeProps(gmctx);
     }
 
     // This must be synchronous.

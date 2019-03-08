@@ -21,25 +21,6 @@ class ClientRouter extends Router {
     return window.location.href;
   }
 
-  fetchRouteProps(gmctx) {
-    return promiseProtect(() => {
-      const route = gmctx.i80.activeRoute;
-      // `getInitialProps()` of a route component gets called only when
-      // switching routes on the client.
-      // Initial route's props are re-hydrated from server provided object.
-      if (gmctx.i80.switchToHref) {
-        const func = route.getComponent().getInitialProps;
-        if (typeof func === "function")
-          return func(gmctx);
-      } else {
-        return gmctx.data.routeProps;
-      }
-    }).then(props => {
-      if (props)
-        gmctx.routeProps = props;
-    });
-  }
-
   // - Relative path is not supported.
   // - `history`: true, false, or "replace"
   goToUrl(href, history=true) {
