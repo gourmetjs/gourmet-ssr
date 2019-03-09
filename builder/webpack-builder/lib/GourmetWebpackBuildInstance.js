@@ -519,7 +519,7 @@ class GourmetWebpackBuildInstance {
     const outputPath = npath.join(infoDir, `init.${name}.${context.target}.js`);
     const absPath = resolve.sync(value[value.length - 1], {basedir: context.workDir, extensions: context.config.builder.defaultExtensions});
     const userModule = relativePath(absPath, infoDir);
-    const iopts = context.config.builder.initOptions[context.target];
+    const iopts = context.config.builder.initOptions;
     const options = iopts ? ", " + JSON.stringify(iopts, null, 2) : "";
     const upperTarget = context.target === "server" ? "Server" : "Client";
 
