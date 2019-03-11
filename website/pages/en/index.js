@@ -82,7 +82,7 @@ export default function Hello({greeting}) {
 ], [
 `
 > Configuration is designed to be minimal, but not to the level of "magic".
-> Here, we specify the above React component as a root component of \`main\` page.
+> Here, we specify the above React component as a root component of the \`main\` page.
 `, `
 \`\`\`js
 // gourmet_config.js
@@ -168,20 +168,20 @@ class Index extends React.Component {
           imageAlign: "top",
           title: "Library, not Framework",
         }, {
-          content: "Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and many more - " +
+          content: "Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and much more - " +
                    "Production is always the number one priority of Gourmet SSR.",
           image: `${baseUrl}img/rocket.svg`,
           imageAlign: "top",
           title: "Production First",
         }, {
           content: "Developers are humans too.<br/>" +
-                   "When we added a new feature, the first thing we considered was how to make it easy to understand and use - just like we do for the consumer products.",
+                   "When we add a new feature, the first thing we consider is how to make it easy to understand and use - just like we do for the consumer products.",
           image: `${baseUrl}img/developer.svg`,
           imageAlign: "top",
           title: "Human Friendly",
         }, {
           content: "Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda function. <br/>" +
-                   "Your server can be Django or Rails. View layer is not limited to React.",
+                   "Your server can be Django or Rails. The view layer is not limited to React.",
           image: `${baseUrl}img/mixer.svg`,
           imageAlign: "top",
           title: "Flexible",
