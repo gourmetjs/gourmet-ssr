@@ -11,27 +11,13 @@ const {HttpLink} = require("apollo-link-http");
 const {ApolloProvider, getDataFromTree} = require("react-apollo");
 const handleLinkError = require("./handleLinkError");
 
+// Options:
+// - `apolloClient = {connectToDevTools: false, ssrForceFetchDelay: 100}`: An options object for `ApolloClient`.
+// - `apolloHttpLink = undefined`: An options object for `ApolloLinkHttp`.
+// - `apolloInMemoryCache = undefined`: An options object for `ApolloInMemoryCache`.
+// * `apolloHttpLink.uri` is converted to an absolute URL using `@gourmet/self-url`.
 module.exports = function getServerRenderer(Base) {
   return class ApolloServerRenderer extends Base {
-    constructor(userObject, options) {
-      super(userObject, {
-        // Options for `ApolloClient`
-        apolloClient: {
-          ssrMode: true,
-          ssrForceFetchDelay: 100,
-          connectToDevTools: false,
-          ...(options && options.apolloClient)
-        },
-
-        apolloHttpLink: {
-          uri: "/graphql",
-          ...(options && options.apolloHttpLink)
-        },
-
-        ...options
-      });
-    }
-
     prepareToRender(gmctx) {
       return promiseProtect(() => {
         return super.prepareToRender(gmctx);
@@ -58,15 +44,20 @@ module.exports = function getServerRenderer(Base) {
     }
 
     createApolloClient(gmctx) {
-      return new ApolloClient({
+      const uri = this.options.apolloLinkHttp && this.options.apolloLinkHttp.uri;
+      return new ApolloClient(Object.assign({
+        connectToDevTools: false,
+        ssrForceFetchDelay: 100
+      }, this.options.apolloClient, {
+        ssrMode: true,
         link: ApolloLink.from([
           onError(handleLinkError),
-          new HttpLink(Object.assign({}, this.options.apolloHttpLink, {
-            uri: selfUrl(gmctx, this.options.apolloHttpLink.uri)
+          new HttpLink(Object.assign({}, this.options.apolloLinkHttp, {
+            uri: selfUrl(gmctx, uri || "/graphql")
           }))
         ]),
-        cache: new InMemoryCache()
-      });
+        cache: new InMemoryCache(this.options.apolloInMemoryCache)
+      }, this.options.apolloClient));
     }
   };
 };

@@ -7,9 +7,9 @@
     "@gourmet/self-url": "^1.1.0",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
-    "apollo-link": "^1.2.8",
-    "apollo-link-error": "^1.1.7",
-    "apollo-link-http": "^1.5.11"
+    "apollo-link": "^1.2.9",
+    "apollo-link-error": "^1.1.8",
+    "apollo-link-http": "^1.5.12"
   },
   "peerDependencies": {
     "react-apollo": "*"

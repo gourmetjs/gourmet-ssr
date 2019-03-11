@@ -12,38 +12,23 @@ const handleLinkError = require("./handleLinkError");
 
 let apolloClient;
 
+// Options:
+// - `createNewApolloClient = false`: True if a new instance of Apollo Client must created per
+//    a rendering session (e.g. route change) on the browser.
+//    On the server-side, a new instance is always created per a request, so this option is not used.
+// - `apolloClient = {connectToDevTools: false}`: An options object for `ApolloClient`.
+// - `apolloHttpLink = undefined`: An options object for `ApolloLinkHttp`.
+// - `apolloInMemoryCache = undefined`: An options object for `ApolloInMemoryCache`.
 module.exports = function getClientRenderer(Base) {
   if (!Base)
     throw Error("`@gourmet/react-apollo-renderer` cannot be the first one in the renderer chain. Check your configuration.");
 
   return class ApolloClientRenderer extends Base {
-    constructor(userObject, options) {
-      super(userObject, {
-        // True if a new instance of Apollo Client must created per a rendering session (e.g. route change) on the browser.
-        // On the server-side, a new instance is always created per a request, so this option is not used.
-        createNewApolloClient: false,
-
-        // Options for `ApolloClient`
-        apolloClient: {
-          ssrMode: false,
-          connectToDevTools: false,
-          ...(options && options.apolloClient)
-        },
-
-        apolloHttpLink: {
-          uri: "/graphql",
-          ...(options && options.apolloHttpLink)
-        },
-
-        ...options
-      });
-    }
-
     prepareToRender(gmctx) {
       return promiseProtect(() => {
         return super.prepareToRender(gmctx);
       }).then(cont => {
-        if (this.options.apollo.createNewApolloClient) {
+        if (this.options.createNewApolloClient === undefined || this.options.createNewApolloClient) {
           gmctx.apolloClient = this.createApolloClient(gmctx);
         } else {
           if (!apolloClient)
@@ -67,15 +52,18 @@ module.exports = function getClientRenderer(Base) {
     }
 
     createApolloClient(gmctx) {
-      const cache = new InMemoryCache();
-    
+      const cache = new InMemoryCache(this.options.apolloInMemoryCache);
+
       if (gmctx.data.apolloState)
         cache.restore(gmctx.data.apolloState);
-    
+
       return new ApolloClient(Object.assign({
+        connectToDevTools: false
+      }, this.options.apolloClient, {
+        ssrMode: false,
         link: ApolloLink.from([
           onError(handleLinkError),
-          new HttpLink(this.options.apolloHttpLink)
+          new HttpLink(this.options.apolloLinkHttp)
         ]),
         cache
       }, this.options.apolloClient));

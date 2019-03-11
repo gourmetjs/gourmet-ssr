@@ -5,10 +5,15 @@
   "scripts": {
     "build": "gourmet build",
     "start": "node lib/server.js",
-    "dev": "nodemon --ignore src lib/server.js -- --watch"
+    "dev": "nodemon --ignore src lib/server.js -- --watch",
+    "test": "npm run test:local && npm run test:prod && npm run test:ltc",
+    "test:local": "gourmet build --verbosity 1 && tape test/*_test.js --verbosity 1",
+    "test:prod": "gourmet build --verbosity 1 --stage prod && tape test/*_test.js --stage prod --verbosity 1",
+    "test:ltc": "gourmet build --verbosity 1 --stage ltc && tape test/*_test.js --stage ltc --verbosity 1"
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.2.0",
+    "@gourmet/console": "^1.1.0",
     "@gourmet/server-args": "^1.2.1",
     "apollo-datasource": "^0.3.1",
     "apollo-server-express": "^2.4.8",
@@ -19,17 +24,13 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.0",
     "@gourmet/preset-react": "^1.2.5",
-    "@gourmet/promise-protect": "^0.3.0",
-    "apollo-cache-inmemory": "^1.5.1",
-    "apollo-client": "^2.5.1",
-    "apollo-link": "^1.2.8",
-    "apollo-link-error": "^1.1.7",
-    "apollo-link-http": "^1.5.11",
-    "core-js": "^2.6.5",
+    "@gourmet/group-react-apollo": "^1.0.0",
+    "@gourmet/promise-tape": "^0.4.0",
     "graphql-tag": "^2.10.1",
     "nodemon": "^1.18.10",
     "react": "16.6.1 || ^16.6.4",
-    "react-apollo": "^2.5.1",
-    "react-dom": "16.6.1 || ^16.6.4"
+    "react-dom": "16.6.1 || ^16.6.4",
+    "puppeteer": "^1.3.0",
+    "tape": "^4.9.0"
   }
 }
