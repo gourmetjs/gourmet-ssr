@@ -26,6 +26,7 @@
     "@gourmet/group-react-apollo": "^1.0.1",
     "@gourmet/preset-react": "^1.2.6",
     "@gourmet/promise-tape": "^0.4.0",
+    "core-js": "2",
     "graphql-tag": "^2.10.1",
     "nodemon": "^1.18.10",
     "puppeteer": "^1.3.0",
