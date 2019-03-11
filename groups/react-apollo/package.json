@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/group-react-apollo",
-  "description": "Gourmet Group containing additional packages for React Apollo projects",
+  "description": "A group of sub-packages enabling the Apollo GraphQL support in Gourmet SSR projects",
   "version": "1.0.0",
   "main": "lib/GourmetGroupReactApollo.js",
   "keywords": [
