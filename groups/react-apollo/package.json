@@ -1,0 +1,19 @@
+{
+  "name": "@gourmet/group-react-apollo",
+  "description": "Gourmet Group containing additional packages for React Apollo projects",
+  "version": "1.0.0",
+  "main": "lib/GourmetGroupReactApollo.js",
+  "keywords": [
+    "gourmet-plugin"
+  ],
+  "dependencies": {
+    "@gourmet/react-apollo-renderer": "^1.0.0",
+    "@gourmet/plugin-react-apollo": "^1.0.0",
+    "react-apollo": "^2.5.2",
+    "core-js": "2"
+  },
+  "peerDependencies": {
+    "react": "16",
+    "react-dom": "16"
+  }
+}

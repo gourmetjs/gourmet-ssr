@@ -30,7 +30,7 @@ export default class TodoMain extends Component {
             if (error)
               return <div>Error!</div>;
             return (
-              <ul>
+              <ul id="todos">
                 {data.todos.map((text, idx) => (
                   <li key={idx}>{text}</li>
                 ))}
@@ -53,6 +53,7 @@ export default class TodoMain extends Component {
             <form onSubmit={e => this.handleSubmit(e, addTodo)}>
               <div className="input-group">
                 <input
+                  id="add_todo"
                   className="form-control"
                   placeholder="What needs to be done?"
                   onChange={e => this.handleChange(e)}
@@ -61,6 +62,7 @@ export default class TodoMain extends Component {
                 />
                 <div className="input-group-append">
                   <button
+                    id="add_button"
                     className="btn btn-outline-secondary"
                     type="submit"
                   >

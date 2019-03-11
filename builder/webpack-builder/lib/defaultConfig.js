@@ -74,10 +74,7 @@ module.exports = {
     },
 
     // Options to be given to the init function
-    initOptions: {
-      client: null,
-      server: null
-    },
+    initOptions: null,
 
     // If true, a global hook is installed in `Error` class to display stack trace
     // based on source maps.

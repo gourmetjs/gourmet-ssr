@@ -22,7 +22,7 @@ function _bufStream(buf) {
   });
 }
 
-// options: provided by init function (from `builder.initOptions.server`)
+// options: provided by init function (from `builder.initOptions`)
 //  - html: object / base content of html sections
 //  - pageTemplate: string or compiled function (define your own init function to set the compiled function)
 //  - dataPropertyName: string (default: "__gourmet_data__")

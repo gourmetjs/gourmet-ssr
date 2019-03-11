@@ -14,7 +14,7 @@ function _domready() {
   });
 }
 
-// options: provided by init function (from `builder.initOptions.client`)
+// options: provided by init function (from `builder.initOptions`)
 //  - contentContainerId: string (default: "__gourmet_content__")
 //  - dataPropertyName: string (default: "__gourmet_data__")
 //  - showErrorInDocument: shows the init error in the document (default: true)
