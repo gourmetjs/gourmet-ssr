@@ -1,11 +1,11 @@
 {
   "name": "@gourmet/is-plain-object",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "gmsrc/isPlainObject.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "url": "https://github.com/gourmetjs/gourmet-ssr.git",
     "directory": "utils/is-plain-object"
   }
 }
