@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-fetch-polyfill",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gourmet Plugin to handle `builder.installFetchPolyfill` option",
   "main": "lib/GourmetPluginFetchPolyfill.js",
   "keywords": [

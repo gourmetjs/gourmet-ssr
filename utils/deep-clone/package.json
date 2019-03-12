@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/deep-clone",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Recursively clones a JavaScript value",
   "main": "gmsrc/deepClone.js",
   "dependencies": {
-    "@gourmet/is-plain-object": "^0.3.0"
+    "@gourmet/is-plain-object": "^0.3.1"
   },
   "license": "MIT",
   "repository": {

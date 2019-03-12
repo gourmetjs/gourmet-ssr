@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/promise-create-write-stream",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Creates a writable file stream and returns a promise that is fulfilled when the writing is finished and the file is closed.",
   "main": "gmsrc/promiseCreateWriteStream.js",
   "dependencies": {

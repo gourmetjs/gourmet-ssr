@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/merge",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Merges objects with special handling of arrays and non-plain objects",
   "main": "gmsrc/merge.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "tape": "^4.9.0"
   },
   "dependencies": {
-    "@gourmet/is-plain-object": "^0.3.0"
+    "@gourmet/is-plain-object": "^0.3.1"
   },
   "license": "MIT",
   "repository": {

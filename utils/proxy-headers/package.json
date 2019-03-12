@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/proxy-headers",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "gmsrc/ProxyHeaders.js",
   "dependencies": {
-    "@gourmet/http-headers": "^0.3.0"
+    "@gourmet/http-headers": "^0.3.1"
   },
   "license": "MIT",
   "repository": {
