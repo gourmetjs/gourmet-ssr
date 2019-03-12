@@ -1,6 +1,4 @@
-# Gourmet SSR
-
-A Server-Side Rendering Engine for Production
+[![Gourmet SSR](/docs/assets/big-banner.png)](https://ssr.gourmetjs.org)
 
 ## Introduction
 
