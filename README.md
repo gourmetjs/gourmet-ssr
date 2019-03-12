@@ -3,9 +3,9 @@
 ## Introduction
 
 - **Library, not Framework** - Gourmet SSR is designed to be used as a view library in your existing project. We worked very hard to make Gourmet SSR unobtrusive.
-- **Production First** - Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and many more. Production is always the number one priority of Gourmet SSR.
-- **Human Friendly** - Developers are humans too. When we added a new feature, the first thing we considered was how to make it easy to understand and use - just like we do for the consumer products.
-- **Flexible** - Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda function. Your server can be Django or Rails. View layer is not limited to React.
+- **Production First** - Small footprint at runtime, chunked transfer, long-term caching, HTTP/2 optimized bundling and much more. Production is always the number one priority of Gourmet SSR.
+- **Human Friendly** - Developers are humans too. When we a new feature, the first thing we consider is how to make it easy to understand and use - just like we do for the consumer products.
+- **Flexible** - Gourmet SSR can be deployed as an in-process VM sandbox, a separate process, a remote HTTP cluster or an AWS Lambda function. Your server can be Django or Rails. The view layer is not limited to React.
 
 ## Quick Overview
 
@@ -20,6 +20,7 @@ export default function Hello({greeting}) {
 }
 ```
 
+<br>
 > Configuration is designed to be minimal, but not to the level of "magic". Here, we specify the above React component as a root component of the `main` page.
 
 ```js
@@ -31,6 +32,7 @@ module.exports = {
 };
 ```
 
+<br>
 > Gourmet SSR is just a view library in your server. This is how you render and serve the `main` page.
 
 ```js
@@ -51,6 +53,7 @@ app.listen(3000, () => {
 });
 ```
 
+<br>
 > The content is rendered on the server-side and rehydrated on the client-side.
 > Required assets are also linked statically.
 >
