@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/http-headers",
-  "version": "0.3.1",
+  "version": "0.3.0",
   "main": "gmsrc/HttpHeaders.js",
   "license": "MIT",
   "repository": {

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/is-plain-object",
-  "version": "0.3.1",
+  "version": "0.3.0",
   "main": "gmsrc/isPlainObject.js",
   "license": "MIT",
   "repository": {

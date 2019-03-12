@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/client-http",
-  "version": "1.2.1",
+  "version": "1.2.0",
   "main": "lib/clientHttp.js",
   "dependencies": {
-    "@gourmet/get-req-opts": "^0.2.1",
-    "@gourmet/http-module": "^0.3.1",
-    "@gourmet/merge": "^0.8.1",
-    "@gourmet/middleware": "^1.2.1",
-    "@gourmet/proxy-headers": "^0.3.1"
+    "@gourmet/get-req-opts": "^0.2.0",
+    "@gourmet/http-module": "^0.3.0",
+    "@gourmet/merge": "^0.8.0",
+    "@gourmet/middleware": "^1.2.0",
+    "@gourmet/proxy-headers": "^0.3.0"
   },
   "license": "MIT",
   "repository": {

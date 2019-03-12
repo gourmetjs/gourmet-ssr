@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/promise-repeat",
-  "version": "0.3.1",
+  "version": "0.3.0",
   "description": "Runs an asynchronous loop in series",
   "main": "gmsrc/promiseRepeat.js",
   "dependencies": {
-    "@gourmet/is-promise": "^0.3.1"
+    "@gourmet/is-promise": "^0.3.0"
   },
   "license": "MIT",
   "repository": {

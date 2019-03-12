@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/promise-sync",
-  "version": "0.3.1",
+  "version": "0.3.0",
   "description": "Synchronously runs a handler if the value is not a promise",
   "main": "gmsrc/promiseSync.js",
   "dependencies": {
-    "@gourmet/is-promise": "^0.3.1"
+    "@gourmet/is-promise": "^0.3.0"
   },
   "license": "MIT",
   "repository": {

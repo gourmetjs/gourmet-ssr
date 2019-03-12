@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-webpack-babel",
-  "version": "1.1.1",
+  "version": "1.1.0",
   "description": "Gourmet Plugin to transpile JavaScript modules using Babel",
   "keywords": [
     "gourmet-plugin"
@@ -15,9 +15,9 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/runtime": "^7.1.5",
-    "@gourmet/merge": "^0.8.1",
-    "@gourmet/plugin-sort": "^0.8.1",
-    "@gourmet/relative-path": "^0.4.1",
+    "@gourmet/merge": "^0.8.0",
+    "@gourmet/plugin-sort": "^0.8.0",
+    "@gourmet/relative-path": "^0.4.0",
     "babel-loader": "^8.0.4",
     "babel-plugin-dynamic-import-node": "^2.2.0"
   },

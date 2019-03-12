@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/omit",
-  "version": "0.3.1",
+  "version": "0.3.0",
   "description": "Creates a copy of a plain object with own properties excluding the specified properties",
   "main": "gmsrc/omit.js",
   "dependencies": {
-    "@gourmet/is-plain-object": "^0.3.1"
+    "@gourmet/is-plain-object": "^0.3.0"
   },
   "license": "MIT",
   "repository": {

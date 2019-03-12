@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/unprefix-path",
-  "version": "0.3.1",
+  "version": "0.3.0",
   "main": "gmsrc/unprefixPath.js",
   "scripts": {
     "test": "tape test/*_test.js"

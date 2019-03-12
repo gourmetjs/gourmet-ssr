@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/get-exported",
-  "version": "0.4.1",
+  "version": "0.4.0",
   "main": "gmsrc/getExported.js",
   "license": "MIT",
   "repository": {

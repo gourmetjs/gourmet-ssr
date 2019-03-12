@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/group-react-emotion",
   "description": "A group of sub-packages enabling the CSS-in-JS support using Emotion in Gourmet SSR projects",
-  "version": "1.1.2",
+  "version": "1.1.1",
   "main": "lib/GourmetGroupReactEmotion.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/emotion-renderer": "^0.6.2",
-    "@gourmet/plugin-react-emotion": "^0.6.1",
+    "@gourmet/emotion-renderer": "^0.6.1",
+    "@gourmet/plugin-react-emotion": "^0.6.0",
     "emotion": "^9.2.12",
     "prop-types": "^15.6.2",
     "react-emotion": "^9.2.12"

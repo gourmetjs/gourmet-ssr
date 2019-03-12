@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/relative-path",
-  "version": "0.4.1",
+  "version": "0.4.0",
   "description": "Converts a platform filesystem path to a portable path relative to a specified base directory",
   "main": "gmsrc/relativePath.js",
   "license": "MIT",
