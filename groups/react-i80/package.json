@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/group-react-i80",
-  "description": "Gourmet Group containing react-i80 related packages",
+  "description": "A group of sub-packages enabling the isomorphic routing support using React I80 in Gourmet SSR projects",
   "version": "1.2.1",
   "main": "lib/GourmetGroupReactI80.js",
   "keywords": [

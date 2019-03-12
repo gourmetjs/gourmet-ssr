@@ -1,0 +1,8 @@
+{
+  "name": "@gourmet/script-readme",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "@gourmet/resolve-template": "^0.3.0"
+  }
+}

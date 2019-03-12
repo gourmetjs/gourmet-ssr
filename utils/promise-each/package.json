@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/promise-each",
   "version": "0.3.0",
-  "description": "Promise aware version of JavaScript's `Array.prototype.forEach`",
+  "description": "Iterates through an array asynchronously in series - the handler will not be called until the promise returned by the previous call is resolved.",
   "main": "gmsrc/promiseEach.js",
   "dependencies": {
     "@gourmet/promise-repeat": "^0.3.0",

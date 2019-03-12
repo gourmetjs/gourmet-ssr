@@ -11,6 +11,15 @@
       "guides": {
         "title": "Guides"
       },
+      "ref/group-react-apollo/index": {
+        "title": "ref/group-react-apollo/index"
+      },
+      "ref/react-i80/index": {
+        "title": "ref/react-i80/index"
+      },
+      "ref/react-loadable/index": {
+        "title": "ref/react-loadable/index"
+      },
       "reference": {
         "title": "Reference"
       },

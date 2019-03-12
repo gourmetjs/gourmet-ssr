@@ -9,7 +9,8 @@
     "contrib/*",
     "groups/*",
     "presets/*",
-    "tests/*"
+    "tests/*",
+    "scripts/*"
   ],
   "hoist": true,
   "version": "independent"

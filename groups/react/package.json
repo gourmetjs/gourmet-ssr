@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/group-react",
-  "description": "Gourmet Group containing additional packages for React projects",
+  "description": "A group of sub-packages for the React support in Gourmet SSR projects",
   "version": "1.2.2",
   "main": "lib/GourmetGroupReact.js",
   "keywords": [

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/group-react-emotion",
-  "description": "Gourmet Group containing additional packages for React Emotion projects",
+  "description": "A group of sub-packages enabling the CSS-in-JS support using Emotion in Gourmet SSR projects",
   "version": "1.1.1",
   "main": "lib/GourmetGroupReactEmotion.js",
   "keywords": [
