@@ -9,9 +9,10 @@
 
 ## Quick Overview
 
-#### hello.js
+> You write the user interface without complicated bootstrapping or boilerplate. It is just a plain tree of React components.
 
 ```js
+// hello.js
 import React from "react";
 
 export default function Hello({greeting}) {
@@ -19,9 +20,10 @@ export default function Hello({greeting}) {
 }
 ```
 
-#### gourmet_config.js
+> Configuration is designed to be minimal, but not to the level of "magic". Here, we specify the above React component as a root component of the `main` page.
 
 ```js
+// gourmet_config.js
 module.exports = {
   pages: {
     main: "./hello.js"
@@ -29,9 +31,10 @@ module.exports = {
 };
 ```
 
-#### server.js
+> Gourmet SSR is just a view library in your server. This is how you render and serve the `main` page.
 
 ```js
+// server.js
 const express = require("express");
 const gourmet = require("@gourmet/client-lib");
 
@@ -48,46 +51,10 @@ app.listen(3000, () => {
 });
 ```
 
-#### package.json
-
-```json
-{
-  "private": true,
-  "scripts": {
-    "build": "gourmet build",
-    "start": "node server.js"
-  }
-}
-```
-
-#### Install
-
-```sh
-$ npm install express @gourmet/client-lib --save
-$ npm install @gourmet/gourmet-cli @gourmet/preset-react react react-dom --save-dev
-```
-
-#### Build and run
-
-```text
-$ npm run build
-server>
-server> >>> Building 'local' stage for 'server' target...
-server>
-server> Hash: 67lUupnSCkvx5QS2PfiMN5B5M2d
-server> Version: webpack 4.28.3
-...
-client>
-client> >>> Building 'local' stage for 'client' target...
-client>
-client> Hash: 2X8CXpO82qOEnWcj6UiIi6eg5gv
-client> Version: webpack 4.28.3
-...
-$ npm start
-Server is listening on port 3000
-```
-
-#### Inspect
+> The content is rendered on the server-side and rehydrated on the client-side.
+> Required assets are also linked statically.
+>
+> The HTML output has all the elements it needs to render the initial user interface - which is great for SEO and user experience.
 
 ```html
 $ curl http://localhost:3000
