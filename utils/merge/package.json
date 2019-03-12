@@ -11,5 +11,11 @@
   },
   "dependencies": {
     "@gourmet/is-plain-object": "^0.3.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/merge"
   }
 }

@@ -10,5 +10,11 @@
     "@gourmet/renderer-sandbox": "^0.5.0",
     "@gourmet/resolve-dirs": "^1.1.0",
     "@gourmet/storage-fs": "^0.4.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "runtime/client-lib"
   }
 }

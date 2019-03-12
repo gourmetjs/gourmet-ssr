@@ -1,5 +1,11 @@
 {
   "name": "@gourmet/serialize-error",
   "version": "0.3.0",
-  "main": "gmsrc/serializeError.js"
+  "main": "gmsrc/serializeError.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/serialize-error"
+  }
 }

@@ -1,5 +1,11 @@
 {
   "name": "@gourmet/error-to-string",
   "version": "0.3.0",
-  "main": "gmsrc/errorToString.js"
+  "main": "gmsrc/errorToString.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/error-to-string"
+  }
 }

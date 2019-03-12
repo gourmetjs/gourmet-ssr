@@ -20,5 +20,11 @@
   "peerDependencies": {
     "@babel/core": "7",
     "webpack": "4"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "groups/core"
   }
 }

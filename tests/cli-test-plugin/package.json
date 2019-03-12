@@ -4,5 +4,11 @@
   "keywords": [
     "gourmet-plugin"
   ],
-  "main": "lib/GourmetPluginCliTest.js"
+  "main": "lib/GourmetPluginCliTest.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "tests/cli-test-plugin"
+  }
 }

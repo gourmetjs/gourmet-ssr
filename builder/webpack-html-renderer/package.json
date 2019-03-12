@@ -8,5 +8,11 @@
   ],
   "peerDependencies": {
     "@gourmet/html-renderer": "*"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/webpack-html-renderer"
   }
 }

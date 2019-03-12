@@ -4,5 +4,11 @@
   "main": "gmsrc/unprefixPath.js",
   "scripts": {
     "test": "tape test/*_test.js"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/unprefix-path"
   }
 }

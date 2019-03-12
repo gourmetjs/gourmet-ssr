@@ -4,5 +4,11 @@
   "dependencies": {
     "emotion-server": "^9.2.12",
     "pump": "^3.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "contrib/emotion-renderer"
   }
 }

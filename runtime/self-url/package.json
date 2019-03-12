@@ -6,5 +6,11 @@
   "dependencies": {
     "@gourmet/parse-href": "^1.1.0",
     "is-absolute-url": "^2.1.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "runtime/self-url"
   }
 }

@@ -8,5 +8,11 @@
   "main": "lib/GourmetPluginPreserveInjector.js",
   "dependencies": {
     "webpack-sources": "^1.2.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/preserve-injector"
   }
 }

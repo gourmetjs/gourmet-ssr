@@ -11,5 +11,11 @@
     "@gourmet/promise-protect": "^0.3.0",
     "@gourmet/variables": "^0.5.0",
     "resolve": "^1.6.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "cli/gourmet-cli-impl"
   }
 }

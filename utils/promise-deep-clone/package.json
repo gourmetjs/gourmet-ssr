@@ -9,5 +9,11 @@
     "@gourmet/promise-map": "^0.3.0",
     "@gourmet/promise-sync": "^0.3.0",
     "@gourmet/promise-wrap": "^0.3.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/promise-deep-clone"
   }
 }

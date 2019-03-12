@@ -9,5 +9,11 @@
   "dependencies": {
     "@gourmet/plugin-react-i80": "^0.4.0",
     "@gourmet/react-i80": "^1.2.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "groups/react-i80"
   }
 }

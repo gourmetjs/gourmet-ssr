@@ -10,5 +10,11 @@
     "@gourmet/client-lib": "^1.2.0",
     "@gourmet/console": "^1.1.0",
     "connect": "^3.6.6"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "runtime/http-server"
   }
 }

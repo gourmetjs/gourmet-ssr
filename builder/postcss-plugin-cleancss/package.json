@@ -6,5 +6,11 @@
   "dependencies": {
     "clean-css": "^4.2.1",
     "postcss": "^7.0.5"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/postcss-plugin-cleancss"
   }
 }

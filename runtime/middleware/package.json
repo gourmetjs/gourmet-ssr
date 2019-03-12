@@ -10,5 +10,11 @@
     "@gourmet/send-content": "^1.1.0",
     "@gourmet/watch-middleware": "^1.1.0",
     "@gourmet/web-proxy": "^1.1.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "runtime/middleware"
   }
 }

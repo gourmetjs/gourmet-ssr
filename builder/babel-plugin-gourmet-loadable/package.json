@@ -8,5 +8,11 @@
   "main": "lib/babelPluginGourmetLoadable.js",
   "dependencies": {
     "@gourmet/base-x": "^0.3.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/babel-plugin-gourmet-loadable"
   }
 }

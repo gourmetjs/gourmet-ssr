@@ -4,5 +4,11 @@
   "main": "lib/getReqArgs.js",
   "dependencies": {
     "@gourmet/proxy-headers": "^0.3.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "runtime/get-req-args"
   }
 }

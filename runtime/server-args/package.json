@@ -6,5 +6,11 @@
     "@gourmet/cli-args": "^0.2.0",
     "@gourmet/merge": "^0.8.0",
     "@gourmet/resolve-dirs": "^1.1.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "runtime/server-args"
   }
 }

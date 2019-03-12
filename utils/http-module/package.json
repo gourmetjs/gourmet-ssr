@@ -2,5 +2,11 @@
   "name": "@gourmet/http-module",
   "version": "0.3.0",
   "description": "Selects between 'http' and 'https' module based on value of protocol string",
-  "main": "gmsrc/httpModule.js"
+  "main": "gmsrc/httpModule.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/http-module"
+  }
 }

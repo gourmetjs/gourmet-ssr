@@ -8,5 +8,11 @@
   ],
   "dependencies": {
     "source-map-support": "gourmetjs/node-source-map-support"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/source-map-support"
   }
 }

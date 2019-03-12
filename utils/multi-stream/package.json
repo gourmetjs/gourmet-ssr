@@ -2,5 +2,11 @@
   "name": "@gourmet/multi-stream",
   "version": "0.3.0",
   "main": "gmsrc/MultiStream.js",
-  "description": "Modified version of `https://github.com/feross/multistream` that uses Node built-in modules only"
+  "description": "Modified version of `https://github.com/feross/multistream` that uses Node built-in modules only",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/multi-stream"
+  }
 }

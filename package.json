@@ -11,7 +11,7 @@
     "lint": "eslint . --ext .js,.jsx --ignore-pattern node_modules --ignore-pattern website",
     "standalone-test": "node scripts/standalone-runner/banner && node scripts/standalone-runner/copy-all && node scripts/standalone-runner/install-all && node scripts/standalone-runner/test-all",
     "delete-test-tags": "bash -c 'git push origin --delete $(git tag -l '@gourmet/test-*')' && bash -c 'git tag -d $(git tag -l '@gourmet/test-*')'",
-    "generate-readme": "lerna exec --stream -- bash -c 'node $LERNA_ROOT_PATH/scripts/readme/generate.js'"
+    "update-packages": "lerna exec --stream -- bash -c 'node $LERNA_ROOT_PATH/scripts/update-package/update.js'"
   },
   "devDependencies": {
     "eslint": "^5.5.0",

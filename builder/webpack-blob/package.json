@@ -4,5 +4,11 @@
   "main": "lib/GourmetPluginWebpackBlob.js",
   "dependencies": {
     "@gourmet/webpack-file-loader": "^0.2.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/webpack-blob"
   }
 }
