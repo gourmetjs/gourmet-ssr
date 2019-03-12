@@ -19,8 +19,8 @@ export default function Hello({greeting}) {
   return <div>{greeting}</div>;
 }
 ```
-
 <br>
+
 > Configuration is designed to be minimal, but not to the level of "magic". Here, we specify the above React component as a root component of the `main` page.
 
 ```js
@@ -31,8 +31,8 @@ module.exports = {
   }
 };
 ```
-
 <br>
+
 > Gourmet SSR is just a view library in your server. This is how you render and serve the `main` page.
 
 ```js
@@ -52,8 +52,8 @@ app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });
 ```
-
 <br>
+
 > The content is rendered on the server-side and rehydrated on the client-side.
 > Required assets are also linked statically.
 >
