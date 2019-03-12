@@ -10,7 +10,7 @@
 
 const siteConfig = {
   title: "Gourmet SSR", // Title for your website.
-  tagline: "A Server-Side Rendering Engine for Production",
+  tagline: "A Server-Side Rendering Engine for Professionals",
   url: "https://ssr.gourmetjs.org", // Your website URL
   baseUrl: "/", // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
