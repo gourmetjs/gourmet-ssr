@@ -1,9 +1,15 @@
 {
   "name": "@gourmet/promise-create-write-stream",
-  "version": "0.3.0",
-  "description": "Creates a writable file stream and returns a promise to indicate the completion",
+  "version": "0.3.1",
+  "description": "Creates a writable file stream and returns a promise that is fulfilled when the writing is finished and the file is closed.",
   "main": "gmsrc/promiseCreateWriteStream.js",
   "dependencies": {
     "mkdirp": "^0.5.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/promise-create-write-stream"
   }
 }

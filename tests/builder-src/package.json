@@ -7,13 +7,13 @@
     "test": "gourmet build --verbosity 1 && gourmet build --verbosity 1 --stage test && tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.2.0",
-    "@gourmet/server-args": "^1.2.1",
+    "@gourmet/client-lib": "^1.2.1",
+    "@gourmet/server-args": "^1.2.2",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/gourmet-cli": "^1.1.1",
     "@gourmet/preset-core": "^1.1.5",
     "@gourmet/test-builder-src-module-a": "^0.1.0",
     "@gourmet/test-builder-src-module-b": "^0.1.1",

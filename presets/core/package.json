@@ -10,5 +10,11 @@
     "@babel/core": "^7.1.2",
     "@gourmet/group-core": "^1.1.5",
     "webpack": "^4.26.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "presets/core"
   }
 }

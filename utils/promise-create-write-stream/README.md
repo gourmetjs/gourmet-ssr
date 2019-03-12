@@ -1,7 +1,6 @@
 # @gourmet/promise-create-write-stream
 
-Creates a writable file stream and returns a promise that is fulfilled when
-the writing is finished and the file is closed.
+Creates a writable file stream and returns a promise that is fulfilled when the writing is finished and the file is closed.
 
 # Basic usage
 

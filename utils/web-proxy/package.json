@@ -1,13 +1,19 @@
 {
   "name": "@gourmet/web-proxy",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "gmsrc/index.js",
   "dependencies": {
-    "@gourmet/error": "^0.3.1",
-    "@gourmet/get-req-opts": "^0.2.0",
-    "@gourmet/handle-request-error": "^1.1.0",
-    "@gourmet/http-module": "^0.3.0",
-    "@gourmet/proxy-headers": "^0.3.0",
+    "@gourmet/error": "^0.3.2",
+    "@gourmet/get-req-opts": "^0.2.1",
+    "@gourmet/handle-request-error": "^1.1.1",
+    "@gourmet/http-module": "^0.3.1",
+    "@gourmet/proxy-headers": "^0.3.1",
     "pump": "^3.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/web-proxy"
   }
 }

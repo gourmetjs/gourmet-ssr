@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-fetch-polyfill",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gourmet Plugin to handle `builder.installFetchPolyfill` option",
   "main": "lib/GourmetPluginFetchPolyfill.js",
   "keywords": [
@@ -8,5 +8,11 @@
   ],
   "dependencies": {
     "whatwg-fetch": "^3.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/fetch-polyfill"
   }
 }

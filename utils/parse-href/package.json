@@ -1,8 +1,14 @@
 {
   "name": "@gourmet/parse-href",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "gmsrc/parseHref.js",
   "scripts": {
     "test": "tape test/*_test.js"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/parse-href"
   }
 }

@@ -1,21 +1,27 @@
 {
   "name": "@gourmet/cli-base",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Base class for the command line interface apps with flexible plugin architecture",
   "main": "lib/CliBase.js",
   "dependencies": {
-    "@gourmet/console": "^1.1.0",
-    "@gourmet/error": "^0.3.1",
-    "@gourmet/merge": "^0.8.0",
-    "@gourmet/omit": "^0.3.0",
-    "@gourmet/plugin-sort": "^0.8.0",
-    "@gourmet/promise-main": "^0.3.0",
-    "@gourmet/promise-protect": "^0.3.0",
-    "@gourmet/promise-repeat": "^0.3.0",
-    "@gourmet/promise-sync": "^0.3.0",
+    "@gourmet/console": "^1.1.1",
+    "@gourmet/error": "^0.3.2",
+    "@gourmet/merge": "^0.8.1",
+    "@gourmet/omit": "^0.3.1",
+    "@gourmet/plugin-sort": "^0.8.1",
+    "@gourmet/promise-main": "^0.3.1",
+    "@gourmet/promise-protect": "^0.3.1",
+    "@gourmet/promise-repeat": "^0.3.1",
+    "@gourmet/promise-sync": "^0.3.1",
     "camelcase-keys": "^4.2.0",
     "minimist": "^1.2.0",
     "resolve": "^1.6.0",
     "test": "^0.6.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "cli/cli-base"
   }
 }

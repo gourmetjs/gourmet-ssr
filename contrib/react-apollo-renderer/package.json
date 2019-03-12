@@ -3,8 +3,8 @@
   "version": "1.0.1",
   "main": "gmsrc/getReactApolloClientRenderer.js",
   "dependencies": {
-    "@gourmet/promise-protect": "^0.3.0",
-    "@gourmet/self-url": "^1.1.0",
+    "@gourmet/promise-protect": "^0.3.1",
+    "@gourmet/self-url": "^1.1.1",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
     "apollo-link": "^1.2.9",
@@ -13,5 +13,11 @@
   },
   "peerDependencies": {
     "react-apollo": "*"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "contrib/react-apollo-renderer"
   }
 }

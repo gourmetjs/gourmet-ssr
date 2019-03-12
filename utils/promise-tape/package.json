@@ -1,6 +1,12 @@
 {
   "name": "@gourmet/promise-tape",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A simple wrapper converting a promise returning function to test handler for 'tape'",
-  "main": "gmsrc/promiseTape.js"
+  "main": "gmsrc/promiseTape.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/promise-tape"
+  }
 }

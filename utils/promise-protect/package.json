@@ -1,6 +1,12 @@
 {
   "name": "@gourmet/promise-protect",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Protects a function from exceptions and wraps the return value with a promise",
-  "main": "gmsrc/promiseProtect.js"
+  "main": "gmsrc/promiseProtect.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/promise-protect"
+  }
 }

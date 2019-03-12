@@ -1,6 +1,12 @@
 {
   "name": "@gourmet/promise-main",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Handles the top main promise of a console app",
-  "main": "gmsrc/promiseMain.js"
+  "main": "gmsrc/promiseMain.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/promise-main"
+  }
 }

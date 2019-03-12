@@ -1,9 +1,15 @@
 {
   "name": "@gourmet/promise-sync",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Synchronously runs a handler if the value is not a promise",
   "main": "gmsrc/promiseSync.js",
   "dependencies": {
-    "@gourmet/is-promise": "^0.3.0"
+    "@gourmet/is-promise": "^0.3.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/promise-sync"
   }
 }

@@ -1,8 +1,14 @@
 {
   "name": "@gourmet/promise-write-file",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "gmsrc/promiseWriteFile.js",
   "dependencies": {
-    "@gourmet/promise-create-write-stream": "^0.3.0"
+    "@gourmet/promise-create-write-stream": "^0.3.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/promise-write-file"
   }
 }

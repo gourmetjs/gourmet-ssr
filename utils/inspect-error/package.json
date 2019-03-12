@@ -1,8 +1,14 @@
 {
   "name": "@gourmet/inspect-error",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "gmsrc/inspectError.js",
   "dependencies": {
-    "@gourmet/serialize-error": "^0.3.0"
+    "@gourmet/serialize-error": "^0.3.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/inspect-error"
   }
 }

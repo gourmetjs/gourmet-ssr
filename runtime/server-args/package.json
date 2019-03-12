@@ -1,10 +1,16 @@
 {
   "name": "@gourmet/server-args",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "lib/serverArgs.js",
   "dependencies": {
-    "@gourmet/cli-args": "^0.2.0",
-    "@gourmet/merge": "^0.8.0",
-    "@gourmet/resolve-dirs": "^1.1.0"
+    "@gourmet/cli-args": "^0.2.1",
+    "@gourmet/merge": "^0.8.1",
+    "@gourmet/resolve-dirs": "^1.1.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "runtime/server-args"
   }
 }

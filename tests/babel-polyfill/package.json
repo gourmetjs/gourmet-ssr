@@ -7,7 +7,7 @@
     "test": "gourmet build --verbosity 1 && gourmet build --verbosity 1 --stage entry && tape test/*_test.js --verbosity 1"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
+    "@gourmet/gourmet-cli": "^1.1.1",
     "@gourmet/preset-core": "^1.1.5",
     "tape": "^4.9.0"
   }

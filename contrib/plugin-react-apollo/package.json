@@ -7,5 +7,11 @@
   ],
   "peerDependencies": {
     "@gourmet/react-apollo-renderer": "*"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "contrib/plugin-react-apollo"
   }
 }

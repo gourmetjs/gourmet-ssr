@@ -1,14 +1,20 @@
 {
   "name": "@gourmet/hash-names",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "gmsrc/HashNames.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/base-x": "^0.3.0"
+    "@gourmet/base-x": "^0.3.1"
   },
   "devDependencies": {
     "tape": "^4.9.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/hash-names"
   }
 }

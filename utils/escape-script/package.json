@@ -1,6 +1,12 @@
 {
   "name": "@gourmet/escape-script",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Escape JavaScript content to be embedded in HTML",
-  "main": "gmsrc/escapeScript.js"
+  "main": "gmsrc/escapeScript.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/escape-script"
+  }
 }

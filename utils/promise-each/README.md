@@ -1,9 +1,10 @@
 # @gourmet/promise-each
 
-Iterates through an array asynchronously in series - the handler will not
-be called until the promise returned by the previous call is resolved.
+Iterates through an array asynchronously in series - the handler will not be called until the promise returned by the previous call is resolved.
 
 # Basic usage
+
+The handler will not be called until the promise returned by the previous call is resolved.
 
 ```js
 const promiseEach = require("@gourmet/promise-each");

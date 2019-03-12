@@ -1,9 +1,15 @@
 {
   "name": "@gourmet/react-context-gmctx",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Simple module to share a React 16.x context object to provide and consume `gmctx`",
   "main": "gmsrc/GourmetContext.js",
   "peerDependencies": {
     "react": "16"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "contrib/react-context-gmctx"
   }
 }

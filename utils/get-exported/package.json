@@ -1,5 +1,11 @@
 {
   "name": "@gourmet/get-exported",
-  "version": "0.4.0",
-  "main": "gmsrc/getExported.js"
+  "version": "0.4.1",
+  "main": "gmsrc/getExported.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "utils/get-exported"
+  }
 }

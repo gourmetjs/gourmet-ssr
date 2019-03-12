@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-source-map-support",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gourmet Plugin to handle `builder.installSourceMapSupport` option",
   "main": "lib/GourmetPluginSourceMapSupport.js",
   "keywords": [
@@ -8,5 +8,11 @@
   ],
   "dependencies": {
     "source-map-support": "gourmetjs/node-source-map-support"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gourmetjs/gourmet-ssr",
+    "directory": "builder/source-map-support"
   }
 }
