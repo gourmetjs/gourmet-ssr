@@ -8,7 +8,7 @@
 const map = require("@gourmet/promise-map");
 
 function checkUrl(url) {
-  return someHowGetTheHttpStatusCodeFromTheUrl(url).then(status => {
+  return somehowGetTheHttpStatusCodeFromTheUrl(url).then(status => {
     return status === 200 ? "OK" : "Down";
   });
 }
