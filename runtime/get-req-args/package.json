@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/get-req-args",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "lib/getReqArgs.js",
   "dependencies": {
-    "@gourmet/proxy-headers": "^0.3.0"
+    "@gourmet/proxy-headers": "^0.3.1"
   },
   "license": "MIT",
   "repository": {

@@ -1,15 +1,15 @@
 {
   "name": "@gourmet/plugin-webpack-global-css",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "keywords": [
     "gourmet-plugin"
   ],
   "main": "lib/GourmetPluginWebpackGlobalCss.js",
   "dependencies": {
-    "@gourmet/merge": "^0.8.0",
-    "@gourmet/plugin-sort": "^0.8.0",
-    "@gourmet/postcss-plugin-cleancss": "^0.2.0",
-    "@gourmet/webpack-file-loader": "^0.2.0",
+    "@gourmet/merge": "^0.8.1",
+    "@gourmet/plugin-sort": "^0.8.1",
+    "@gourmet/postcss-plugin-cleancss": "^0.2.1",
+    "@gourmet/webpack-file-loader": "^0.2.1",
     "autoprefixer": "^9.3.1",
     "css-loader": "^1.0.0",
     "extract-loader": "^2.0.1",

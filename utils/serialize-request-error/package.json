@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/serialize-request-error",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Serializes an error into a JSON object",
   "main": "gmsrc/serializeRequestError.js",
   "dependencies": {
-    "@gourmet/serialize-error": "^0.3.0"
+    "@gourmet/serialize-error": "^0.3.1"
   },
   "license": "MIT",
   "repository": {

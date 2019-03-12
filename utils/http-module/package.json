@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/http-module",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Selects between 'http' and 'https' module based on value of protocol string",
   "main": "gmsrc/httpModule.js",
   "license": "MIT",
