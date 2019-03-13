@@ -6,25 +6,28 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@gourmet/group-core">
-    <img src="https://img.shields.io/npm/v/@gourmet/group-core.svg">
+    <img src="https://img.shields.io/npm/v/@gourmet/group-core.svg" alt="Latest Version">
   </a>
   <a href="https://github.com/gourmetjs/gourmet-ssr/commits/master">
-    <img src="https://img.shields.io/github/last-commit/gourmetjs/gourmet-ssr.svg">
+    <img src="https://img.shields.io/github/last-commit/gourmetjs/gourmet-ssr.svg" alt="Last Commit">
   </a>
   <a href="https://github.com/gourmetjs/gourmet-ssr/issues">
-    <img src="https://img.shields.io/github/issues/gourmetjs/gourmet-ssr.svg">
+    <img src="https://img.shields.io/github/issues/gourmetjs/gourmet-ssr.svg" alt="Open Issues">
   </a>
   <a href="https://nodejs.org">
-    <img src="https://img.shields.io/node/v/@gourmet/preset-core.svg">
+    <img src="https://img.shields.io/node/v/@gourmet/preset-core.svg" alt="Node Version Requirement">
   </a>
-  <a href="https://nodejs.org">
-    <img src="https://img.shields.io/website/https/ssr.gourmetjs.org.svg">
+  <a href="https://ssr.gourmetjs.org">
+    <img src="https://img.shields.io/website/https/ssr.gourmetjs.org.svg" alt="Website Status">
   </a>
   <a href="https://github.com/gourmetjs/gourmet-ssr">
-    <img src="https://img.shields.io/github/languages/top/gourmetjs/gourmet-ssr.svg">
+    <img src="https://img.shields.io/github/languages/top/gourmetjs/gourmet-ssr.svg" alt="Main Language">
+  </a>
+  <a href="https://github.com/gourmetjs/gourmet-ssr/pulls">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">
   </a>
   <a href="https://github.com/gourmetjs/gourmet-ssr/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/gourmetjs/gourmet-ssr.svg">
+    <img src="https://img.shields.io/github/license/gourmetjs/gourmet-ssr.svg" alt="License">
   </a>
 </p>
 
