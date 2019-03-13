@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://ssr.gourmetjs.org">
-    <img src="/docs/assets/big-banner.png" alt="Gourmet SSR">
+    <img src="/docs/assets/repo-banner.svg" alt="Gourmet SSR">
   </a>
 </h1>
 
