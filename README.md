@@ -20,6 +20,9 @@
   <a href="https://nodejs.org">
     <img src="https://img.shields.io/website/https/ssr.gourmetjs.org.svg">
   </a>
+  <a href="https://github.com/gourmetjs/gourmet-ssr">
+    <img src="https://img.shields.io/github/languages/top/gourmetjs/gourmet-ssr.svg">
+  </a>
   <a href="https://github.com/gourmetjs/gourmet-ssr/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/gourmetjs/gourmet-ssr.svg">
   </a>
