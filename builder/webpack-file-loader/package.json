@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/webpack-file-loader",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "lib/fileLoader.js",
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/webpack-file-loader"

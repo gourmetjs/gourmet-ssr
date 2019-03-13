@@ -1,15 +1,15 @@
 {
   "name": "@gourmet/gourmet-cli-impl",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Gourmet command line interface implementation",
   "main": "lib/GourmetCli.js",
   "dependencies": {
-    "@gourmet/cli-base": "^1.1.2",
-    "@gourmet/error": "^0.3.3",
-    "@gourmet/plain-merge": "^0.4.2",
-    "@gourmet/promise-deep-prop": "^0.4.2",
-    "@gourmet/promise-protect": "^0.3.2",
-    "@gourmet/variables": "^0.5.2",
+    "@gourmet/cli-base": "^1.1.3",
+    "@gourmet/error": "^0.3.4",
+    "@gourmet/plain-merge": "^0.4.3",
+    "@gourmet/promise-deep-prop": "^0.4.3",
+    "@gourmet/promise-protect": "^0.3.3",
+    "@gourmet/variables": "^0.5.3",
     "resolve": "^1.6.0"
   },
   "license": "MIT",

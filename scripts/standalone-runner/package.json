@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/script-standalone-runner",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "copy-all": "node copy-all.js",
@@ -8,8 +8,8 @@
     "test-all": "node test-all.js"
   },
   "devDependencies": {
-    "@gourmet/promise-each": "^0.3.2",
-    "@gourmet/promise-main": "^0.3.2",
+    "@gourmet/promise-each": "^0.3.3",
+    "@gourmet/promise-main": "^0.3.3",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "pshell": "^1.1.0",

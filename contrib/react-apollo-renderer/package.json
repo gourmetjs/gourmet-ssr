@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/react-apollo-renderer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "gmsrc/getReactApolloClientRenderer.js",
   "dependencies": {
-    "@gourmet/promise-protect": "^0.3.2",
-    "@gourmet/self-url": "^1.1.2",
+    "@gourmet/promise-protect": "^0.3.3",
+    "@gourmet/self-url": "^1.1.3",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
     "apollo-link": "^1.2.9",

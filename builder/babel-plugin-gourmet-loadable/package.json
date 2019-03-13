@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/babel-plugin-gourmet-loadable",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Babel plugin that automatically populates `id` & `modules` property",
   "keywords": [
     "babel-plugin"
   ],
   "main": "lib/babelPluginGourmetLoadable.js",
   "dependencies": {
-    "@gourmet/base-x": "^0.3.2"
+    "@gourmet/base-x": "^0.3.3"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/babel-plugin-gourmet-loadable"

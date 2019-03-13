@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-source-map-support",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Gourmet Plugin to handle `builder.installSourceMapSupport` option",
   "main": "lib/GourmetPluginSourceMapSupport.js",
   "keywords": [

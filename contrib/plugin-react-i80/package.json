@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-react-i80",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "main": "lib/GourmetPluginReactI80.js",
   "keywords": [
     "gourmet-plugin"

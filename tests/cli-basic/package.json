@@ -6,12 +6,12 @@
     "debug": "node --inspect-brk test/command_test.js"
   },
   "dependencies": {
-    "@gourmet/gourmet-cli": "^1.1.2",
-    "@gourmet/test-cli-test-plugin": "^0.3.3"
+    "@gourmet/gourmet-cli": "^1.1.3",
+    "@gourmet/test-cli-test-plugin": "^0.3.4"
   },
   "devDependencies": {
     "pshell": "^1.1.0",
     "tape": "^4.9.0"
   },
-  "version": "1.1.2"
+  "version": "1.1.3"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/renderer-sandbox",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "main": "lib/RendererSandbox.js",
   "dependencies": {
     "node-fetch": "^2.1.2"

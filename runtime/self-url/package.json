@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/self-url",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Converts a relative URL to absolute URL only when `gmctx.isServer` is true",
   "main": "gmsrc/selfUrl.js",
   "dependencies": {
-    "@gourmet/parse-href": "^1.1.2",
+    "@gourmet/parse-href": "^1.1.3",
     "is-absolute-url": "^2.1.0"
   },
   "license": "MIT",

@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/promise-queue",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "main": "gmsrc/promiseQueue.js",
   "dependencies": {
-    "@gourmet/is-promise": "^0.3.2"
+    "@gourmet/is-promise": "^0.3.3"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/promise-queue"

@@ -1,11 +1,11 @@
 {
   "name": "@gourmet/console",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "A console abstraction for generating text output and debug logs",
   "dependencies": {
-    "@gourmet/colors": "^1.1.2",
-    "@gourmet/is-plain-object": "^0.3.3",
-    "@gourmet/prefix-lines": "^0.3.2",
+    "@gourmet/colors": "^1.1.3",
+    "@gourmet/is-plain-object": "^0.3.5",
+    "@gourmet/prefix-lines": "^0.3.3",
     "minimist": "^1.2.0",
     "strip-ansi": "^5.0.0"
   },

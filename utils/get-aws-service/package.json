@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/get-aws-service",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Provides a standard way of acquiring AWS SDK's service objects",
   "main": "gmsrc/getAwsService.js",
   "dependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/colors",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "main": "gmsrc/colors.js",
   "scripts": {
     "demo": "node example/demo.js"

@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/client-lambda",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "main": "lib/clientLambda.js",
   "dependencies": {
-    "@gourmet/error": "^0.3.3",
-    "@gourmet/get-aws-service": "^0.3.2",
-    "@gourmet/get-req-args": "^0.4.2",
-    "@gourmet/merge": "^0.8.2",
-    "@gourmet/omit": "^0.3.2",
-    "@gourmet/send-content": "^1.1.2"
+    "@gourmet/error": "^0.3.4",
+    "@gourmet/get-aws-service": "^0.3.3",
+    "@gourmet/get-req-args": "^0.4.3",
+    "@gourmet/merge": "^0.8.3",
+    "@gourmet/omit": "^0.3.3",
+    "@gourmet/send-content": "^1.1.3"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/runtime/client-lambda"
