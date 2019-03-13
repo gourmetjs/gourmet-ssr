@@ -21,6 +21,10 @@
     "@babel/core": "7",
     "webpack": "4"
   },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=3"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

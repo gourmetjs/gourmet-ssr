@@ -4,6 +4,27 @@
   </a>
 </h1>
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/@gourmet/group-core">
+    <img src="https://img.shields.io/npm/v/@gourmet/group-core.svg">
+  </a>
+  <a href="https://github.com/gourmetjs/gourmet-ssr/commits/master">
+    <img src="https://img.shields.io/github/last-commit/gourmetjs/gourmet-ssr.svg">
+  </a>
+  <a href="https://github.com/gourmetjs/gourmet-ssr/issues">
+    <img src="https://img.shields.io/github/issues/gourmetjs/gourmet-ssr.svg">
+  </a>
+  <a href="https://nodejs.org">
+    <img src="https://img.shields.io/node/v/@gourmet/preset-core.svg">
+  </a>
+  <a href="https://nodejs.org">
+    <img src="https://img.shields.io/website/https/ssr.gourmetjs.org.svg">
+  </a>
+  <a href="https://github.com/gourmetjs/gourmet-ssr/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/gourmetjs/gourmet-ssr.svg">
+  </a>
+</p>
+
 ## Introduction
 
 - **Library, not Framework** - Gourmet SSR is designed to be used as a view library in your existing project. We worked very hard to make Gourmet SSR unobtrusive.
