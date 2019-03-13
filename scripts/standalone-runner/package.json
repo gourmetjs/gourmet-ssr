@@ -1,5 +1,5 @@
 {
-  "name": "@gourmet/script-standalone-runner",
+  "name": "@gourmet/test-standalone-runner",
   "version": "0.2.4",
   "private": true,
   "scripts": {
