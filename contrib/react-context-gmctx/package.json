@@ -7,5 +7,5 @@
     "react": "16"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/contrib/react-context-gmctx"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/contrib/react-context-gmctx"
 }

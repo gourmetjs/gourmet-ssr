@@ -4,5 +4,5 @@
   "description": "A simple wrapper converting a promise returning function to test handler for 'tape'",
   "main": "gmsrc/promiseTape.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-tape"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/promise-tape"
 }

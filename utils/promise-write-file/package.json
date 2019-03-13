@@ -6,5 +6,5 @@
     "@gourmet/promise-create-write-stream": "^0.3.2"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-write-file"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/promise-write-file"
 }

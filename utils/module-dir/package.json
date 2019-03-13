@@ -6,5 +6,5 @@
     "resolve": "^1.6.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/module-dir"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/module-dir"
 }

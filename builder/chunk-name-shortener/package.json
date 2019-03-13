@@ -4,5 +4,5 @@
   "description": "Webpack plugin to shorten the chunk names using truncated hash",
   "main": "lib/WebpackPluginChunkNameShortener.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/chunk-name-shortener"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/chunk-name-shortener"
 }

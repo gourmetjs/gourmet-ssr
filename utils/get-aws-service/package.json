@@ -7,5 +7,5 @@
     "aws-sdk": "^2.224.1"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/get-aws-service"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/get-aws-service"
 }

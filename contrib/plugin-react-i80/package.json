@@ -9,5 +9,5 @@
     "@gourmet/react-i80": "*"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/contrib/plugin-react-i80"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/contrib/plugin-react-i80"
 }

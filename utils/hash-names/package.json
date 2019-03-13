@@ -12,5 +12,5 @@
     "tape": "^4.9.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/hash-names"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/hash-names"
 }

@@ -18,5 +18,5 @@
     "react": "16"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/contrib/react-i80"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/contrib/react-i80"
 }

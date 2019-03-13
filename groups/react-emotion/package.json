@@ -18,5 +18,5 @@
     "react-dom": "16"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/groups/react-emotion"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/groups/react-emotion"
 }

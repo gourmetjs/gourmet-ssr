@@ -9,5 +9,5 @@
     "@gourmet/gourmet-cli-impl": "^1.1.2"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/cli/gourmet-cli"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/cli/gourmet-cli"
 }

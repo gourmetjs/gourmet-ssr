@@ -16,5 +16,5 @@
     "tape": "^4.9.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/storage-fs"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/storage-fs"
 }

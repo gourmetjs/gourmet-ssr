@@ -15,5 +15,5 @@
     "tape": "^4.9.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/storage-s3"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/storage-s3"
 }

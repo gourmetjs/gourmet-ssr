@@ -10,5 +10,5 @@
     "source-map-support": "gourmetjs/node-source-map-support"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/source-map-support"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/source-map-support"
 }

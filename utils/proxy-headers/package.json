@@ -6,5 +6,5 @@
     "@gourmet/http-headers": "^0.3.2"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/proxy-headers"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/proxy-headers"
 }

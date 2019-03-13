@@ -7,5 +7,5 @@
     "end-of-stream": "^1.4.1"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/stream-to-string"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/stream-to-string"
 }

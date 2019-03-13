@@ -7,5 +7,5 @@
     "@gourmet/is-plain-object": "^0.3.3"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/deep-clone"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/deep-clone"
 }

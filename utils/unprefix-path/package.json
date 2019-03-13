@@ -6,5 +6,5 @@
     "test": "tape test/*_test.js"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/unprefix-path"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/unprefix-path"
 }

@@ -4,5 +4,5 @@
   "description": "Protects a function from exceptions and wraps the return value with a promise",
   "main": "gmsrc/promiseProtect.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-protect"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/promise-protect"
 }

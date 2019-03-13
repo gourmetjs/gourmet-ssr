@@ -4,5 +4,5 @@
   "description": "Returns true if the object is a promise",
   "main": "gmsrc/isPromise.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/is-promise"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/is-promise"
 }

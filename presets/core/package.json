@@ -12,5 +12,5 @@
     "webpack": "^4.26.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/presets/core"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/presets/core"
 }

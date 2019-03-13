@@ -6,5 +6,5 @@
     "demo": "node example/demo.js"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/colors"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/colors"
 }

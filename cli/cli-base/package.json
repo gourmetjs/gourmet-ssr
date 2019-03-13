@@ -19,5 +19,5 @@
     "test": "^0.6.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/cli/cli-base"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/cli/cli-base"
 }

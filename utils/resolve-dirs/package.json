@@ -4,5 +4,5 @@
   "description": "Resolves runtime directories from options object",
   "main": "gmsrc/resolveDirs.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/resolve-dirs"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/resolve-dirs"
 }

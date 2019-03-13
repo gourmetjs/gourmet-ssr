@@ -26,5 +26,5 @@
     "npm": ">=3"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/groups/core"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/groups/core"
 }

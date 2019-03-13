@@ -13,5 +13,5 @@
     "react-dom": "16"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/tests/news-view"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/tests/news-view"
 }

@@ -4,5 +4,5 @@
   "main": "gmsrc/MultiStream.js",
   "description": "Modified version of `https://github.com/feross/multistream` that uses Node built-in modules only",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/multi-stream"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/multi-stream"
 }

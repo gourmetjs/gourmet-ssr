@@ -17,5 +17,5 @@
     "react-dom": "16"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/presets/react"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/presets/react"
 }

@@ -4,5 +4,5 @@
   "description": "Handles the top main promise of a console app",
   "main": "gmsrc/promiseMain.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-main"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/promise-main"
 }

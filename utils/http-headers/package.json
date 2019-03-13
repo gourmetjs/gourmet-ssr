@@ -3,5 +3,5 @@
   "version": "0.3.2",
   "main": "gmsrc/HttpHeaders.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/http-headers"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/http-headers"
 }

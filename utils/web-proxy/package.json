@@ -11,5 +11,5 @@
     "pump": "^3.0.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/web-proxy"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/web-proxy"
 }

@@ -10,5 +10,5 @@
     "whatwg-fetch": "^3.0.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/fetch-polyfill"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/fetch-polyfill"
 }

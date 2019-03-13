@@ -22,5 +22,5 @@
     "tape": "^4.9.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/variables"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/variables"
 }

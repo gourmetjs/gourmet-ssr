@@ -11,5 +11,5 @@
     "pump": "^3.0.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/send-content"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/send-content"
 }

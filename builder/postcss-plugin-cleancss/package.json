@@ -8,5 +8,5 @@
     "postcss": "^7.0.5"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/postcss-plugin-cleancss"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/postcss-plugin-cleancss"
 }

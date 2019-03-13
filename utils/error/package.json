@@ -7,5 +7,5 @@
     "lodash.template": "^4.4.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/error"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/error"
 }

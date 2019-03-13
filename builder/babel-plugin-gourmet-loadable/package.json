@@ -10,5 +10,5 @@
     "@gourmet/base-x": "^0.3.2"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/babel-plugin-gourmet-loadable"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/babel-plugin-gourmet-loadable"
 }

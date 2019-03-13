@@ -4,5 +4,5 @@
   "description": "Escape JavaScript content to be embedded in HTML",
   "main": "gmsrc/escapeScript.js",
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/escape-script"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/escape-script"
 }

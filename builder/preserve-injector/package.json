@@ -10,5 +10,5 @@
     "webpack-sources": "^1.2.0"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/preserve-injector"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/builder/preserve-injector"
 }

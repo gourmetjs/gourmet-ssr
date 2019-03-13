@@ -11,5 +11,5 @@
     "@gourmet/react-i80": "^1.2.3"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/groups/react-i80"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/groups/react-i80"
 }

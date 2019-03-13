@@ -6,5 +6,5 @@
     "@gourmet/serialize-error": "^0.3.2"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/inspect-error"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/inspect-error"
 }

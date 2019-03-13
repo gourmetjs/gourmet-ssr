@@ -11,5 +11,5 @@
     "@gourmet/promise-wrap": "^0.3.2"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-deep-clone"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/promise-deep-clone"
 }

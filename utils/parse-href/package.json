@@ -6,5 +6,5 @@
     "test": "tape test/*_test.js"
   },
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/parse-href"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/utils/parse-href"
 }
