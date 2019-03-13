@@ -8,7 +8,7 @@ const relativePath = require("@gourmet/relative-path");
 // Common fields to add to `package.json`
 const PACKAGE = resolveTemplate(`{
   "license": "MIT",
-  "repository": "https://github.com/gourmetjs/gourmet-ssr/{{pkgPath}}"
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/{{pkgPath}}"
 }`);
 
 const README = resolveTemplate(
