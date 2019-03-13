@@ -34,7 +34,10 @@ class Footer extends React.Component {
           <div>
             <h5>Social</h5>
             <a href="https://github.com/gourmetjs/gourmet-ssr">
-              GitHub
+              <img src="https://img.shields.io/github/stars/gourmetjs/gourmet-ssr.svg?style=social" alt="GitHub Stars"/>
+            </a>
+            <a href="https://twitter.com/gourmetjs">
+              <img src="https://img.shields.io/twitter/follow/gourmetjs.svg?style=social" alt="Follow on Twitter"/>
             </a>
           </div>
         </section>
