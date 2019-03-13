@@ -6,9 +6,5 @@
   ],
   "main": "lib/GourmetPluginCliTest.js",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "tests/cli-test-plugin"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/tests/cli-test-plugin"
 }

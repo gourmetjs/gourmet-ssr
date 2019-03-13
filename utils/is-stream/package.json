@@ -3,9 +3,5 @@
   "version": "0.3.1",
   "main": "gmsrc/isStream.js",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "utils/is-stream"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/is-stream"
 }

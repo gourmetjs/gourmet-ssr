@@ -12,9 +12,5 @@
     "@gourmet/storage-fs": "^0.4.1"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "runtime/client-lib"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/runtime/client-lib"
 }

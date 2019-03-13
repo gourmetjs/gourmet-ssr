@@ -16,9 +16,5 @@
     "postcss-loader": "^3.0.0"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "builder/webpack-global-css"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/webpack-global-css"
 }

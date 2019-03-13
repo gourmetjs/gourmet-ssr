@@ -14,9 +14,5 @@
     "strip-ansi": "^5.0.0"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "utils/handle-request-error"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/handle-request-error"
 }

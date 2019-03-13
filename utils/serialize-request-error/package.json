@@ -7,9 +7,5 @@
     "@gourmet/serialize-error": "^0.3.1"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "utils/serialize-request-error"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/serialize-request-error"
 }

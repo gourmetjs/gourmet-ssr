@@ -30,9 +30,5 @@
     "webpack": "4"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "builder/webpack-builder"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/webpack-builder"
 }

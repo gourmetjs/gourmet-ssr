@@ -7,8 +7,8 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/emotion-renderer": "^0.6.2",
-    "@gourmet/plugin-react-emotion": "^0.6.1",
+    "@gourmet/emotion-renderer": "^1.0.1",
+    "@gourmet/plugin-react-emotion": "^1.0.1",
     "emotion": "^9.2.12",
     "prop-types": "^15.6.2",
     "react-emotion": "^9.2.12"
@@ -18,9 +18,5 @@
     "react-dom": "16"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "groups/react-emotion"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/groups/react-emotion"
 }

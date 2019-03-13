@@ -10,9 +10,5 @@
     "react": "16"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "contrib/react-loadable"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/contrib/react-loadable"
 }

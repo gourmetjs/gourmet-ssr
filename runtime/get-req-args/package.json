@@ -6,9 +6,5 @@
     "@gourmet/proxy-headers": "^0.3.1"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "runtime/get-req-args"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/runtime/get-req-args"
 }

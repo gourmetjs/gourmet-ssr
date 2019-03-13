@@ -7,9 +7,5 @@
     "mkdirp": "^0.5.1"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "utils/promise-create-write-stream"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-create-write-stream"
 }

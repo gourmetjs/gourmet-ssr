@@ -13,9 +13,5 @@
     "resolve": "^1.6.0"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "cli/gourmet-cli-impl"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/cli/gourmet-cli-impl"
 }

@@ -12,9 +12,5 @@
     "react-dom": "16"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "contrib/react-renderer"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/contrib/react-renderer"
 }

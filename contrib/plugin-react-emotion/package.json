@@ -12,9 +12,5 @@
     "@gourmet/emotion-renderer": "*"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "contrib/plugin-react-emotion"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/contrib/plugin-react-emotion"
 }

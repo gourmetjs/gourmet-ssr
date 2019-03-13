@@ -3,9 +3,5 @@
   "version": "0.3.2",
   "main": "gmsrc/isPlainObject.js",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr.git",
-    "directory": "utils/is-plain-object"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/is-plain-object"
 }

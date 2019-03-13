@@ -12,9 +12,5 @@
     "connect": "^3.6.6"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "runtime/http-server"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/runtime/http-server"
 }

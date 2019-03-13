@@ -3,9 +3,5 @@
   "version": "0.3.2",
   "main": "gmsrc/registrar.js",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "runtime/loadable-registrar"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/runtime/loadable-registrar"
 }

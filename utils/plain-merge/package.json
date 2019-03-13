@@ -7,9 +7,5 @@
     "@gourmet/is-plain-object": "^0.3.1"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "utils/plain-merge"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/plain-merge"
 }

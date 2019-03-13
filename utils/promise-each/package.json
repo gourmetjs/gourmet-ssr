@@ -8,9 +8,5 @@
     "@gourmet/promise-sync": "^0.3.1"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "utils/promise-each"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-each"
 }

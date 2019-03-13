@@ -15,9 +15,5 @@
     "react-apollo": "*"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "contrib/react-apollo-renderer"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/contrib/react-apollo-renderer"
 }

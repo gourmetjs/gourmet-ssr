@@ -3,9 +3,5 @@
   "version": "0.3.1",
   "main": "gmsrc/promiseReadFile.js",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "utils/promise-read-file"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-read-file"
 }

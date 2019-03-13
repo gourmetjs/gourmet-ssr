@@ -7,9 +7,5 @@
     "minimist": "^1.2.0"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gourmetjs/gourmet-ssr",
-    "directory": "runtime/cli-args"
-  }
+  "repository": "https://github.com/gourmetjs/gourmet-ssr/runtime/cli-args"
 }
