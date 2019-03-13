@@ -57,7 +57,7 @@ class HomeSplash extends React.Component {
         <div className="inner">
           <ProjectTitle siteConfig={siteConfig}/>
           <PromoSection>
-            <Button href={docUrl("getting-started.html")}>GET STARTED</Button>
+            <Button href={docUrl("getting-started")}>GET STARTED</Button>
           </PromoSection>
         </div>
       </SplashContainer>
@@ -205,12 +205,29 @@ class Index extends React.Component {
       </Container>
     );
 
+    const GetStarted = () => (
+      <Container>
+        <div className="section promoSection">
+          <div className="promoRow">
+            <div className="pluginRowBlock">
+              <div className="pluginWrapper buttonWrapper">
+                <a className="button large" href="/docs/getting-started">
+                  GET STARTED
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
+
     return (
       <div>
         <HomeSplash siteConfig={siteConfig} language={language}/>
         <div className="mainContainer">
           <Features/>
           <HowItWorks/>
+          <GetStarted/>
         </div>
       </div>
     );

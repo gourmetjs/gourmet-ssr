@@ -33,7 +33,7 @@ const siteConfig = {
   headerLinks: [
     {doc: "getting-started", label: "Getting Started"},
     {doc: "tutorial-1", label: "Tutorial"},
-    {doc: "guides", label: "Docs"},
+    {doc: "tutorial-1", label: "Docs"},
     {href: "https://github.com/gourmetjs/gourmet-ssr", label: "GitHub"},
     //{page: "help", label: "Help"},
     //{blog: true, label: "Blog"},
