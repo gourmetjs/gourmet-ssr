@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/github/issues/gourmetjs/gourmet-ssr.svg" alt="Open Issues">
   </a>
   <a href="https://nodejs.org">
-    <img src="https://img.shields.io/node/v/@gourmet/preset-core.svg" alt="Node Version Requirement">
+    <img src="https://img.shields.io/node/v/@gourmet/group-core.svg" alt="Node Version Requirement">
   </a>
   <a href="https://ssr.gourmetjs.org">
     <img src="https://img.shields.io/website/https/ssr.gourmetjs.org.svg" alt="Website Status">
