@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/test-news-view",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "module": "gmsrc/NewsView.jsx",
   "dependencies": {
-    "@gourmet/promise-repeat": "^0.3.1",
-    "@gourmet/self-url": "^1.1.1",
+    "@gourmet/promise-repeat": "^0.3.2",
+    "@gourmet/self-url": "^1.1.2",
     "classnames": "^2.2.6",
     "timeago.js": "^3.0.2"
   },

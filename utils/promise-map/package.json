@@ -1,11 +1,11 @@
 {
   "name": "@gourmet/promise-map",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Promise aware version of JavaScript's `Array.prototype.map`",
   "main": "gmsrc/promiseMap.js",
   "dependencies": {
-    "@gourmet/promise-repeat": "^0.3.1",
-    "@gourmet/promise-sync": "^0.3.1"
+    "@gourmet/promise-repeat": "^0.3.2",
+    "@gourmet/promise-sync": "^0.3.2"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-map"

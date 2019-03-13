@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/group-react-i80",
   "description": "A group of sub-packages enabling the isomorphic routing support using React I80 in Gourmet SSR projects",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "lib/GourmetGroupReactI80.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/plugin-react-i80": "^0.4.1",
-    "@gourmet/react-i80": "^1.2.2"
+    "@gourmet/plugin-react-i80": "^0.4.2",
+    "@gourmet/react-i80": "^1.2.3"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/groups/react-i80"

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/resolve-template",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "gmsrc/resolveTemplate.js",
   "dependencies": {
     "lodash.template": "^4.4.0"

@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/resolve-dirs",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Resolves runtime directories from options object",
   "main": "gmsrc/resolveDirs.js",
   "license": "MIT",

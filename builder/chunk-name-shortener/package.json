@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/webpack-plugin-chunk-name-shortener",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Webpack plugin to shorten the chunk names using truncated hash",
   "main": "lib/WebpackPluginChunkNameShortener.js",
   "license": "MIT",

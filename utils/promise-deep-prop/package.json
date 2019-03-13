@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/promise-deep-prop",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Gets a deep property value while resolving promises",
   "main": "gmsrc/promiseDeepProp.js",
   "dependencies": {
-    "@gourmet/error": "^0.3.2",
-    "@gourmet/is-plain-object": "^0.3.1",
-    "@gourmet/promise-each": "^0.3.1",
-    "@gourmet/promise-sync": "^0.3.1"
+    "@gourmet/error": "^0.3.3",
+    "@gourmet/is-plain-object": "^0.3.3",
+    "@gourmet/promise-each": "^0.3.2",
+    "@gourmet/promise-sync": "^0.3.2"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-deep-prop"

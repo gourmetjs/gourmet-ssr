@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-global-css",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "private": true,
   "scripts": {
     "watch": "node lib/server.js --watch",
@@ -11,16 +11,16 @@
     "test:ltc": "gourmet build --verbosity 1 --stage ltc --save-webpack-stats && tape test/*_test.js --stage ltc --verbosity 1"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.2.1",
-    "@gourmet/console": "^1.1.1",
-    "@gourmet/server-args": "^1.2.2",
+    "@gourmet/client-lib": "^1.2.2",
+    "@gourmet/console": "^1.1.2",
+    "@gourmet/server-args": "^1.2.3",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.1",
-    "@gourmet/preset-core": "^1.1.5",
-    "@gourmet/promise-tape": "^0.4.1",
+    "@gourmet/gourmet-cli": "^1.1.2",
+    "@gourmet/preset-core": "^1.1.6",
+    "@gourmet/promise-tape": "^0.4.2",
     "got": "^8.3.1",
     "tape": "^4.9.0"
   }

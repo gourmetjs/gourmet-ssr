@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/plugin-webpack-blob",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "lib/GourmetPluginWebpackBlob.js",
   "dependencies": {
-    "@gourmet/webpack-file-loader": "^0.2.1"
+    "@gourmet/webpack-file-loader": "^0.2.2"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/builder/webpack-blob"

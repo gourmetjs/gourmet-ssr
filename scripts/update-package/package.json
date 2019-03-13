@@ -1,9 +1,9 @@
 {
   "name": "@gourmet/script-readme",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "devDependencies": {
-    "@gourmet/relative-path": "^0.4.1",
-    "@gourmet/resolve-template": "^0.3.1"
+    "@gourmet/relative-path": "^0.4.2",
+    "@gourmet/resolve-template": "^0.3.2"
   }
 }

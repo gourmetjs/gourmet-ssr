@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/promise-read-file",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "gmsrc/promiseReadFile.js",
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-read-file"

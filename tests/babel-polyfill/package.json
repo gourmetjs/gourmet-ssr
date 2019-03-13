@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/test-babel-polyfill",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "private": true,
   "scripts": {
     "build": "gourmet build",
     "test": "gourmet build --verbosity 1 && gourmet build --verbosity 1 --stage entry && tape test/*_test.js --verbosity 1"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.1",
-    "@gourmet/preset-core": "^1.1.5",
+    "@gourmet/gourmet-cli": "^1.1.2",
+    "@gourmet/preset-core": "^1.1.6",
     "tape": "^4.9.0"
   }
 }

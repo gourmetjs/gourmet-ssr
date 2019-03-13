@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/promise-deep-clone",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Recursively clones a JavaScript value while resolving promises",
   "main": "gmsrc/promiseDeepClone.js",
   "dependencies": {
-    "@gourmet/is-plain-object": "^0.3.1",
-    "@gourmet/promise-each": "^0.3.1",
-    "@gourmet/promise-map": "^0.3.1",
-    "@gourmet/promise-sync": "^0.3.1",
-    "@gourmet/promise-wrap": "^0.3.1"
+    "@gourmet/is-plain-object": "^0.3.3",
+    "@gourmet/promise-each": "^0.3.2",
+    "@gourmet/promise-map": "^0.3.2",
+    "@gourmet/promise-sync": "^0.3.2",
+    "@gourmet/promise-wrap": "^0.3.2"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-deep-clone"

@@ -1,15 +1,15 @@
 {
   "name": "@gourmet/plugin-sort",
   "description": "A general purpose library for human friendly plugin ordering",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "main": "gmsrc/index.js",
   "scripts": {
     "test": "tape test/*_test.js"
   },
   "dependencies": {
-    "@gourmet/is-plain-object": "^0.3.1",
-    "@gourmet/merge": "^0.8.1",
-    "@gourmet/omit": "^0.3.1"
+    "@gourmet/is-plain-object": "^0.3.3",
+    "@gourmet/merge": "^0.8.2",
+    "@gourmet/omit": "^0.3.2"
   },
   "devDependencies": {
     "tape": "^4.9.0"

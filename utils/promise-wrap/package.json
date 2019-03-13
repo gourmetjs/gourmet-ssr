@@ -1,10 +1,10 @@
 {
   "name": "@gourmet/promise-wrap",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Conditionally wraps a value with a promise only if it is not a promise",
   "main": "gmsrc/promiseWrap.js",
   "dependencies": {
-    "@gourmet/is-promise": "^0.3.1"
+    "@gourmet/is-promise": "^0.3.2"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-wrap"

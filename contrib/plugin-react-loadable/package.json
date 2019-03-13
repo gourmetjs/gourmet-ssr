@@ -1,13 +1,13 @@
 {
   "name": "@gourmet/plugin-react-loadable",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "main": "lib/GourmetPluginReactLoadable.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/babel-plugin-gourmet-loadable": "^1.0.2",
-    "@gourmet/relative-path": "^0.4.1",
+    "@gourmet/babel-plugin-gourmet-loadable": "^1.0.3",
+    "@gourmet/relative-path": "^0.4.2",
     "resolve": "^1.6.0"
   },
   "license": "MIT",

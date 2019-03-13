@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/group-react-apollo",
   "description": "A group of sub-packages enabling the GraphQL support using Apollo in Gourmet SSR projects",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/GourmetGroupReactApollo.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@gourmet/plugin-react-apollo": "^1.0.1",
-    "@gourmet/react-apollo-renderer": "^1.0.1",
+    "@gourmet/plugin-react-apollo": "^1.0.2",
+    "@gourmet/react-apollo-renderer": "^1.0.2",
     "react-apollo": "^2.5.2"
   },
   "peerDependencies": {

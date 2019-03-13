@@ -1,11 +1,11 @@
 {
   "name": "@gourmet/promise-each",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Iterates through an array asynchronously in series - the handler will not be called until the promise returned by the previous call is resolved.",
   "main": "gmsrc/promiseEach.js",
   "dependencies": {
-    "@gourmet/promise-repeat": "^0.3.1",
-    "@gourmet/promise-sync": "^0.3.1"
+    "@gourmet/promise-repeat": "^0.3.2",
+    "@gourmet/promise-sync": "^0.3.2"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/promise-each"

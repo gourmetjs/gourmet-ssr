@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/is-stream",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "gmsrc/isStream.js",
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/utils/is-stream"
