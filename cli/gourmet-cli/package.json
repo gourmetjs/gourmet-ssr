@@ -1,12 +1,12 @@
 {
   "name": "@gourmet/gourmet-cli",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Gourmet command line interface",
   "bin": {
     "gourmet": "bin/gourmet-cli.js"
   },
   "dependencies": {
-    "@gourmet/gourmet-cli-impl": "^1.1.3"
+    "@gourmet/gourmet-cli-impl": "^1.1.4"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/cli/gourmet-cli"

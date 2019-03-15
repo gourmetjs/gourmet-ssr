@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-react-hello",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -11,9 +11,9 @@
     "test:ltc": "gourmet build --verbosity 1 --stage ltc && tape test/*_test.js --stage ltc --verbosity 1"
   },
   "dependencies": {
-    "@gourmet/client-http": "^1.2.3",
-    "@gourmet/client-lib": "^1.2.3",
-    "@gourmet/console": "^1.1.3",
+    "@gourmet/client-http": "^1.2.4",
+    "@gourmet/client-lib": "^1.2.4",
+    "@gourmet/console": "^1.1.4",
     "@gourmet/server-args": "^1.2.4",
     "express": "^4.16.3",
     "morgan": "^1.9.0",
@@ -21,9 +21,9 @@
     "react-dom": "^16.8.4"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.3",
-    "@gourmet/http-server": "^1.2.3",
-    "@gourmet/preset-react": "^1.2.8",
+    "@gourmet/gourmet-cli": "^1.1.4",
+    "@gourmet/http-server": "^1.2.4",
+    "@gourmet/preset-react": "^1.2.9",
     "@gourmet/promise-tape": "^0.4.3",
     "puppeteer": "^1.3.0",
     "tape": "^4.9.0"

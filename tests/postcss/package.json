@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-postcss",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -11,15 +11,15 @@
     "test": "npm run build:local && npm run build:prod && npm run build:file && npm run build:config && tape test/*_test.js --verbosity 1"
   },
   "dependencies": {
-    "@gourmet/client-lib": "^1.2.3",
-    "@gourmet/console": "^1.1.3",
+    "@gourmet/client-lib": "^1.2.4",
+    "@gourmet/console": "^1.1.4",
     "@gourmet/server-args": "^1.2.4",
     "express": "^4.16.3",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.3",
-    "@gourmet/preset-core": "^1.1.7",
+    "@gourmet/gourmet-cli": "^1.1.4",
+    "@gourmet/preset-core": "^1.1.8",
     "postcss-color-rgba-fallback": "^3.0.0",
     "tape": "^4.9.0"
   }

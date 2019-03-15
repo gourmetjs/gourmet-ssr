@@ -1,7 +1,7 @@
 {
   "name": "@gourmet/group-react",
   "description": "A group of sub-packages for the React support in Gourmet SSR projects",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "main": "lib/GourmetGroupReact.js",
   "keywords": [
     "gourmet-plugin"
@@ -11,7 +11,7 @@
     "@gourmet/plugin-react-loadable": "^0.7.4",
     "@gourmet/react-context-gmctx": "^0.4.4",
     "@gourmet/react-loadable": "^0.5.4",
-    "@gourmet/react-renderer": "^1.2.4"
+    "@gourmet/react-renderer": "^1.2.5"
   },
   "peerDependencies": {
     "react": "16",
