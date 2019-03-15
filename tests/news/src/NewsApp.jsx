@@ -1,5 +1,5 @@
 // NOTE: We don't recommend the data fetching via an agent like `NewsData`,
-// inside`getCodeProps()` as shown in this app.
+// inside`getStockProps()` as shown in this app.
 // This test app was written before `getInitialProps()` was introduced in Gourmet SSR,
 // and the old style is kept intact to test the flexibility of the engine.
 import React, {Component} from "react";
@@ -25,7 +25,7 @@ const cssArticle = css`
 `;
 
 export default class NewsApp extends Component {
-  static getCodeProps(gmctx) {
+  static getStockProps(gmctx) {
     const newsData = new NewsData(gmctx);
     return newsData.prepare().then(() => {
       return {newsData};

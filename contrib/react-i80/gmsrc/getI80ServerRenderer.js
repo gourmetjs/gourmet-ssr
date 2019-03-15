@@ -38,10 +38,8 @@ module.exports = function(Base) {
           return false;
         return Promise.all([
           super.prepareToRender(gmctx),
-          this.getRouteProps(gmctx)
-        ]).then(([cont, routeProps]) => {
-          if (routeProps)
-            gmctx.routeProps = gmctx.data.routeProps = routeProps;
+          this.fetchRouteProps(gmctx)
+        ]).then(([cont]) => {
           return cont;
         });
       } else {
@@ -49,11 +47,20 @@ module.exports = function(Base) {
       }
     }
 
-    getRouteProps(gmctx) {
+    fetchRouteProps(gmctx) {
       const route = gmctx.i80.activeRoute;
-      const func = route.getComponent().getInitialProps;
-      if (func)
-        return func(gmctx);
+      const type = route.getComponent();
+      return Promise.all([
+        type.getInitialProps && type.getInitialProps(gmctx),
+        type.getStockProps && type.getStockProps(gmctx)
+      ]).then(([initProps, stockProps]) => {
+        if (initProps)
+          gmctx.data.routeProps = initProps;
+        if (initProps && stockProps)
+          gmctx.routeProps = Object.assign({}, initProps, stockProps);
+        else
+          gmctx.routeProps = initProps || stockProps;
+      });
     }
 
     makeRouteProps(gmctx, directProps) {
@@ -63,7 +70,6 @@ module.exports = function(Base) {
         {gmctx, route, path: url.path, params: route.params, search: url.search},
         gmctx.clientProps,
         gmctx.pageProps,
-        gmctx.codeProps,
         gmctx.routeProps,
         directProps
       );

@@ -8,6 +8,23 @@ const run = require("../lib/app");
 
 let app, port;
 
+const expected = {
+  mainPage: '{"MainPage_getInitialProps":true,"MainPage_getStockProps":true,"gmctx":"{...}","greeting":"Hello, world!"}',
+  indexView: '{"IndexView_getInitialProps":true,"IndexView_getStockProps":true,"MainPage_activeRoute":true,"MainPage_getInitialProps":true,"MainPage_getStockProps":"overridden_by_view","gmctx":"{...}","greeting":"Hello, world!","params":{},"path":"/","route":"{...}","search":""}',
+  dashboardView: '{"DashboardView_getInitialProps":true,"MainPage_activeRoute":true,"MainPage_getInitialProps":true,"MainPage_getStockProps":true,"gmctx":"{...}","greeting":"Hello, world!","params":{},"path":"/dashboard","route":"{...}","search":""}'
+};
+
+function extract(re, body) {
+  const m = re.exec(body);
+  if (m && m[1])
+    return m[1].replace(/&quot;/g, '"');
+  return null;
+}
+
+function wrap(title, content) {
+  return `JSON(${title})_BEGIN_[${content}]_END_JSON(${title})`;
+}
+
 test("start server", t => {
   app = run({port: 0});
   app.server.on("listening", () => {
@@ -18,12 +35,26 @@ test("start server", t => {
 
 test("check server rendered content", pt(async t => {
   let res = await got(`http://localhost:${port}/`);
-  t.ok(/<pre id="page_props">[^]*JSON: {&quot;MainPage_getInitialProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;greeting&quot;:&quot;Hello, world!&quot;}[^]*<\/pre>/.test(res.body));
-  t.ok(/<pre id="route_props">[^]*JSON: {&quot;IndexView_getInitialProps&quot;:true,&quot;MainPage_activeRoute&quot;:true,&quot;MainPage_getInitialProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;greeting&quot;:&quot;Hello, world!&quot;,&quot;params&quot;:{},&quot;path&quot;:&quot;\/&quot;,&quot;route&quot;:&quot;{...}&quot;,&quot;search&quot;:&quot;&quot;}[^]*<\/pre>/.test(res.body));
+
+  t.equal(
+    extract(/JSON\(Page props\)_BEGIN_\[({.*})\]_END_JSON\(Page props\)/, res.body),
+    expected.mainPage
+  );
+  t.equal(
+    extract(/JSON\(Route props\)_BEGIN_\[({.*})\]_END_JSON\(Route props\)/, res.body),
+    expected.indexView
+  );
 
   res = await got(`http://localhost:${port}/dashboard`);
-  t.ok(/<pre id="page_props">[^]*JSON: {&quot;MainPage_getInitialProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;greeting&quot;:&quot;Hello, world!&quot;}[^]*<\/pre>/.test(res.body));
-  t.ok(/<pre id="route_props">[^]*JSON: {&quot;DashboardView_getInitialProps&quot;:true,&quot;MainPage_activeRoute&quot;:true,&quot;MainPage_getInitialProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;greeting&quot;:&quot;Hello, world!&quot;,&quot;params&quot;:{},&quot;path&quot;:&quot;\/dashboard&quot;,&quot;route&quot;:&quot;{...}&quot;,&quot;search&quot;:&quot;&quot;}[^]*<\/pre>/.test(res.body));
+
+  t.equal(
+    extract(/JSON\(Page props\)_BEGIN_\[({.*})\]_END_JSON\(Page props\)/, res.body),
+    expected.mainPage
+  );
+  t.equal(
+    extract(/JSON\(Route props\)_BEGIN_\[({.*})\]_END_JSON\(Route props\)/, res.body),
+    expected.dashboardView
+  );
 }));
 
 test("run puppeteer", pt(async t => {
@@ -41,17 +72,17 @@ test("run puppeteer", pt(async t => {
 
   t.equal(title, "IndexView");
 
-  const pageProps = await page.$eval("#page_props", pre => {
+  let pageProps = await page.$eval("#page_props", pre => {
     return pre.innerText;
   });
 
-  t.ok(pageProps.indexOf('JSON: {"MainPage_getInitialProps":true,"gmctx":"{...}","greeting":"Hello, world!"}') !== -1);
+  t.ok(pageProps.indexOf(wrap("Page props", expected.mainPage)) !== -1);
 
   let routeProps = await page.$eval("#route_props", pre => {
     return pre.innerText;
   });
 
-  t.ok(routeProps.indexOf('JSON: {"IndexView_getInitialProps":true,"MainPage_activeRoute":true,"MainPage_getInitialProps":true,"gmctx":"{...}","greeting":"Hello, world!","params":{},"path":"/","route":"{...}","search":""}') !== -1);
+  t.ok(routeProps.indexOf(wrap("Route props", expected.indexView)) !== -1);
 
   const requestCount = app.requestCount;
 
@@ -66,11 +97,17 @@ test("run puppeteer", pt(async t => {
 
   t.equal(requestCount, app.requestCount, "server request must not be made");
 
+  pageProps = await page.$eval("#page_props", pre => {
+    return pre.innerText;
+  });
+
+  t.ok(pageProps.indexOf(wrap("Page props", expected.mainPage)) !== -1);
+
   routeProps = await page.$eval("#route_props", pre => {
     return pre.innerText;
   });
 
-  t.ok(routeProps.indexOf('JSON: {"DashboardView_getInitialProps":true,"MainPage_activeRoute":true,"MainPage_getInitialProps":true,"gmctx":"{...}","greeting":"Hello, world!","params":{},"path":"/dashboard","route":"{...}","search":""}') !== -1);
+  t.ok(routeProps.indexOf(wrap("Route props", expected.dashboardView)) !== -1);
 
   await browser.close();
 }));

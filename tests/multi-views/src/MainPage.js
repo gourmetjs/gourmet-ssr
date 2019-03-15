@@ -18,6 +18,10 @@ export default class MainPage extends React.Component {
     });
   }
 
+  static getStockProps() {
+    return {MainPage_getStockProps: true};
+  }
+
   render() {
     return (
       <div>

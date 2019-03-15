@@ -30,7 +30,7 @@ module.exports = function(Base) {
     }
 
     // This is the same as the server version. See the comment of it.
-    // The method is redefined here because we simply don't have a mechanism to share it.
+    // The method is redefined here because they don't share a base class.
     prepareToRender(gmctx) {
       const router = Router.get(true);
       if (router) {
@@ -38,10 +38,8 @@ module.exports = function(Base) {
           return false;
         return Promise.all([
           super.prepareToRender(gmctx),
-          this.getRouteProps(gmctx)
-        ]).then(([cont, routeProps]) => {
-          if (routeProps)
-            gmctx.routeProps = routeProps;
+          this.fetchRouteProps(gmctx)
+        ]).then(([cont]) => {
           return cont;
         });
       } else {
@@ -49,27 +47,32 @@ module.exports = function(Base) {
       }
     }
 
-    getRouteProps(gmctx) {
+    fetchRouteProps(gmctx) {
       const route = gmctx.i80.activeRoute;
+      const type = route.getComponent();
       // `getInitialProps()` of a route component gets called only when switching routes on the client.
-      // Initial route's props are re-hydrated from server provided object.
-      if (gmctx.i80.switchToHref) {
-        const func = route.getComponent().getInitialProps;
-        if (func)
-          return func(gmctx);
-      } else {
-        return gmctx.data.routeProps;
-      }
+      // For the initial route, the props will be re-hydrated from `gmctx.data.routeProps`.
+      return Promise.all([
+        gmctx.i80.switchToHref
+          ? type.getInitialProps && type.getInitialProps(gmctx)
+          : gmctx.data.routeProps,
+        type.getStockProps && type.getStockProps(gmctx)
+      ]).then(([initProps, stockProps]) => {
+        if (initProps && stockProps)
+          gmctx.routeProps = Object.assign({}, initProps, stockProps);
+        else
+          gmctx.routeProps = initProps || stockProps;
+      });
     }
 
+    // This must be synchronous.
     makeRouteProps(gmctx, directProps) {
       const route = gmctx.i80.activeRoute;
       const url = route.url;
       return Object.assign(
         {gmctx, route, path: url.path, params: route.params, search: url.search},
         gmctx.data.clientProps,
-        gmctx.data.pageProps,
-        gmctx.codeProps,
+        gmctx.pageProps,
         gmctx.routeProps,
         directProps
       );

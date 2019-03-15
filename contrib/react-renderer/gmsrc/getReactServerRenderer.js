@@ -52,13 +52,8 @@ module.exports = function getReactServerRenderer(Base) {
       return Promise.all([
         super.prepareToRender(gmctx),
         registrar.loadAll(),
-        this.getInitialProps(gmctx),
-        this.getCodeProps(gmctx)
-      ]).then(([cont, dummy, pageProps, codeProps]) => { // eslint-disable-line no-unused-vars
-        if (pageProps)
-          gmctx.pageProps = gmctx.data.pageProps = pageProps;
-        if (codeProps)
-          gmctx.codeProps = codeProps;
+        this.fetchPageProps(gmctx)
+      ]).then(([cont]) => {
         return cont;
       });
     }
@@ -74,21 +69,24 @@ module.exports = function getReactServerRenderer(Base) {
       });
     }
 
-    // This can be asynchronous
-    getInitialProps(gmctx) {
-      if (this.userObject.getInitialProps)
-        return this.userObject.getInitialProps(gmctx);
-    }
-
-    // This can be asynchronous
-    getCodeProps(gmctx) {
-      if (this.userObject.getCodeProps)
-        return this.userObject.getCodeProps(gmctx);
+    fetchPageProps(gmctx) {
+      const type = this.userObject;
+      return Promise.all([
+        type.getInitialProps && type.getInitialProps(gmctx),
+        type.getStockProps && type.getStockProps(gmctx)
+      ]).then(([initProps, stockProps]) => {
+        if (initProps)
+          gmctx.data.pageProps = initProps;
+        if (initProps && stockProps)
+          gmctx.pageProps = Object.assign({}, initProps, stockProps);
+        else
+          gmctx.pageProps = initProps || stockProps;
+      });
     }
 
     // This must be synchronous.
     makePageProps(gmctx) {
-      return Object.assign({gmctx}, gmctx.clientProps, gmctx.pageProps, gmctx.codeProps);
+      return Object.assign({gmctx}, gmctx.clientProps, gmctx.pageProps);
     }
 
     // This can be asynchronous

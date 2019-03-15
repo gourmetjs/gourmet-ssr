@@ -8,6 +8,22 @@ const run = require("../lib/app");
 
 let app, port;
 
+const expected = {
+  mainPage: '{"MainPage_getInitialProps":true,"MainPage_getStockProps":true,"gmctx":"{...}","greeting":"Hello, world!"}',
+  dashboardPage: '{"DashboardPage_createPageElement":true,"DashboardPage_getInitialProps":true,"DashboardPage_makePageProps":true,"gmctx":"{...}","username":"admin"}'
+};
+
+function extract(re, body) {
+  const m = re.exec(body);
+  if (m && m[1])
+    return m[1].replace(/&quot;/g, '"');
+  return null;
+}
+
+function wrap(content) {
+  return `JSON_BEGIN_[${content}]_END_JSON`;
+}
+
 test("start server", t => {
   app = run({port: 0});
   app.server.on("listening", () => {
@@ -18,12 +34,19 @@ test("start server", t => {
 
 test("check server rendered content", pt(async t => {
   let res = await got(`http://localhost:${port}/`);
+
   t.ok(res.body.indexOf("<h1>Index</h1><p>Hello, world!</p>") !== -1);
-  t.ok(res.body.indexOf("JSON: {&quot;MainPage_getInitialProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;greeting&quot;:&quot;Hello, world!&quot;}") !== -1);
+  t.equal(
+    extract(/JSON_BEGIN_\[({.*})\]_END_JSON/, res.body),
+    expected.mainPage
+  );
 
   res = await got(`http://localhost:${port}/dashboard`);
   t.ok(res.body.indexOf("<h1>Dashboard</h1>") !== -1);
-  t.ok(res.body.indexOf("JSON: {&quot;DashboardPage_createPageElement&quot;:true,&quot;DashboardPage_getInitialProps&quot;:true,&quot;DashboardPage_makePageProps&quot;:true,&quot;gmctx&quot;:&quot;{...}&quot;,&quot;username&quot;:&quot;admin&quot;}") !== -1);
+  t.equal(
+    extract(/JSON_BEGIN_\[({.*})\]_END_JSON/, res.body),
+    expected.dashboardPage
+  );
 }));
 
 test("run puppeteer", pt(async t => {
@@ -45,7 +68,7 @@ test("run puppeteer", pt(async t => {
     return pre.innerText;
   });
 
-  t.ok(pre.indexOf('JSON: {"MainPage_getInitialProps":true,"gmctx":"{...}","greeting":"Hello, world!"}') !== -1);
+  t.ok(pre.indexOf(wrap(expected.mainPage)) !== -1);
 
   let config = await page.evaluate(() => {
     return {allPages: window.__allPages, onlyMainPage: window.__onlyMainPage};
@@ -65,7 +88,7 @@ test("run puppeteer", pt(async t => {
     return pre.innerText;
   });
 
-  t.ok(pre.indexOf('JSON: {"DashboardPage_createPageElement":true,"DashboardPage_getInitialProps":true,"DashboardPage_makePageProps":true,"gmctx":"{...}","username":"admin"}') !== -1);
+  t.ok(pre.indexOf(wrap(expected.dashboardPage)) !== -1);
 
   config = await page.evaluate(() => {
     return {allPages: window.__allPages, onlyMainPage: window.__onlyMainPage};

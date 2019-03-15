@@ -9,5 +9,5 @@ export default function renderProps(title, props) {
       value = JSON.stringify(value);
     }
     return `  ${name}: ${value}\n`;
-  }).concat([`  JSON: ${JSON.stringify(json)}\n`]));
+  }).concat([`  JSON(${title})_BEGIN_[${JSON.stringify(json)}]_END_JSON(${title})\n`]));
 }

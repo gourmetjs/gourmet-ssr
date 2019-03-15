@@ -7,6 +7,10 @@ export default class IndexView extends React.Component {
     return {IndexView_getInitialProps: true};
   }
 
+  static getStockProps() {
+    return {MainPage_getStockProps: "overridden_by_view", IndexView_getStockProps: true};
+  }
+
   render() {
     return (
       <pre id="route_props">

@@ -5,30 +5,15 @@ const morgan = require("morgan");
 const serverArgs = require("@gourmet/server-args");
 const gourmet = require("@gourmet/client-lib");
 const con = require("@gourmet/console")();
-const {ApolloServer} = require("apollo-server-express");
-const schema = require("./schema");
-const TodoData = require("./TodoData");
-const resolvers = require("./resolvers");
 
 module.exports = function(def) {
   const args = serverArgs(Object.assign({
     workDir: __dirname + "/..",
-    outputDir: "../../.gourmet/todo-apollo"
+    outputDir: "../../.gourmet/todo-redux"
   }, def));
   const app = express();
 
-  const apollo = new ApolloServer({
-    typeDefs: schema,
-    dataSources() {
-      return {todoData: new TodoData()};
-    },
-    resolvers
-  });
-
   app.use(morgan("dev"));
-
-  apollo.applyMiddleware({app});
-
   app.use(gourmet.middleware(args));
 
   app.get("/", (req, res) => {
@@ -39,7 +24,6 @@ module.exports = function(def) {
 
   app.server = app.listen(args.port, () => {
     con.log(`Server is listening on port ${args.port}...`);
-    con.info(`GraphQL path is ${apollo.graphqlPath}`);
   });
 
   return app;

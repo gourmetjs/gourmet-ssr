@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-todo-redux",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -13,25 +13,22 @@
   },
   "dependencies": {
     "@gourmet/client-lib": "^1.2.3",
-    "@gourmet/console": "^1.1.3",
     "@gourmet/server-args": "^1.2.4",
-    "apollo-datasource": "^0.3.1",
-    "apollo-server-express": "^2.4.8",
+    "@gourmet/console": "^1.1.3",
     "express": "^4.16.3",
-    "graphql": "^14.1.1",
     "morgan": "^1.9.0"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.3",
-    "@gourmet/group-react-apollo": "^1.0.3",
     "@gourmet/preset-react": "^1.2.8",
-    "@gourmet/promise-tape": "^0.4.3",
-    "core-js": "2",
-    "graphql-tag": "^2.10.1",
-    "nodemon": "^1.18.10",
-    "puppeteer": "^1.3.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "tape": "^4.9.0"
+    "prop-types": "^15.6.2",
+    "redux": "^4.0.1",
+    "react-redux": "^6.0.1",
+    "nodemon": "^1.18.10",
+    "tape": "^4.9.0",
+    "@gourmet/promise-tape": "^0.4.3",
+    "puppeteer": "^1.3.0"
   }
 }

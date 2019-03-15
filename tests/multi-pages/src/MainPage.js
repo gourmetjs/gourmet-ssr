@@ -6,6 +6,10 @@ export default class MainPage extends React.Component {
     return {MainPage_getInitialProps: true};
   }
 
+  static getStockProps() {
+    return {MainPage_getStockProps: true};
+  }
+
   render() {
     return (
       <div>
