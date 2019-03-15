@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Todo from "./Todo";
 
 const TodoList = ({todos, toggleTodo}) => (
-  <ul>
+  <ul id="todos">
     {todos.map(todo =>
       <Todo
         key={todo.id}
