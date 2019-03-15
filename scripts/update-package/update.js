@@ -44,7 +44,7 @@ function writePackage(dir, pkg) {
   const pkgPath = relativePath(dir, npath.join(__dirname, "../..")).substring(2); // remove `./`
   const pkgMore = JSON.parse(PACKAGE({pkgPath}));
   const content = JSON.stringify(Object.assign({}, pkg, pkgMore), null, 2);
-  writeFile(npath.join(dir, "package.json"), content);
+  writeFile(npath.join(dir, "package.json"), content + "\n");   // add a trailing newline to follow Lerna's behavior
 }
 
 function writeReadMe(dir, pkg) {
