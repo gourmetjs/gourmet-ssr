@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^1.2.4",
+    "@gourmet/server-args": "^1.2.4",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.4",
+    "@gourmet/preset-react": "^1.2.9",
+    "nodemon": "^1.18.10",
+    "prop-types": "^15.6.2",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-redux": "^6.0.1",
+    "redux": "^4.0.1"
+  }
+}
