@@ -180,9 +180,9 @@ You can access the full source code of this example in `examples/redux-init` fol
 
 On the server side, `getStockProps()` is called with a freshly created `gmctx` every time a new HTTP request is served. You will always want this behavior to prevent any possible conflicts between requests.
 
-On the client side, a page component's `getStockProps()` will be called many times whenever the route changes, with a freshly created `gmctx` too, because a change of route triggers the re-rendering of the whole React components tree, from the very root component.
+On the client side, the change of route triggers the re-rendering of the whole React components tree, from the very root component. For this reason, a page component's `getStockProps()` will be called many times whenever the route changes, with a freshly created `gmctx`.
 
-To preserve the state between routes switching, you should use a global variable for your Redux store. See the source code below.
+To preserve the state between routes switching on the client, you should use a global variable for your Redux store. See the source code below.
 
 ```js
 // src/containers/Root.js
