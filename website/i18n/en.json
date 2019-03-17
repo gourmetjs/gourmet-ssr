@@ -8,8 +8,11 @@
       "getting-started": {
         "title": "Getting Started"
       },
-      "guides": {
-        "title": "Guides"
+      "guides/index": {
+        "title": "Guides: Index"
+      },
+      "guides/using-redux": {
+        "title": "Using Redux with Gourmet SSR"
       },
       "ref/group-react-apollo/index": {
         "title": "ref/group-react-apollo/index"
@@ -45,7 +48,7 @@
     "links": {
       "Getting Started": "Getting Started",
       "Tutorial": "Tutorial",
-      "Docs": "Docs",
+      "Guides": "Guides",
       "GitHub": "GitHub"
     },
     "categories": {

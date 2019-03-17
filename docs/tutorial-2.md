@@ -412,7 +412,7 @@ module.exports = {
 }
 ```
 
-## Implementing `LoginView` and `SingupView`
+## Implementing `LoginView` and `SignupView`
 
 In `LoginView`, we used `CenteredBox` to wrap our content inside a centered, shadowed box. It also supports a header and a footer. Inside the `CenteredBox`, we used `HorzForm` to render a form that supports an API based submit button.
 

@@ -12,7 +12,8 @@
       "tutorial-6"
     ],
     "Guides": [
-      "guides"
+      "guides/index",
+      "guides/using-redux"
     ],
     "Reference": [
       "reference"

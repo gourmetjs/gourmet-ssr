@@ -4,6 +4,14 @@ import {Provider} from "react-redux";
 import App from "../components/App";
 import rootReducer from "../reducers";
 
+const Root = ({store}) => {
+  return (
+    <Provider store={store}>
+      <App/>
+    </Provider>
+  );
+};
+
 const fetchInitialState = () => {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -20,14 +28,6 @@ const fetchInitialState = () => {
       });
     }, 10);
   });
-};
-
-const Root = ({store}) => {
-  return (
-    <Provider store={store}>
-      <App/>
-    </Provider>
-  );
 };
 
 Root.getStockProps = gmctx => {
