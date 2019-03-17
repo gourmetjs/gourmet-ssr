@@ -9,7 +9,7 @@ const app = express();
 
 app.use(gourmet.middleware(args));
 
-app.get("/", (req, res) => {
+app.get("*", (req, res) => {
   res.serve("main");
 });
 

@@ -13,6 +13,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.4",
     "@gourmet/preset-react": "^1.2.9",
+    "@gourmet/group-react-i80": "^1.2.5",
     "nodemon": "^1.18.10",
     "prop-types": "^15.6.2",
     "react": "^16.8.4",

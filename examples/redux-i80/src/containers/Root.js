@@ -1,8 +1,25 @@
 import React from "react";
+import i80, {ActiveRoute} from "@gourmet/react-i80";
 import {createStore} from "redux";
 import {Provider} from "react-redux";
 import App from "../components/App";
+import Settings from "../components/Settings";
 import rootReducer from "../reducers";
+
+i80([
+  ["/", App],
+  ["/settings", Settings]
+]);
+
+const Root = ({store}) => {
+  return (
+    <Provider store={store}>
+      <ActiveRoute/>
+    </Provider>
+  );
+};
+
+let clientReduxStore;
 
 const fetchInitialState = () => {
   return new Promise(resolve => {
@@ -22,14 +39,6 @@ const fetchInitialState = () => {
   });
 };
 
-const Root = ({store}) => {
-  return (
-    <Provider store={store}>
-      <App/>
-    </Provider>
-  );
-};
-
 Root.getStockProps = gmctx => {
   if (gmctx.isServer) {
     return fetchInitialState(gmctx).then(state => {
@@ -39,8 +48,10 @@ Root.getStockProps = gmctx => {
       };
     });
   } else {
+    if (!clientReduxStore)
+      clientReduxStore = createStore(rootReducer, gmctx.data.reduxState);
     return {
-      store: createStore(rootReducer, gmctx.data.reduxState)
+      store: clientReduxStore
     };
   }
 };
