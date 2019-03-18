@@ -3,17 +3,15 @@ id: using-redux
 title: Using Redux with Gourmet SSR
 ---
 
-## Adding Redux packages
+## Introduction
 
-To enable Redux support in your existing Gourmet SSR project, you should install `redux` and `react-redux`. You can add them to `devDependencies` because Redux will be used only in your SSR code.
+Usually, building a Redux app with the server-side rendering is a complicated task. That is not because Redux is particularly incompatible with SSR than others, but because enabling SSR itself is a complicated task.
 
-```text
-npm install redux react-redux --save-dev
-```
+However, as Gourmet SSR takes care of the most complications from the SSR-izing an app, using Redux in a Gourmet SSR project is surprisingly simple. It is just a matter of adding a snippet for bootstrapping. Let's see how.
 
 ## Example app
 
-The example app in this document is based on the original [Redux Todos Example](https://github.com/reduxjs/redux/tree/master/examples/todos). We modified the project slightly to integrate it with Gourmet SSR environment and adjust to our code style.
+The example app in this document is based on the original [Redux Todos Example](https://github.com/reduxjs/redux/tree/master/examples/todos).
 
 You can run the example as below:
 
@@ -25,6 +23,10 @@ npm run dev
 ```
 
 Open your browser and go to `http://localhost:3000`.
+
+You will see a screen like below. There are two todo items pre-populated from the server.
+
+![Redux SSR Example](../assets/guide-redux-todo.png)
 
 ## How it works
 
@@ -89,25 +91,61 @@ Gourmet SSR will call the function to get the stock props before rendering the p
 `getStockProps()` works very similar to `getInitialProps()`, which we showed you in the [tutorial](https://ssr.gourmetjs.org/docs/tutorial-5#getinitialprops). Compared to `getInitialProps()`, `getStockProps()` is:
 
 - Always invoked before rendering, both on the server and the client.
-- Allowed to return any type of props, not limited to JSON serializable objects.
+- Allowed to return any type of values, not limited to JSON serializable objects.
 
 In this example, we use the `fetchInitialState()` function to get the initial state for Redux store on the server side. The data is hard-coded inside the function, simulating an asynchronous fetching operation using a promise. In your real application, this could be an API call or database fetching.
 
-Note that we assign the initial state data to `gmctx.data.reduxState`. Everything you store under `gmctx.data` on the server side will be serialized as a JSON object and transferred to the client for re-hydration in Gourmet SSR.
+Note that we assign the initial state data to `gmctx.data.reduxState`. Everything you store under `gmctx.data` on the server side will be serialized as a JSON object and transferred to the client for re-hydration in Gourmet SSR. `gmctx` is a [context object](../tutorial-5#gourmet-context-gmctx) containing the information about a rendering session in Gourmet SSR.
 
 On the client-side, the Redux store is re-hydrated with the state data from `gmctx.data.reduxState`. 
 
-That's it! With this simple snippet in your root component, Redux will be available to the rest of your React tree as usual.
+That's it! The other React components are the same as the original Redux example (other than some slight modifications for adjusting to our code style). With this simple snippet in your root component, Redux will be available to the rest of your React tree as usual. 
 
-> In our example, the state data is not saved in database, so it will be reset whenever the page is refreshed. We wanted to keep this example simple to show you only the important part of Redux integration.
+In case you are curious, this is the source code of the server.
+
+```js
+// lib/server.js
+"use strict";
+
+const express = require("express");
+const serverArgs = require("@gourmet/server-args");
+const gourmet = require("@gourmet/client-lib");
+
+const args = serverArgs({workDir: __dirname + "/.."});
+const app = express();
+
+app.use(gourmet.middleware(args));
+
+app.get("/", (req, res) => {
+  res.serve("main");
+});
+
+app.use(gourmet.errorMiddleware());
+
+app.listen(args.port, () => {
+  console.log(`Server is listening on port ${args.port}...`);
+});
+```
+
+As you can see, there is no special code for Redux. It is just a typical Express server for a Gourmet SSR project.
+
+> In our example, the state data is not saved in any persistent storage, so it will be reset whenever the page is refreshed. We wanted to keep this example simple to show you only the important part of Redux integration.
+
+## Adding Redux packages for existing projects
+
+To use Redux in your existing Gourmet SSR project, you should install `redux` and `react-redux` packages. You can add them to `devDependencies` because you need Redux only in your SSR code.
+
+```text
+npm install redux react-redux --save-dev
+```
 
 ## Advanced topics
 
 ### Supplying the initial state
 
-In the example above, we explained a case that your initial state is fetched inside the SSR code via `getStockProps()` static function. This is recommended because the criteria of data to fetch usually depends on the user interface to render.
+In the example above, we explained a case that your initial state is fetched inside the SSR code via `getStockProps()` static function. This is a recommended pattern because the criteria of data to fetch usually depends on the user interface to render.
 
-As an alternative, however, you can supply the initial state from your Node server via `res.serve()` function.
+As an alternative, however, you can supply the initial state from your server via `res.serve()` function.
 
 ```js
 // lib/server.js
@@ -176,7 +214,7 @@ export default Root;
 
 You can access the full source code of this example in `examples/redux-init` folder.
 
-### Using Redux with React I80
+### Using Redux with React I80 router
 
 On the server side, `getStockProps()` is called with a freshly created `gmctx` every time a new HTTP request is served. You will always want this behavior to prevent any possible conflicts between requests.
 
