@@ -5,7 +5,7 @@ title: Adding Real UI and Styling
 
 ## What we will add in this step
 
-Now that we have completed the basic structure of our app, we can add the real user interface of `LoginView` and `SignupView`.
+Now that we have completed the basic structure of our app, we can add the real user interface of `LoginRoute` and `SignupRoute`.
 
 The final result would look like the following.
 
@@ -68,12 +68,12 @@ app.listen(args.port, () => {
 ```js
 import React from "react";
 import i80, {ActiveRoute} from "@gourmet/react-i80";
-import LoginView from "./LoginView";
-import SignupView from "./SignupView";
+import LoginRoute from "./LoginRoute";
+import SignupRoute from "./SignupRoute";
 
 i80([
-  ["/login", LoginView],
-  ["/signup", SignupView]
+  ["/login", LoginRoute],
+  ["/signup", SignupRoute]
 ]);
 
 export default function PublicPage() {
@@ -85,7 +85,7 @@ export default function PublicPage() {
 }
 ```
 
-### src/containers/LoginView.js
+### src/containers/LoginRoute.js
 
 ```js
 import React, {Component} from "react";
@@ -94,7 +94,7 @@ import httpApi from "../utils/httpApi";
 import CenteredBox from "../components/CenteredBox";
 import HorzForm from "../components/HorzForm";
 
-export default class LoginView extends Component {
+export default class LoginRoute extends Component {
   static HEADER = (<h3>Log in to NewsApp</h3>);
   static FOOTER = (<p>New to NewsApp? <a href="/signup">Create an account.</a></p>);
 
@@ -103,7 +103,7 @@ export default class LoginView extends Component {
 
   render() {
     return (
-      <CenteredBox header={LoginView.HEADER} footer={LoginView.FOOTER}>
+      <CenteredBox header={LoginRoute.HEADER} footer={LoginRoute.FOOTER}>
         <HorzForm onSubmit={() => this.onSubmit()}>
           <div className="form-group row">
             <label htmlFor="username" className="col-sm-3 col-form-label">Username:</label>
@@ -145,7 +145,7 @@ export default class LoginView extends Component {
 }
 ```
 
-### src/containers/SignupView.js
+### src/containers/SignupRoute.js
 
 ```jsx
 import React, {Component} from "react";
@@ -154,7 +154,7 @@ import httpApi from "../utils/httpApi";
 import CenteredBox from "../components/CenteredBox";
 import HorzForm from "../components/HorzForm";
 
-export default class SignupView extends Component {
+export default class SignupRoute extends Component {
   static HEADER = (<h3>Create an account</h3>);
   static FOOTER = (<p>Already have an account? <a href="/login">Log in instead.</a></p>);
 
@@ -165,7 +165,7 @@ export default class SignupView extends Component {
 
   render() {
     return (
-      <CenteredBox header={SignupView.HEADER} footer={SignupView.FOOTER}>
+      <CenteredBox header={SignupRoute.HEADER} footer={SignupRoute.FOOTER}>
         <HorzForm onSubmit={() => this.onSubmit()}>
           <div className="form-group row">
             <label htmlFor="name" className="col-sm-3 col-form-label">Name:</label>
@@ -412,17 +412,17 @@ module.exports = {
 }
 ```
 
-## Implementing `LoginView` and `SignupView`
+## Implementing `LoginRoute` and `SignupRoute`
 
-In `LoginView`, we used `CenteredBox` to wrap our content inside a centered, shadowed box. It also supports a header and a footer. Inside the `CenteredBox`, we used `HorzForm` to render a form that supports an API based submit button.
+In `LoginRoute`, we used `CenteredBox` to wrap our content inside a centered, shadowed box. It also supports a header and a footer. Inside the `CenteredBox`, we used `HorzForm` to render a form that supports an API based submit button.
 
 ```js
-// src/containers/LoginView.js
-export default class LoginView extends Component {
+// src/containers/LoginRoute.js
+export default class LoginRoute extends Component {
   //...
   render() {
     return (
-      <CenteredBox header={LoginView.HEADER} footer={LoginView.FOOTER}>
+      <CenteredBox header={LoginRoute.HEADER} footer={LoginRoute.FOOTER}>
         <HorzForm onSubmit={() => this.onSubmit()}>
           //...
 ```
@@ -432,7 +432,7 @@ The actual form fields are given as children of `HorzForm`. We used Bootstrap's 
 When a user clicks the `Log in` button, `onSubmit()` is executed. `HorzForm` expects the `onSubmit` handler to return a promise. While the promise is pending, `HorzForm` will display a progress bar with all fields disabled. If the promise is successfully fulfilled with a truthy value, `HorzForm` will re-enable the fields and accept further user interaction on the form. If the promise is rejected with an error, `HorzForm` will display the error message and re-enable the fields to allow the user to retry.
 
 ```js
-// src/containers/LoginView.js
+// src/containers/LoginRoute.js
 // ...
 onSubmit() {
   const username = this.usernameRef.current.value.toLowerCase().trim();
@@ -449,7 +449,7 @@ onSubmit() {
 
 In our code, if a POST HTTP request to `/api/login` succeeds, we will redirect the browser to the URL `/`, using React I80's `i80.goToUrl()` function. During the transition, the fields will be kept disabled because the promise will be fulfilled with a falsy value `undefined`. As there is no route that matches with `/` in the current page, a new request to the server will be made to load the page containing the `/` route.
 
-`SignupView` is a little longer than `LoginView` because of more fields, but the structure is exactly the same.
+`SignupRoute` is a little longer than `LoginRoute` because of more fields, but the structure is exactly the same.
 
 On the server-side, we added dummy APIs for testing.
 
@@ -542,8 +542,8 @@ Key point here is to utilize the global stylesheet whenever possible, and keep t
 You may not be familiar with the [class fields](http://2ality.com/2017/07/class-fields.html) syntax of JavaScript in the following example.
 
 ```js
-// src/containers/LoginView.js
-export default class LoginView extends Component {
+// src/containers/LoginRoute.js
+export default class LoginRoute extends Component {
   static HEADER = (<h3>Log in to NewsApp</h3>);
   //...
   usernameRef = React.createRef();
@@ -555,7 +555,7 @@ This is not in the final standard yet, but it is currently at stage 3, which is 
 
 ## Container components vs presentational components
 
-`CenteredBox` and `HorzForm` are presentational components that are located inside `src/components`, while pages and views were put inside `src/containers`. In this tutorial, we follow a simple but powerful pattern that divides components into two categories: container components and presentational components. Our criteria are as follows.
+`CenteredBox` and `HorzForm` are presentational components that are located inside `src/components`, while pages and routes were put inside `src/containers`. In this tutorial, we follow a simple but powerful pattern that divides components into two categories: container components and presentational components. Our criteria are as follows.
 
 Container components:
 - are concerned with how things work.
