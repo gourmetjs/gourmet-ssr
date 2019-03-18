@@ -9,13 +9,13 @@ We will add the user interface for browsing news articles, backed by server APIs
 
 ## Edited / added source files
 
-### src/containers/NewsView.js
+### src/containers/NewsRoute.js
 
 ```js
 import React, {Component} from "react";
 import ArticlesPane from "./ArticlesPane";
 
-export default class NewsView extends Component {
+export default class NewsRoute extends Component {
   static getInitialProps(gmctx) {
     return ArticlesPane.fetchInitialArticles("news", gmctx);
   }
@@ -28,13 +28,13 @@ export default class NewsView extends Component {
 }
 ```
 
-### src/containers/SavedView.js
+### src/containers/SavedRoute.js
 
 ```js
 import React, {Component} from "react";
 import ArticlesPane from "./ArticlesPane";
 
-export default class SavedView extends Component {
+export default class SavedRoute extends Component {
   static getInitialProps(gmctx) {
     return ArticlesPane.fetchInitialArticles("saved", gmctx);
   }
@@ -199,12 +199,12 @@ import React from "react";
 import i80, {ActiveRoute, Link} from "@gourmet/react-i80";
 import httpApi from "../utils/httpApi";
 import TabbedPanes from "../components/TabbedPanes";
-import NewsView from "./NewsView";
-import SavedView from "./SavedView";
+import NewsRoute from "./NewsRoute";
+import SavedRoute from "./SavedRoute";
 
 i80([
-  ["/", NewsView],
-  ["/saved", SavedView]
+  ["/", NewsRoute],
+  ["/saved", SavedRoute]
 ]);
 
 export default function MainPage({user}) {
@@ -646,9 +646,9 @@ When the rendering happens on the server-side, Gourmet SSR looks for a static fu
 
 The props returned by a page component's `getInitialProps()` will be serialized as a JSON object and transferred to the client. That is, a page component's `getInitialProps()` will be executed on the server-side only.
 
-A view component (React I80's matching route component) also supports `getInitialProps()`. If defined, the result object is handed over to the view component as properties, in addition to the page component's result of `getInitialProps()`, in case it is defined as well.
+A route component also supports `getInitialProps()`. If defined, the result object is handed over to the route component as props, in addition to the page component's result of `getInitialProps()`, in case it is defined as well.
 
-One subtlety of view component's `getInitialProps()` is that, because views can be switched on the client side, it can be executed on the client as well. The initial content rendered on the server will contain a serialized result of the initial view component's `getInitialProps()`, so it will not be executed on the client side just like a page component. However, if a view switch occurs on the client, the newly activated view's `getInitialProps()` will be executed on the browser.
+One subtlety of route component's `getInitialProps()` is that, because routes can be switched on the client side, it can be executed on the client as well. The initial content rendered on the server will contain a serialized result of the initial route component's `getInitialProps()`, so it will not be executed on the client side just like a page component. However, if a route switch occurs on the client, the newly activated route's `getInitialProps()` will be executed on the browser.
 
 > The idea of the asynchronous data fetching via a static function of a component, named `getInitialProps()`, was made popular by [Next.js](https://nextjs.org/learn/basics/fetching-data-for-pages). We appreciate their work for the inspiration.
 
@@ -660,7 +660,7 @@ One important issue regarding the isomorphic data fetching is the authentication
 2. The user visits `/` to get the HTML page containing the latest news articles.
 3. The server receives the request and verifies the session cookie.
 4. The server calls `res.serve("main")` to render the page.
-5. Gourmet SSR calls the static `getInitialProps()` function of the view component `NewsView`.
+5. Gourmet SSR calls the static `getInitialProps()` function of the route component `NewsRoute`.
 6. The `getInitialProps()` function sends a HTTP GET request to the server API `/api/news` to fetch the latest news articles.
 7. The server API `/api/news` verifies the session cookie, and sends back the news articles.
 8. Gourmet SSR renders the initial content with the result of `getInitialProps()`.
@@ -691,7 +691,7 @@ In order to handle all these tasks related to the data fetching in SSR code, we 
 
 When you call `res.serve()` to render a HTML page using Gourmet SSR, a new context object with the information about the rendering request is created internally. By convention, we call the context object `gmctx`.
 
-There are many ways to get `gmctx`. It is given to the page and view components as a prop. It is given to `getInitialProps()` as the only argument. It is also possible to get `gmctx` through [React Context](https://reactjs.org/docs/context.html) inside a rendering tree using `@gourmet/react-context-gmctx` module, which comes as a sub-package inside `@gourmet/preset-react`.
+There are many ways to get `gmctx`. It is given to the page and route components as a prop. It is given to `getInitialProps()` as the only argument. It is also possible to get `gmctx` through [React Context](https://reactjs.org/docs/context.html) inside a rendering tree using `@gourmet/react-context-gmctx` module, which comes as a sub-package inside `@gourmet/preset-react`.
 
 A few useful properties of `gmctx` are as follows:
 
@@ -794,9 +794,9 @@ const tabs = [
 
 ### `ArticlesPane`
 
-`ArticlesPane` is a container component that does all the heavy lifting, providing most glue logic through event handlers (`loadMore`, `saveArticle`, and `unsaveArticle`), between a view component (`NewsView` or `SavedView`) as a parent, and presentational components (`Articles`, `ErrorBanner`, and `LoadButton`) as children.
+`ArticlesPane` is a container component that does all the heavy lifting, providing most glue logic through event handlers (`loadMore`, `saveArticle`, and `unsaveArticle`), between a route component (`NewsRoute` or `SavedRoute`) as a parent, and presentational components (`Articles`, `ErrorBanner`, and `LoadButton`) as children.
 
-A static function `fetchInitialArticles()` is used as a helper to implement the parent view's `onInitialProps()` static function. It fetches the initial data using `httpApi()` function. It is important to hand over `gmctx` to `httpApi()` here, because this function can be called on both server and client. On the other hand, other event handlers that call `httpApi()` omit `gmctx`, because they are always executed in the browser.
+A static function `fetchInitialArticles()` is used as a helper to implement the parent route component's `onInitialProps()` static function. It fetches the initial data using `httpApi()` function. It is important to hand over `gmctx` to `httpApi()` here, because this function can be called on both server and client. On the other hand, other event handlers that call `httpApi()` omit `gmctx`, because they are always executed in the browser.
 
 ### `TabbedPanes`
 
