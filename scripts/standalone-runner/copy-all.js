@@ -9,7 +9,7 @@ const ncp = require("ncp").ncp;
 const promiseEach = require("@gourmet/promise-each");
 const promiseMain = require("@gourmet/promise-main");
 
-const TEST_DIR = npath.join(__dirname, "..");
+const TEST_DIR = npath.join(__dirname, "../../tests");
 const TARGET_DIR = npath.join(__dirname, "../../../.gourmet-standalone/tests");
 
 async function main() {
