@@ -30,7 +30,7 @@ You will see a screen like below. There are two todo items pre-populated from th
 
 ## How it works
 
-All the secret is in `Root` component. This is the page component of the app.
+All the secret is in the `Root` component. This is the page component of the app.
 
 ```js
 // src/containers/Root.js
@@ -93,7 +93,7 @@ Gourmet SSR will call the function to get the stock props before rendering the p
 - Always invoked before rendering, both on the server and the client.
 - Allowed to return any type of values, not limited to JSON serializable objects.
 
-In this example, we use the `fetchInitialState()` function to get the initial state for Redux store on the server side. The data is hard-coded inside the function, simulating an asynchronous fetching operation using a promise. In your real application, this could be an API call or database fetching.
+In this example, we use the `fetchInitialState()` function to get the initial state for the Redux store on the server side. The data is hard-coded inside the function, simulating an asynchronous fetching operation using a promise. In your real application, this could be an API call or database fetching.
 
 Note that we assign the initial state data to `gmctx.data.reduxState`. Everything you store under `gmctx.data` on the server side will be serialized as a JSON object and transferred to the client for re-hydration in Gourmet SSR. `gmctx` is a [context object](../tutorial-5#gourmet-context-gmctx) containing the information about a rendering session in Gourmet SSR.
 
