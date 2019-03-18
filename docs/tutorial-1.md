@@ -69,12 +69,12 @@ app.listen(args.port, () => {
 ```js
 import React from "react";
 import i80, {ActiveRoute} from "@gourmet/react-i80";
-import LoginView from "./LoginView";
-import SignupView from "./SignupView";
+import LoginRoute from "./LoginRoute";
+import SignupRoute from "./SignupRoute";
 
 i80([
-  ["/login", LoginView],
-  ["/signup", SignupView]
+  ["/login", LoginRoute],
+  ["/signup", SignupRoute]
 ]);
 
 export default function PublicPage() {
@@ -92,12 +92,12 @@ export default function PublicPage() {
 ```js
 import React from "react";
 import i80, {ActiveRoute} from "@gourmet/react-i80";
-import NewsView from "./NewsView";
-import SavedView from "./SavedView";
+import NewsRoute from "./NewsRoute";
+import SavedRoute from "./SavedRoute";
 
 i80([
-  ["/", NewsView],
-  ["/saved", SavedView]
+  ["/", NewsRoute],
+  ["/saved", SavedRoute]
 ]);
 
 export default function MainPage() {
@@ -110,12 +110,12 @@ export default function MainPage() {
 }
 ```
 
-### src/containers/LoginView.js
+### src/containers/LoginRoute.js
 
 ```js
 import React from "react";
 
-export default function LoginView() {
+export default function LoginRoute() {
   return (
     <div>
       <p>Login Form</p>
@@ -124,12 +124,12 @@ export default function LoginView() {
 }
 ```
 
-### src/containers/SignupView.js
+### src/containers/SignupRoute.js
 
 ```js
 import React from "react";
 
-export default function SignupView() {
+export default function SignupRoute() {
   return (
     <div>
       <p>Signup Form</p>
@@ -138,12 +138,12 @@ export default function SignupView() {
 }
 ```
 
-### src/containers/NewsView.js
+### src/containers/NewsRoute.js
 
 ```js
 import React from "react";
 
-export default function NewsView() {
+export default function NewsRoute() {
   return (
     <div>
       <p>News article #1</p>
@@ -154,12 +154,12 @@ export default function NewsView() {
 }
 ```
 
-### src/containers/SavedView.js
+### src/containers/SavedRoute.js
 
 ```js
 import React from "react";
 
-export default function SavedView() {
+export default function SavedRoute() {
   return (
     <div>
       <p>Saved article #1</p>
@@ -230,25 +230,25 @@ You will see screens like these.
 
 ## Routing using React I80
 
-React I80 is a tiny, isomorphic routing library specifically designed for Gourmet SSR. Using React I80, you can divide the user interface of your app into more manageable smaller units called views, and associate them with URLs. Also, you can group multiple views into pages.
+React I80 is a tiny, isomorphic routing library specifically designed for Gourmet SSR. Using React I80, you can divide the user interface of your app into more manageable smaller units called routes, and associate them with URLs. Also, you can group multiple routes into pages.
 
-### Pages and Views
+### Pages and Routes
 
-Switching between views inside the same page happens on the client-side, and no round-trip to the server is made. On the other hand, each page is a completely separated HTML endpoint from the other. A transition between pages always happens in a clean, new browser session.
+Switching between routes inside the same page happens on the client-side, and no round-trip to the server is made. On the other hand, each page is a completely separated HTML endpoint from the other. A transition between pages always happens in a clean, new browser session.
 
-Using Gourmet SSR, you are not limited to a single HTML page for your whole app. In fact, splitting your app into multiple pages is an encouraged pattern for better user experience. At the least, you must separate the content for the authenticated state from the unauthenticated public content for security reasons. With this in mind, we structured our pages and views as below.
+Using Gourmet SSR, you are not limited to a single HTML page for your whole app. In fact, splitting your app into multiple pages is an encouraged pattern for better user experience. At the least, you must separate the content for the authenticated state from the unauthenticated public content for security reasons. With this in mind, we structured our pages and routes as below.
 
 ```text
-PublicPage --+-- LoginView
+PublicPage --+-- LoginRoute
              |
-             +-- SignupView
+             +-- SignupRoute
 
-MainPage ----+-- NewsView
+MainPage ----+-- NewsRoute
              |
-             +-- SavedView
+             +-- SavedRoute
 ```
 
-First, the server is responsible for routing requests to the corresponding pages based on URLs.
+First, the server is responsible for directing requests to the corresponding pages based on URLs.
 
 ```js
 // lib/server.js
@@ -268,14 +268,14 @@ And then, inside each page, you define routes for the page using the top-level `
 import i80, {ActiveRoute} from "@gourmet/react-i80";
 //...
 i80([
-  ["/login", LoginView],
-  ["/signup", SignupView]
+  ["/login", LoginRoute],
+  ["/signup", SignupRoute]
 ]);
 ```
 
-You must call the `i80()` function just once at the global level to initialize React I80. `i80()` expects an array of arrays containing a pair of elements. Each element within the array consists of a URL path and a React view component.
+You must call the `i80()` function just once at the global level to initialize React I80. `i80()` expects an array of arrays containing a pair of elements. Each element within the array consists of a URL path and a React route component.
 
-Inside the page's rendering function, the `ActiveRoute` component is used to render a view that matches the current URL.
+Inside the page's rendering function, the `ActiveRoute` component is used to render a route component that matches the current URL.
 
 ```js
 // src/containers/PublicPage.js
