@@ -1,11 +1,11 @@
 /* your custom css */
 
 .fixedHeaderContainer header img.logo {
-  height: 20px;
+  height: 26px;
 }
 
 .homeContainer .projectTitle img.logo {
-  height: 42px;
+  height: 60px;
 }
 
 .fixedHeaderContainer header h2.headerTitleWithLogo {

@@ -10,7 +10,7 @@
 
 const siteConfig = {
   title: "Gourmet SSR", // Title for your website.
-  tagline: "A Server-Side Rendering Engine for Professionals",
+  tagline: "A Lightweight Server-Side Rendering Engine for React Apps",
   url: "https://ssr.gourmetjs.org", // Your website URL
   baseUrl: "/", // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
@@ -41,7 +41,7 @@ const siteConfig = {
 
   /* path to images for header/footer */
   headerIcon: "img/gourmet-ssr.svg",
-  footerIcon: "img/gourmet-ssr.svg",
+  footerIcon: "img/gourmet-ssr-blk.svg",
   favicon: "img/favicon.png",
 
   /* Colors for website */

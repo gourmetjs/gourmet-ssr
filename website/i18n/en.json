@@ -3,7 +3,7 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "A Server-Side Rendering Engine for Professionals",
+    "tagline": "A Lightweight Server-Side Rendering Engine for React Apps",
     "docs": {
       "getting-started": {
         "title": "Getting Started"
