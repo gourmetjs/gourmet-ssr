@@ -27,7 +27,14 @@ module.exports = function(def) {
 
   app.use(morgan("dev"));
 
-  apollo.applyMiddleware({app});
+  app.use((req, res, next) => {
+    if (req.url === "/custom-graphql" && req.headers["x-gourmet-test-name"] !== "@gourmet/test-todo-apollo")
+      next(Error("x-gourmet-test-name header error"));
+    else
+      next();
+  });
+
+  apollo.applyMiddleware({app, path: "/custom-graphql"});
 
   app.use(gourmet.middleware(args));
 

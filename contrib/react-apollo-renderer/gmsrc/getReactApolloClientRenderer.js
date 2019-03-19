@@ -2,6 +2,7 @@
 
 const React = require("react");
 const promiseProtect = require("@gourmet/promise-protect");
+const merge = require("@gourmet/merge");
 const {ApolloClient} = require("apollo-client");
 const {InMemoryCache} = require("apollo-cache-inmemory");
 const {onError} = require("apollo-link-error");
@@ -12,13 +13,6 @@ const handleLinkError = require("./handleLinkError");
 
 let apolloClient;
 
-// Options:
-// - `createNewApolloClient = false`: True if a new instance of Apollo Client must created per
-//    a rendering session (e.g. route change) on the browser.
-//    On the server-side, a new instance is always created per a request, so this option is not used.
-// - `apolloClient = {connectToDevTools: false}`: An options object for `ApolloClient`.
-// - `apolloHttpLink = undefined`: An options object for `ApolloLinkHttp`.
-// - `apolloInMemoryCache = undefined`: An options object for `ApolloInMemoryCache`.
 module.exports = function getClientRenderer(Base) {
   if (!Base)
     throw Error("`@gourmet/react-apollo-renderer` cannot be the first one in the renderer chain. Check your configuration.");
@@ -28,13 +22,9 @@ module.exports = function getClientRenderer(Base) {
       return promiseProtect(() => {
         return super.prepareToRender(gmctx);
       }).then(cont => {
-        if (this.options.createNewApolloClient === undefined || this.options.createNewApolloClient) {
-          gmctx.apolloClient = this.createApolloClient(gmctx);
-        } else {
-          if (!apolloClient)
-            apolloClient = this.createApolloClient(gmctx);
-          gmctx.apolloClient = apolloClient;
-        }
+        if (!apolloClient)
+          apolloClient = this.createApolloClient(gmctx);
+        gmctx.apolloClient = apolloClient;
         return cont;
       });
     }
@@ -52,21 +42,39 @@ module.exports = function getClientRenderer(Base) {
     }
 
     createApolloClient(gmctx) {
-      const cache = new InMemoryCache(this.options.apolloInMemoryCache);
+      // Apollo options are specified in `builder.initOptions.apollo`, which is copied from `apollo`
+      // at build time by the `@gourmet/plugin-react-apollo`.
+      // The root base class of the renderers chain stores the `initOptions` in `this.options`.
+      // We create a deep copy to allow in-place modification in the page component's `createApolloClient`.
+      const options = merge({
+        client: {
+          connectToDevTools: false
+        },
+        linkHttp: {
+          uri: "/graphql"
+        },
+        cacheInMemory: {}
+      }, this.options.apollo);
+
+      if (this.userObject.createApolloClient) {
+        const apollo = this.userObject.createApolloClient(gmctx, options);
+        if (apollo)
+          return apollo;
+      }
+
+      const cache = new InMemoryCache(options.cacheInMemory);
 
       if (gmctx.data.apolloState)
         cache.restore(gmctx.data.apolloState);
 
-      return new ApolloClient(Object.assign({
-        connectToDevTools: false
-      }, this.options.apolloClient, {
+      return new ApolloClient(Object.assign({}, options.client, {
         ssrMode: false,
         link: ApolloLink.from([
           onError(handleLinkError),
-          new HttpLink(this.options.apolloLinkHttp)
+          new HttpLink(options.linkHttp)
         ]),
         cache
-      }, this.options.apolloClient));
+      }));
     }
   };
 };

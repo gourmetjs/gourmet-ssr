@@ -9,7 +9,8 @@
   "dependencies": {
     "@gourmet/plugin-react-apollo": "^1.0.3",
     "@gourmet/react-apollo-renderer": "^1.0.3",
-    "react-apollo": "^2.5.2"
+    "react-apollo": "^2.5.2",
+    "graphql-tag": "^2.10.1"
   },
   "peerDependencies": {
     "react": "16",

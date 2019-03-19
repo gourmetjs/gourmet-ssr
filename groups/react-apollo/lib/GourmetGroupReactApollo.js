@@ -1,7 +1,5 @@
 "use strict";
 
-// We added a dependency entry `core-js: "2"` for the reason below:
-// https://babeljs.io/docs/en/babel-preset-env#usebuiltins
 class GroupReactApollo {
   onUserConfig(context) {
     const moduleDir = context.builder.moduleDir(__dirname);
@@ -9,6 +7,7 @@ class GroupReactApollo {
       builder: {
         alias: {
           "react-apollo": moduleDir("react-apollo"),
+          "graphql-tag": moduleDir("graphql-tag"),
           "@gourmet/react-apollo-renderer": moduleDir("@gourmet/react-apollo-renderer")
         }
       }

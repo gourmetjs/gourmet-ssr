@@ -11,6 +11,12 @@ module.exports = {
     contentHash: context => context.stage === "ltc"
   },
 
+  apollo: {
+    linkHttp: {
+      uri: "/custom-graphql"
+    }
+  },
+
   config: {
     html: {
       headTop: [

@@ -2,6 +2,7 @@
 
 const React = require("react");
 const promiseProtect = require("@gourmet/promise-protect");
+const merge = require("@gourmet/merge");
 const selfUrl = require("@gourmet/self-url");
 const {ApolloClient} = require("apollo-client");
 const {InMemoryCache} = require("apollo-cache-inmemory");
@@ -11,11 +12,6 @@ const {HttpLink} = require("apollo-link-http");
 const {ApolloProvider, getDataFromTree} = require("react-apollo");
 const handleLinkError = require("./handleLinkError");
 
-// Options:
-// - `apolloClient = {connectToDevTools: false, ssrForceFetchDelay: 100}`: An options object for `ApolloClient`.
-// - `apolloHttpLink = undefined`: An options object for `ApolloLinkHttp`.
-// - `apolloInMemoryCache = undefined`: An options object for `ApolloInMemoryCache`.
-// * `apolloHttpLink.uri` is converted to an absolute URL using `@gourmet/self-url`.
 module.exports = function getServerRenderer(Base) {
   return class ApolloServerRenderer extends Base {
     prepareToRender(gmctx) {
@@ -44,20 +40,40 @@ module.exports = function getServerRenderer(Base) {
     }
 
     createApolloClient(gmctx) {
-      const uri = this.options.apolloLinkHttp && this.options.apolloLinkHttp.uri;
-      return new ApolloClient(Object.assign({
-        connectToDevTools: false,
-        ssrForceFetchDelay: 100
-      }, this.options.apolloClient, {
+      // Apollo options are specified in `builder.initOptions.apollo`, which is copied from `apollo`
+      // at build time by the `@gourmet/plugin-react-apollo`.
+      // The root base class of the renderers chain stores the `initOptions` in `this.options`.
+      // We create a deep copy to allow in-place modification in the page component's `createApolloClient`.
+      const options = merge({
+        // An options object for `apollo-client`
+        client: {
+          connectToDevTools: false,
+          ssrForceFetchDelay: 100
+        },
+        // An options object for `apollo-link-http`.
+        linkHttp: {
+          uri: "/graphql"   // This will be converted to an absolute URL using `@gourmet/self-url`
+        },
+        // An options object for `apollo-cache-inmemory`
+        cacheInMemory: {}
+      }, this.options.apollo);
+
+      options.linkHttp.uri = selfUrl(gmctx, options.linkHttp.uri);
+
+      if (this.userObject.createApolloClient) {
+        const apollo = this.userObject.createApolloClient(gmctx, options);
+        if (apollo !== undefined)
+          return apollo;
+      }
+
+      return new ApolloClient(Object.assign({}, options.client, {
         ssrMode: true,
         link: ApolloLink.from([
           onError(handleLinkError),
-          new HttpLink(Object.assign({}, this.options.apolloLinkHttp, {
-            uri: selfUrl(gmctx, uri || "/graphql")
-          }))
+          new HttpLink(options.linkHttp)
         ]),
-        cache: new InMemoryCache(this.options.apolloInMemoryCache)
-      }, this.options.apolloClient));
+        cache: new InMemoryCache(options.cacheInMemory)
+      }));
     }
   };
 };
