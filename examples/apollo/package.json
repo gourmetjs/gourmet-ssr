@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^1.2.4",
+    "@gourmet/server-args": "^1.2.4",
+    "express": "^4.16.3",
+    "graphql": "^14.1.1",
+    "apollo-datasource": "^0.3.1",
+    "apollo-server-express": "^2.4.8"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.4",
+    "@gourmet/preset-react": "^1.2.10",
+    "@gourmet/group-react-apollo": "^1.0.4",
+    "core-js": "2",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "nodemon": "^1.18.10"
+  }
+}
