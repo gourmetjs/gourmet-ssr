@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-todo-apollo",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.4",
-    "@gourmet/group-react-apollo": "^1.0.3",
-    "@gourmet/preset-react": "^1.2.9",
+    "@gourmet/group-react-apollo": "^1.0.4",
+    "@gourmet/preset-react": "^1.2.10",
     "@gourmet/promise-tape": "^0.4.3",
     "core-js": "2",
     "nodemon": "^1.18.10",

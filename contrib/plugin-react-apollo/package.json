@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/plugin-react-apollo",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "lib/GourmetPluginReactApollo.js",
   "keywords": [
     "gourmet-plugin"
