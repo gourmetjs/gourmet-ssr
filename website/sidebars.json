@@ -13,7 +13,8 @@
     ],
     "Guides": [
       "guides/index",
-      "guides/using-redux"
+      "guides/using-redux",
+      "guides/using-apollo-graphql"
     ],
     "Reference": [
       "reference"

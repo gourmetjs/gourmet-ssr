@@ -1,6 +1,6 @@
 ---
 id: using-redux
-title: Using Redux with Gourmet SSR
+title: Using Redux
 ---
 
 ## Introduction

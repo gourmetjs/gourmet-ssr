@@ -11,8 +11,11 @@
       "guides/index": {
         "title": "Guides: Index"
       },
+      "guides/using-apollo-graphql": {
+        "title": "Using Apollo GraphQL"
+      },
       "guides/using-redux": {
-        "title": "Using Redux with Gourmet SSR"
+        "title": "Using Redux"
       },
       "ref/group-react-apollo/index": {
         "title": "ref/group-react-apollo/index"
