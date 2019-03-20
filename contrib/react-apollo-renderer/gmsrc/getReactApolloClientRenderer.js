@@ -22,7 +22,7 @@ module.exports = function getClientRenderer(Base) {
       return promiseProtect(() => {
         return super.prepareToRender(gmctx);
       }).then(cont => {
-        if (!apolloClient)
+        if (apolloClient === undefined)
           apolloClient = this.createApolloClient(gmctx);
         gmctx.apolloClient = apolloClient;
         return cont;
@@ -33,11 +33,15 @@ module.exports = function getClientRenderer(Base) {
       return promiseProtect(() => {
         return super.invokeUserRenderer(gmctx);
       }).then(element => {
-        return (
-          <ApolloProvider client={gmctx.apolloClient}>
-            {element}
-          </ApolloProvider>
-        );
+        if (gmctx.apolloClient) {
+          return (
+            <ApolloProvider client={gmctx.apolloClient}>
+              {element}
+            </ApolloProvider>
+          );
+        } else {
+          return element;
+        }
       });
     }
 
@@ -58,7 +62,7 @@ module.exports = function getClientRenderer(Base) {
 
       if (this.userObject.createApolloClient) {
         const apollo = this.userObject.createApolloClient(gmctx, options);
-        if (apollo)
+        if (apollo || apollo === null)
           return apollo;
       }
 

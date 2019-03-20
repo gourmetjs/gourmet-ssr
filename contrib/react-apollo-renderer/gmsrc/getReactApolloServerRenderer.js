@@ -27,15 +27,19 @@ module.exports = function getServerRenderer(Base) {
       return promiseProtect(() => {
         return super.invokeUserRenderer(gmctx);
       }).then(element => {
-        element = (
-          <ApolloProvider client={gmctx.apolloClient}>
-            {element}
-          </ApolloProvider>
-        );
-        return getDataFromTree(element).then(() => {
-          gmctx.data.apolloState = gmctx.apolloClient.cache.extract();
+        if (gmctx.apolloClient) {
+          element = (
+            <ApolloProvider client={gmctx.apolloClient}>
+              {element}
+            </ApolloProvider>
+          );
+          return getDataFromTree(element).then(() => {
+            gmctx.data.apolloState = gmctx.apolloClient.cache.extract();
+            return element;
+          });
+        } else {
           return element;
-        });
+        }
       });
     }
 
@@ -62,7 +66,7 @@ module.exports = function getServerRenderer(Base) {
 
       if (this.userObject.createApolloClient) {
         const apollo = this.userObject.createApolloClient(gmctx, options);
-        if (apollo !== undefined)
+        if (apollo || apollo === null)
           return apollo;
       }
 
