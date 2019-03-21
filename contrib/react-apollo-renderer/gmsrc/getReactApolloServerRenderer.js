@@ -33,13 +33,14 @@ module.exports = function getServerRenderer(Base) {
               {element}
             </ApolloProvider>
           );
-          return getDataFromTree(element).then(() => {
-            gmctx.data.apolloState = gmctx.apolloClient.cache.extract();
-            return element;
-          });
-        } else {
-          return element;
+          if (gmctx.apolloClient.cache && typeof gmctx.apolloClient.cache.extract === "function") {
+            return getDataFromTree(element).then(() => {
+              gmctx.data.apolloState = gmctx.apolloClient.cache.extract();
+              return element;
+            });
+          }
         }
+        return element;
       });
     }
 
@@ -64,20 +65,23 @@ module.exports = function getServerRenderer(Base) {
 
       options.linkHttp.uri = selfUrl(gmctx, options.linkHttp.uri);
 
-      if (this.userObject.createApolloClient) {
-        const apollo = this.userObject.createApolloClient(gmctx, options);
-        if (apollo || apollo === null)
-          return apollo;
+      let apollo;
+
+      if (this.userObject.createApolloClient)
+        apollo = this.userObject.createApolloClient(gmctx, options);
+
+      if (apollo === undefined) {
+        apollo = new ApolloClient(Object.assign({}, options.client, {
+          ssrMode: true,
+          link: ApolloLink.from([
+            onError(handleLinkError),
+            new HttpLink(options.linkHttp)
+          ]),
+          cache: new InMemoryCache(options.cacheInMemory)
+        }));
       }
 
-      return new ApolloClient(Object.assign({}, options.client, {
-        ssrMode: true,
-        link: ApolloLink.from([
-          onError(handleLinkError),
-          new HttpLink(options.linkHttp)
-        ]),
-        cache: new InMemoryCache(options.cacheInMemory)
-      }));
+      return apollo;
     }
   };
 };

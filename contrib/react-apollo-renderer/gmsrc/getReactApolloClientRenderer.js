@@ -60,25 +60,26 @@ module.exports = function getClientRenderer(Base) {
         cacheInMemory: {}
       }, this.options.apollo);
 
-      if (this.userObject.createApolloClient) {
-        const apollo = this.userObject.createApolloClient(gmctx, options);
-        if (apollo || apollo === null)
-          return apollo;
+      let apollo;
+
+      if (this.userObject.createApolloClient)
+        apollo = this.userObject.createApolloClient(gmctx, options);
+
+      if (apollo === undefined) {
+        apollo = new ApolloClient(Object.assign({}, options.client, {
+          ssrMode: false,
+          link: ApolloLink.from([
+            onError(handleLinkError),
+            new HttpLink(options.linkHttp)
+          ]),
+          cache: new InMemoryCache(options.cacheInMemory)
+        }));
       }
 
-      const cache = new InMemoryCache(options.cacheInMemory);
+      if (apollo && apollo.cache && typeof apollo.cache.restore === "function" && gmctx.data.apolloState)
+        apollo.cache.restore(gmctx.data.apolloState);
 
-      if (gmctx.data.apolloState)
-        cache.restore(gmctx.data.apolloState);
-
-      return new ApolloClient(Object.assign({}, options.client, {
-        ssrMode: false,
-        link: ApolloLink.from([
-          onError(handleLinkError),
-          new HttpLink(options.linkHttp)
-        ]),
-        cache
-      }));
+      return apollo;
     }
   };
 };

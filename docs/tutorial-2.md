@@ -551,7 +551,7 @@ export default class LoginRoute extends Component {
 }
 ```
 
-This is not in the final standard yet, but it is currently at stage 3, which is the last stage of the standardization process, so it is pretty safe to use. Gourmet SSR supports the syntax by default. See [this](#LATER) for more details about Gourmet SSR's support of ES proposals.
+This is not in the final standard yet, but it is currently at stage 3, which is the last stage of the standardization process, so it is pretty safe to use. Gourmet SSR supports the syntax by default.
 
 ## Container components vs presentational components
 

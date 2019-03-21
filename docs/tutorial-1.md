@@ -349,8 +349,8 @@ npm run dev
 
 ### `serverArgs()`
 
-`--watch` is not the only option that `@gourmet/server-args` supports. In our server code above, we use `args.port` to get the port number to listen to. It will be derived from `--port` command line option, `PORT` environment variable, or default value of `3000`, in the order of priority. See [this](#LATER) for more details.
+`--watch` is not the only option that `@gourmet/server-args` supports. In our server code above, we use `args.port` to get the port number to listen to. It will be derived from `--port` command line option, `PORT` environment variable, or default value of `3000`, in the order of priority.
 
 ### `gourmet.errorMiddleware()`
 
-`gourmet.errorMiddleware()` returns an error handling middleware (a Connect/Express compatible middleware with four arguments `(err, req, res, next)`). You should install it as the last error handler in your middleware chain. In addition to the customizable error page rendering, it will also take care of Gourmet SSR specific tasks such as embedding `--watch` support runtime in error pages, and sending out JSON error responses (i.e. `{error: {...}}`) to JSON requests. See [this](#LATER) for more details.
+`gourmet.errorMiddleware()` returns an error handling middleware (a Connect/Express compatible middleware with four arguments `(err, req, res, next)`). You should install it as the last error handler in your middleware chain. In addition to the customizable error page rendering, it will also take care of Gourmet SSR specific tasks such as embedding `--watch` support runtime in error pages, and sending out JSON error responses (i.e. `{error: {...}}`) to JSON requests.
