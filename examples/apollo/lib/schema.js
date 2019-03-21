@@ -2,7 +2,7 @@
 
 const {gql} = require("apollo-server-express");
 
-const schema = gql`
+module.exports = gql`
 type Query {
   todos: [String]!
 }
@@ -11,5 +11,3 @@ type Mutation {
   addTodo(text: String!): String!
 }
 `;
-
-module.exports = schema;

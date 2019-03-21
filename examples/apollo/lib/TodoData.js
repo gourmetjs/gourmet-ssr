@@ -8,10 +8,6 @@ const _todos = [
 ];
 
 module.exports = class TodoData extends DataSource {
-  initialize(config) {
-    this.context = config.context;
-  }
-
   getAll() {
     return _todos.slice();  // make a shallow copy
   }

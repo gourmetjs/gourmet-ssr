@@ -3,7 +3,6 @@
 const express = require("express");
 const serverArgs = require("@gourmet/server-args");
 const gourmet = require("@gourmet/client-lib");
-const con = require("@gourmet/console")();
 const {ApolloServer} = require("apollo-server-express");
 const schema = require("./schema");
 const TodoData = require("./TodoData");
@@ -31,6 +30,6 @@ app.get("/", (req, res) => {
 app.use(gourmet.errorMiddleware());
 
 app.listen(args.port, () => {
-  con.log(`Server is listening on port ${args.port}...`);
-  con.info(`GraphQL path is ${apollo.graphqlPath}`);
+  console.log(`Server is listening on port ${args.port}...`);
+  console.log(`GraphQL path is ${apollo.graphqlPath}`);
 });
