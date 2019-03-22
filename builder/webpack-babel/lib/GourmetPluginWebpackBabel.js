@@ -117,6 +117,7 @@ class GourmetPluginWebpackBabel {
       loose: babel.loose,
       spec: babel.spec,
       useBuiltIns: babel.polyfill,
+      corejs: babel.corejs,
 
       // https://github.com/facebook/create-react-app/blob/1d8d9eaaeef0e4dbcefedac40d3f18b892c8c18b/packages/babel-preset-react-app/create.js#L91
       exclude: ["transform-typeof-symbol"]

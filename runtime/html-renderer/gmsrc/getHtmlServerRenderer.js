@@ -42,11 +42,8 @@ class HtmlServerRenderer {
   //  - other custom context values
   getRenderer(spec) {
     return context => {
-      let gmctx;
-      return promiseProtect(() => {
-        gmctx = this.createContext(context, spec);
-        return this.prepareToRender(gmctx);
-      }).then(cont => {
+      const gmctx = this.createContext(context, spec);
+      return this.prepareToRender(gmctx).then(cont => {
         if (cont !== false)
           return this.invokeUserRenderer(gmctx);
       }).then(content => {
@@ -82,17 +79,20 @@ class HtmlServerRenderer {
   }
 
   // Do per-rendering preparation tasks.
-  // If this function returns `false` or a promise fulfilled with `false`,
-  // `invokeUserRenderer()` is skipped.
+  // Must return a promise.
+  // If this function returns a promise fulfilled with `false`, `invokeUserRenderer()` is skipped.
   prepareToRender(gmctx) { // eslint-disable-line no-unused-vars
+    return Promise.resolve();
   }
 
   // Do the actual rendering and returns an rendered object.
+  // Must return a promise.
   // Default implementation assumes that the `userObject` is a function.
   invokeUserRenderer(gmctx) {
-    return this.userObject(gmctx);
+    return promiseProtect(() => {
+      return this.userObject(gmctx);
+    });
   }
-
  
   // This is a synchronous function
   renderToMedium(gmctx, content) {

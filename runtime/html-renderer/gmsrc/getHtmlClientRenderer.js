@@ -27,11 +27,8 @@ class HtmlClientRenderer {
   // The init function doesn't use `context` argument. However, it is used by
   // React I80 to re-render the content when the active route is changed.
   render(context) {
-    let gmctx;
-    return promiseProtect(() => {
-      gmctx = this.createContext(context);
-      return this.prepareToRender(gmctx);
-    }).then(cont => {
+    const gmctx = this.createContext(context);
+    return this.prepareToRender(gmctx).then(cont => {
       if (cont !== false)
         return this.invokeUserRenderer(gmctx);
     }).then(content => {
@@ -54,15 +51,19 @@ class HtmlClientRenderer {
   }
 
   // Do per-rendering preparation tasks.
-  // If this function returns `false` or a promise fulfilled with `false`,
-  // `invokeUserRenderer()` is skipped.
+  // Must return a promise.
+  // If this function returns a promise fulfilled with `false`, `invokeUserRenderer()` is skipped.
   prepareToRender(gmctx) { // eslint-disable-line no-unused-vars
+    return Promise.resolve();
   }
 
   // Do the actual rendering and returns an rendered object.
+  // Must return a promise.
   // Default implementation assumes that the `userObject` is a function.
   invokeUserRenderer(gmctx) {
-    return this.userObject(gmctx);
+    return promiseProtect(() => {
+      return this.userObject(gmctx);
+    });
   }
   
   renderToDom(gmctx, content, elemId) { // eslint-disable-line no-unused-vars

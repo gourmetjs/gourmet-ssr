@@ -35,7 +35,7 @@ module.exports = function(Base) {
       const router = Router.get(true);
       if (router) {
         if (router.resetActiveRoute(gmctx) === false)
-          return false;
+          return Promise.resolve(false);
         return Promise.all([
           super.prepareToRender(gmctx),
           this.fetchRouteProps(gmctx)

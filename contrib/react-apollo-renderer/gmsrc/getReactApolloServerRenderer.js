@@ -1,7 +1,6 @@
 "use strict";
 
 const React = require("react");
-const promiseProtect = require("@gourmet/promise-protect");
 const merge = require("@gourmet/merge");
 const selfUrl = require("@gourmet/self-url");
 const {ApolloClient} = require("apollo-client");
@@ -15,18 +14,14 @@ const handleLinkError = require("./handleLinkError");
 module.exports = function getServerRenderer(Base) {
   return class ApolloServerRenderer extends Base {
     prepareToRender(gmctx) {
-      return promiseProtect(() => {
-        return super.prepareToRender(gmctx);
-      }).then(cont => {
+      return super.prepareToRender(gmctx).then(cont => {
         gmctx.apolloClient = this.createApolloClient(gmctx);
         return cont;
       });
     }
 
     invokeUserRenderer(gmctx) {
-      return promiseProtect(() => {
-        return super.invokeUserRenderer(gmctx);
-      }).then(element => {
+      return super.invokeUserRenderer(gmctx).then(element => {
         if (gmctx.apolloClient) {
           element = (
             <ApolloProvider client={gmctx.apolloClient}>

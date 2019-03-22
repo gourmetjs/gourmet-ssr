@@ -61,11 +61,8 @@ module.exports = function getReactServerRenderer(Base) {
     invokeUserRenderer(gmctx) {
       return promiseProtect(() => {
         const props = this.makePageProps(gmctx);
-        return this.createPageElement(gmctx, this.userObject, props);
-      }).then(element => {
-        if (element)
-          return this.wrapWithContext(gmctx, element);
-        return element;
+        const element = this.createPageElement(gmctx, this.userObject, props);
+        return this.wrapWithContext(gmctx, element);
       });
     }
 
@@ -89,7 +86,7 @@ module.exports = function getReactServerRenderer(Base) {
       return Object.assign({gmctx}, gmctx.clientProps, gmctx.pageProps);
     }
 
-    // This can be asynchronous
+    // This must be synchronous.
     createPageElement(gmctx, type, props) {
       return React.createElement(type, props);
     }

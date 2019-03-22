@@ -1,7 +1,6 @@
 "use strict";
 
 const React = require("react");
-const promiseProtect = require("@gourmet/promise-protect");
 const merge = require("@gourmet/merge");
 const {ApolloClient} = require("apollo-client");
 const {InMemoryCache} = require("apollo-cache-inmemory");
@@ -19,9 +18,7 @@ module.exports = function getClientRenderer(Base) {
 
   return class ApolloClientRenderer extends Base {
     prepareToRender(gmctx) {
-      return promiseProtect(() => {
-        return super.prepareToRender(gmctx);
-      }).then(cont => {
+      return super.prepareToRender(gmctx).then(cont => {
         if (apolloClient === undefined)
           apolloClient = this.createApolloClient(gmctx);
         gmctx.apolloClient = apolloClient;
@@ -30,9 +27,7 @@ module.exports = function getClientRenderer(Base) {
     }
 
     invokeUserRenderer(gmctx) {
-      return promiseProtect(() => {
-        return super.invokeUserRenderer(gmctx);
-      }).then(element => {
+      return super.invokeUserRenderer(gmctx).then(element => {
         if (gmctx.apolloClient) {
           return (
             <ApolloProvider client={gmctx.apolloClient}>

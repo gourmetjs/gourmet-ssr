@@ -38,11 +38,8 @@ module.exports = function getReactClientRenderer(Base) {
     invokeUserRenderer(gmctx) {
       return promiseProtect(() => {
         const props = this.makePageProps(gmctx);
-        return this.createPageElement(gmctx, this.userObject, props);
-      }).then(element => {
-        if (element)
-          return this.wrapWithContext(gmctx, element);
-        return element;
+        const element = this.createPageElement(gmctx, this.userObject, props);
+        return this.wrapWithContext(gmctx, element);
       });
     }
 
