@@ -8,11 +8,7 @@ function getRenderer(Base) {
     }
 
     createPageElement(gmctx, type, props) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(super.createPageElement(gmctx, type, Object.assign(props, {DashboardPage_createPageElement: true})));
-        }, 10);
-      });
+      return super.createPageElement(gmctx, type, Object.assign(props, {DashboardPage_createPageElement: true}));
     }
   };
 }

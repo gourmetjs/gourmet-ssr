@@ -11,6 +11,8 @@ const outputDir = npath.join(__dirname, "../../../.gourmet/babel-polyfill");
 // "use strict";
 // 
 // <<<FROM-HERE>>>__webpack_require__(/*! core-js/modules/es6.promise */ "../../node_modules/core-js/modules/es6.promise.js");
+//
+// __webpack_require__(/*! core-js/modules/es6.object.to-string */ "../../node_modules/core-js/modules/es6.object.to-string.js");
 // 
 // module.exports = function main() {<<<TO-HERE>>>
 //   return Promise.resolve("<div>Hello, world!</div>");
@@ -18,7 +20,7 @@ const outputDir = npath.join(__dirname, "../../../.gourmet/babel-polyfill");
 
 test("Verify `polyfill: \"usage\"`", t => {
   const content = fs.readFileSync(npath.join(outputDir, "local/client/main.js"), "utf8");
-  const check = /__webpack_require__\([/*! \w.-]+"[./\w]+core-js\/modules\/es6\.promise\.js"\);\s+module\.exports = function main\(\) {/.test(content);
+  const check = /__webpack_require__\([/*! \w.-]+"[./\w]+core-js\/modules\/es6\.promise\.js"\);\s+__webpack_require__\([/*! \w.-]+"[./\w]+core-js\/modules\/es6\.object\.to-string\.js"\);\s+module\.exports = function main\(\) {/.test(content);
 
   t.ok(check, "'usage' mode should inject polyfills at the place of references");
 

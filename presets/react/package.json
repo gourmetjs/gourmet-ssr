@@ -7,10 +7,10 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@babel/core": "^7.1.2",
+    "@babel/core": "^7.4.0",
     "@gourmet/group-core": "^1.1.9",
     "@gourmet/group-react": "^1.2.6",
-    "webpack": "^4.26.0"
+    "webpack": "^4.26.6"
   },
   "peerDependencies": {
     "react": "16",
