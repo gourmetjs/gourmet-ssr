@@ -7,9 +7,9 @@
     "gourmet-plugin"
   ],
   "dependencies": {
-    "@babel/core": "^7.1.2",
+    "@babel/core": "^7.4.0",
     "@gourmet/group-core": "^1.1.9",
-    "webpack": "^4.26.0"
+    "webpack": "^4.29.6"
   },
   "license": "MIT",
   "repository": "https://github.com/gourmetjs/gourmet-ssr/tree/master/presets/core"
