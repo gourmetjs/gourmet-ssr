@@ -193,15 +193,16 @@ module.exports = {
   },
   "dependencies": {
     "express": "^4.16.4",
-    "@gourmet/server-args": "^1.2.1",
-    "@gourmet/client-lib": "^1.2.0"
+    "@gourmet/server-args": "^1.2.4",
+    "@gourmet/client-lib": "^1.2.4"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
-    "@gourmet/preset-react": "^1.2.3",
-    "@gourmet/group-react-i80": "^1.2.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
+    "@gourmet/gourmet-cli": "^1.1.4",
+    "@gourmet/preset-react": "^1.5.0",
+    "@gourmet/group-react-i80": "^1.3.0",
+    "core-js": "^3.0.0",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
     "nodemon": "^1.18.10"
   }
 }
@@ -299,6 +300,16 @@ Inside your SSR code, you import `@gourmet/react-i80` to implement your routing 
 > In Gourmet SSR, a preset is a complete set of sub-packages that defines the target environment of your Gourmet SSR project. Presets are mutually exclusive, so your app must use only one preset in your app. (e.g. React vs Vue)
 >
 > On the other hand, a group is a set of related sub-packages to support additional functionality, on top of a preset. Groups can be used together based on your needs. Internally, groups are used as building blocks of presets.
+
+## Polyfill and `core-js` as a dependency
+
+By default, your SSR code is built with direct references to [`core-js`](https://github.com/zloirock/core-js) to polyfill JavaScript features that are not available in legacy browsers such IE 11. For this reason, `core-js` should be installed at the application level as a dependency at build time.
+
+For a simple project, you may not need to do this because one of Babel modules depends on `core-js`, and it probably gets `core-js` hoisted to the top level by NPM. However, as your app's dependencies get complex, there might be a different version hoisted to the top and cause a build error.
+
+The easies way to prevent this problem from happening is to add `core-js` explicitly to `devDependencies` as shown in this example.
+
+See [Babel documentation](https://babeljs.io/docs/en/babel-preset-env#usebuiltins) for more information.
 
 ## Automatic rebuilding and reloading
 

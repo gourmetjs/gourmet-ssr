@@ -8,18 +8,18 @@
   "dependencies": {
     "@gourmet/client-lib": "^1.2.4",
     "@gourmet/server-args": "^1.2.4",
-    "express": "^4.16.3",
+    "express": "^4.16.4",
     "apollo-server-express": "^2.4.8",
     "apollo-datasource": "^0.3.1",
     "graphql": "^14.1.1"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.4",
-    "@gourmet/preset-react": "^1.2.10",
-    "@gourmet/group-react-apollo": "^1.0.4",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "core-js": "2",
+    "@gourmet/preset-react": "^1.5.0",
+    "@gourmet/group-react-apollo": "^1.1.0",
+    "core-js": "^3.0.0",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
     "nodemon": "^1.18.10"
   }
 }

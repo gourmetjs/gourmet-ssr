@@ -397,16 +397,17 @@ module.exports = {
   },
   "dependencies": {
     "express": "^4.16.4",
-    "@gourmet/server-args": "^1.2.1",
-    "@gourmet/client-lib": "^1.2.0",
+    "@gourmet/server-args": "^1.2.4",
+    "@gourmet/client-lib": "^1.2.4",
     "body-parser": "^1.18.3"
   },
   "devDependencies": {
-    "@gourmet/gourmet-cli": "^1.1.0",
-    "@gourmet/preset-react": "^1.2.3",
-    "@gourmet/group-react-i80": "^1.2.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
+    "@gourmet/gourmet-cli": "^1.1.4",
+    "@gourmet/preset-react": "^1.5.0",
+    "@gourmet/group-react-i80": "^1.3.0",
+    "core-js": "^3.0.0",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
     "nodemon": "^1.18.10"
   }
 }
