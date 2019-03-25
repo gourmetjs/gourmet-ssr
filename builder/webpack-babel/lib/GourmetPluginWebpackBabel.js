@@ -57,6 +57,10 @@ class GourmetPluginWebpackBabel {
         // may result in a bigger output. `"entry"` can be a better option for that kind of projects.
         polyfill: "usage",
 
+        // core-js v3 is supported from Babel v7.4.0. See the following release note for details about this option.
+        // https://babeljs.io/blog/2019/03/19/7.4.0#highlights
+        corejs: 3,
+
         // Where to load browserslist configuration:
         //  - "gourmet": global setting from `builder.runtime` of `gourmet_config.js`.
         //  - "root": single location configuration lookup beginning at project's root directory
@@ -117,7 +121,7 @@ class GourmetPluginWebpackBabel {
       loose: babel.loose,
       spec: babel.spec,
       useBuiltIns: babel.polyfill,
-      corejs: 2,
+      corejs: babel.polyfill ? babel.corejs : undefined,
 
       // https://github.com/facebook/create-react-app/blob/1d8d9eaaeef0e4dbcefedac40d3f18b892c8c18b/packages/babel-preset-react-app/create.js#L91
       exclude: ["transform-typeof-symbol"]
@@ -245,7 +249,7 @@ class GourmetPluginWebpackBabel {
   onEntry(value, context) {
     if (context.config.babel.polyfill === "entry") {
       return [
-        require.resolve("../gmsrc/babel-polyfill-entry.js")
+        require.resolve(context.config.babel.corejs === 3 ? "../gmsrc/entry-corejs-v3.js" : "../gmsrc/babel-polyfill-entry.js")
       ].concat(value);
     }
     return value;
