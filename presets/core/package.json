@@ -1,14 +1,14 @@
 {
   "name": "@gourmet/preset-core",
   "description": "Gourmet Preset containing core packages for building and running a Gourmet SSR project",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "main": "lib/GourmetPresetCore.js",
   "keywords": [
     "gourmet-plugin"
   ],
   "dependencies": {
     "@babel/core": "^7.4.0",
-    "@gourmet/group-core": "^1.3.0",
+    "@gourmet/group-core": "^1.4.0",
     "webpack": "^4.26.6"
   },
   "license": "MIT",

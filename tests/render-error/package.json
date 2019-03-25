@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-render-error",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "private": true,
   "scripts": {
     "build": "gourmet build",
@@ -20,7 +20,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.4",
     "@gourmet/group-react-emotion": "^1.1.4",
-    "@gourmet/preset-react": "^1.4.0",
+    "@gourmet/preset-react": "^1.5.0",
     "@gourmet/promise-tape": "^0.4.3",
     "core-js": "^3.0.0",
     "got": "^8.3.1",
