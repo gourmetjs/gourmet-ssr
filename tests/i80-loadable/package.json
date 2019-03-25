@@ -1,6 +1,6 @@
 {
   "name": "@gourmet/test-i80-loadable",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "scripts": {
     "watch": "node lib/server.js --watch",
@@ -22,7 +22,7 @@
     "@gourmet/gourmet-cli": "^1.1.4",
     "@gourmet/group-react-emotion": "^1.1.4",
     "@gourmet/group-react-i80": "^1.3.0",
-    "@gourmet/preset-react": "^1.3.0",
+    "@gourmet/preset-react": "^1.4.0",
     "@gourmet/promise-tape": "^0.4.3",
     "classnames": "^2.2.6",
     "got": "^8.3.1",
