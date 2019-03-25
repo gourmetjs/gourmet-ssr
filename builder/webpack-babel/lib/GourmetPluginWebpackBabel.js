@@ -59,7 +59,7 @@ class GourmetPluginWebpackBabel {
 
         // core-js v3 is supported from Babel v7.4.0. See the following release note for details about this option.
         // https://babeljs.io/blog/2019/03/19/7.4.0#highlights
-        corejs: 3,
+        corejs: 2,
 
         // Where to load browserslist configuration:
         //  - "gourmet": global setting from `builder.runtime` of `gourmet_config.js`.
