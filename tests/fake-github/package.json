@@ -22,6 +22,7 @@
     "@gourmet/group-react-emotion": "^1.1.4",
     "@gourmet/preset-react": "^1.4.0",
     "@gourmet/promise-tape": "^0.4.3",
+    "core-js": "^3.0.0",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.6",
     "ionicons": "^2.0.1",

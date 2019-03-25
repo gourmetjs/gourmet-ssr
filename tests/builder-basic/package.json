@@ -23,6 +23,7 @@
     "@gourmet/plugin-webpack-babel": "^1.3.0",
     "@gourmet/plugin-webpack-builder": "^1.1.8",
     "@gourmet/promise-tape": "^0.4.3",
+    "core-js": "^3.0.0",
     "puppeteer": "^1.3.0",
     "tape": "^4.9.0",
     "webpack": "^4.26.6"

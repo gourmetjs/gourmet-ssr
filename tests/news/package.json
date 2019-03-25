@@ -25,6 +25,7 @@
     "@gourmet/preset-react": "^1.4.0",
     "@gourmet/promise-tape": "^0.4.3",
     "@gourmet/test-news-view": "^1.1.3",
+    "core-js": "^3.0.0",
     "nodemon": "^1.18.10",
     "puppeteer": "^1.3.0",
     "react": "^16.8.4",

@@ -17,6 +17,7 @@
     "@gourmet/preset-core": "^1.3.0",
     "@gourmet/test-builder-src-module-a": "^0.1.0",
     "@gourmet/test-builder-src-module-b": "^0.1.1",
+    "core-js": "^3.0.0",
     "tape": "^4.9.0"
   }
 }

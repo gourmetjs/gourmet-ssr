@@ -23,6 +23,7 @@
     "@gourmet/group-react-emotion": "^1.1.4",
     "@gourmet/preset-react": "^1.4.0",
     "@gourmet/promise-tape": "^0.4.3",
+    "core-js": "^3.0.0",
     "puppeteer": "^1.3.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",

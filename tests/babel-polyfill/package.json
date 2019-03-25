@@ -9,6 +9,7 @@
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.4",
     "@gourmet/preset-core": "^1.3.0",
+    "core-js": "^3.0.0",
     "tape": "^4.9.0"
   }
 }
