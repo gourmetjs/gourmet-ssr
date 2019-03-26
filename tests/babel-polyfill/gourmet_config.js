@@ -7,8 +7,7 @@ module.exports = {
   },
 
   babel: {
-    polyfill: context => context.stage.startsWith("entry") ? "entry" : "usage",
-    corejs: context => context.stage.endsWith("v2") ? 2 : 3
+    polyfill: context => context.stage === "entry" ? "entry" : "usage"
   },
 
   pages: {
