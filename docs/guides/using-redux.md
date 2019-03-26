@@ -212,7 +212,7 @@ const Root = ({reduxState}) => {
 export default Root;
 ```
 
-You can access the full source code of this example in `examples/redux-init` folder.
+You can access the full source code of this example in the `examples/redux-init` folder.
 
 ### Using Redux with React I80 router
 
@@ -327,6 +327,6 @@ const Settings = () => (
 export default Settings;
 ```
 
-You can access the full source code of this example in `examples/redux-i80` folder.
+You can access the full source code of this example in the `examples/redux-i80` folder.
 
 Run the example and verify that the state is preserved when you switch routes.

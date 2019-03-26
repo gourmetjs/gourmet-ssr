@@ -303,9 +303,9 @@ Inside your SSR code, you import `@gourmet/react-i80` to implement your routing 
 
 ## Polyfill and `core-js` as a dependency
 
-By default, your SSR code is built with direct references to [`core-js`](https://github.com/zloirock/core-js) to polyfill JavaScript features that are not available in legacy browsers such IE 11. For this reason, `core-js` should be installed at the application level as a dependency at build time.
+By default, your SSR code is built with direct references to [`core-js`](https://github.com/zloirock/core-js) to polyfill JavaScript features that are not available in legacy browsers such IE 11. For this reason, `core-js` should be installed at the application level as a dependency.
 
-For a simple project, you may not need to do this because one of Babel modules depends on `core-js`, and it probably gets `core-js` hoisted to the top level by NPM. However, as your app's dependencies get complex, there might be a different version hoisted to the top and cause a build error.
+For a simple project, you may not need to do this because one of Babel modules depends on `core-js`, and it will probably have `core-js` hoisted to the top level by NPM. However, as your app dependencies are getting more complex, there might be a different version hoisted to the top and cause a build error.
 
 The easies way to prevent this problem from happening is to add `core-js` explicitly to `devDependencies` as shown in this example.
 

@@ -278,18 +278,18 @@ module.exports = {
   "dependencies": {
     "@gourmet/client-lib": "^1.2.4",
     "@gourmet/server-args": "^1.2.4",
-    "express": "^4.16.3",
+    "express": "^4.16.4",
     "apollo-server-express": "^2.4.8",
     "apollo-datasource": "^0.3.1",
     "graphql": "^14.1.1"
   },
   "devDependencies": {
     "@gourmet/gourmet-cli": "^1.1.4",
-    "@gourmet/preset-react": "^1.2.10",
-    "@gourmet/group-react-apollo": "^1.0.4",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "core-js": "2",
+    "@gourmet/preset-react": "^1.5.0",
+    "@gourmet/group-react-apollo": "^1.1.0",
+    "core-js": "^3.0.0",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
     "nodemon": "^1.18.10"
   }
 }
@@ -330,7 +330,7 @@ For SSR code, we are using the following packages. They are listed in `devDepend
 - `@gourmet/group-react-apollo`: A group of sub-packages that enables Apollo GraphQL support in your project. See below for more information.
 - `react`: Standard React library.
 - `react-dom`: Standard React library.
-- `core-js`: A workaround for a Babel related issue. See [this](https://babeljs.io/docs/en/babel-preset-env#usebuiltins) for more details.
+- `core-js`: A polyfill library referenced by [Babel output](../tutorial-1#polyfill-and-core-js-as-a-dependency).
 
 The following are dev tools that are needed only at development time.
 
@@ -339,15 +339,15 @@ The following are dev tools that are needed only at development time.
 
 ###  `@gourmet/group-react-apollo`
 
-Installing this package will automatically enable Apollo support in your project. An instance of `ApolloClient` is created with the sensible defaults and provided to the rest of your React tree, so you can use `Query` and `Mutation` components without any additional configuration or bootstrapping.
+Installing this package will automatically enable Apollo support in your project. An instance of `ApolloClient` is created with the sensible defaults and provided to the rest of your React tree, so you can use `Query` and `Mutation` components without any additional configuration or bootstrapping as shown in `src/TodoMain.js`.
 
 `react-apollo` and `graphql-tag` packages are included in the group as sub-packages. When you import them in your SSR code, Gourmet Builder will resolve the references to the corresponding sub-packages inside the group, so you don't need to install them individually.
 
 ## Advanced topics
 
-### Default options for `ApolloClient`
+### Default options
 
-`@gourmet/group-react-apollo` creates an instance of `ApolloClient` like the following. (This snippet is for explanation only and the real code is not the same.)
+`@gourmet/group-react-apollo` creates an instance of `ApolloClient` that is similar the the following. (This snippet is for explanation only and the real code is not the same.)
 
 ```js
 const selfUrl = require("@gourmet/self-url");
@@ -386,9 +386,9 @@ function createApolloClient(gmctx) {
 }
 ```
 
-### Specifying `ApolloClient` options
+### Specifying Apollo options
 
-You can specify `ApolloClient` options through `apollo` section of `gourmet_config.js` as below.
+You can specify Apollo options through `apollo` section of `gourmet_config.js` as below.
 
 ```js
 // gourmet_config.js
@@ -406,14 +406,14 @@ module.exports = {
 ```
 
 - **`client`**: Options for [`ApolloClient`](https://www.apollographql.com/docs/react/api/apollo-client.html). Note that `link`, `ssrMode` and `cache` are overridden.
-- **`httpLink`**: Options for [`HttpLink`](https://www.apollographql.com/docs/link/links/http.html#options). Any relative path in `uri` will be converted to an absolute path using [`@gourmet/self-url`](../tutorial-5#converting-a-relative-path-to-an-absolute-path) on the server.
+- **`linkHttp`**: Options for [`HttpLink`](https://www.apollographql.com/docs/link/links/http.html#options). Any relative path in `uri` will be converted to an absolute path using [`@gourmet/self-url`](../tutorial-5#converting-a-relative-path-to-an-absolute-path) on the server.
 - **`cacheInMemory`**: Options for [`InMemoryCache`](https://github.com/apollographql/apollo-client/tree/master/packages/apollo-cache-inmemory).
 
 Note that you can specify only JSON serializable values through this method.
 
 ### Specifying options with non-JSON-serializable values
 
-You can defined a static function `createApolloClient()` in your page component to modify Apollo options just before `ApolloClient` is created for the page. You can use this method to specify options with non-JSON-serializable values, or to generate options dynamically based on context at runtime.
+You can defined a static function `createApolloClient()` in your page component to modify Apollo options just before `ApolloClient` is created for the page. You can use this method to specify options with non-JSON-serializable values, or to generate options dynamically based on context at runtime. You can safely modify `options` in-place inside this function.
 
 ```js
 export default class TodoApp extends Component {
@@ -442,7 +442,7 @@ export default class TodoApp extends Component {
     return new ApolloClient({
       ...options.client,
       link: ApolloLink.from([
-        // ... your ApolloLink middleware here
+        // ... your ApolloLink middlewares here
         new HttpLink(options.linkHttp)
       ]),
       cache: new InMemoryCache(options.cacheInMemory)
@@ -451,9 +451,122 @@ export default class TodoApp extends Component {
 }
 ```
 
-Don't forget to add Apollo packages (`apollo-client`, `apollo-cache-inmemory`, ..etc) to your `package.json` if you use this method.
+Don't forget to add Apollo packages you are using (`apollo-client`, `apollo-cache-inmemory`, ..etc) to your `package.json` if you use this method.
 
 ### Disabling Apollo for a specific page
 
 If you return `null` from `createApolloClient()`, the creation of `ApolloClient` is skipped completely and Apollo support will be disabled for the page. This can be useful if you don't want the Apollo layer for a specific page in a multi-page project.
 
+### Adding Apollo GraphQL support manually
+
+If you add `@gourmet/group-react-apollo` as a dependency, the Apollo related modules inside the group will be added to your SSR bundles no matter how you implement your `createApolloClient()`. For example, even if you return `null` from `createApolloClient()`, the page bundle will still include those unused modules. Also, if you use different versions of Apollo modules than the ones come with the group, you will end up having two different versions of Apollo modules in your bundles, one being unused.
+
+If you want a complete control of the dependency of Apollo modules, you can omit `@gourmet/group-react-apollo`, and implement the Apollo GraphQL bootstrapping manually.
+
+```js
+// src/TodoApp.js
+import React, {Component} from "react";
+import selfUrl from "@gourmet/self-url";
+import {ApolloClient} from "apollo-client";
+import {InMemoryCache} from "apollo-cache-inmemory";
+import {HttpLink} from "apollo-link-http";
+import {ApolloProvider, getDataFromTree} from "react-apollo";
+import TodoMain from "./TodoMain";
+
+let _apollo;
+
+function createApollo(gmctx) {
+  const apollo = new ApolloClient({
+    ssrMode: gmctx.isServer,
+    ssrForceFetchDelay: 100,
+    connectToDevTools: false,
+    link: new HttpLink({uri: selfUrl(gmctx, "/graphql")}),
+    cache: new InMemoryCache()
+  });
+
+  if (gmctx.isClient && gmctx.data.apolloState)
+    apollo.cache.restore(gmctx.data.apolloState);
+
+  return apollo;
+}
+
+function getRenderer(Base) {
+  return class ApolloRenderer extends Base {
+    prepareToRender(gmctx) {
+      return super.prepareToRender(gmctx).then(() => {
+        if (gmctx.isServer) {
+          gmctx.apolloClient = createApollo(gmctx);
+        } else {
+          if (!_apollo)
+            _apollo = createApollo(gmctx);
+          gmctx.apolloClient = _apollo;
+        }
+      });
+    }
+
+    invokeUserRenderer(gmctx) {
+      return super.invokeUserRenderer(gmctx).then(element => {
+        element = (
+          <ApolloProvider client={gmctx.apolloClient}>
+            {element}
+          </ApolloProvider>
+        );
+        if (gmctx.isServer) {
+          return getDataFromTree(element).then(() => {
+            gmctx.data.apolloState = gmctx.apolloClient.cache.extract();
+            return element;
+          });
+        }
+        return element;
+      });
+    }
+  };
+}
+
+export default class TodoApp extends Component {
+  static getServerRenderer = getRenderer;
+  static getClientRenderer = getRenderer;
+
+  render() {
+    return (
+      <div className="container" style={{width: "400px", padding: "10em 0"}}>
+        <TodoMain/>
+      </div>
+    );
+  }
+}
+```
+
+```json
+// package.json
+{
+  "private": true,
+  "scripts": {
+    "build": "gourmet build",
+    "start": "node lib/server.js",
+    "dev": "nodemon --ignore src lib/server.js -- --watch"
+  },
+  "dependencies": {
+    "@gourmet/client-lib": "^1.2.4",
+    "@gourmet/server-args": "^1.2.4",
+    "express": "^4.16.4",
+    "apollo-server-express": "^2.4.8",
+    "apollo-datasource": "^0.3.1",
+    "graphql": "^14.1.1"
+  },
+  "devDependencies": {
+    "@gourmet/gourmet-cli": "^1.1.4",
+    "@gourmet/preset-react": "^1.5.0",
+    "@gourmet/self-url": "^1.1.3",
+    "apollo-client": "^2.5.1",
+    "apollo-link-http": "^1.5.14",
+    "apollo-cache-inmemory": "^1.5.1",
+    "core-js": "^3.0.0",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
+    "nodemon": "^1.18.10"
+  }
+}
+```
+
+Note that this is a highly advanced use case. Usually, the customization through `createApolloClient()` would suffice for most use cases. You can access the full source code of this example in the `examples/apollo-manual` folder.
