@@ -5,9 +5,9 @@ title: Using Redux
 
 ## Introduction
 
-Usually, building a Redux app with the server-side rendering is a complicated task. That is not because Redux is particularly incompatible with SSR than others, but because enabling SSR itself is a complicated task.
+Usually, building a Redux app with server-side rendering is a complicated task. That is not because Redux is particularly more incompatible with SSR compared to others, but because enabling SSR itself is a complicated task.
 
-However, as Gourmet SSR takes care of the most complications from the SSR-izing an app, using Redux in a Gourmet SSR project is surprisingly simple. It is just a matter of adding a snippet for bootstrapping. Let's see how.
+However, as Gourmet SSR takes care of most of the complications from SSR-izing an app, using Redux in a Gourmet SSR project is surprisingly simple. It is just a matter of adding a snippet for bootstrapping. Let's see how.
 
 ## Example app
 
@@ -30,7 +30,7 @@ You will see a screen like below. There are two todo items pre-populated from th
 
 ## How it works
 
-All the secret is in the `Root` component. This is the page component of the app.
+All the secrets are in the `Root` component. This is the page component of the app.
 
 ```js
 // src/containers/Root.js
@@ -86,7 +86,7 @@ export default Root;
 
 `getStockProps()` is a static function of your page component. Here, it is used to create a Redux store.
 
-Gourmet SSR will call the function to get the stock props before rendering the page component. The stock props you return from this function will be provided to the page component, combined with other root-level props, such as the props from `getInitialProps()` and/or `res.serve()`.
+Gourmet SSR will call the function to get the stock props before rendering the page component. The stock props you return from this function will be provided to the page component and combined with other root-level props, such as the props from `getInitialProps()` and/or `res.serve()`.
 
 `getStockProps()` works very similar to `getInitialProps()`, which we showed you in the [tutorial](https://ssr.gourmetjs.org/docs/tutorial-5#getinitialprops). Compared to `getInitialProps()`, `getStockProps()` is:
 
@@ -129,11 +129,11 @@ app.listen(args.port, () => {
 
 As you can see, there is no special code for Redux. It is just a typical Express server for a Gourmet SSR project.
 
-> In our example, the state data is not saved in any persistent storage, so it will be reset whenever the page is refreshed. We wanted to keep this example simple to show you only the important part of Redux integration.
+> In our example, the state data is not saved in any persistent storage, so it will be reset every time the page is refreshed. We wanted to keep this example simple to show you only the important part of Redux integration.
 
 ## Adding Redux packages for existing projects
 
-To use Redux in your existing Gourmet SSR project, you should install `redux` and `react-redux` packages. You can add them to `devDependencies` because you need Redux only in your SSR code.
+To use Redux in your existing Gourmet SSR project, you should install the `redux` and `react-redux` packages. You can add them to `devDependencies` because you need Redux only in your SSR code.
 
 ```text
 npm install redux react-redux --save-dev
@@ -143,7 +143,7 @@ npm install redux react-redux --save-dev
 
 ### Supplying the initial state
 
-In the example above, we explained a case that your initial state is fetched inside the SSR code via `getStockProps()` static function. This is a recommended pattern because the criteria of data to fetch usually depends on the user interface to render.
+In the example above, we explained a case in which your initial state is fetched inside the SSR code via `getStockProps()` static function. This is a recommended pattern because the criteria of data to fetch usually depends on the user interface to render.
 
 As an alternative, however, you can supply the initial state from your server via `res.serve()` function.
 
@@ -191,7 +191,7 @@ app.listen(args.port, () => {
 });
 ```
 
-With this approach, your `Root` component now becomes much simpler as the data fetching is not its responsibility and Gourmet SSR takes care of the dehydration and rehydration automatically.
+With this approach, your `Root` component now becomes much simpler, as the data fetching is not its responsibility and Gourmet SSR takes care of the dehydration and rehydration automatically.
 
 ```js
 // src/containers/Root.js
@@ -218,7 +218,7 @@ You can access the full source code of this example in the `examples/redux-init`
 
 On the server side, `getStockProps()` is called with a freshly created `gmctx` every time a new HTTP request is served. You will always want this behavior to prevent any possible conflicts between requests.
 
-On the client side, the change of route triggers the re-rendering of the whole React components tree, from the very root component. For this reason, a page component's `getStockProps()` will be called many times whenever the route changes, with a freshly created `gmctx`.
+On the client side, the change of route triggers the re-rendering of the whole React components tree, from the very root component onwards. For this reason, a page component's `getStockProps()` will be called many times whenever the route changes, with a freshly created `gmctx`.
 
 To preserve the state between routes switching on the client, you should use a global variable for your Redux store. See the source code below.
 

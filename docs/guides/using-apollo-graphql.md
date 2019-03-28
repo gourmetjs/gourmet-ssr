@@ -24,7 +24,7 @@ You will see a screen like this.
 
 ![Apollo Todo App](../assets/guide-apollo-todo.png)
 
-There are two todo items pre-populated from the server using GraphQL query. When you type in the text and click the "Add Todo" button, a new item will be added through a GraphQL mutation.
+There are two todo items pre-populated from the server using the GraphQL query. When you type in the text and click the "Add Todo" button, a new item will be added through a GraphQL mutation.
 
 ## Server source code
 
@@ -299,9 +299,9 @@ module.exports = {
 
 ### Server
 
-We are using the `apollo-server-express` package, instead of more commonly used `apollo-server` package, because we want to implement an Express server for both GraphQL serving and SSR rendering. `apollo-server-express` provides the GraphQL server functionality via a Connect/Express compatible middleware.
+We are using the `apollo-server-express` package, instead of the more commonly used `apollo-server` package, because we want to implement an Express server for both the GraphQL serving and SSR rendering. `apollo-server-express` provides the GraphQL server functionality via a Connect/Express compatible middleware.
 
-We are implementing very simple GraphQL schema that consists of one query and one mutation in `lib/schema.js`. Also, a todo item is defined as a string for simplicity.
+We are implementing a very simple GraphQL schema that consists of one query and one mutation in `lib/schema.js`. Also, a todo item is defined as a string for simplicity.
 
 `lib/TodoData.js` implements a simple Apollo data source. It uses a global variable `_todo` to save todo items. The data will be reset if the server restarts.
 
@@ -315,7 +315,7 @@ While your server is running, you can open `http://localhost:3000/graphql` in yo
 
 ### Packages
 
-For our Express server, we are using the following packages. They are listed in `dependencies` section of `package.json` because the server needs them at runtime.
+For our Express server, we are using the following packages. They are listed in the `dependencies` section of `package.json` because the server needs them at runtime.
 
 - `@gourmet/client-lib`: Gourmet SSR server renderer.
 - `@gourmet/server-args`: A common command line options parser for Gourmet SSR projects.
@@ -324,7 +324,7 @@ For our Express server, we are using the following packages. They are listed in 
 - `apollo-datasource`: Base class of Apollo DataSource.
 - `graphql`: GraphQL core library, should be installed side by side with `apollo-server-express` as a peer dependency.
 
-For SSR code, we are using the following packages. They are listed in `devDependencies` section of `package.json` because they get built and embedded inside the SSR bundles.
+For SSR code, we are using the following packages. They are listed in the `devDependencies` section of `package.json` because they get built and embedded inside the SSR bundles.
 
 - `@gourmet/preset-react`: A preset of React build tools and runtime helpers.
 - `@gourmet/group-react-apollo`: A group of sub-packages that enables Apollo GraphQL support in your project. See below for more information.
@@ -339,15 +339,15 @@ The following are dev tools that are needed only at development time.
 
 ###  `@gourmet/group-react-apollo`
 
-Installing this package will automatically enable Apollo support in your project. An instance of `ApolloClient` is created with the sensible defaults and provided to the rest of your React tree, so you can use `Query` and `Mutation` components without any additional configuration or bootstrapping as shown in `src/TodoMain.js`.
+Installing this package will automatically enable Apollo support in your project. An instance of `ApolloClient` is created with the sensible defaults and provided to the rest of your React tree, freeing you to use `Query` and `Mutation` components without any additional configuration or bootstrapping as shown in `src/TodoMain.js`.
 
-`react-apollo` and `graphql-tag` packages are included in the group as sub-packages. When you import them in your SSR code, Gourmet Builder will resolve the references to the corresponding sub-packages inside the group, so you don't need to install them individually.
+`react-apollo` and `graphql-tag` packages are included in the group as sub-packages. When you import them into your SSR code, Gourmet Builder will resolve the references to the corresponding sub-packages inside the group, so you don't need to install them individually.
 
 ## Advanced topics
 
 ### Default options
 
-`@gourmet/group-react-apollo` creates an instance of `ApolloClient` that is similar the the following. (This snippet is for explanation only and the real code is not the same.)
+`@gourmet/group-react-apollo` creates an instance of `ApolloClient` that is similar to the following. (This snippet is for explanation purposes only - note that the real code is not the same.)
 
 ```js
 const selfUrl = require("@gourmet/self-url");
@@ -388,7 +388,7 @@ function createApolloClient(gmctx) {
 
 ### Specifying Apollo options
 
-You can specify Apollo options through `apollo` section of `gourmet_config.js` as below.
+You can specify Apollo options through the `apollo` section of `gourmet_config.js` as below.
 
 ```js
 // gourmet_config.js
@@ -413,7 +413,7 @@ Note that you can specify only JSON serializable values through this method.
 
 ### Specifying options with non-JSON-serializable values
 
-You can defined a static function `createApolloClient()` in your page component to modify Apollo options just before `ApolloClient` is created for the page. You can use this method to specify options with non-JSON-serializable values, or to generate options dynamically based on context at runtime. You can safely modify `options` in-place inside this function.
+You can define a static function `createApolloClient()` in your page component to modify Apollo options just before `ApolloClient` is created for the page. You can use this method to specify options with non-JSON-serializable values, or to generate options dynamically based on context at runtime. You can safely modify `options` in-place inside this function.
 
 ```js
 export default class TodoApp extends Component {
@@ -451,17 +451,17 @@ export default class TodoApp extends Component {
 }
 ```
 
-Don't forget to add Apollo packages you are using (`apollo-client`, `apollo-cache-inmemory`, ..etc) to your `package.json` if you use this method.
+Don't forget to add the Apollo packages you are using (`apollo-client`, `apollo-cache-inmemory`, ..etc) to your `package.json` if you use this method.
 
 ### Disabling Apollo for a specific page
 
-If you return `null` from `createApolloClient()`, the creation of `ApolloClient` is skipped completely and Apollo support will be disabled for the page. This can be useful if you don't want the Apollo layer for a specific page in a multi-page project.
+If you return `null` from `createApolloClient()`, the creation of `ApolloClient` is skipped completely and Apollo support will be disabled for the page. This can be useful if you don't want to use the Apollo layer for a specific page in a multi-page project.
 
 ### Adding Apollo GraphQL support manually
 
-If you add `@gourmet/group-react-apollo` as a dependency, the Apollo related modules inside the group will be added to your SSR bundles no matter how you implement your `createApolloClient()`. For example, even if you return `null` from `createApolloClient()`, the page bundle will still include those unused modules. Also, if you use different versions of Apollo modules than the ones come with the group, you will end up having two different versions of Apollo modules in your bundles, one being unused.
+If you add `@gourmet/group-react-apollo` as a dependency, the Apollo related modules inside the group will be added to your SSR bundles no matter how you implement your `createApolloClient()`. For example, even if you return `null` from `createApolloClient()`, the page bundle will still include those unused modules. Also, if you use different versions of Apollo modules from the ones that come within the group, you will end up having two different versions of Apollo modules in your bundles, resulting in one being unused.
 
-If you want a complete control of the dependency of Apollo modules, you can omit `@gourmet/group-react-apollo`, and implement the Apollo GraphQL bootstrapping manually.
+If you want complete control over the dependency of Apollo modules, you can omit `@gourmet/group-react-apollo`, and implement the Apollo GraphQL bootstrapping manually.
 
 ```js
 // src/TodoApp.js
